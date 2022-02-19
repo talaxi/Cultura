@@ -1,0 +1,19 @@
+<div class="container">
+    <div class="headerArea">
+        <app-header></app-header>
+    </div>
+    <div class="mainArea">
+        <div id="BarnView" *ngIf="activeView === navigationEnum.barn">            
+            <app-barn-view></app-barn-view>
+        </div>
+        <div id="RaceSelectionView" *ngIf="activeView === navigationEnum.raceselection">            
+            <app-race-selection-view></app-race-selection-view>
+        </div>
+    </div> 
+    <div class="navArea">
+        <app-navigation (viewChanged)="changeView($event)"></app-navigation>
+    </div>   
+    <div class="footerArea">
+        <app-footer></app-footer>
+    </div>
+</div>

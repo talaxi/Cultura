@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Output, OnInit } from '@angular/core';
+import { NavigationEnum } from '../../../models/navigation-enum.model';
 
 @Component({
   selector: 'app-navigation',
@@ -6,7 +7,8 @@ import { Component, EventEmitter, Output, OnInit } from '@angular/core';
   styleUrls: ['./navigation.component.css']
 })
 export class NavigationComponent implements OnInit {
-  @Output() viewChanged = new EventEmitter<string>();
+  @Output() viewChanged = new EventEmitter<NavigationEnum>();  
+  public navigationEnum = NavigationEnum;
 
 
   constructor() { }
@@ -14,7 +16,7 @@ export class NavigationComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  switchView(selectedView: string) 
+  switchView(selectedView: NavigationEnum) 
   {
     console.log("Switch view to " + selectedView);
     this.viewChanged.emit(selectedView);   
