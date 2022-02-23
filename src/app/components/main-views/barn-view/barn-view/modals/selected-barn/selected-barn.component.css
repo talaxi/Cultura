@@ -1,0 +1,52 @@
+.selectedBarnModal {    
+    height: 100%;
+    background-color: var(--background-secondary);    
+    color: var(--foreground-default);
+  }
+
+.infoText
+{
+    text-align: center;
+}
+
+.customLabel
+{
+    color: #000;
+    font-weight: 700;
+    text-align: center;
+    position: absolute;
+    width: 75%; /* needs to match the size of the main grid */
+}
+
+.progressBarContainer
+{
+    height: 2rem;
+}
+
+.progressBar
+{
+    height: 2rem;
+}
+
+.gridContainer
+{
+    height: 100%;
+    display: grid;
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+    justify-content: stretch;
+    grid-template-areas: 
+      "trainingName trainingStats trainingTimeToComplete";
+}
+
+.trainingName {
+    grid-area: trainingName;
+  }
+
+  .trainingStats {
+    grid-area: trainingStats;
+  }
+
+  .trainingTimeToComplete {
+    grid-area: trainingTimeToComplete;
+  }
