@@ -1,14 +1,14 @@
-  .container {
+  .gridContainer {
     display: grid;
     width: 100vw;
     height: 100vh;
-    grid-template-columns: 25% 25% 25% 25%;
+    grid-template-columns: 85% 15%;
     grid-template-rows: 10% 80% 10%;
     justify-content: stretch;
     grid-template-areas: 
-      "header header header header"
-      "main main main nav"
-      "footer footer footer footer";
+      "header header"
+      "main  nav"
+      "footer footer";
   }
 
   .mainArea {
@@ -43,5 +43,7 @@
     color: var(--foreground-quaternary);
   }
 
-
+  .mainView {
+      height: 100%;
+  }
   

@@ -28,6 +28,12 @@
     height: 2rem;
 }
 
+.progressBar > div, .progress-bar, .progressBar div {
+  -webkit-transition: initial !important;
+  -o-transition: initial !important;
+  transition: initial !important;
+}
+
 .gridContainer
 {
     height: 100%;
@@ -50,3 +56,26 @@
   .trainingTimeToComplete {
     grid-area: trainingTimeToComplete;
   }
+
+  .infoGridContainer
+{
+    height: 100%;
+    display: grid;
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+    justify-content: stretch;
+    grid-template-areas: 
+      "unassign info back";
+}
+
+.unassign {
+  grid-area: unassign;
+}
+
+.info {
+  grid-area: info;
+}
+
+.back {
+  grid-area: back;
+}

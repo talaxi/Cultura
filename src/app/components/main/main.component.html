@@ -1,13 +1,25 @@
-<div class="container">
+<div class="gridContainer">
     <div class="headerArea">
         <app-header></app-header>
     </div>
     <div class="mainArea">
-        <div id="BarnView" *ngIf="activeView === navigationEnum.barn">            
-            <app-barn-view></app-barn-view>
+        <div id="BarnView" class="mainView" *ngIf="activeView === navigationEnum.barn">            
+            <app-barn-view></app-barn-view>            
         </div>
-        <div id="RaceSelectionView" *ngIf="activeView === navigationEnum.raceselection">            
+        <div id="RaceSelectionView" class="mainView" *ngIf="activeView === navigationEnum.raceselection">            
             <app-race-selection-view></app-race-selection-view>
+        </div>
+        <div id="AnimalsView" class="mainView" *ngIf="activeView === navigationEnum.animals">            
+            <app-animals-view></app-animals-view>
+        </div>
+        <div id="ShopView" class="mainView" *ngIf="activeView === navigationEnum.shop">            
+            <app-shop-view></app-shop-view>
+        </div>
+        <div id="ResourcesView" class="mainView" *ngIf="activeView === navigationEnum.resources">            
+            <app-resources-view></app-resources-view>
+        </div>
+        <div id="SettingsView" class="mainView" *ngIf="activeView === navigationEnum.settings">            
+            <app-settings-view></app-settings-view>
         </div>
     </div> 
     <div class="navArea">

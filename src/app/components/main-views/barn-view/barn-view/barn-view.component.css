@@ -1,4 +1,5 @@
-.container {
+.gridContainer {
+    height: 100%;
     display: grid;
     grid-template-columns: auto;
     grid-template-rows: auto;
@@ -9,83 +10,52 @@
       "barn7 barn8 barn9";
   }
 
-  .barn1 {
-    grid-area: barn1;
+  .selectedBarnDiv {
+    height: 100%;
+  }
+
+  .barnDefault {
     justify-self: stretch;
+    display: grid;
+    align-items: center;
 
     background-color: var(--background-secondary);
     border-color: var(--background-tertiary);
     color: var(--foreground-default);
+  }
+
+  .barn1 {
+    grid-area: barn1;
   }
 
   .barn2 {
     grid-area: barn2;
-    justify-self: stretch;
-
-    background-color: var(--background-secondary);
-    border-color: var(--background-tertiary);
-    color: var(--foreground-default);
   }
 
   .barn3 {
     grid-area: barn3;
-    justify-self: stretch;
-
-    background-color: var(--background-secondary);
-    border-color: var(--background-tertiary);
-    color: var(--foreground-default);
   }
 
   .barn4 {
     grid-area: barn4;
-    justify-self: stretch;
-
-    background-color: var(--background-secondary);
-    border-color: var(--background-tertiary);
-    color: var(--foreground-default);
   }
 
   .barn5 {
     grid-area: barn5;
-    justify-self: stretch;
-
-    background-color: var(--background-secondary);
-    border-color: var(--background-tertiary);
-    color: var(--foreground-default);
   }
 
   .barn6 {
     grid-area: barn6;
-    justify-self: stretch;
-
-    background-color: var(--background-secondary);
-    border-color: var(--background-tertiary);
-    color: var(--foreground-default);
   }
 
   .barn7 {
     grid-area: barn7;
-    justify-self: stretch;
-
-    background-color: var(--background-secondary);
-    border-color: var(--background-tertiary);
-    color: var(--foreground-default);
   }
 
   .barn8 {
     grid-area: barn8;
-    justify-self: stretch;
-
-    background-color: var(--background-secondary);
-    border-color: var(--background-tertiary);
-    color: var(--foreground-default);
   }
 
   .barn9 {
     grid-area: barn9;
-    justify-self: stretch;
-
-    background-color: var(--background-secondary);
-    border-color: var(--background-tertiary);
-    color: var(--foreground-default);
   }

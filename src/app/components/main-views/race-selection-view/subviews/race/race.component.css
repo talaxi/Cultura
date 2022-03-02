@@ -1,0 +1,13 @@
+#raceInfo {
+    height: 100%;
+
+    background-color: var(--background-secondary);
+    border-color: var(--background-tertiary);
+    color: var(--foreground-default); 
+    
+    white-space: pre;
+  }
+
+  .updates {
+    white-space: pre;
+  }

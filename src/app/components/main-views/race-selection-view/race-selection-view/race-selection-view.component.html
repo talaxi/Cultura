@@ -1,1 +1,12 @@
-<p>race-selection-view works!</p>
+<div class="raceSelectionDiv" *ngIf="!showRace">
+        <div class="raceGridContainer">
+                <span class="circuit" (click)="toggleCircuitRace(true)">Circuit Race</span>
+                <span class="local" (click)="toggleCircuitRace(false)">Local Race</span>
+        </div>
+        <hr />
+        <app-circuit-view *ngIf="displayCircuitView" (raceSelected)="raceSelected($event)"></app-circuit-view>
+        <app-local-view *ngIf="!displayCircuitView"></app-local-view>
+</div>
+<div class="raceDiv" *ngIf="showRace">
+        <app-race [selectedRace]="selectedRace" (raceFinished)="showRace = false"></app-race>
+</div>

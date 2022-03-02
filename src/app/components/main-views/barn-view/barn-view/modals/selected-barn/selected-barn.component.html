@@ -1,0 +1,65 @@
+<div class="selectedBarnModal" *ngIf="animalAssigned">
+    <div class="infoText">
+        <div class="infoGridContainer">
+            <div class="unassign" (click)="unassignAnimal()">
+                <span>Unassign</span>
+            </div>
+            <div class="info">
+                <span>Barn {{ this.selectedBarnNumber }}</span>
+                <br />
+                <span>{{ this.associatedAnimalName }}</span>
+                <hr />
+                <span *ngIf="this.existingTraining !== null">{{ this.existingTraining.trainingName }} </span>
+            </div>
+            <div class="back" (click)="returnToBarnView()">
+                <span>Back</span>
+            </div>
+        </div>
+        <hr />
+        <div *ngIf="this.existingTraining !== null">
+            <br />
+            <p class="progressBarContainer">
+                <ngb-progressbar type="success" [value]="this.trainingProgressBarPercent" class="progressBar">
+                    <span class="customLabel">{{ this.trainingProgressBarPercent | number : '1.2-2' }}%</span>
+                </ngb-progressbar>
+            </p>
+            <br />
+        </div>
+        <br />
+        <br />
+        <span>Change Training</span>
+        <div class="gridContainer">
+            <div (click)="selectNewTraining(training)" *ngFor="let training of availableTrainings">
+                <p class="trainingName">{{ training.trainingName }}</p>
+                <p class="trainingStats">{{ training.getStatGainDescription() }}</p>
+                <p class="trainingTimeToComplete">{{ training.timeToComplete }} sec</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="selectedBarnModal" *ngIf="!animalAssigned">
+    <div class="infoText">
+        <div class="infoGridContainer">
+            <div class="info">
+                <span>Barn {{ this.selectedBarnNumber }}</span>
+                <br />
+                <span>Unassigned</span>
+            </div>
+            <div class="back" (click)="returnToBarnView()">
+                <span>Back</span>
+            </div>
+        </div>
+        <hr />
+        <br />
+        <br />
+        <span>Assign Animal</span>
+        <div class="gridContainer">
+            <div (click)="assignAnimal(animal)" *ngFor="let animal of availableAnimals">
+                <!-- eventually make this an animal component that displays relevant info -->
+                <p class="animalName">{{ animal.name }}</p>
+                <p class="animalType">{{ animal.getAnimalType() }}</p>
+            </div>
+        </div>
+    </div>
+</div>

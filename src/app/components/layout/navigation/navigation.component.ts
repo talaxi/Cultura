@@ -17,8 +17,7 @@ export class NavigationComponent implements OnInit {
   }
 
   switchView(selectedView: NavigationEnum) 
-  {
-    console.log("Switch view to " + selectedView);
+  {        
     this.viewChanged.emit(selectedView);   
   }
 }

@@ -6,10 +6,15 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./barn-view.component.css']
 })
 export class BarnViewComponent implements OnInit {
+  selectedBarn = 0;
 
   constructor() { }
 
-  ngOnInit(): void {
+  ngOnInit(): void {    
   }
 
+  goToBarn(selectedBarnNumber: number): void 
+  {
+    this.selectedBarn = selectedBarnNumber;
+  }
 }

@@ -1,4 +1,8 @@
 export enum NavigationEnum {
     barn, 
-    raceselection
+    raceselection,
+    animals,
+    shop,
+    resources,
+    settings
   }

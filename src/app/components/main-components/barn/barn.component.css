@@ -1,0 +1,23 @@
+.barn {
+    border-radius: 25px;
+    border: 2px solid #73AD21;
+    padding: 30px;  
+    text-align: center;
+    width: 25%;
+    margin: auto;
+  }
+
+  .progressBarBackground
+  {
+    background-color: black;
+    border-radius: 13px;
+    padding: 3px;
+  }
+
+  .progressBar
+  {
+    height:24px;  
+    background-color: red;
+    border-radius: 10px;
+    height: 20px;
+  }

@@ -1,0 +1,9 @@
+<div class="circuitViewDiv">
+    <span class="circuitRaceHeader">Rank {{ circuitRank }} Circuit</span>
+
+    <div (click)="selectCircuitRace(race)" *ngFor="let race of availableCircuitRaces; let i = index">
+        <span>Race {{ i+1 }}</span>
+        <p *ngFor="let raceLeg of race.raceLegs">{{ raceLeg.getCourseTypeName() }} {{ raceLeg.distance }} meters</p> 
+        <p>{{ race.isCompleted ? "Completed" : "Start" }}</p>       
+    </div>
+</div>

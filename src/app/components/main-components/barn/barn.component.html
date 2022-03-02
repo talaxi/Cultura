@@ -1,1 +1,13 @@
-<p>barn works!</p>
+<div class="barn">
+    <div class="unlocked" *ngIf="this.isOccupied">
+        <span>{{ this.associatedAnimalName }}</span>
+        <br />
+        <span>{{ this.associatedAnimalType }}</span>
+        <br />
+        <br />
+        <p><ngb-progressbar type="success" [value]="this.trainingProgressBarPercent"></ngb-progressbar></p>        
+    </div>
+    <div class="locked" *ngIf="this.isLocked">
+        <span>{{ this.isLocked }}</span>
+    </div>
+</div>

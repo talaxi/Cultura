@@ -1,5 +1,8 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, Input } from '@angular/core';
+import { AnimalTypeEnum } from 'src/app/models/animal-type-enum.model';
+import { RaceCourseTypeEnum } from 'src/app/models/race-course-type-enum.model';
 import { NavigationEnum } from '../../models/navigation-enum.model';
+import { GlobalService } from '../../services/global-service.service';
 
 @Component({
   selector: 'app-main',
@@ -7,11 +10,11 @@ import { NavigationEnum } from '../../models/navigation-enum.model';
   styleUrls: ['./main.component.css']
 })
 export class MainComponent implements OnInit {
-  //activeView = "barn";
   public navigationEnum = NavigationEnum;
   activeView = NavigationEnum.barn;
 
-  constructor(private ref: ChangeDetectorRef) { }
+  constructor(private ref: ChangeDetectorRef, private globalService: GlobalService) {    
+   }
 
   ngOnInit(): void {
   }
