@@ -26,6 +26,9 @@ import { SettingsViewComponent } from './components/main-views/settings-view/set
 import { AnimalComponent } from './components/main-components/animal/animal.component';
 import { AnimalListComponent } from './components/main-components/animal-list/animal-list.component';
 import { SelectedAnimalComponent } from './components/main-views/animals-view/subviews/selected-animal/selected-animal.component';
+import { DrawRaceComponent } from './components/main-views/race-selection-view/subviews/draw-race/draw-race.component';
+import { TrainingListComponent } from './components/main-components/training-list/training-list.component';
+import { TrainingOptionComponent } from './components/main-components/training-option/training-option.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +40,7 @@ import { SelectedAnimalComponent } from './components/main-views/animals-view/su
     BarnComponent,
     BarnViewComponent,
     RaceSelectionViewComponent,    
-    SelectedBarnComponent, ProgressBarComponent, CircuitViewComponent, LocalViewComponent, RaceComponent, AnimalsViewComponent, ShopViewComponent, ResourcesViewComponent, SettingsViewComponent, AnimalComponent, AnimalListComponent, SelectedAnimalComponent
+    SelectedBarnComponent, ProgressBarComponent, CircuitViewComponent, LocalViewComponent, RaceComponent, AnimalsViewComponent, ShopViewComponent, ResourcesViewComponent, SettingsViewComponent, AnimalComponent, AnimalListComponent, SelectedAnimalComponent, DrawRaceComponent, TrainingListComponent, TrainingOptionComponent
   ],
   imports: [
     BrowserModule,

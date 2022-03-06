@@ -7,34 +7,56 @@
             <div class="info">
                 <span>Barn {{ this.selectedBarnNumber }}</span>
                 <br />
-                <span>{{ this.associatedAnimalName }}</span>
+                <div *ngIf="this.associatedAnimal.name !== this.associatedAnimal.getAnimalType()">
+                    <span *ngIf="this.associatedAnimal.name !== this.associatedAnimal.getAnimalType()">{{
+                        this.associatedAnimal.name }}</span>
+                    <br />
+                    <span>{{ this.associatedAnimal.getAnimalType() }}</span>
+                </div>
+                <div *ngIf="this.associatedAnimal.name === this.associatedAnimal.getAnimalType()">
+                    <span>{{ this.associatedAnimal.getAnimalType() }}</span>
+                </div>
                 <hr />
-                <span *ngIf="this.existingTraining !== null">{{ this.existingTraining.trainingName }} </span>
+                <span *ngIf="this.existingTraining !== null && this.existingTraining !== undefined">{{
+                    this.existingTraining.trainingName }} </span>
+                <span *ngIf="this.existingTraining === null || this.existingTraining === undefined">No Training
+                    Assigned</span>
             </div>
             <div class="back" (click)="returnToBarnView()">
                 <span>Back</span>
             </div>
         </div>
         <hr />
-        <div *ngIf="this.existingTraining !== null">
+        <div *ngIf="this.existingTraining !== null && this.existingTraining !== undefined">
             <br />
             <p class="progressBarContainer">
                 <ngb-progressbar type="success" [value]="this.trainingProgressBarPercent" class="progressBar">
-                    <span class="customLabel">{{ this.trainingProgressBarPercent | number : '1.2-2' }}%</span>
                 </ngb-progressbar>
+                <span class="customLabel">{{ this.trainingProgressBarPercent | number : '1.2-2' }}%</span>
             </p>
             <br />
         </div>
         <br />
         <br />
-        <span>Change Training</span>
-        <div class="gridContainer">
-            <div (click)="selectNewTraining(training)" *ngFor="let training of availableTrainings">
-                <p class="trainingName">{{ training.trainingName }}</p>
-                <p class="trainingStats">{{ training.getStatGainDescription() }}</p>
-                <p class="trainingTimeToComplete">{{ training.timeToComplete }} sec</p>
+        <div>
+            <div class="facilitySizeFilter">
+
+            </div>
+            <div class="changeTrainingHeader">
+                <span>Change Training</span>
+            </div>
+            <div class="statFilter">
+                <span (click)="toggleStatFilter('Speed')" class="speedFilter">SPD</span>
+                <span (click)="toggleStatFilter('Acceleration')" class="accelerationFilter">ACC</span>
+                <span (click)="toggleStatFilter('Endurance')" class="enduranceFilter">END</span>
+                <span (click)="toggleStatFilter('Power')" class="powerFilter">PWR</span>
+                <span (click)="toggleStatFilter('Focus')" class="focusFilter">FCS</span>
+                <span (click)="toggleStatFilter('Adaptability')" class="adaptabilityFilter">ADP</span>
             </div>
         </div>
+        <br />
+        <app-training-list [availableTrainingOptions]="availableTrainings"
+            (selectedTrainingOption)="selectNewTraining($event)"></app-training-list>
     </div>
 </div>
 

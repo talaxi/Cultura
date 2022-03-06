@@ -37,8 +37,8 @@ export class RaceComponent implements OnInit {
     race.raceLegs.forEach(item => totalRaceDistance += item.distance);
     distancePerSecond = totalRaceDistance / 60;
     var secondsPassed = 0;
-    if (race.raceLength === 0 || race.raceLength === undefined || race.raceLength === null)
-      race.raceLength = 60;
+    if (race.timeToComplete === 0 || race.timeToComplete === undefined || race.timeToComplete === null)
+      race.timeToComplete = 60;
 
     //TODO: more specific way to get the animals racing each leg
     //calculate speed of animal based on acceleration and top speed (no obstacles)
@@ -57,7 +57,7 @@ export class RaceComponent implements OnInit {
 
       var velocity = 0;
       var distanceToGo = item.distance;
-      for (var i = secondsPassed; i <= race.raceLength; i++) {
+      for (var i = secondsPassed; i <= race.timeToComplete; i++) {
         //Race logic here
 
         //TODO: Add focus and adaptability here
@@ -79,8 +79,6 @@ export class RaceComponent implements OnInit {
               racingAnimal.raceVariables.recoveringStamina = false;
               racingAnimal.raceVariables.currentRecoveringStaminaLength = racingAnimal.raceVariables.defaultRecoveringStaminaLength;
             }
-
-            //TODO: ADD MESSAGE 
           }
           
           if (racingAnimal.raceVariables.lostFocus)
@@ -90,6 +88,7 @@ export class RaceComponent implements OnInit {
             if (racingAnimal.raceVariables.currentLostFocusLength === 0) {
               racingAnimal.raceVariables.lostFocus = false;
               racingAnimal.raceVariables.currentLostFocusLength = racingAnimal.raceVariables.defaultLostFocusLength;
+              racingAnimal.raceVariables.metersSinceLostFocus = 0;
             }
             //TODO: ADD MESSAGE
           }
@@ -108,6 +107,12 @@ export class RaceComponent implements OnInit {
 
         distanceCovered += velocity;
         distanceToGo -= velocity;
+
+        race.raceUI.distanceCoveredBySecond.push(distanceCovered);
+        race.raceUI.velocityBySecond.push(velocity);
+
+        if (!didAnimalLoseFocus)        
+          racingAnimal.raceVariables.metersSinceLostFocus += velocity;                
 
         if (racingAnimal.ability.abilityInUse) {
           racingAnimal.ability.remainingLength -= velocity;
@@ -135,6 +140,11 @@ export class RaceComponent implements OnInit {
         if (racingAnimal.currentStats.stamina === 0) {
           racingAnimal.raceVariables.recoveringStamina = true;
           velocity = velocity / 2;
+
+          var staminaUpdate: StringNumberPair = new StringNumberPair();
+          staminaUpdate.value = secondsPassed;
+          staminaUpdate.text = racingAnimal.name + " ran out of stamina and must slow down.";
+          raceResult.raceUpdates.push(staminaUpdate);
         }
 
         if (racingAnimal.ability.currentCooldown <= 0) {
@@ -146,9 +156,8 @@ export class RaceComponent implements OnInit {
           racingAnimal.ability.currentCooldown = racingAnimal.ability.cooldown;
         }
 
-
         //Race housekeeping here
-        if (secondsPassed !== 0 && secondsPassed !== race.raceLength && secondsPassed % 5 === 0) {
+        if (secondsPassed !== 0 && secondsPassed !== race.timeToComplete && secondsPassed % 10 === 0) {
           var timingUpdate: StringNumberPair = new StringNumberPair();
           timingUpdate.value = secondsPassed;
           timingUpdate.text = this.getUpdateMessageByRelativeDistance(distancePerSecond, secondsPassed, distanceCovered, racingAnimal.name);
@@ -294,29 +303,7 @@ export class RaceComponent implements OnInit {
   }
 
   didAnimalStumble(racingAnimal: Animal): boolean {
-    //TODO: eventually this will be replaced with different track routes
-
-    //focusModifier is inverse of what percent chance the animal will lose focus right at their focusMs amount
-    var adaptabilityModifier: number;
-    var adaptabilityModifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "focusModifier");
-    if (adaptabilityModifierPair === undefined)
-      adaptabilityModifier = .9;
-    else
-      adaptabilityModifier = adaptabilityModifierPair.value;
-
-    var unwaveringFocus = racingAnimal.currentStats.focusMs * adaptabilityModifier;
-
-    if (racingAnimal.raceVariables.metersSinceLostFocus < unwaveringFocus)
-      return false;
-
-    var metersSinceExpectedDistraction = racingAnimal.raceVariables.metersSinceLostFocus - unwaveringFocus;
-    var percentChangeOfLosingFocus = metersSinceExpectedDistraction / racingAnimal.currentStats.focusMs;
-
-    var rng = this.utilityService.getRandomNumber(1, 100);
-
-    if (rng <= percentChangeOfLosingFocus)
-      return true;
-    else
+    //TODO: eventually this will be replaced with different track routes with various chances of stumbling
       return false;
   }
 

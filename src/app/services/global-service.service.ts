@@ -11,6 +11,8 @@ import { RaceLeg } from '../models/races/race-leg.model';
 import { ResourceValue } from '../models/resources/resource-value.model';
 import { UtilityService } from './utility/utility.service';
 import { StringNumberPair } from '../models/utility/string-number-pair.model';
+import { RacePath } from '../models/races/race-path.model';
+import { RaceDesignEnum } from '../models/race-design-enum.model';
 
 @Injectable({
   providedIn: 'root'
@@ -47,30 +49,8 @@ export class GlobalService {
     goat.isAvailable = true;
 
     //Initialize training options
-    var trainingOption = new TrainingOption();
-    trainingOption.trainingName = "Test Training 1";
-    trainingOption.isAvailable = true;
-    trainingOption.timeTrained = 0;
-    trainingOption.timeToComplete = 5;
-    trainingOption.trainingType = TrainingOptionsEnum.LandTraining1;
-    trainingOption.trainingCourseType = RaceCourseTypeEnum.FlatLand;
-    trainingOption.statGain = 1;
-    trainingOption.affectedStatRatios = new AnimalStats(1, 0, 0, 0, 0, 0);
+    this.InitializeGlobalTrainingOptions();
 
-    horse.currentTraining = trainingOption;
-
-    var trainingOption2 = new TrainingOption();
-    trainingOption2.trainingName = "Test Training 2";
-    trainingOption2.isAvailable = true;
-    trainingOption2.timeTrained = 0;
-    trainingOption2.timeToComplete = 100;
-    trainingOption2.trainingType = TrainingOptionsEnum.LandTraining2;
-    trainingOption2.trainingCourseType = RaceCourseTypeEnum.FlatLand;
-    trainingOption2.statGain = 1;
-    trainingOption2.affectedStatRatios = new AnimalStats(0, 0, 0, 0, .5, .5);    
-
-    this.globalVar.trainingOptions.push(trainingOption);
-    this.globalVar.trainingOptions.push(trainingOption2);
     this.globalVar.animals.push(horse);
     this.globalVar.animals.push(cheetah);
     this.globalVar.animals.push(goat);
@@ -78,8 +58,8 @@ export class GlobalService {
 
     //Initialize circuit race information
     this.globalVar.circuitRank = "Z";
-    this.GenerateCircuitRaces();    
-    
+    this.GenerateCircuitRaces();
+
     //Initialize local race information
 
     //Initialize resources
@@ -87,6 +67,98 @@ export class GlobalService {
 
     //Initialize Resources
     this.globalVar.modifiers.push(new StringNumberPair(.2, "staminaModifier"));
+  }
+
+  InitializeGlobalTrainingOptions(): void {
+    var shortTrackRunning = new TrainingOption();
+    shortTrackRunning.trainingName = "Short Track Running";
+    shortTrackRunning.isAvailable = true;    
+    shortTrackRunning.timeToComplete = 30;
+    shortTrackRunning.trainingType = TrainingOptionsEnum.ShortTrackRunning;
+    shortTrackRunning.trainingCourseType = RaceCourseTypeEnum.FlatLand;
+    shortTrackRunning.statGain = 1;
+    shortTrackRunning.affectedStatRatios = new AnimalStats(1, 0, 0, 0, 0, 0);
+    this.globalVar.trainingOptions.push(shortTrackRunning);
+
+    var sprints = new TrainingOption();
+    sprints.trainingName = "Sprints";
+    sprints.isAvailable = true;    
+    sprints.timeToComplete = 20;
+    sprints.trainingType = TrainingOptionsEnum.Sprints;
+    sprints.trainingCourseType = RaceCourseTypeEnum.FlatLand;
+    sprints.statGain = 1;
+    sprints.affectedStatRatios = new AnimalStats(0, 1, 0, 0, 0, 0);    
+    this.globalVar.trainingOptions.push(sprints);
+
+    var trailRunning = new TrainingOption();
+    trailRunning.trainingName = "Trail Running";
+    trailRunning.isAvailable = true;    
+    trailRunning.timeToComplete = 60;
+    trailRunning.trainingType = TrainingOptionsEnum.TrailRunning;
+    trailRunning.trainingCourseType = RaceCourseTypeEnum.FlatLand;
+    trailRunning.statGain = 1;
+    trailRunning.affectedStatRatios = new AnimalStats(.5, 0, 1, 0, 0, 0);    
+    this.globalVar.trainingOptions.push(trailRunning);
+
+    var moveLogs = new TrainingOption();
+    moveLogs.trainingName = "Move Logs";
+    moveLogs.isAvailable = true;    
+    moveLogs.timeToComplete = 30;
+    moveLogs.trainingType = TrainingOptionsEnum.MoveLogs;
+    moveLogs.trainingCourseType = RaceCourseTypeEnum.FlatLand;
+    moveLogs.statGain = 1;
+    moveLogs.affectedStatRatios = new AnimalStats(0, 0, 0, 1, 0, 0);    
+    this.globalVar.trainingOptions.push(moveLogs);
+
+    var footwork = new TrainingOption();
+    footwork.trainingName = "Footwork";
+    footwork.isAvailable = true;    
+    footwork.timeToComplete = 45;
+    footwork.trainingType = TrainingOptionsEnum.Footwork;
+    footwork.trainingCourseType = RaceCourseTypeEnum.FlatLand;
+    footwork.statGain = 1;
+    footwork.affectedStatRatios = new AnimalStats(0, .5, 0, 0, 0, 1);    
+    this.globalVar.trainingOptions.push(footwork);
+
+    var practiceCommands = new TrainingOption();
+    practiceCommands.trainingName = "Practice Commands";
+    practiceCommands.isAvailable = true;    
+    practiceCommands.timeToComplete = 60;
+    practiceCommands.trainingType = TrainingOptionsEnum.PracticeCommands;
+    practiceCommands.trainingCourseType = RaceCourseTypeEnum.FlatLand;
+    practiceCommands.statGain = 1;
+    practiceCommands.affectedStatRatios = new AnimalStats(0, 0, 0, 0, 1, .25);    
+    this.globalVar.trainingOptions.push(practiceCommands);
+
+    var scentTraining = new TrainingOption();
+    scentTraining.trainingName = "Scent Training";
+    scentTraining.isAvailable = true;    
+    scentTraining.timeToComplete = 45;
+    scentTraining.trainingType = TrainingOptionsEnum.ScentTraining;
+    scentTraining.trainingCourseType = RaceCourseTypeEnum.FlatLand;
+    scentTraining.statGain = 1;
+    scentTraining.affectedStatRatios = new AnimalStats(0, 0, .5, 0, 1, 0);    
+    this.globalVar.trainingOptions.push(scentTraining);
+
+    var smallWagonTow = new TrainingOption();
+    smallWagonTow.trainingName = "Small Wagon Tow";
+    smallWagonTow.isAvailable = true;    
+    smallWagonTow.timeToComplete = 45;
+    smallWagonTow.trainingType = TrainingOptionsEnum.SmallWagonTow;
+    smallWagonTow.trainingCourseType = RaceCourseTypeEnum.FlatLand;
+    smallWagonTow.statGain = 1;
+    smallWagonTow.affectedStatRatios = new AnimalStats(0, 0, 0, 1.5, .25, 0);    
+    this.globalVar.trainingOptions.push(smallWagonTow);
+
+    var sidestep = new TrainingOption();
+    sidestep.trainingName = "Sidestep";
+    sidestep.isAvailable = true;    
+    sidestep.timeToComplete = 35;
+    sidestep.trainingType = TrainingOptionsEnum.Sidestep;
+    sidestep.trainingCourseType = RaceCourseTypeEnum.FlatLand;
+    sidestep.statGain = 1;
+    sidestep.affectedStatRatios = new AnimalStats(0, 2, 0, 0, 0, 0);    
+    this.globalVar.trainingOptions.push(sidestep);
   }
 
   IncreaseCircuitRank(): void {
@@ -109,8 +181,8 @@ export class GlobalService {
     //use basic algorithm to go ahead and auto generate these
     var circuitRank = "Z";
     var raceIndex = 1;
-    var raceLength = 60;
-    var legLengthCutoff = raceLength / 4;
+    var timeToComplete = 60;
+    var legLengthCutoff = timeToComplete / 4;
 
     var baseMeters = 250;
     var factor = 1.15;
@@ -131,39 +203,39 @@ export class GlobalService {
         {
           var leg = new RaceLeg();
           leg.courseType = RaceCourseTypeEnum.FlatLand;
-          leg.distance = Math.round(baseMeters * (factor ^ i) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor));
+          leg.distance = Math.round(baseMeters * (factor ^ i) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor));          
           raceLegs.push(leg);
         }
         else if (i <= 10) {
           var leg1Distance = this.utilityService.getRandomNumber(legMinimumDistance, legMaximumDistance);
           var leg2Distance = this.utilityService.getRandomNumber(legMinimumDistance, legMaximumDistance);
           var sum = leg1Distance + leg2Distance;
-          var normalizeValue = raceLength / sum;
+          var normalizeValue = timeToComplete / sum;
           var leg1Normalized = leg1Distance * normalizeValue;
           var leg2Normalized = leg2Distance * normalizeValue;
 
           if (leg1Normalized < legLengthCutoff) {
             leg1Normalized = 0;
-            leg2Normalized = raceLength;
+            leg2Normalized = timeToComplete;
           }
           else if (leg2Normalized < legLengthCutoff) {
             leg2Normalized = 0;
-            leg1Normalized = raceLength;
+            leg1Normalized = timeToComplete;
           }
 
           if (leg1Normalized > 0) {
             var leg1 = new RaceLeg();
             leg1.courseType = RaceCourseTypeEnum.FlatLand;
-            leg1.distance = (Math.round(baseMeters * (factor ^ i) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor)) * (leg1Normalized / raceLength));
+            leg1.distance = (Math.round(baseMeters * (factor ^ i) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor)) * (leg1Normalized / timeToComplete));
             raceLegs.push(leg1);
           }
 
           if (leg2Normalized > 0) {
             var leg2 = new RaceLeg();
             leg2.courseType = RaceCourseTypeEnum.Rock;
-            leg2.distance = (Math.round(baseMeters * (factor ^ i) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor)) * (leg2Normalized / raceLength));
+            leg2.distance = (Math.round(baseMeters * (factor ^ i) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor)) * (leg2Normalized / timeToComplete));
             raceLegs.push(leg2);
-          }
+          }          
         }
         else {
           //make it 3 race types but variable on what they are based on what the user has?
@@ -173,6 +245,16 @@ export class GlobalService {
           raceLegs.push(leg);
         }
 
+        var totalDistance = 0;
+
+        raceLegs.forEach(leg => {
+          totalDistance += leg.distance;
+        });        
+
+        raceLegs.forEach(leg => {
+          leg.pathData = this.GenerateRaceLegPaths(leg, totalDistance);
+        });
+
         //TODO: need to include rewards as well
         var testRewards: ResourceValue[] = [];
         testRewards.push(new ResourceValue("Resource1", 50));
@@ -180,7 +262,7 @@ export class GlobalService {
         testRewards.push(new ResourceValue("Resource3", 54));
         testRewards.push(new ResourceValue("Resource4", 500));
 
-        this.globalVar.circuitRaces.push(new Race(raceLegs, circuitRank, true, raceIndex, testRewards));
+        this.globalVar.circuitRaces.push(new Race(raceLegs, circuitRank, true, raceIndex, totalDistance, testRewards));
 
         raceIndex += 1;
       }
@@ -188,5 +270,80 @@ export class GlobalService {
       var charCode = circuitRank.charCodeAt(0);
       circuitRank = String.fromCharCode(--charCode);
     }
+  }
+
+  GenerateRaceLegPaths(leg: RaceLeg, totalDistance: number): RacePath[] {
+    var paths: RacePath[] = [];
+    var totalLegLengthRemaining = leg.distance;
+    var pathLength = totalDistance / 20;
+    var totalRoutes = totalLegLengthRemaining / pathLength;
+    var lastRouteSpecial = false;
+
+    //console.log("totalLegLengthRemaining: " + totalLegLengthRemaining);
+    //console.log("pathLength: " + pathLength);
+    //console.log("totalRoutes: " + totalRoutes);
+
+    for (var i = 0; i < totalRoutes; i++) {
+      var path = new RacePath();
+
+      if (i === 0) {        
+        path.length = pathLength;
+        path.routeDesign = RaceDesignEnum.Regular;
+        paths.push(path);
+        continue;
+      }
+
+      if (i === totalRoutes - 1) {        
+        path.length = totalLegLengthRemaining;
+        path.routeDesign = RaceDesignEnum.Regular;
+        paths.push(path);
+        continue;
+      }
+
+      if (totalLegLengthRemaining > pathLength)
+        path.length = pathLength;
+      else
+        path.length = totalLegLengthRemaining;
+
+      totalLegLengthRemaining -= path.length;
+
+      if (totalLegLengthRemaining < 0)
+        totalLegLengthRemaining = 0;
+
+      if (!lastRouteSpecial)
+        path.routeDesign = this.GetSpecialRoute(leg.courseType);
+      else
+        path.routeDesign = RaceDesignEnum.Regular;
+
+      if (path.routeDesign !== RaceDesignEnum.Regular)
+        lastRouteSpecial = true;
+      else
+        lastRouteSpecial = false;
+
+      paths.push(path);
+    }
+
+    return paths;
+  }
+
+  GetSpecialRoute(courseType: RaceCourseTypeEnum): RaceDesignEnum {
+    var specialRoute = RaceDesignEnum.Regular;
+    var totalLandDesigns = 3;
+
+    var routeType = this.utilityService.getRandomInteger(1, totalLandDesigns);
+
+    if (routeType === 1) {
+      return specialRoute;
+    }
+    else if (routeType === 2) {
+      if (courseType === RaceCourseTypeEnum.FlatLand)
+        specialRoute = RaceDesignEnum.S;
+    }
+    else if (routeType === 3) {
+      if (courseType === RaceCourseTypeEnum.FlatLand)
+        specialRoute = RaceDesignEnum.Bumps;
+    }    
+    
+    return specialRoute;
   }
 }

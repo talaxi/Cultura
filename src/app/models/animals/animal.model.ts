@@ -72,6 +72,8 @@ export class Horse extends Animal {
         this.ability.cooldown = 10;
         this.ability.efficiency = 10;
         this.ability.name = "Pacemaker";
+
+        this.raceVariables = new RaceVariables();
     }
 
     override viewAbility(): string {
@@ -97,7 +99,9 @@ export class Cheetah extends Animal {
         this.ability = new Ability();
         this.ability.cooldown = 10;
         this.ability.efficiency = 4;
-        this.ability.name = "Sprint";      
+        this.ability.name = "Sprint";     
+        
+        this.raceVariables = new RaceVariables();
     }
 
     override viewAbility(): string {
@@ -124,6 +128,8 @@ export class Monkey extends Animal {
         this.ability.cooldown = 10;
         this.ability.efficiency = 10;
         this.ability.name = "Landslide";
+
+        this.raceVariables = new RaceVariables();
     }
 
     override viewAbility(): string {
@@ -145,5 +151,7 @@ export class Goat extends Animal {
         this.ability.cooldown = 10;
         this.ability.efficiency = 10;
         this.ability.name = "";
+
+        this.raceVariables = new RaceVariables();
     }
 }

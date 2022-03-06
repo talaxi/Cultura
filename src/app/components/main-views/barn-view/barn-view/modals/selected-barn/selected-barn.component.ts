@@ -15,13 +15,22 @@ import { UtilityService } from 'src/app/services/utility/utility.service';
 export class SelectedBarnComponent implements OnInit {
   @Input() selectedBarnNumber: number;
   @Output() returnToBarnEmitter = new EventEmitter<number>();
+
   barn: Barn;
   animalAssigned: boolean;
+  associatedAnimal: Animal;
   associatedAnimalName: string;
   existingTraining: TrainingOption | null;
   trainingProgressBarPercent: number;
   availableTrainings: TrainingOption[];
   availableAnimals: Animal[];
+
+  filterSpeed = false;
+  filterAcceleration = false;
+  filterEndurance = false;
+  filterPower = false;
+  filterFocus = false;
+  filterAdaptability = false;
 
   constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private utilityService: UtilityService) {
   }
@@ -37,10 +46,12 @@ export class SelectedBarnComponent implements OnInit {
 
         if (associatedAnimal !== undefined && associatedAnimal !== null) {
           this.animalAssigned = true;
+          this.associatedAnimal = associatedAnimal;
           this.associatedAnimalName = associatedAnimal.name;
           this.existingTraining = associatedAnimal.currentTraining;
 
           this.availableTrainings = this.GetAvailableTrainingOptions(associatedAnimal);
+          console.log("Training Options: " + this.availableTrainings.length);
         }
         else {
           this.animalAssigned = false;
@@ -99,6 +110,16 @@ export class SelectedBarnComponent implements OnInit {
     trainingOptions = this.globalService.globalVar.trainingOptions.filter(item => item.isAvailable &&
       item.trainingCourseType === associatedAnimal.raceCourseType);
 
+    if (this.filterAcceleration || this.filterAdaptability || this.filterEndurance || this.filterFocus || this.filterPower
+      || this.filterSpeed) {
+      trainingOptions = []; //just for ease of testing
+      /*trainingOptions.filter(item => (this.filterAcceleration && item.affectedStatRatios.acceleration > 0) ||
+        (this.filterAdaptability && item.affectedStatRatios.adaptability > 0) ||
+        (this.filterEndurance && item.affectedStatRatios.endurance > 0) ||
+        (this.filterFocus && item.affectedStatRatios.focus > 0) || (this.filterPower && item.affectedStatRatios.power > 0) ||
+        (this.filterSpeed && item.affectedStatRatios.topSpeed > 0));*/
+    }
+
     return trainingOptions;
   }
 
@@ -113,8 +134,6 @@ export class SelectedBarnComponent implements OnInit {
 
     animalOptions = this.globalService.globalVar.animals.filter(item => item.isAvailable &&
       (item.associatedBarnNumber === undefined || item.associatedBarnNumber <= 0));
-
-    console.log(animalOptions);
 
     return animalOptions;
   }
@@ -143,5 +162,23 @@ export class SelectedBarnComponent implements OnInit {
 
   returnToBarnView(): void {
     this.returnToBarnEmitter.emit(0);
+  }
+
+  toggleStatFilter(stat: string): void {   
+    console.log("Filter: " + stat); 
+    if (stat === "Speed")    
+      this.filterSpeed = !this.filterSpeed;          
+    if (stat === "Acceleration")
+      this.filterAcceleration = !this.filterAcceleration;
+    if (stat === "Focus")
+      this.filterFocus = !this.filterFocus;
+    if (stat === "Power")
+      this.filterPower = !this.filterPower;
+    if (stat === "Endurance")
+      this.filterEndurance = !this.filterEndurance;
+    if (stat === "Adaptability")
+      this.filterAdaptability = !this.filterAdaptability;
+
+      this.availableTrainings = this.GetAvailableTrainingOptions(this.associatedAnimal);
   }
 }

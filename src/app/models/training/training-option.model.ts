@@ -12,6 +12,10 @@ export class TrainingOption {
     isAvailable: boolean;
     timeTrained: number; //current amount / timetocomplete
 
+    constructor() {
+        this.timeTrained = 0;
+    }
+
     //TODO: maybe do <br/> instead of commas?
     getStatGainDescription(): string {
         var statGainDescription = "";

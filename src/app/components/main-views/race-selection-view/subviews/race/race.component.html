@@ -1,6 +1,11 @@
 <div id="raceInfo">
     <div class="updates">
-        {{ incrementalRaceUpdates.trim() }}
+        <div class="drawRace">
+            <app-draw-race [race]="selectedRace"></app-draw-race>
+        </div>
+        <div class="raceUpdates">
+            {{ incrementalRaceUpdates.trim() }}
+        </div>
     </div>
     <div class="results" *ngIf="displayResults">
         <hr />

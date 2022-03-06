@@ -39,15 +39,12 @@ export class AnimalListComponent implements OnInit {
 
     if (this.animalCells.length !== 0)
       this.animalRows.push(this.animalCells);
-
-    console.log(this.animalRows);
   }
 
   @HostListener('window:resize', ['$event'])
   onResize() {
     this.screenHeight = window.innerHeight;
-    this.screenWidth = window.innerWidth;
-    console.log("New Screen Height: " + this.screenHeight);
+    this.screenWidth = window.innerWidth;    
   }
 
   selectAnimal(animal: Animal): void {
