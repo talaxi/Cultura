@@ -40,6 +40,7 @@ export class GameLoopService {
 
           while (animal.currentTraining.timeTrained >= animal.currentTraining.timeToComplete) {
             animal.increaseStatsFromCurrentTraining();
+            this.globalService.calculateAnimalRacingStats(animal);
             animal.currentTraining.timeTrained -= animal.currentTraining.timeToComplete;
           }
         }

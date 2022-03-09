@@ -1,13 +1,11 @@
 import { Injectable } from '@angular/core';
-import { Animal } from 'src/app/models/animals/animal.model';
-import { GlobalService } from '../global-service.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UtilityService {
-
-  //can't get globalservice here
+  
+  //circular dependency with global, use lookup for global variables instead
   constructor() { }
   
   getRandomInteger(min: number, max: number): number {
@@ -20,5 +18,5 @@ export class UtilityService {
 
   getRandomNumberPercent(): number {
     return (Math.random()  * (99) + 1);
-  }
+  }  
 }

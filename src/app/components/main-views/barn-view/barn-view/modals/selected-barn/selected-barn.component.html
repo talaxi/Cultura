@@ -1,4 +1,4 @@
-<div class="selectedBarnModal" *ngIf="animalAssigned">
+<div class="selectedBarnModal" *ngIf="animalAssigned && !barn.isLocked">
     <div class="infoText">
         <div class="infoGridContainer">
             <div class="unassign" (click)="unassignAnimal()">
@@ -38,20 +38,31 @@
         </div>
         <br />
         <br />
-        <div>
+        <div class="filterGridContainer">
             <div class="facilitySizeFilter">
-
+                <span (click)="toggleFacilityFilter('Small')" id="smallFilter" [class.filterActive]="filterSmall">Small
+                </span>
+                <span (click)="toggleFacilityFilter('Medium')" id="mediumFilter"
+                    [class.filterActive]="filterMedium">Medium </span>
+                <span (click)="toggleFacilityFilter('Large')" id="largeFilter" [class.filterActive]="filterLarge">Large
+                </span>
             </div>
             <div class="changeTrainingHeader">
                 <span>Change Training</span>
             </div>
             <div class="statFilter">
-                <span (click)="toggleStatFilter('Speed')" class="speedFilter">SPD</span>
-                <span (click)="toggleStatFilter('Acceleration')" class="accelerationFilter">ACC</span>
-                <span (click)="toggleStatFilter('Endurance')" class="enduranceFilter">END</span>
-                <span (click)="toggleStatFilter('Power')" class="powerFilter">PWR</span>
-                <span (click)="toggleStatFilter('Focus')" class="focusFilter">FCS</span>
-                <span (click)="toggleStatFilter('Adaptability')" class="adaptabilityFilter">ADP</span>
+                <span (click)="toggleStatFilter('Speed')" id="speedFilter" [class.filterActive]="filterSpeed">SPD
+                </span>
+                <span (click)="toggleStatFilter('Acceleration')" id="accelerationFilter"
+                    [class.filterActive]="filterAcceleration">ACC </span>
+                <span (click)="toggleStatFilter('Endurance')" id="enduranceFilter"
+                    [class.filterActive]="filterEndurance">END </span>
+                <span (click)="toggleStatFilter('Power')" id="powerFilter" [class.filterActive]="filterPower">PWR
+                </span>
+                <span (click)="toggleStatFilter('Focus')" id="focusFilter" [class.filterActive]="filterFocus">FCS
+                </span>
+                <span (click)="toggleStatFilter('Adaptability')" id="adaptabilityFilter"
+                    [class.filterActive]="filterAdaptability">ADP</span>
             </div>
         </div>
         <br />
@@ -60,7 +71,7 @@
     </div>
 </div>
 
-<div class="selectedBarnModal" *ngIf="!animalAssigned">
+<div class="selectedBarnModal" *ngIf="!animalAssigned && !barn.isLocked">
     <div class="infoText">
         <div class="infoGridContainer">
             <div class="info">
@@ -76,12 +87,31 @@
         <br />
         <br />
         <span>Assign Animal</span>
-        <div class="gridContainer">
-            <div (click)="assignAnimal(animal)" *ngFor="let animal of availableAnimals">
-                <!-- eventually make this an animal component that displays relevant info -->
-                <p class="animalName">{{ animal.name }}</p>
-                <p class="animalType">{{ animal.getAnimalType() }}</p>
+        <app-animal-list [availableAnimals]="availableAnimals" (selectedAnimal)="assignAnimal($event)">
+        </app-animal-list>
+    </div>
+</div>
+
+<div class="selectedBarnModal" *ngIf="barn.isLocked">
+    <div class="infoText">
+        <div class="infoGridContainer">
+            <div class="info">
+                <span>Barn {{ this.selectedBarnNumber }}</span>
+                <br />
+                <span>Locked</span>
             </div>
+            <div class="back" (click)="returnToBarnView()">
+                <span>Back</span>
+            </div>
+        </div>
+        <hr />
+        <br />
+        <br />
+        <div class="purchaseBarn">
+            <span>Purchase Barn</span>
+            <br />
+            <span class="price">{{ barn.purchasePrice }}</span>
+            <button id="purchaseButton" (click)="purchaseBarn()">Buy</button>
         </div>
     </div>
 </div>

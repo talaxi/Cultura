@@ -1,3 +1,33 @@
 .circuitRaceHeader {
     text-align: center;
 }
+
+.circuitRaceGrid {
+    height: 100%;
+    display: grid;
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+    justify-content: stretch;    
+    grid-template-areas: 
+      "circuitRace1 circuitRace2 circuitRace3 circuitRace4 circuitRace5";
+  }
+
+  .circuitRace1 {
+    grid-area: circuitRace1;    
+  }
+
+  .circuitRace2 {
+    grid-area: circuitRace2;    
+  }
+
+  .circuitRace3 {
+    grid-area: circuitRace3;    
+  }
+
+  .circuitRace4 {
+    grid-area: circuitRace4;    
+  }
+
+  .circuitRace5 {
+    grid-area: circuitRace5;    
+  }

@@ -77,13 +77,13 @@ export class DrawRaceComponent implements OnInit {
     this.race.raceLegs.forEach(leg => {
       if (leg.pathData !== undefined && leg.pathData.length !== 0) {
         leg.pathData.forEach(path => {
-          if (leg.courseType === RaceCourseTypeEnum.FlatLand) {
+          if (leg.courseType === RaceCourseTypeEnum.Flatland) {
             if (path.routeDesign === RaceDesignEnum.Regular)
-              this.drawRegularFlatLandOverview(context, path, 1, 1);
+              this.drawRegularFlatlandOverview(context, path, 1, 1);
             if (path.routeDesign === RaceDesignEnum.S)
-              this.drawSFlatLandOverview(context, path, 1, 1);
+              this.drawSFlatlandOverview(context, path, 1, 1);
             if (path.routeDesign === RaceDesignEnum.Bumps)
-              this.drawBumpsFlatLandOverview(context, path);
+              this.drawBumpsFlatlandOverview(context, path);
           }
 
           this.lengthCompleted += path.length;
@@ -150,13 +150,13 @@ export class DrawRaceComponent implements OnInit {
       if (leg.pathData !== undefined && leg.pathData.length !== 0) {
         leg.pathData.forEach(path => {
 
-          if (leg.courseType === RaceCourseTypeEnum.FlatLand) {
+          if (leg.courseType === RaceCourseTypeEnum.Flatland) {
             if (path.routeDesign === RaceDesignEnum.Regular)
-              this.drawRegularFlatLandOverview(context, path, xRaceModeModifier, 1, xDistanceOffset);
+              this.drawRegularFlatlandOverview(context, path, xRaceModeModifier, 1, xDistanceOffset);
             if (path.routeDesign === RaceDesignEnum.S)
-              this.drawSFlatLandOverview(context, path, xRaceModeModifier, 1, xDistanceOffset);
+              this.drawSFlatlandOverview(context, path, xRaceModeModifier, 1, xDistanceOffset);
             //if (path.routeDesign === RaceDesignEnum.Bumps)
-            //this.drawBumpsFlatLandOverview(context, path,);
+            //this.drawBumpsFlatlandOverview(context, path,);
           }
 
           this.lengthCompleted += path.length;
@@ -196,7 +196,7 @@ export class DrawRaceComponent implements OnInit {
     context.fillText('6', 6 * fullRaceXDistance / 6 - scaledDistanceTraveled, this.canvasHeight / 2);
   }
 
-  drawRegularFlatLandOverview(context: any, path: RacePath, xRaceModeModifier: number, yRaceModeModifier: number, xDistanceOffset?: number): void {
+  drawRegularFlatlandOverview(context: any, path: RacePath, xRaceModeModifier: number, yRaceModeModifier: number, xDistanceOffset?: number): void {
     var horizontalLength = (path.length / this.race.length) * this.canvasWidth * xRaceModeModifier;
 
     if (xDistanceOffset === undefined || xDistanceOffset === null)
@@ -211,7 +211,7 @@ export class DrawRaceComponent implements OnInit {
     this.lastPathEndingY = this.canvasHeight / 2;
   }
 
-  drawSFlatLandOverview(context: any, path: RacePath, xRaceModeModifier: number, yRaceModeModifier: number, xDistanceOffset?: number): void {
+  drawSFlatlandOverview(context: any, path: RacePath, xRaceModeModifier: number, yRaceModeModifier: number, xDistanceOffset?: number): void {
     var horizontalLength = (path.length / this.race.length) * this.canvasWidth * xRaceModeModifier;
 
     if (xDistanceOffset === undefined || xDistanceOffset === null)
@@ -263,7 +263,7 @@ export class DrawRaceComponent implements OnInit {
     //ending Y doesn't change
   }
 
-  drawBumpsFlatLandOverview(context: any, path: RacePath): void {
+  drawBumpsFlatlandOverview(context: any, path: RacePath): void {
     var horizontalLength = (path.length / this.race.length) * this.canvasWidth;
 
     console.log("Draw Bumps");
@@ -301,7 +301,7 @@ export class DrawRaceComponent implements OnInit {
    currentRoute = this.race.raceLegs[currentLegCount].pathData[currentRouteCount];
    currentDistanceInRoute = currentRoute.length - (currentDistanceTraveled - (previousRouteDistance + previousLegDistance));
 
-   if (currentLeg.courseType === RaceCourseTypeEnum.FlatLand) {
+   if (currentLeg.courseType === RaceCourseTypeEnum.Flatland) {
      //if (path.routeDesign === RaceDesignEnum.Regular)
-     this.drawRegularFlatLandOverview(context, currentRoute, startingX, 60, 3);
+     this.drawRegularFlatlandOverview(context, currentRoute, startingX, 60, 3);
    }*/

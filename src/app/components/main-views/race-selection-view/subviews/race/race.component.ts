@@ -8,6 +8,7 @@ import { ResourceValue } from 'src/app/models/resources/resource-value.model';
 import { StringNumberPair } from 'src/app/models/utility/string-number-pair.model';
 import { GameLoopService } from 'src/app/services/game-loop/game-loop.service';
 import { GlobalService } from 'src/app/services/global-service.service';
+import { LookupService } from 'src/app/services/lookup.service';
 import { UtilityService } from 'src/app/services/utility/utility.service';
 
 @Component({
@@ -23,7 +24,8 @@ export class RaceComponent implements OnInit {
   rewardCells: string[];
   @Output() raceFinished = new EventEmitter<boolean>();
 
-  constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private utilityService: UtilityService) { }
+  constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private utilityService: UtilityService,
+    private lookupService: LookupService) { }
 
   ngOnInit(): void {
     this.runRace(this.selectedRace);
@@ -39,11 +41,20 @@ export class RaceComponent implements OnInit {
     var secondsPassed = 0;
     if (race.timeToComplete === 0 || race.timeToComplete === undefined || race.timeToComplete === null)
       race.timeToComplete = 60;
+    var selectedDeck = this.globalService.globalVar.animalDecks.find(item => item.isPrimaryDeck);
+
+    if (selectedDeck === undefined)
+    {
+      raceResult.errorMessage = 'No animal deck selected.';
+      return raceResult;
+    }
+
+    var racingAnimals = this.lookupService.getAnimalsFromAnimalDeck(selectedDeck);
 
     //TODO: more specific way to get the animals racing each leg
     //calculate speed of animal based on acceleration and top speed (no obstacles)
     race.raceLegs.forEach(item => {
-      var racingAnimal = this.globalService.globalVar.animals.find(animal => animal.raceCourseType === item.courseType);
+      var racingAnimal = racingAnimals.find(animal => animal.raceCourseType === item.courseType);
       if (racingAnimal === null || racingAnimal === undefined) {
         //TODO: throw error? no animal found
         return;

@@ -7,6 +7,8 @@ import { GlobalService } from 'src/app/services/global-service.service';
   templateUrl: './animal-list.component.html',
   styleUrls: ['./animal-list.component.css']
 })
+
+//despite the name, used globally
 export class AnimalListComponent implements OnInit {
   @Input() availableAnimals: Animal[];
   @Output() selectedAnimal = new EventEmitter<Animal>(); 

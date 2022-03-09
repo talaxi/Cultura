@@ -23,8 +23,6 @@ export class BarnComponent implements OnInit {
   constructor(private globalService: GlobalService, private gameLoopService: GameLoopService) { }
 
   ngOnInit(): void {
-    this.barnInitialization();
-
     if (this.barnNumber > 0 && this.barnNumber <= this.globalService.globalVar.barns.length + 1) {
       var globalBarn = this.globalService.globalVar.barns.find(item => item.barnNumber === this.barnNumber);
 
@@ -68,37 +66,5 @@ export class BarnComponent implements OnInit {
 
   @HostListener("click") onClick() {
     this.selectedBarn.emit(this.barnNumber);
-  }
-
-  barnInitialization(): void {
-    if (this.globalService.globalVar.barns === null || this.globalService.globalVar.barns === undefined ||
-      this.globalService.globalVar.barns.length === 0) {
-
-      this.globalService.globalVar.barns = [];
-      var barn1 = new Barn();
-      barn1.barnNumber = 1;
-      barn1.isLocked = false;
-
-      if (this.globalService.globalVar.animals !== null && this.globalService.globalVar.animals !== undefined &&
-        this.globalService.globalVar.animals.length > 0) {
-        var horse = this.globalService.globalVar.animals.find(item => item.type === AnimalTypeEnum.Horse);
-        if (horse !== null && horse !== undefined)
-          horse.associatedBarnNumber = barn1.barnNumber;
-      }
-      else {
-        console.log("Can't find horse");
-        //TODO: throw error, can't find default animal. initialize animal first
-      }
-
-      this.globalService.globalVar.barns.push(barn1);
-
-      for (var i = 2; i <= 9; i++) {
-        var newBarn = new Barn();
-        newBarn.barnNumber = i;
-        newBarn.isLocked = true;
-
-        this.globalService.globalVar.barns.push(newBarn);
-      }
-    }
-  }
+  }  
 }

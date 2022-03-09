@@ -1,3 +1,4 @@
+import { Type } from "class-transformer";
 import { RaceCourseTypeEnum } from "../race-course-type-enum.model";
 import { RacePath } from "./race-path.model";
 
@@ -5,6 +6,7 @@ export class RaceLeg {
     courseType: RaceCourseTypeEnum;
     distance: number;
     legComplete = false;
+    @Type(() => RacePath)
     pathData: RacePath[];
 
     constructor(courseType?: RaceCourseTypeEnum, distance?: number) {

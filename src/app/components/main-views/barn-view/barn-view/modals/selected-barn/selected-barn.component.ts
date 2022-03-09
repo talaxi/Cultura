@@ -4,6 +4,7 @@ import { Barn } from 'src/app/models/barns/barn.model';
 import { TrainingOption } from 'src/app/models/training/training-option.model';
 import { GameLoopService } from 'src/app/services/game-loop/game-loop.service';
 import { GlobalService } from 'src/app/services/global-service.service';
+import { LookupService } from 'src/app/services/lookup.service';
 import { UtilityService } from 'src/app/services/utility/utility.service';
 
 @Component({
@@ -31,8 +32,12 @@ export class SelectedBarnComponent implements OnInit {
   filterPower = false;
   filterFocus = false;
   filterAdaptability = false;
+  filterSmall = false;
+  filterMedium = false;
+  filterLarge = false;
 
-  constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private utilityService: UtilityService) {
+
+  constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private lookupService: LookupService) {
   }
 
   ngOnInit(): void {
@@ -58,8 +63,8 @@ export class SelectedBarnComponent implements OnInit {
           this.availableAnimals = this.GetAvailableAnimalOptions();
         }
 
-        if (!this.barn.isLocked) {
-          this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {
+        this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {
+          if (!this.barn.isLocked) {
             var associatedAnimal = this.globalService.globalVar.animals.find(item => item.associatedBarnNumber == this.selectedBarnNumber);
             if (associatedAnimal === undefined || associatedAnimal === null) {
               //any game loop logic needed for an empty barn
@@ -75,9 +80,10 @@ export class SelectedBarnComponent implements OnInit {
 
               this.trainingProgressBarPercent = ((associatedAnimal.currentTraining.timeTrained / associatedAnimal.currentTraining.timeToComplete) * 100);
             }
-          });
-        }
+          }
+        });
       }
+
     }
     else {
       console.log("Can't find barn");
@@ -112,12 +118,11 @@ export class SelectedBarnComponent implements OnInit {
 
     if (this.filterAcceleration || this.filterAdaptability || this.filterEndurance || this.filterFocus || this.filterPower
       || this.filterSpeed) {
-      trainingOptions = []; //just for ease of testing
-      /*trainingOptions.filter(item => (this.filterAcceleration && item.affectedStatRatios.acceleration > 0) ||
+      trainingOptions = trainingOptions.filter(item => (this.filterAcceleration && item.affectedStatRatios.acceleration > 0) ||
         (this.filterAdaptability && item.affectedStatRatios.adaptability > 0) ||
         (this.filterEndurance && item.affectedStatRatios.endurance > 0) ||
         (this.filterFocus && item.affectedStatRatios.focus > 0) || (this.filterPower && item.affectedStatRatios.power > 0) ||
-        (this.filterSpeed && item.affectedStatRatios.topSpeed > 0));*/
+        (this.filterSpeed && item.affectedStatRatios.topSpeed > 0));
     }
 
     return trainingOptions;
@@ -158,16 +163,21 @@ export class SelectedBarnComponent implements OnInit {
     this.availableTrainings = this.GetAvailableTrainingOptions(selectedAnimal);
     this.associatedAnimalName = selectedAnimal.name;
     this.existingTraining = null;
+
+    var globalAnimal = this.lookupService.getAnimalByType(selectedAnimal.type);
+    if (globalAnimal !== null) {
+      globalAnimal.associatedBarnNumber = this.selectedBarnNumber;
+      this.associatedAnimal = globalAnimal;
+    }
   }
 
   returnToBarnView(): void {
     this.returnToBarnEmitter.emit(0);
   }
 
-  toggleStatFilter(stat: string): void {   
-    console.log("Filter: " + stat); 
-    if (stat === "Speed")    
-      this.filterSpeed = !this.filterSpeed;          
+  toggleStatFilter(stat: string): void {
+    if (stat === "Speed")
+      this.filterSpeed = !this.filterSpeed;
     if (stat === "Acceleration")
       this.filterAcceleration = !this.filterAcceleration;
     if (stat === "Focus")
@@ -179,6 +189,26 @@ export class SelectedBarnComponent implements OnInit {
     if (stat === "Adaptability")
       this.filterAdaptability = !this.filterAdaptability;
 
-      this.availableTrainings = this.GetAvailableTrainingOptions(this.associatedAnimal);
+    this.availableTrainings = this.GetAvailableTrainingOptions(this.associatedAnimal);
+  }
+
+  toggleFacilityFilter(size: string): void {
+    if (size === "Small")
+      this.filterSmall = !this.filterSmall;
+    if (size === "Medium")
+      this.filterMedium = !this.filterMedium;
+    if (size === "Large")
+      this.filterLarge = !this.filterLarge;
+
+    this.availableTrainings = this.GetAvailableTrainingOptions(this.associatedAnimal);
+  }
+
+  purchaseBarn(): void {
+    var moneyAmount = this.lookupService.getMoney();
+
+    if (moneyAmount >= this.barn.purchasePrice) {
+      this.barn.isLocked = false;
+      this.lookupService.spendMoney(this.barn.purchasePrice);
+    }
   }
 }

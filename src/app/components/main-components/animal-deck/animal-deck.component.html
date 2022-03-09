@@ -1,0 +1,7 @@
+<p>
+{{deck.name}} - <span *ngFor="let animal of deck.selectedAnimals; let i = index;">
+    {{animal.name}}<span *ngIf="i < deck.selectedAnimals.length - 1"> / </span> 
+</span>
+</p>
+<!-- maybe Name of Deck - Animal1 / Animal2 / Animal3    Edit Button that sends you to decks tab-->
+<!-- Animals in the color of their type -->

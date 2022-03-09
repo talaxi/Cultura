@@ -1,9 +1,15 @@
 <div class="circuitViewDiv">
-    <span class="circuitRaceHeader">Rank {{ circuitRank }} Circuit</span>
-
-    <div (click)="selectCircuitRace(race)" *ngFor="let race of availableCircuitRaces; let i = index">
-        <span>Race {{ i+1 }}</span>
-        <p *ngFor="let raceLeg of race.raceLegs">{{ raceLeg.getCourseTypeName() }} {{ raceLeg.distance }} meters</p> 
-        <p>{{ race.isCompleted ? "Completed" : "Start" }}</p>       
+    <div class="circuitRaceHeader">Rank {{ circuitRank }} Circuit</div>
+    <app-animal-deck></app-animal-deck>
+    <hr />
+    <div class="circuitRaceGrid">
+        <div class="circuitRace{{i+1}}" (click)="selectCircuitRace(race)"
+            *ngFor="let race of availableCircuitRaces; let i = index">
+            <span>Race {{ i+1 }} </span>
+            <br />
+            <p *ngFor="let raceLeg of race.raceLegs">{{ raceLeg.distance | number :
+                '1.2-2' }} Meters of {{ raceLeg.getCourseTypeName() }}  </p>
+            <p>{{ race.isCompleted ? "Completed" : "Start" }}</p>
+        </div>
     </div>
 </div>

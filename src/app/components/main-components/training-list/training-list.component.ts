@@ -25,7 +25,7 @@ export class TrainingListComponent implements OnInit {
     this.trainingsCells = [];
     this.trainingsRows = [];
 
-    var maxColumns = 2;
+    var maxColumns = 4;
     if (this.screenHeight <= 650)
       maxColumns = 2;
 
@@ -52,7 +52,7 @@ export class TrainingListComponent implements OnInit {
   }
 
   ngOnChanges(changes: any) {
-    console.log("Changed");
-    this.availableTrainingOptions = changes.availableTrainingOptions;
+    this.availableTrainingOptions = changes.availableTrainingOptions.currentValue;
+    this.setupDisplayTrainings();
   }
 }

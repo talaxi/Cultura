@@ -1,13 +1,13 @@
 <div class="navigation">
-    <p (click)="switchView(navigationEnum.barn)">Barn</p>
+    <p (click)="switchView(navigationEnum.barn)" [ngClass]="selectedNavigation === navigationEnum.barn ? 'active' : ''">Barn</p>
     <hr />
-    <p (click)="switchView(navigationEnum.raceselection)">Race</p>
+    <p (click)="switchView(navigationEnum.raceselection)" [ngClass]="selectedNavigation === navigationEnum.raceselection ? 'active' : ''">Race</p>
     <hr />
-    <p (click)="switchView(navigationEnum.animals)">Animals</p>
+    <p (click)="switchView(navigationEnum.animals)" [ngClass]="selectedNavigation === navigationEnum.animals ? 'active' : ''">Animals</p>
     <hr />
-    <p (click)="switchView(navigationEnum.shop)">Shop</p>
+    <p (click)="switchView(navigationEnum.shop)" [ngClass]="selectedNavigation === navigationEnum.shop ? 'active' : ''">Shop</p>
     <hr />
-    <p (click)="switchView(navigationEnum.resources)">Resources</p>
+    <p (click)="switchView(navigationEnum.resources)" [ngClass]="selectedNavigation === navigationEnum.resources ? 'active' : ''">Resources</p>
     <hr />
-    <p (click)="switchView(navigationEnum.settings)">Settings</p>
+    <p (click)="switchView(navigationEnum.settings)" [ngClass]="selectedNavigation === navigationEnum.settings ? 'active' : ''">Settings</p>
 </div>

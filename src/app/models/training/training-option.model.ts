@@ -1,4 +1,6 @@
+import { Type } from "class-transformer";
 import { AnimalStats } from "../animals/animal-stats.model";
+import { FacilitySizeEnum } from "../facility-size-enum.model";
 import { RaceCourseTypeEnum } from "../race-course-type-enum.model";
 import { TrainingOptionsEnum } from "../training-options-enum.model";
 
@@ -6,7 +8,9 @@ export class TrainingOption {
     trainingName: string;
     trainingType: TrainingOptionsEnum;
     trainingCourseType: RaceCourseTypeEnum;
+    facilitySize: FacilitySizeEnum;
     timeToComplete: number;
+    @Type(() => AnimalStats)
     affectedStatRatios: AnimalStats; //multiply the value here for each stat by statgain to get the value gained
     statGain: number;
     isAvailable: boolean;
@@ -14,6 +18,7 @@ export class TrainingOption {
 
     constructor() {
         this.timeTrained = 0;
+        this.isAvailable = false;
     }
 
     //TODO: maybe do <br/> instead of commas?
@@ -26,8 +31,6 @@ export class TrainingOption {
             statGainDescription += this.statGain * this.affectedStatRatios.acceleration + " acceleration, ";
         if (this.affectedStatRatios.endurance > 0)
             statGainDescription += this.statGain * this.affectedStatRatios.endurance + " endurance, ";
-        if (this.affectedStatRatios.stamina > 0)
-            statGainDescription += this.statGain * this.affectedStatRatios.stamina + " stamina, ";
         if (this.affectedStatRatios.focus > 0)
             statGainDescription += this.statGain * this.affectedStatRatios.focus + " focus, ";
         if (this.affectedStatRatios.power > 0)

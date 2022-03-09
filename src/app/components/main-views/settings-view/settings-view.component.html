@@ -1,1 +1,11 @@
-<p>settings-view works!</p>
+<div class="settingsView">
+    <!--<input id="importExport" name="importExport" #importExportValue>            -->
+    <textarea id="importExport" name="importExport" rows="10" cols="200" [(ngModel)]="importExportValue">  
+    </textarea>
+    <button (click)="SaveGame()">
+        Export
+    </button>
+    <button (click)="LoadGame()">
+        Import
+    </button>
+</div>

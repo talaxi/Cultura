@@ -13,5 +13,4 @@ export class TrainingOptionComponent implements OnInit {
 
   ngOnInit(): void {
   }
-
 }

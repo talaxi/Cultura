@@ -9,7 +9,7 @@ import { NavigationEnum } from '../../../models/navigation-enum.model';
 export class NavigationComponent implements OnInit {
   @Output() viewChanged = new EventEmitter<NavigationEnum>();  
   public navigationEnum = NavigationEnum;
-
+  public selectedNavigation = 0;
 
   constructor() { }
 
@@ -18,6 +18,7 @@ export class NavigationComponent implements OnInit {
 
   switchView(selectedView: NavigationEnum) 
   {        
-    this.viewChanged.emit(selectedView);   
+    this.viewChanged.emit(selectedView);
+    this.selectedNavigation = selectedView;
   }
 }

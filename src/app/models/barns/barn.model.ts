@@ -4,4 +4,5 @@ export class Barn {
     barnNumber: number;
     isLocked: boolean;
     isAvailable: boolean;
+    purchasePrice: number;
 }

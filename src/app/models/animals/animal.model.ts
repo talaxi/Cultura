@@ -1,3 +1,4 @@
+import { Type } from "class-transformer";
 import { AnimalTypeEnum } from "../animal-type-enum.model";
 import { RaceCourseTypeEnum } from "../race-course-type-enum.model";
 import { TrainingOption } from "../training/training-option.model";
@@ -6,16 +7,31 @@ import { AnimalStats } from "./animal-stats.model";
 import { RaceVariables } from "./race-variables.model";
 
 export class Animal {
-    name!: string;
-    type!: AnimalTypeEnum;
-    raceCourseType!: RaceCourseTypeEnum;
+    name: string;    
+    type: AnimalTypeEnum;
+    raceCourseType: RaceCourseTypeEnum;
+    @Type(() => AnimalStats)
     currentStats: AnimalStats;
+    @Type(() => AnimalStats)
     baseStats: AnimalStats;  //used for breeding calculations
     isAvailable: boolean;
+    @Type(() => TrainingOption)
     currentTraining: TrainingOption | null;
     associatedBarnNumber: number;
+    @Type(() => Ability)
     ability: Ability;
+    @Type(() => RaceVariables)
     raceVariables: RaceVariables;
+    breedLevel: number;
+    breedGaugeXp: number;
+    breedGaugeMax: number;
+    
+
+    constructor() {
+        this.breedLevel = 1;
+        this.breedGaugeXp = 0;
+        this.breedGaugeMax = 1000;
+    }
 
     viewAbility(): string {
         return "";
@@ -48,25 +64,21 @@ export class Animal {
         this.currentStats.power += this.currentTraining.affectedStatRatios.power * this.currentTraining.statGain;
         this.currentStats.focus += this.currentTraining.affectedStatRatios.focus * this.currentTraining.statGain;
         this.currentStats.adaptability += this.currentTraining.affectedStatRatios.adaptability * this.currentTraining.statGain;
-
-        this.currentStats.stamina = this.currentStats.calculateStamina();
-        this.currentStats.maxSpeedMs = this.currentStats.calculateMaxSpeed();
-        this.currentStats.accelerationMs = this.currentStats.calculateTrueAcceleration();
-        this.currentStats.powerMs = this.currentStats.calculateTruePower();
-        this.currentStats.focusMs = this.currentStats.calculateTrueFocus();
-        this.currentStats.adaptabilityMs = this.currentStats.calculateTrueAdaptability();
     }
 }
+
+
+
 
 export class Horse extends Animal {
 
     constructor() {
         super();
         this.baseStats = new AnimalStats(5, 5, 5, 5, 5, 5);
-        this.currentStats = new AnimalStats(5, 5, 5, 5, 5, 5);
+        this.currentStats = new AnimalStats(5, 5, 5, 5, 5, 5);        
 
         this.type = AnimalTypeEnum.Horse;
-        this.raceCourseType = RaceCourseTypeEnum.FlatLand;
+        this.raceCourseType = RaceCourseTypeEnum.Flatland;
 
         this.ability = new Ability();
         this.ability.cooldown = 10;
@@ -94,7 +106,7 @@ export class Cheetah extends Animal {
         this.currentStats = new AnimalStats(5, 5, 5, 5, 5, 5);
 
         this.type = AnimalTypeEnum.Cheetah;
-        this.raceCourseType = RaceCourseTypeEnum.FlatLand;
+        this.raceCourseType = RaceCourseTypeEnum.Flatland;
 
         this.ability = new Ability();
         this.ability.cooldown = 10;

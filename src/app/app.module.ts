@@ -1,5 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule,ReactiveFormsModule } from '@angular/forms'; 
+
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -14,6 +16,7 @@ import { RaceSelectionViewComponent } from './components/main-views/race-selecti
 
 import { GlobalService } from './services/global-service.service';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+
 import { SelectedBarnComponent } from './components/main-views/barn-view/barn-view/modals/selected-barn/selected-barn.component';
 import { ProgressBarComponent } from './components/utility/progress-bar/progress-bar.component';
 import { CircuitViewComponent } from './components/main-views/race-selection-view/subviews/circuit-view/circuit-view/circuit-view.component';
@@ -29,6 +32,10 @@ import { SelectedAnimalComponent } from './components/main-views/animals-view/su
 import { DrawRaceComponent } from './components/main-views/race-selection-view/subviews/draw-race/draw-race.component';
 import { TrainingListComponent } from './components/main-components/training-list/training-list.component';
 import { TrainingOptionComponent } from './components/main-components/training-option/training-option.component';
+import { CommonModule } from '@angular/common';
+import { ShoppingListComponent } from './components/main-components/shopping-list/shopping-list.component';
+import { ShoppingItemComponent } from './components/main-components/shopping-item/shopping-item.component';
+import { AnimalDeckComponent } from './components/main-components/animal-deck/animal-deck.component';
 
 @NgModule({
   declarations: [
@@ -40,12 +47,15 @@ import { TrainingOptionComponent } from './components/main-components/training-o
     BarnComponent,
     BarnViewComponent,
     RaceSelectionViewComponent,    
-    SelectedBarnComponent, ProgressBarComponent, CircuitViewComponent, LocalViewComponent, RaceComponent, AnimalsViewComponent, ShopViewComponent, ResourcesViewComponent, SettingsViewComponent, AnimalComponent, AnimalListComponent, SelectedAnimalComponent, DrawRaceComponent, TrainingListComponent, TrainingOptionComponent
+    SelectedBarnComponent, ProgressBarComponent, CircuitViewComponent, LocalViewComponent, RaceComponent, AnimalsViewComponent, ShopViewComponent, ResourcesViewComponent, SettingsViewComponent, AnimalComponent, AnimalListComponent, SelectedAnimalComponent, DrawRaceComponent, TrainingListComponent, TrainingOptionComponent, ShoppingListComponent, ShoppingItemComponent, AnimalDeckComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    NgbModule
+    NgbModule,
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [GlobalService],
   bootstrap: [AppComponent]
