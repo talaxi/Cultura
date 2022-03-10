@@ -18,6 +18,7 @@ import { UtilityService } from 'src/app/services/utility/utility.service';
 })
 export class RaceComponent implements OnInit {
   @Input() selectedRace: Race;
+  racingAnimals: Animal[];
   incrementalRaceUpdates: string;
   displayResults: boolean;
   rewardRows: string[][];
@@ -49,12 +50,12 @@ export class RaceComponent implements OnInit {
       return raceResult;
     }
 
-    var racingAnimals = this.lookupService.getAnimalsFromAnimalDeck(selectedDeck);
+    this.racingAnimals = this.lookupService.getAnimalsFromAnimalDeck(selectedDeck);
 
     //TODO: more specific way to get the animals racing each leg
     //calculate speed of animal based on acceleration and top speed (no obstacles)
     race.raceLegs.forEach(item => {
-      var racingAnimal = racingAnimals.find(animal => animal.raceCourseType === item.courseType);
+      var racingAnimal = this.racingAnimals.find(animal => animal.raceCourseType === item.courseType);
       if (racingAnimal === null || racingAnimal === undefined) {
         //TODO: throw error? no animal found
         return;
@@ -277,12 +278,18 @@ export class RaceComponent implements OnInit {
 
   raceWasSuccessfulUpdate(raceResult: RaceResult): void {
     var globalCircuitRank = this.globalService.globalVar.circuitRank;
-    //need some sort of race ID so you can update the correct race
+    
+    //TODO: This is just for circuit -- need local as well
     var globalRaceVal = this.globalService.globalVar.circuitRaces.find(item => item.raceId === this.selectedRace.raceId);
     if (globalRaceVal === undefined || globalRaceVal === null)
       return;
 
     globalRaceVal.isCompleted = true;
+    var breedGaugeIncrease = this.lookupService.getCircuitBreedGaugeIncrease();
+    this.racingAnimals.forEach(animal => {
+      this.globalService.IncreaseAnimalBreedGauge(animal, breedGaugeIncrease); 
+    });
+
 
     if (this.selectedRace.rewards !== undefined && this.selectedRace.rewards !== null) {
       this.selectedRace.rewards.forEach(item => {

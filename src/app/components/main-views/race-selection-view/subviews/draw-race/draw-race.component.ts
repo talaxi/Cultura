@@ -130,9 +130,6 @@ export class DrawRaceComponent implements OnInit {
     if (currentSeconds > 0 && this.race.raceUI.distanceCoveredBySecond.length > 0)
       oneSecondDistanceDifference = this.race.raceUI.distanceCoveredBySecond[currentSeconds] - this.race.raceUI.distanceCoveredBySecond[currentSeconds - 1];
 
-    console.log("Fractional");
-    console.log(fractionalDistance * fractionalSeconds);
-
     var xDistanceOffset = (currentDistanceTraveled * this.race.timeToComplete) - oneSecondDistanceDifference;
     context.lineWidth = 5;
     context.globalCompositeOperation = "source-over";
@@ -185,8 +182,6 @@ export class DrawRaceComponent implements OnInit {
     var currentSeconds = Math.floor(currentTime);
     var currentDistanceTraveled = this.race.raceUI.distanceCoveredBySecond[currentSeconds];
     var scaledDistanceTraveled = currentDistanceTraveled * this.race.timeToComplete;
-
-    console.log(fullRaceXDistance / 6 - scaledDistanceTraveled);
 
     context.fillText('1', fullRaceXDistance / 6 - scaledDistanceTraveled, this.canvasHeight / 2);
     context.fillText('2', 2 * fullRaceXDistance / 6 - scaledDistanceTraveled, this.canvasHeight / 2);

@@ -36,13 +36,6 @@ export class AnimalStats {
             this.focus = focus;
         if (adaptability !== undefined)
             this.adaptability = adaptability;
-
-        this.stamina = this.calculateStamina();
-        this.maxSpeedMs = this.calculateMaxSpeed();
-        this.accelerationMs = this.calculateTrueAcceleration();
-        this.powerMs = this.calculateTruePower();
-        this.focusMs = this.calculateTrueFocus();
-        this.adaptabilityMs = this.calculateTrueAdaptability();
     }
 
     calculateStamina(animalDefaultModifier?: number): number {

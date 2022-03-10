@@ -10,6 +10,12 @@
                 <span>{{ selectedAnimal.getAnimalType() }}</span>
             </div>
             <span>{{ selectedAnimal.getRaceCourseType() }}</span>
+            <br/>
+            <span>Breed Level {{selectedAnimal.breedLevel}}</span>
+            <br/>
+            <span>Breed XP: {{selectedAnimal.breedGaugeXp | number : '1.2-2'}}/{{selectedAnimal.breedGaugeMax}}
+                <button (click)="Breed()">Breed</button>
+            </span>
         </div>
         <div class="back" (click)="returnToAnimalView()">
             <span>Back</span>

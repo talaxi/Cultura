@@ -1,1 +1,15 @@
-<p>local-view works!</p>
+<div class="localViewDiv">
+    <div class="localRaceHeader"></div>
+    <app-animal-deck></app-animal-deck>
+    <hr />
+    <div class="localRaceGrid">
+        <div class="localRace{{i+1}}" (click)="selectLocalRace(race)"
+            *ngFor="let race of availableLocalRaces; let i = index">
+            <span>Race {{ i+1 }} </span>
+            <br />
+            <p *ngFor="let raceLeg of race.raceLegs">{{ raceLeg.distance | number :
+                '1.2-2' }} Meters of {{ raceLeg.getCourseTypeName() }}  </p>
+            <p>{{ race.isCompleted ? "Completed" : "Start" }}</p>
+        </div>
+    </div>
+</div>

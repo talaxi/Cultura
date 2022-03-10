@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Animal } from 'src/app/models/animals/animal.model';
+import { GlobalService } from 'src/app/services/global-service.service';
 import { LookupService } from 'src/app/services/lookup.service';
 
 @Component({
@@ -19,7 +20,7 @@ export class SelectedAnimalComponent implements OnInit {
   adaptabilityModifierAmount: number;
 
 
-  constructor(private lookupService: LookupService) { }
+  constructor(private lookupService: LookupService, private globalService: GlobalService) { }
 
   ngOnInit(): void {
     this.maxSpeedModifierAmount = this.lookupService.getMaxSpeedModifierByAnimalType(this.selectedAnimal.type);
@@ -32,5 +33,9 @@ export class SelectedAnimalComponent implements OnInit {
 
   returnToAnimalView(): void {
     this.returnEmitter.emit(false);
+  }
+
+  Breed(): void {
+    this.globalService.BreedAnimal(this.selectedAnimal);
   }
 }

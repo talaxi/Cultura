@@ -1,5 +1,7 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { GlobalService } from '../global-service.service';
+import { LookupService } from '../lookup.service';
+declare var LZString: any;
 
 @Injectable({
   providedIn: 'root'
@@ -7,9 +9,10 @@ import { GlobalService } from '../global-service.service';
 export class GameLoopService {
   private last_timestamp = Date.now();
   deltaTime: number;
+  saveTime = 0;
   gameUpdateEvent = new EventEmitter<number>();
 
-  constructor(private globalService: GlobalService) { }
+  constructor(private globalService: GlobalService, private lookupService: LookupService) { }
 
   public Update(): void {
     const deltaTime = (Date.now() - this.last_timestamp) / 1000;
@@ -22,6 +25,14 @@ export class GameLoopService {
     /*setInterval(() => {
       this.Update()
       }, 1000/60);*/
+
+    this.saveTime += deltaTime;
+
+    if (this.saveTime >= 5)
+    {
+      this.saveTime = 0;
+      this.saveGame();
+    }
   }
 
   public gameCheckup(deltaTime: number): void {
@@ -41,10 +52,19 @@ export class GameLoopService {
           while (animal.currentTraining.timeTrained >= animal.currentTraining.timeToComplete) {
             animal.increaseStatsFromCurrentTraining();
             this.globalService.calculateAnimalRacingStats(animal);
+            var breedGaugeIncrease = this.lookupService.getTrainingBreedGaugeIncrease();            
+            this.globalService.IncreaseAnimalBreedGauge(animal, breedGaugeIncrease); 
+            
             animal.currentTraining.timeTrained -= animal.currentTraining.timeToComplete;
           }
         }
       });
     }
+  }
+
+  public saveGame() {
+    var globalData = JSON.stringify(this.globalService.globalVar);
+    var compressedData = LZString.compressToBase64(globalData);
+    localStorage.setItem("gameData", compressedData);
   }
 }

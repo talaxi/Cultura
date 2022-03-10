@@ -68,6 +68,12 @@ export class GlobalService {
   InitializeModifiers(): void {
     this.globalVar.modifiers.push(new StringNumberPair(.2, "staminaModifier"));
 
+    this.globalVar.modifiers.push(new StringNumberPair(5, "trainingBreedGaugeIncrease"));
+    this.globalVar.modifiers.push(new StringNumberPair(10, "circuitBreedGaugeIncrease"));
+    this.globalVar.modifiers.push(new StringNumberPair(1, "localBreedGaugeIncrease"));
+
+    this.globalVar.modifiers.push(new StringNumberPair(.01, "breedLevelStatModifier"));
+
     var baseMaxSpeedModifier = .3;
     var baseAccelerationModifier = .1;
     var baseStaminaModifier = 10;
@@ -552,6 +558,7 @@ export class GlobalService {
     var totalPowerModifier = animal.currentStats.defaultPowerModifier;
     var totalFocusModifier = animal.currentStats.defaultFocusModifier;
     var totalAdaptabilityModifier = animal.currentStats.defaultAdaptabilityModifier;
+    var breedLevelStatModifierValue = .01;
     var animalTypeName = animal.getAnimalType().toLowerCase();
 
     //get modifiers, replace original variables if they are found
@@ -576,14 +583,40 @@ export class GlobalService {
       totalAdaptabilityModifier = animalAdaptabilityModifier.value;
 
     //leave space to adjust modifiers with other items or anything
+    var breedLevelStatModifier = this.globalVar.modifiers.find(item => item.text === "breedLevelStatModifier");
+    if (breedLevelStatModifier !== undefined && breedLevelStatModifier !== null)
+      breedLevelStatModifierValue = breedLevelStatModifier.value;
+    breedLevelStatModifierValue = 1 + (breedLevelStatModifierValue * (animal.breedLevel-1));
 
     //do the calculations  
-    animal.currentStats.maxSpeedMs = animal.currentStats.topSpeed * totalMaxSpeedModifier;
-    animal.currentStats.accelerationMs = animal.currentStats.acceleration * totalAccelerationModifier;
-    animal.currentStats.stamina = animal.currentStats.endurance * totalStaminaModifier;
-    animal.currentStats.powerMs = animal.currentStats.power * totalPowerModifier;
-    animal.currentStats.focusMs = animal.currentStats.focus * totalFocusModifier;
-    animal.currentStats.adaptabilityMs = animal.currentStats.adaptability * totalAdaptabilityModifier;
+    animal.currentStats.maxSpeedMs = animal.currentStats.topSpeed * (totalMaxSpeedModifier * breedLevelStatModifierValue);
+    animal.currentStats.accelerationMs = animal.currentStats.acceleration * (totalAccelerationModifier * breedLevelStatModifierValue);
+    animal.currentStats.stamina = animal.currentStats.endurance * (totalStaminaModifier * breedLevelStatModifierValue);
+    animal.currentStats.powerMs = animal.currentStats.power * (totalPowerModifier * breedLevelStatModifierValue);
+    animal.currentStats.focusMs = animal.currentStats.focus * (totalFocusModifier * breedLevelStatModifierValue);
+    animal.currentStats.adaptabilityMs = animal.currentStats.adaptability * (totalAdaptabilityModifier * breedLevelStatModifierValue);
+  }
 
+  IncreaseAnimalBreedGauge(animal: Animal, amount: number) {    
+    animal.breedGaugeXp += amount;
+
+    if (animal.breedGaugeXp >= animal.breedGaugeMax)
+    {
+      animal.breedGaugeXp = animal.breedGaugeMax;
+    }
+  }
+
+  BreedAnimal(animal: Animal) {
+    if (animal.breedGaugeXp < animal.breedGaugeMax)
+      return;
+
+    animal.breedLevel += 1;
+    animal.breedGaugeXp = 0;
+    //increase max total
+
+    animal.currentStats = new AnimalStats(animal.baseStats.topSpeed, animal.baseStats.acceleration, animal.baseStats.endurance,
+      animal.baseStats.power, animal.baseStats.focus, animal.baseStats.adaptability);
+    this.calculateAnimalRacingStats(animal);
+    
   }
 }

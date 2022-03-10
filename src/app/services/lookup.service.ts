@@ -47,50 +47,158 @@ export class LookupService {
       return globalAnimal;
     else
       return null;
-  }  
+  }
 
   getMaxSpeedModifierByAnimalType(type: AnimalTypeEnum): number {
+    var totalModifier = 0;
+    var breedModifier = 0.01;
+    var defaultModifier = 0;
+    var animal = this.globalService.globalVar.animals.find(item => item.type === type);
+    if (animal !== null && animal !== undefined) {
+      var breedLevelStatModifier = this.globalService.globalVar.modifiers.find(item => item.text === "breedLevelStatModifier");
+      if (breedLevelStatModifier !== undefined && breedLevelStatModifier !== null)
+        breedModifier = breedLevelStatModifier.value;
+
+      breedModifier *= (animal.breedLevel - 1);
+    }
+
     var modifierPair = this.globalService.globalVar.modifiers.find(item => item.text === AnimalTypeEnum[type].toLowerCase() + "DefaultMaxSpeedModifier");
     if (modifierPair !== null && modifierPair !== undefined)
-      return modifierPair.value;
+      defaultModifier = modifierPair.value;
 
-    return 0;
+    totalModifier = defaultModifier + breedModifier;
+
+    return totalModifier;
   }
 
   getAccelerationModifierByAnimalType(type: AnimalTypeEnum): number {
+    var totalModifier = 0;
+    var breedModifier = 0.01;
+    var defaultModifier = 0;
+    var animal = this.globalService.globalVar.animals.find(item => item.type === type);
+    if (animal !== null && animal !== undefined) {
+      var breedLevelStatModifier = this.globalService.globalVar.modifiers.find(item => item.text === "breedLevelStatModifier");
+      if (breedLevelStatModifier !== undefined && breedLevelStatModifier !== null)
+        breedModifier = breedLevelStatModifier.value;
+
+      breedModifier *= (animal.breedLevel - 1);
+    }
+
     var modifierPair = this.globalService.globalVar.modifiers.find(item => item.text === AnimalTypeEnum[type].toLowerCase() + "DefaultAccelerationModifier");
     if (modifierPair !== null && modifierPair !== undefined)
-      return modifierPair.value;
+      defaultModifier = modifierPair.value;
 
-    return 0;
+    totalModifier = defaultModifier + breedModifier;
+
+    return totalModifier;
   }
 
   getStaminaModifierByAnimalType(type: AnimalTypeEnum): number {
+    var totalModifier = 0;
+    var breedModifier = 0.01;
+    var defaultModifier = 0;
+    var animal = this.globalService.globalVar.animals.find(item => item.type === type);
+    if (animal !== null && animal !== undefined) {
+      var breedLevelStatModifier = this.globalService.globalVar.modifiers.find(item => item.text === "breedLevelStatModifier");
+      if (breedLevelStatModifier !== undefined && breedLevelStatModifier !== null)
+        breedModifier = breedLevelStatModifier.value;
+
+      breedModifier *= (animal.breedLevel - 1);
+    }
+
     var modifierPair = this.globalService.globalVar.modifiers.find(item => item.text === AnimalTypeEnum[type].toLowerCase() + "DefaultStaminaModifier");
     if (modifierPair !== null && modifierPair !== undefined)
-      return modifierPair.value;
+      defaultModifier = modifierPair.value;
 
-    return 0;
+    totalModifier = defaultModifier + breedModifier;
+
+    return totalModifier;
   }
 
   getPowerModifierByAnimalType(type: AnimalTypeEnum): number {
+    var totalModifier = 0;
+    var breedModifier = 0.01;
+    var defaultModifier = 0;
+    var animal = this.globalService.globalVar.animals.find(item => item.type === type);
+    if (animal !== null && animal !== undefined) {
+      var breedLevelStatModifier = this.globalService.globalVar.modifiers.find(item => item.text === "breedLevelStatModifier");
+      if (breedLevelStatModifier !== undefined && breedLevelStatModifier !== null)
+        breedModifier = breedLevelStatModifier.value;
+
+      breedModifier *= (animal.breedLevel - 1);
+    }
+
     var modifierPair = this.globalService.globalVar.modifiers.find(item => item.text === AnimalTypeEnum[type].toLowerCase() + "DefaultPowerModifier");
     if (modifierPair !== null && modifierPair !== undefined)
-      return modifierPair.value;
+      defaultModifier = modifierPair.value;
 
-    return 0;
+    totalModifier = defaultModifier + breedModifier;
+
+    return totalModifier;
   }
 
   getFocusModifierByAnimalType(type: AnimalTypeEnum): number {
+    var totalModifier = 0;
+    var breedModifier = 0.01;
+    var defaultModifier = 0;
+    var animal = this.globalService.globalVar.animals.find(item => item.type === type);
+    if (animal !== null && animal !== undefined) {
+      var breedLevelStatModifier = this.globalService.globalVar.modifiers.find(item => item.text === "breedLevelStatModifier");
+      if (breedLevelStatModifier !== undefined && breedLevelStatModifier !== null)
+        breedModifier = breedLevelStatModifier.value;
+
+      breedModifier *= (animal.breedLevel - 1);
+    }
+
     var modifierPair = this.globalService.globalVar.modifiers.find(item => item.text === AnimalTypeEnum[type].toLowerCase() + "DefaultFocusModifier");
+    if (modifierPair !== null && modifierPair !== undefined)
+      defaultModifier = modifierPair.value;
+
+    totalModifier = defaultModifier + breedModifier;
+
+    return totalModifier;
+  }
+
+  getAdaptabilityModifierByAnimalType(type: AnimalTypeEnum): number {
+    var totalModifier = 0;
+    var breedModifier = 0.01;
+    var defaultModifier = 0;
+    var animal = this.globalService.globalVar.animals.find(item => item.type === type);
+    if (animal !== null && animal !== undefined) {
+      var breedLevelStatModifier = this.globalService.globalVar.modifiers.find(item => item.text === "breedLevelStatModifier");
+      if (breedLevelStatModifier !== undefined && breedLevelStatModifier !== null)
+        breedModifier = breedLevelStatModifier.value;
+
+      breedModifier *= (animal.breedLevel - 1);
+    }
+
+    var modifierPair = this.globalService.globalVar.modifiers.find(item => item.text === AnimalTypeEnum[type].toLowerCase() + "DefaultAdaptabilityModifier");
+    if (modifierPair !== null && modifierPair !== undefined)
+      defaultModifier = modifierPair.value;
+
+    totalModifier = defaultModifier + breedModifier;
+
+    return totalModifier;
+  }
+
+  getTrainingBreedGaugeIncrease(): number {
+    var modifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "trainingBreedGaugeIncrease");
     if (modifierPair !== null && modifierPair !== undefined)
       return modifierPair.value;
 
     return 0;
   }
 
-  getAdaptabilityModifierByAnimalType(type: AnimalTypeEnum): number {
-    var modifierPair = this.globalService.globalVar.modifiers.find(item => item.text === AnimalTypeEnum[type].toLowerCase() + "DefaultAdaptabilityModifier");
+  getCircuitBreedGaugeIncrease(): number {
+    var modifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "circuitBreedGaugeIncrease");
+    if (modifierPair !== null && modifierPair !== undefined)
+      return modifierPair.value;
+
+    return 0;
+  }
+
+  getLocalBreedGaugeIncrease(): number {
+    var modifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "localBreedGaugeIncrease");
     if (modifierPair !== null && modifierPair !== undefined)
       return modifierPair.value;
 
