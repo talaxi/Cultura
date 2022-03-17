@@ -14,15 +14,28 @@ import { GameLoopService } from 'src/app/services/game-loop/game-loop.service';
 export class DrawRaceComponent implements OnInit {
   @ViewChild('raceCanvas', { static: false, read: ElementRef }) raceCanvas: ElementRef;
   @Input() race: Race;
+  subscription: any;
   canvasHeight: number;
   canvasWidth: number;
   totalLegs: number;
   isRaceFinished: boolean;
   lengthCompleted = 0;
+  canvasXDistanceScale: number;
+  averageDistancePerSecond: number;
 
   lastPathEndingX = 0;
   lastPathEndingY = 0;
   lastPreviousSeconds = 0; //in between seconds, get average speed and do that over the frames
+
+  totalRaceModeXDistance = 0;
+  totalRaceModeYDistance = 0;
+  previousXTest = 0;
+
+  visibleDistanceXLeft = 0;
+  visibleDistanceYTop = 0;
+  visibleDistanceXRight = 0;
+  visibleDistanceYBottom = 0;
+
 
   constructor(private gameLoopService: GameLoopService) { }
 
@@ -32,12 +45,11 @@ export class DrawRaceComponent implements OnInit {
 
   ngAfterViewInit() {
     this.totalLegs = this.race.raceLegs.length;
-    this.raceCanvas.nativeElement.width = 900;
-    this.raceCanvas.nativeElement.height = 600;
-    this.canvasHeight = this.raceCanvas.nativeElement.height;
-    this.canvasWidth = this.raceCanvas.nativeElement.width;
+    this.setupCanvas();
+    this.canvasXDistanceScale = this.canvasWidth / this.race.length; //needs to be 2D
     var raceModeXScale = 2;
     var raceModeYScale = 2;
+    this.averageDistancePerSecond = this.race.length / this.race.timeToComplete;
 
     var context = this.raceCanvas.nativeElement.getContext('2d');
     context.lineWidth = 2;
@@ -45,7 +57,7 @@ export class DrawRaceComponent implements OnInit {
     var fullRaceXDistance = this.race.length * this.race.timeToComplete;
     var currentTime = 0;
 
-    this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {
+    this.subscription = this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {      
       //clear canvas
       context.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
 
@@ -63,6 +75,16 @@ export class DrawRaceComponent implements OnInit {
         //this.displayRacer(context, currentTime);
       }
     });
+  }
+
+  setupCanvas() {
+    this.raceCanvas.nativeElement.style.width = '100%';
+    this.raceCanvas.nativeElement.style.height = '100%';
+    this.raceCanvas.nativeElement.width = this.raceCanvas.nativeElement.offsetWidth;
+    this.raceCanvas.nativeElement.height = this.raceCanvas.nativeElement.offsetHeight;
+    this.canvasHeight = this.raceCanvas.nativeElement.height;
+    this.canvasWidth = this.raceCanvas.nativeElement.width;
+
   }
 
   displayOverview(context: any, raceFinished: boolean): void {
@@ -83,7 +105,7 @@ export class DrawRaceComponent implements OnInit {
             if (path.routeDesign === RaceDesignEnum.S)
               this.drawSFlatlandOverview(context, path, 1, 1);
             if (path.routeDesign === RaceDesignEnum.Bumps)
-              this.drawBumpsFlatlandOverview(context, path);
+              this.drawBumpsFlatlandOverview(context, path, 1, 1);
           }
 
           this.lengthCompleted += path.length;
@@ -92,32 +114,31 @@ export class DrawRaceComponent implements OnInit {
     });
 
     if (raceFinished) {
+      context.fillStyle = "maroon";
+      context.lineCap = "round";
+      context.globalCompositeOperation = "source-atop";
+
+      var secondsTaken = this.race.raceUI.distanceCoveredBySecond.length;
+      var completedDistance = this.race.raceUI.distanceCoveredBySecond[secondsTaken - 1] / this.race.length;
+      var distanceScaled = completedDistance * this.canvasWidth;
+
+      context.fillRect(0, 0, distanceScaled, this.canvasHeight);
       //display finished distance
     }
-  }
-
-  displayRacer(context: any, currentTime: number): void {
-    if (this.race === undefined || this.race.raceLegs == undefined)
-      return;
-
-    var currentSeconds = Math.floor(currentTime);
-    var currentDistanceTraveled = this.race.raceUI.distanceCoveredBySecond[currentSeconds];
-
-    context.fillStyle = "maroon";
-    context.lineCap = "round";
-    context.lineWidth = 5;
-    context.globalCompositeOperation = "source-atop";
-    context.fillRect(0, 0, (currentDistanceTraveled / this.race.length) * this.canvasWidth, this.canvasHeight);
   }
 
   displayRace(context: any, currentTime: number): void {
     if (this.race === undefined || this.race.raceLegs == undefined)
       return;
 
+    //track color
+    context.strokeStyle = "gray";
+
     this.lastPathEndingX = 0;
     this.lastPathEndingY = this.canvasHeight / 2;
 
     var xRaceModeModifier = 10;
+    this.totalRaceModeXDistance = this.race.length * xRaceModeModifier; //TODO: race.length needs to broken down into x and y
 
     var currentSeconds = Math.floor(currentTime);
     var fractionalSeconds = currentTime - currentSeconds;
@@ -126,11 +147,12 @@ export class DrawRaceComponent implements OnInit {
       fractionalDistance = this.race.raceUI.distanceCoveredBySecond[currentSeconds + 1] - this.race.raceUI.distanceCoveredBySecond[currentSeconds];
     var currentDistanceTraveled = this.race.raceUI.distanceCoveredBySecond[currentSeconds] + (fractionalDistance * fractionalSeconds);
 
-    var oneSecondDistanceDifference = 0;   //Give the racer overlay one second of time to get on the screen ahead of the translate
-    if (currentSeconds > 0 && this.race.raceUI.distanceCoveredBySecond.length > 0)
-      oneSecondDistanceDifference = this.race.raceUI.distanceCoveredBySecond[currentSeconds] - this.race.raceUI.distanceCoveredBySecond[currentSeconds - 1];
+    //current distance traveled, scaled with the canvas and modifier, minus getting the coloring in the middle of the screen
+    var xDistanceOffset = (currentDistanceTraveled * this.canvasXDistanceScale * xRaceModeModifier) - (this.canvasWidth / 2);
 
-    var xDistanceOffset = (currentDistanceTraveled * this.race.timeToComplete) - oneSecondDistanceDifference;
+    this.visibleDistanceXLeft = xDistanceOffset;
+    this.visibleDistanceXRight = xDistanceOffset + (this.canvasWidth);
+    
     context.lineWidth = 5;
     context.globalCompositeOperation = "source-over";
     //move canvas based on distance travelled as a relation to the scale size
@@ -143,6 +165,9 @@ export class DrawRaceComponent implements OnInit {
       return;
     }
 
+    //console.log("Current Distance Traveled: " + currentDistanceTraveled);
+    //console.log("xDistanceOffset: " + xDistanceOffset);
+    //console.log("Total Distance Scaled: " + this.totalRaceModeXDistance);
     this.race.raceLegs.forEach(leg => {
       if (leg.pathData !== undefined && leg.pathData.length !== 0) {
         leg.pathData.forEach(path => {
@@ -152,8 +177,8 @@ export class DrawRaceComponent implements OnInit {
               this.drawRegularFlatlandOverview(context, path, xRaceModeModifier, 1, xDistanceOffset);
             if (path.routeDesign === RaceDesignEnum.S)
               this.drawSFlatlandOverview(context, path, xRaceModeModifier, 1, xDistanceOffset);
-            //if (path.routeDesign === RaceDesignEnum.Bumps)
-            //this.drawBumpsFlatlandOverview(context, path,);
+            if (path.routeDesign === RaceDesignEnum.Bumps)
+              this.drawBumpsFlatlandOverview(context, path, xRaceModeModifier, 1, xDistanceOffset);
           }
 
           this.lengthCompleted += path.length;
@@ -164,31 +189,43 @@ export class DrawRaceComponent implements OnInit {
     context.fillStyle = "maroon";
     context.lineCap = "round";
     context.globalCompositeOperation = "source-atop";
-    //context.fillRect(0, 0, 0, 0);
 
-    //if less than half a second or so, fill up to that and then keep it at that distance or some set distance ahead of the translation
-    context.fillRect(0, 0, 50, this.canvasHeight);
-    //shouldn't this always just fill up a certain part of the screen, not necessarily track with distance?
-    //the translation tracks with distance and moves this baby along.
-    //maybe do the math to figure out where you are in the current view and have it at that point
+    context.fillRect(0, 0, this.canvasWidth / 2, this.canvasHeight);
+
+    context.fillStyle = "red";
+    context.fillRect(this.canvasWidth / 2 - 5, 0, 5, this.canvasHeight);
+
+    //break this out into its own function
+    //average speed
+    var averageDistance = this.averageDistancePerSecond * currentTime;
+    //add canvasWidth to offset the fact that we start at half the screen
+    var averageDistanceScaled = (averageDistance * this.canvasXDistanceScale * xRaceModeModifier);// + (this.canvasWidth / 2);
+    this.drawRacer(context, averageDistanceScaled, "black");    
   }
 
-  displayTestData(context: any, deltaTime: number) {
-    var fullRaceXDistance = this.race.length * this.race.timeToComplete;
-    var currentTime = 0;
-    context.font = '48px serif';
-    currentTime += deltaTime;
+  drawRacer(context: any, scaledDistanceInRace: number, color: string): void {
+    var percentOfVisibleDistance = 0;
+    //get visible distance on the canvas currently
+    //if the average distance is within that range, display it as a percentage
+    if (scaledDistanceInRace >= this.visibleDistanceXLeft && scaledDistanceInRace <= this.visibleDistanceXRight) {
+      var totalVisibleDistance = this.visibleDistanceXRight - this.visibleDistanceXLeft;
+      var amountOfVisibleDistance = scaledDistanceInRace - this.visibleDistanceXLeft;
+      percentOfVisibleDistance = amountOfVisibleDistance / totalVisibleDistance;
+    
+    context.fillStyle = color;
+    context.fillRect((this.canvasWidth * percentOfVisibleDistance) - 5, 0, 5, this.canvasHeight);
+    }
+    /*if (this.race === undefined || this.race.raceLegs == undefined)
+      return;
 
     var currentSeconds = Math.floor(currentTime);
     var currentDistanceTraveled = this.race.raceUI.distanceCoveredBySecond[currentSeconds];
-    var scaledDistanceTraveled = currentDistanceTraveled * this.race.timeToComplete;
 
-    context.fillText('1', fullRaceXDistance / 6 - scaledDistanceTraveled, this.canvasHeight / 2);
-    context.fillText('2', 2 * fullRaceXDistance / 6 - scaledDistanceTraveled, this.canvasHeight / 2);
-    context.fillText('3', 3 * fullRaceXDistance / 6 - scaledDistanceTraveled, this.canvasHeight / 2);
-    context.fillText('4', 4 * fullRaceXDistance / 6 - scaledDistanceTraveled, this.canvasHeight / 2);
-    context.fillText('5', 5 * fullRaceXDistance / 6 - scaledDistanceTraveled, this.canvasHeight / 2);
-    context.fillText('6', 6 * fullRaceXDistance / 6 - scaledDistanceTraveled, this.canvasHeight / 2);
+    context.fillStyle = "maroon";
+    context.lineCap = "round";
+    context.lineWidth = 5;
+    context.globalCompositeOperation = "source-atop";
+    context.fillRect(0, 0, (currentDistanceTraveled / this.race.length) * this.canvasWidth, this.canvasHeight);*/
   }
 
   drawRegularFlatlandOverview(context: any, path: RacePath, xRaceModeModifier: number, yRaceModeModifier: number, xDistanceOffset?: number): void {
@@ -199,7 +236,7 @@ export class DrawRaceComponent implements OnInit {
 
     context.moveTo(this.lastPathEndingX - xDistanceOffset, this.lastPathEndingY);
     context.lineTo(this.lastPathEndingX + horizontalLength - xDistanceOffset, this.canvasHeight / 2);
-    //context.fillText('End', this.lastPathEndingX + horizontalLength, this.canvasHeight / 2);
+    //context.fillText('End', this.lastPathEndingX + horizontalLength, this.canvasHeight / 2);    
     context.stroke();
 
     this.lastPathEndingX = this.lastPathEndingX + horizontalLength;
@@ -258,45 +295,57 @@ export class DrawRaceComponent implements OnInit {
     //ending Y doesn't change
   }
 
-  drawBumpsFlatlandOverview(context: any, path: RacePath): void {
-    var horizontalLength = (path.length / this.race.length) * this.canvasWidth;
+  drawBumpsFlatlandOverview(context: any, path: RacePath, xRaceModeModifier: number, yRaceModeModifier: number, xDistanceOffset?: number): void {
+    var horizontalLength = (path.length / this.race.length) * this.canvasWidth * xRaceModeModifier;
 
-    console.log("Draw Bumps");
+    if (xDistanceOffset === undefined || xDistanceOffset === null)
+      xDistanceOffset = 0;
+
+    var startingX = this.lastPathEndingX - xDistanceOffset;
+    var startingY = this.lastPathEndingY;
+    var xRegularOffset = .04 * horizontalLength; //straight lines on either side
+
+    var xFullBump = .115 * horizontalLength;
+    var yFullBump = xFullBump / 3;
+
+    context.beginPath();
+    context.moveTo(startingX, startingY);
+    context.lineTo(startingX + xRegularOffset, startingY);
+
+    context.lineTo(startingX + xRegularOffset + xFullBump / 2, startingY - yFullBump);
+    context.lineTo(startingX + xRegularOffset + xFullBump, startingY);
+
+    context.lineTo(startingX + xRegularOffset + xFullBump + xFullBump / 2, startingY - yFullBump);
+    context.lineTo(startingX + xRegularOffset + 2 * xFullBump, startingY);
+
+    context.lineTo(startingX + xRegularOffset + 2 * xFullBump + xFullBump / 2, startingY - yFullBump);
+    context.lineTo(startingX + xRegularOffset + 3 * xFullBump, startingY);
+
+    context.lineTo(startingX + xRegularOffset + 3 * xFullBump + xFullBump / 2, startingY - yFullBump);
+    context.lineTo(startingX + xRegularOffset + 4 * xFullBump, startingY);
+
+    context.lineTo(startingX + xRegularOffset + 4 * xFullBump + xFullBump / 2, startingY - yFullBump);
+    context.lineTo(startingX + xRegularOffset + 5 * xFullBump, startingY);
+
+    context.lineTo(startingX + xRegularOffset + 5 * xFullBump + xFullBump / 2, startingY - yFullBump);
+    context.lineTo(startingX + xRegularOffset + 6 * xFullBump, startingY);
+
+    context.lineTo(startingX + xRegularOffset + 6 * xFullBump + xFullBump / 2, startingY - yFullBump);
+    context.lineTo(startingX + xRegularOffset + 7 * xFullBump, startingY);
+
+    context.lineTo(startingX + xRegularOffset + 7 * xFullBump + xFullBump / 2, startingY - yFullBump);
+    context.lineTo(startingX + xRegularOffset + 8 * xFullBump, startingY);
+
+    context.lineTo(startingX + xRegularOffset + 8 * xFullBump + xRegularOffset, startingY);
+    context.stroke();
 
     this.lastPathEndingX = this.lastPathEndingX + horizontalLength;
   }
+
+  ngOnDestroy() {    
+    if (this.subscription !== null && this.subscription !== undefined)
+    {      
+      this.subscription.unsubscribe();          
+    }
+  }
 }
-
-
-//maybe useful??
-/*//get the leg this distance is in, then the route
-   this.race.raceLegs.forEach(leg => {
-     if (!legFound) {
-       if (currentDistanceTraveled <= leg.distance + previousLegDistance)
-         legFound = true;
-       else {
-         currentLegCount += 1;
-         previousLegDistance += leg.distance;
-       }
-     }
-   });
-
-   this.race.raceLegs[currentLegCount].pathData.forEach(route => {
-     if (!routeFound) {
-       if (currentDistanceTraveled <= route.length + previousRouteDistance + previousLegDistance)
-         routeFound = true;
-       else {
-         currentRouteCount += 1;
-         previousRouteDistance += route.length;
-       }
-     }
-   });
-
-   currentLeg = this.race.raceLegs[currentLegCount];
-   currentRoute = this.race.raceLegs[currentLegCount].pathData[currentRouteCount];
-   currentDistanceInRoute = currentRoute.length - (currentDistanceTraveled - (previousRouteDistance + previousLegDistance));
-
-   if (currentLeg.courseType === RaceCourseTypeEnum.Flatland) {
-     //if (path.routeDesign === RaceDesignEnum.Regular)
-     this.drawRegularFlatlandOverview(context, currentRoute, startingX, 60, 3);
-   }*/

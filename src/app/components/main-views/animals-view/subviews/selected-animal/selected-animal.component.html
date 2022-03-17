@@ -1,90 +1,99 @@
 <div class="selectedAnimalView">
     <div class="info">
         <div class="animalInfo">
-            <div *ngIf="selectedAnimal.name !== selectedAnimal.getAnimalType()">
-                <span *ngIf="selectedAnimal.name !== selectedAnimal.getAnimalType()">{{ selectedAnimal.name }}</span>
+            <div [ngClass]="colorConditional">
+                <div *ngIf="selectedAnimal.name !== selectedAnimal.getAnimalType()">
+                    <div *ngIf="!editingName">
+                        <span>{{ selectedAnimal.name }}</span>
+                        <span><button (click)="editingName = !editingName">Edit Name</button></span>                        
+                    </div>
+                    <div *ngIf="editingName">
+                        <span><input id="newName" name="newName" [(ngModel)]="newName"></span>
+                        <span><button (click)="editName()">Save</button></span>
+                        <span><button (click)="editingName = !editingName">Cancel</button></span>
+                    </div>                    
+                        <span>{{ selectedAnimal.getAnimalType() }}</span>
+                </div>
+                <div *ngIf="selectedAnimal.name === selectedAnimal.getAnimalType()">
+                    <span>{{ selectedAnimal.getAnimalType() }}</span>
+                </div>
+                <span>{{ selectedAnimal.getRaceCourseType() }}</span>
                 <br />
-                <span>{{ selectedAnimal.getAnimalType() }}</span>
             </div>
-            <div *ngIf="selectedAnimal.name === selectedAnimal.getAnimalType()">
-                <span>{{ selectedAnimal.getAnimalType() }}</span>
-            </div>
-            <span>{{ selectedAnimal.getRaceCourseType() }}</span>
-            <br/>
             <span>Breed Level {{selectedAnimal.breedLevel}}</span>
-            <br/>
+            <br />
             <span>Breed XP: {{selectedAnimal.breedGaugeXp | number : '1.2-2'}}/{{selectedAnimal.breedGaugeMax}}
-                <button (click)="Breed()">Breed</button>
+                <button (click)="breed()">Breed</button>
             </span>
         </div>
         <div class="back" (click)="returnToAnimalView()">
             <span>Back</span>
         </div>
     </div>
-    <br/>
-    <hr/>
-    <br/>
+    <br />
+    <hr />
+    <br />
     <!--Grid this, split page 50/50-->
     <div class="gridContainer">
         <div class="trainableStats">
-            <span ngbPopover="{{ selectedAnimal.currentStats.topSpeedPopover(maxSpeedModifierAmount) }}" triggers="mouseenter:mouseleave"
-                popoverClass="popoverClass">
+            <span ngbPopover="{{ selectedAnimal.currentStats.topSpeedPopover(maxSpeedModifierAmount) }}"
+                triggers="mouseenter:mouseleave" popoverClass="popoverClass">
                 Speed: {{ selectedAnimal.currentStats.topSpeed | number : '1.2-2' }}
             </span>
             <br />
-            <span ngbPopover="{{ selectedAnimal.currentStats.accelerationPopover(accelerationModifierAmount) }}" triggers="mouseenter:mouseleave"
-                popoverClass="popoverClass">
+            <span ngbPopover="{{ selectedAnimal.currentStats.accelerationPopover(accelerationModifierAmount) }}"
+                triggers="mouseenter:mouseleave" popoverClass="popoverClass">
                 Acceleration: {{ selectedAnimal.currentStats.acceleration | number : '1.2-2' }}
             </span>
             <br />
-            <span ngbPopover="{{ selectedAnimal.currentStats.endurancePopover(staminaModifierAmount) }}" triggers="mouseenter:mouseleave"
-                popoverClass="popoverClass">
+            <span ngbPopover="{{ selectedAnimal.currentStats.endurancePopover(staminaModifierAmount) }}"
+                triggers="mouseenter:mouseleave" popoverClass="popoverClass">
                 Endurance: {{ selectedAnimal.currentStats.endurance | number : '1.2-2' }}
             </span>
             <br />
-            <span ngbPopover="{{ selectedAnimal.currentStats.powerPopover(powerModifierAmount) }}" triggers="mouseenter:mouseleave"
-                popoverClass="popoverClass">
+            <span ngbPopover="{{ selectedAnimal.currentStats.powerPopover(powerModifierAmount) }}"
+                triggers="mouseenter:mouseleave" popoverClass="popoverClass">
                 Power: {{ selectedAnimal.currentStats.power | number : '1.2-2' }}
             </span>
             <br />
-            <span ngbPopover="{{ selectedAnimal.currentStats.focusPopover(focusModifierAmount) }}" triggers="mouseenter:mouseleave"
-                popoverClass="popoverClass">
+            <span ngbPopover="{{ selectedAnimal.currentStats.focusPopover(focusModifierAmount) }}"
+                triggers="mouseenter:mouseleave" popoverClass="popoverClass">
                 Focus: {{ selectedAnimal.currentStats.focus | number : '1.2-2' }}
             </span>
             <br />
-            <span ngbPopover="{{ selectedAnimal.currentStats.adaptabilityPopover(adaptabilityModifierAmount) }}" triggers="mouseenter:mouseleave"
-                popoverClass="popoverClass">
+            <span ngbPopover="{{ selectedAnimal.currentStats.adaptabilityPopover(adaptabilityModifierAmount) }}"
+                triggers="mouseenter:mouseleave" popoverClass="popoverClass">
                 Adaptability: {{ selectedAnimal.currentStats.adaptability | number : '1.2-2' }}
             </span>
         </div>
         <div class="racingStats">
             <span ngbPopover="{{ selectedAnimal.currentStats.maxSpeedMsPopover() }}" triggers="mouseenter:mouseleave"
-            popoverClass="popoverClass">
+                popoverClass="popoverClass">
                 Max Speed: {{ selectedAnimal.currentStats.maxSpeedMs | number : '1.2-2' }} m/s
             </span>
             <br />
-            <span ngbPopover="{{ selectedAnimal.currentStats.accelerationMsPopover() }}" triggers="mouseenter:mouseleave"
-            popoverClass="popoverClass">
+            <span ngbPopover="{{ selectedAnimal.currentStats.accelerationMsPopover() }}"
+                triggers="mouseenter:mouseleave" popoverClass="popoverClass">
                 Acceleration: {{ selectedAnimal.currentStats.accelerationMs | number : '1.2-2' }} m/s
             </span>
             <br />
             <span ngbPopover="{{ selectedAnimal.currentStats.staminaPopover() }}" triggers="mouseenter:mouseleave"
-            popoverClass="popoverClass">
+                popoverClass="popoverClass">
                 Stamina: {{ selectedAnimal.currentStats.stamina | number : '1.2-2' }}
             </span>
             <br />
             <span ngbPopover="{{ selectedAnimal.currentStats.powerMsPopover() }}" triggers="mouseenter:mouseleave"
-            popoverClass="popoverClass">
+                popoverClass="popoverClass">
                 Power: {{ selectedAnimal.currentStats.powerMs | number : '1.2-2' }}%
             </span>
             <br />
             <span ngbPopover="{{ selectedAnimal.currentStats.focusMsPopover() }}" triggers="mouseenter:mouseleave"
-            popoverClass="popoverClass">
+                popoverClass="popoverClass">
                 Focus: ~{{ selectedAnimal.currentStats.focusMs | number : '1.2-2' }} m
             </span>
             <br />
-            <span ngbPopover="{{ selectedAnimal.currentStats.adaptabilityMsPopover() }}" triggers="mouseenter:mouseleave"
-            popoverClass="popoverClass">
+            <span ngbPopover="{{ selectedAnimal.currentStats.adaptabilityMsPopover() }}"
+                triggers="mouseenter:mouseleave" popoverClass="popoverClass">
                 Adaptability: ~{{ selectedAnimal.currentStats.adaptabilityMs | number : '1.2-2' }} m
             </span>
         </div>

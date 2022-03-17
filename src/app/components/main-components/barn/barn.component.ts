@@ -15,7 +15,8 @@ export class BarnComponent implements OnInit {
   associatedAnimalName: string;
   associatedAnimalType: string;
   isLocked: boolean;
-  isOccupied: boolean; 
+  isOccupied: boolean;
+  subscription: any;
 
   @Output() selectedBarn = new EventEmitter<number>();
   trainingProgressBarPercent: number;
@@ -30,7 +31,7 @@ export class BarnComponent implements OnInit {
         this.barn = globalBarn;
 
         var associatedAnimal = this.globalService.globalVar.animals.find(item => item.associatedBarnNumber == this.barnNumber);
-        
+
         if (associatedAnimal !== undefined && associatedAnimal !== null) {
           this.isOccupied = true;
           this.associatedAnimalName = associatedAnimal.name;
@@ -40,6 +41,7 @@ export class BarnComponent implements OnInit {
           this.isOccupied = false;
 
         this.isLocked = globalBarn.isLocked;
+        console.log(this.barnNumber + " - " + this.isLocked);
       }
     }
     else {
@@ -48,7 +50,7 @@ export class BarnComponent implements OnInit {
     }
 
     if (!this.isLocked) {
-      this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {
+      this.subscription = this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {
         var associatedAnimal = this.globalService.globalVar.animals.find(item => item.associatedBarnNumber == this.barnNumber);
         if (associatedAnimal === undefined || associatedAnimal === null) {
           //any game loop logic needed for an empty barn
@@ -64,7 +66,14 @@ export class BarnComponent implements OnInit {
     }
   }
 
+  ngOnDestroy() {
+    if (this.subscription !== null && this.subscription !== undefined) {
+      console.log("barn unsub");
+      this.subscription.unsubscribe();
+    }
+  }
+
   @HostListener("click") onClick() {
     this.selectedBarn.emit(this.barnNumber);
-  }  
+  }
 }

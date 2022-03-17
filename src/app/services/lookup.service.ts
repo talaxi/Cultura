@@ -26,8 +26,7 @@ export class LookupService {
     return animals;
   }
 
-  getMoney(): number {
-    console.log(this.globalService.globalVar.resources);
+  getMoney(): number {    
     var resource = this.globalService.globalVar.resources.find(item => item.name === "Money");
     if (resource !== undefined)
       return resource.amount;

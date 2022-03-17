@@ -7,5 +7,20 @@ export enum TrainingOptionsEnum {
     PracticeCommands,
     ScentTraining,
     SmallWagonTow,
-    Sidestep
+    Sidestep,
+    MediumTrackRunning,
+    UphillRun,
+    Puzzles,
+    MoveRocks,
+    DodgeBall,
+    BurstPractice,
+    Acrobatics,
+    LongTrackRunning,
+    VehicleTow,
+    LogJump,
+    Meditation,
+    WindSprints,
+    GreenwayHike,
+    Marathon,
+    AgilityCourse
   }

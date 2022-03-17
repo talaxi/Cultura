@@ -18,7 +18,9 @@ export class SelectedAnimalComponent implements OnInit {
   powerModifierAmount: number;
   focusModifierAmount: number;
   adaptabilityModifierAmount: number;
-
+  colorConditional: any;
+  editingName: boolean;
+  newName: string;
 
   constructor(private lookupService: LookupService, private globalService: GlobalService) { }
 
@@ -29,13 +31,21 @@ export class SelectedAnimalComponent implements OnInit {
     this.powerModifierAmount = this.lookupService.getPowerModifierByAnimalType(this.selectedAnimal.type);
     this.focusModifierAmount = this.lookupService.getFocusModifierByAnimalType(this.selectedAnimal.type);
     this.adaptabilityModifierAmount = this.lookupService.getAdaptabilityModifierByAnimalType(this.selectedAnimal.type);
+
+    this.colorConditional = {'flatlandColor': this.selectedAnimal.getRaceCourseType() === 'Flatland',
+  'rockColor': this.selectedAnimal.getRaceCourseType() === 'Rock', 'waterColor': this.selectedAnimal.getRaceCourseType() === 'Water'};
   }
 
   returnToAnimalView(): void {
     this.returnEmitter.emit(false);
   }
 
-  Breed(): void {
+  breed(): void {
     this.globalService.BreedAnimal(this.selectedAnimal);
+  }
+
+  editName(): void {
+    this.selectedAnimal.name = this.newName;
+    this.editingName = false;
   }
 }

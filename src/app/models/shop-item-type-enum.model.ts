@@ -1,4 +1,5 @@
 export enum ShopItemTypeEnum {
     Animal,
-    Food
+    Food,
+    Training,
   }

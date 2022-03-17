@@ -15,10 +15,16 @@ export class TrainingOption {
     statGain: number;
     isAvailable: boolean;
     timeTrained: number; //current amount / timetocomplete
+    purchasePrice: number;
 
     constructor() {
         this.timeTrained = 0;
         this.isAvailable = false;
+        this.purchasePrice = 50;
+    }
+
+    getFacilitySize(): string {
+        return FacilitySizeEnum[this.facilitySize];
     }
 
     //TODO: maybe do <br/> instead of commas?

@@ -8,7 +8,7 @@
             <span>Race {{ i+1 }} </span>
             <br />
             <p *ngFor="let raceLeg of race.raceLegs">{{ raceLeg.distance | number :
-                '1.2-2' }} Meters of {{ raceLeg.getCourseTypeName() }}  </p>
+                '1.2-2' }} Meters of {{ raceLeg.getTerrainName() }} {{ raceLeg.getCourseTypeName() }}  </p>
             <p>{{ race.isCompleted ? "Completed" : "Start" }}</p>
         </div>
     </div>

@@ -1,5 +1,6 @@
 export enum StumbleSeverityEnum {
-    Low = 25,
-    Medium = 50,
-    High = 75
+    None = 0,
+    Low = .9,
+    Medium = .75,
+    High = .50
 }

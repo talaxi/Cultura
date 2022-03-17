@@ -16,7 +16,7 @@ export class ResourcesViewComponent implements OnInit {
   displayResources(): string {
     var totalResources = "";
 
-    this.globalService.globalVar.resources.forEach(item => {
+    this.globalService.globalVar.resources.forEach(item => {      
       totalResources += item.name + " " + item.amount + "\n";
     });
 

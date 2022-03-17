@@ -20,6 +20,8 @@ import { ShopItem } from '../models/shop/shop-item.model';
 import { ShopItemTypeEnum } from '../models/shop-item-type-enum.model';
 import { FacilitySizeEnum } from '../models/facility-size-enum.model';
 import { AnimalDeck } from '../models/animals/animal-deck.model';
+import { Terrain } from '../models/races/terrain.model';
+import { TerrainTypeEnum } from '../models/terrain-type-enum.model';
 
 @Injectable({
   providedIn: 'root'
@@ -38,6 +40,7 @@ export class GlobalService {
     this.globalVar.resources = [];
     this.globalVar.modifiers = [];
     this.globalVar.animalDecks = [];
+    this.globalVar.barns = [];
 
     //Initialize modifiers
     this.InitializeModifiers();
@@ -55,13 +58,13 @@ export class GlobalService {
     this.InitializeBarns();
 
     //Initialize circuit race information
-    this.globalVar.circuitRank = "W";
+    this.globalVar.circuitRank = "Z";
     this.GenerateCircuitRaces();
 
     //Initialize local race information
 
     //Initialize resources
-    this.globalVar.resources.push(new ResourceValue("Money", 5000));
+    this.InitializeResources();
 
   }
 
@@ -143,7 +146,7 @@ export class GlobalService {
   }
 
   InitializeAnimalDecks(): void {
-    var deck = new AnimalDeck();    
+    var deck = new AnimalDeck();
     deck.isPrimaryDeck = true;
     deck.isAvailable = true;
     deck.name = "Animal Deck 1";
@@ -228,6 +231,23 @@ export class GlobalService {
     foodShopSection.name = "Food";
     foodShopSection.itemList = foodShopItems;
     this.globalVar.shop.push(foodShopSection);
+
+    var trainingShopSection = new ShopSection();
+    var trainingShopItems: ShopItem[] = [];
+
+    this.globalVar.trainingOptions.filter(item => !item.isAvailable).forEach(item => {
+      var purchasableTraining = new ShopItem();
+      purchasableTraining.name = item.trainingName;
+      purchasableTraining.description = item.getStatGainDescription();
+      purchasableTraining.purchasePrice = item.purchasePrice;
+      purchasableTraining.canHaveMultiples = false;
+      purchasableTraining.type = ShopItemTypeEnum.Training;
+      trainingShopItems.push(purchasableTraining);
+    });
+
+    trainingShopSection.name = "Trainings";
+    trainingShopSection.itemList = trainingShopItems;
+    this.globalVar.shop.push(trainingShopSection);
   }
 
   InitializeBarns(): void {
@@ -238,7 +258,10 @@ export class GlobalService {
       var barn1 = new Barn();
       barn1.barnNumber = 1;
       barn1.isLocked = false;
+      barn1.size = FacilitySizeEnum.Small;
       barn1.purchasePrice = 0;
+      barn1.facilityUpgradePrice = 500;
+      barn1.upgradePrice = 500;
 
       if (this.globalVar.animals !== null && this.globalVar.animals !== undefined &&
         this.globalVar.animals.length > 0) {
@@ -258,6 +281,7 @@ export class GlobalService {
         newBarn.barnNumber = i;
         newBarn.isLocked = true;
         newBarn.purchasePrice = 500 * i;
+        newBarn.size = FacilitySizeEnum.Small;
 
         this.globalVar.barns.push(newBarn);
       }
@@ -265,104 +289,30 @@ export class GlobalService {
   }
 
   InitializeGlobalTrainingOptions(): void {
-    var shortTrackRunning = new TrainingOption();
-    shortTrackRunning.trainingName = "Short Track Running";
-    shortTrackRunning.isAvailable = true;
-    shortTrackRunning.facilitySize = FacilitySizeEnum.Small;
-    shortTrackRunning.timeToComplete = 30;
-    shortTrackRunning.trainingType = TrainingOptionsEnum.ShortTrackRunning;
-    shortTrackRunning.trainingCourseType = RaceCourseTypeEnum.Flatland;
-    shortTrackRunning.statGain = 1;
-    shortTrackRunning.affectedStatRatios = new AnimalStats(1, 0, 0, 0, 0, 0);
-    this.globalVar.trainingOptions.push(shortTrackRunning);
-
-    var sprints = new TrainingOption();
-    sprints.trainingName = "Sprints";
-    sprints.isAvailable = true;
-    shortTrackRunning.facilitySize = FacilitySizeEnum.Small;
-    sprints.timeToComplete = 20;
-    sprints.trainingType = TrainingOptionsEnum.Sprints;
-    sprints.trainingCourseType = RaceCourseTypeEnum.Flatland;
-    sprints.statGain = 1;
-    sprints.affectedStatRatios = new AnimalStats(0, 1, 0, 0, 0, 0);
-    this.globalVar.trainingOptions.push(sprints);
-
-    var trailRunning = new TrainingOption();
-    trailRunning.trainingName = "Trail Running";
-    trailRunning.isAvailable = true;
-    shortTrackRunning.facilitySize = FacilitySizeEnum.Small;
-    trailRunning.timeToComplete = 60;
-    trailRunning.trainingType = TrainingOptionsEnum.TrailRunning;
-    trailRunning.trainingCourseType = RaceCourseTypeEnum.Flatland;
-    trailRunning.statGain = 1;
-    trailRunning.affectedStatRatios = new AnimalStats(.5, 0, 1, 0, 0, 0);
-    this.globalVar.trainingOptions.push(trailRunning);
-
-    var moveLogs = new TrainingOption();
-    moveLogs.trainingName = "Move Logs";
-    moveLogs.isAvailable = true;
-    shortTrackRunning.facilitySize = FacilitySizeEnum.Small;
-    moveLogs.timeToComplete = 30;
-    moveLogs.trainingType = TrainingOptionsEnum.MoveLogs;
-    moveLogs.trainingCourseType = RaceCourseTypeEnum.Flatland;
-    moveLogs.statGain = 1;
-    moveLogs.affectedStatRatios = new AnimalStats(0, 0, 0, 1, 0, 0);
-    this.globalVar.trainingOptions.push(moveLogs);
-
-    var footwork = new TrainingOption();
-    footwork.trainingName = "Footwork";
-    footwork.isAvailable = true;
-    shortTrackRunning.facilitySize = FacilitySizeEnum.Small;
-    footwork.timeToComplete = 45;
-    footwork.trainingType = TrainingOptionsEnum.Footwork;
-    footwork.trainingCourseType = RaceCourseTypeEnum.Flatland;
-    footwork.statGain = 1;
-    footwork.affectedStatRatios = new AnimalStats(0, .5, 0, 0, 0, 1);
-    this.globalVar.trainingOptions.push(footwork);
-
-    var practiceCommands = new TrainingOption();
-    practiceCommands.trainingName = "Practice Commands";
-    practiceCommands.isAvailable = true;
-    shortTrackRunning.facilitySize = FacilitySizeEnum.Small;
-    practiceCommands.timeToComplete = 60;
-    practiceCommands.trainingType = TrainingOptionsEnum.PracticeCommands;
-    practiceCommands.trainingCourseType = RaceCourseTypeEnum.Flatland;
-    practiceCommands.statGain = 1;
-    practiceCommands.affectedStatRatios = new AnimalStats(0, 0, 0, 0, 1, .25);
-    this.globalVar.trainingOptions.push(practiceCommands);
-
-    var scentTraining = new TrainingOption();
-    scentTraining.trainingName = "Scent Training";
-    scentTraining.isAvailable = true;
-    shortTrackRunning.facilitySize = FacilitySizeEnum.Small;
-    scentTraining.timeToComplete = 45;
-    scentTraining.trainingType = TrainingOptionsEnum.ScentTraining;
-    scentTraining.trainingCourseType = RaceCourseTypeEnum.Flatland;
-    scentTraining.statGain = 1;
-    scentTraining.affectedStatRatios = new AnimalStats(0, 0, .5, 0, 1, 0);
-    this.globalVar.trainingOptions.push(scentTraining);
-
-    var smallWagonTow = new TrainingOption();
-    smallWagonTow.trainingName = "Small Wagon Tow";
-    smallWagonTow.isAvailable = true;
-    shortTrackRunning.facilitySize = FacilitySizeEnum.Small;
-    smallWagonTow.timeToComplete = 45;
-    smallWagonTow.trainingType = TrainingOptionsEnum.SmallWagonTow;
-    smallWagonTow.trainingCourseType = RaceCourseTypeEnum.Flatland;
-    smallWagonTow.statGain = 1;
-    smallWagonTow.affectedStatRatios = new AnimalStats(0, 0, 0, 1.5, .25, 0);
-    this.globalVar.trainingOptions.push(smallWagonTow);
-
-    var sidestep = new TrainingOption();
-    sidestep.trainingName = "Sidestep";
-    sidestep.isAvailable = true;
-    shortTrackRunning.facilitySize = FacilitySizeEnum.Small;
-    sidestep.timeToComplete = 35;
-    sidestep.trainingType = TrainingOptionsEnum.Sidestep;
-    sidestep.trainingCourseType = RaceCourseTypeEnum.Flatland;
-    sidestep.statGain = 1;
-    sidestep.affectedStatRatios = new AnimalStats(0, 2, 0, 0, 0, 0);
-    this.globalVar.trainingOptions.push(sidestep);
+    this.globalVar.trainingOptions.push(this.initializeService.initializeTraining(TrainingOptionsEnum.ShortTrackRunning));
+    this.globalVar.trainingOptions.push(this.initializeService.initializeTraining(TrainingOptionsEnum.Sprints));
+    this.globalVar.trainingOptions.push(this.initializeService.initializeTraining(TrainingOptionsEnum.TrailRunning));
+    this.globalVar.trainingOptions.push(this.initializeService.initializeTraining(TrainingOptionsEnum.MoveLogs));
+    this.globalVar.trainingOptions.push(this.initializeService.initializeTraining(TrainingOptionsEnum.Footwork));
+    this.globalVar.trainingOptions.push(this.initializeService.initializeTraining(TrainingOptionsEnum.PracticeCommands));
+    this.globalVar.trainingOptions.push(this.initializeService.initializeTraining(TrainingOptionsEnum.ScentTraining));
+    this.globalVar.trainingOptions.push(this.initializeService.initializeTraining(TrainingOptionsEnum.SmallWagonTow));
+    this.globalVar.trainingOptions.push(this.initializeService.initializeTraining(TrainingOptionsEnum.Sidestep));
+    this.globalVar.trainingOptions.push(this.initializeService.initializeTraining(TrainingOptionsEnum.MediumTrackRunning));
+    this.globalVar.trainingOptions.push(this.initializeService.initializeTraining(TrainingOptionsEnum.UphillRun));
+    this.globalVar.trainingOptions.push(this.initializeService.initializeTraining(TrainingOptionsEnum.Puzzles));
+    this.globalVar.trainingOptions.push(this.initializeService.initializeTraining(TrainingOptionsEnum.MoveRocks));
+    this.globalVar.trainingOptions.push(this.initializeService.initializeTraining(TrainingOptionsEnum.DodgeBall));
+    this.globalVar.trainingOptions.push(this.initializeService.initializeTraining(TrainingOptionsEnum.BurstPractice));
+    this.globalVar.trainingOptions.push(this.initializeService.initializeTraining(TrainingOptionsEnum.Acrobatics));
+    this.globalVar.trainingOptions.push(this.initializeService.initializeTraining(TrainingOptionsEnum.LongTrackRunning));
+    this.globalVar.trainingOptions.push(this.initializeService.initializeTraining(TrainingOptionsEnum.VehicleTow));
+    this.globalVar.trainingOptions.push(this.initializeService.initializeTraining(TrainingOptionsEnum.LogJump));
+    this.globalVar.trainingOptions.push(this.initializeService.initializeTraining(TrainingOptionsEnum.Meditation));
+    this.globalVar.trainingOptions.push(this.initializeService.initializeTraining(TrainingOptionsEnum.WindSprints));
+    this.globalVar.trainingOptions.push(this.initializeService.initializeTraining(TrainingOptionsEnum.GreenwayHike));
+    this.globalVar.trainingOptions.push(this.initializeService.initializeTraining(TrainingOptionsEnum.Marathon));
+    this.globalVar.trainingOptions.push(this.initializeService.initializeTraining(TrainingOptionsEnum.AgilityCourse));
   }
 
   IncreaseCircuitRank(): void {
@@ -385,28 +335,41 @@ export class GlobalService {
     var circuitRank = "Z";
     var raceIndex = 1;
     var timeToComplete = 60;
-    var legLengthCutoff = timeToComplete / 4;
+    var legLengthCutoff = timeToComplete / 4; //a leg cannot be any shorter than this as a percentage
 
-    var baseMeters = 250;
+    var baseMeters = 100;
     var factor = 1.15;
 
     var maxRandomFactor = 1.1;
     var minRandomFactor = 0.9;
 
-    var legMinimumDistance = 20;
-    var legMaximumDistance = 80;
+    var legMinimumDistance = 20; //as a percentage of 100
+    var legMaximumDistance = 80; //as a percentage of 100
 
     for (var i = 0; i < 26; i++) //Circuit rank Z-A
     {
-      for (var j = 0; j < 5; j++) {
+      var circuitRaces = 5;
+      if (i === 0)
+        circuitRaces = 1;
+      else if (i == 1)
+        circuitRaces = 3;
+      for (var j = 0; j < circuitRaces; j++) {
         var raceLegs: RaceLeg[] = [];
-        var uniqueRacingTypes: RaceCourseTypeEnum[] = []; //if you're premaking these, you can't base it on their loadout at the time
+        var uniqueRacingTypes: RaceCourseTypeEnum[] = []; //if you're premaking these, you can't base it on the user's available animals at the time
 
         if (i < 2) //make these breakpoints configurable, figure out your time horizon on new races
         {
           var leg = new RaceLeg();
           leg.courseType = RaceCourseTypeEnum.Flatland;
-          leg.distance = Math.round(baseMeters * (factor ^ i) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor));
+          if (i === 1) {
+            if (j === 0)
+              leg.terrain = new Terrain(TerrainTypeEnum.Sunny);
+            else if (j === 1)
+              leg.terrain = new Terrain(TerrainTypeEnum.Rainy);
+            else if (j === 2)
+              leg.terrain = new Terrain(TerrainTypeEnum.Storms);
+          }
+          leg.distance = Math.round(baseMeters * (factor ** i) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor));
           raceLegs.push(leg);
         }
         else if (i <= 10) {
@@ -429,14 +392,14 @@ export class GlobalService {
           if (leg1Normalized > 0) {
             var leg1 = new RaceLeg();
             leg1.courseType = RaceCourseTypeEnum.Flatland;
-            leg1.distance = (Math.round(baseMeters * (factor ^ i) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor)) * (leg1Normalized / timeToComplete));
+            leg1.distance = (Math.round(baseMeters * (factor ** i) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor)) * (leg1Normalized / timeToComplete));
             raceLegs.push(leg1);
           }
 
           if (leg2Normalized > 0) {
             var leg2 = new RaceLeg();
             leg2.courseType = RaceCourseTypeEnum.Rock;
-            leg2.distance = (Math.round(baseMeters * (factor ^ i) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor)) * (leg2Normalized / timeToComplete));
+            leg2.distance = (Math.round(baseMeters * (factor ** i) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor)) * (leg2Normalized / timeToComplete));
             raceLegs.push(leg2);
           }
         }
@@ -444,7 +407,7 @@ export class GlobalService {
           //make it 3 race types but variable on what they are based on what the user has?
           var leg = new RaceLeg();
           leg.courseType = RaceCourseTypeEnum.Flatland;
-          leg.distance = Math.round(baseMeters * (factor ^ i) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor));
+          leg.distance = Math.round(baseMeters * (factor ** i) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor));
           raceLegs.push(leg);
         }
 
@@ -459,13 +422,9 @@ export class GlobalService {
         });
 
         //TODO: need to include rewards as well
-        var testRewards: ResourceValue[] = [];
-        testRewards.push(new ResourceValue("Resource1", 50));
-        testRewards.push(new ResourceValue("Resource2", 5));
-        testRewards.push(new ResourceValue("Resource3", 54));
-        testRewards.push(new ResourceValue("Resource4", 500));
 
-        this.globalVar.circuitRaces.push(new Race(raceLegs, circuitRank, true, raceIndex, totalDistance, testRewards));
+
+        this.globalVar.circuitRaces.push(new Race(raceLegs, circuitRank, true, raceIndex, totalDistance, this.GenerateCircuitRaceRewards(circuitRank)));
 
         raceIndex += 1;
       }
@@ -473,6 +432,45 @@ export class GlobalService {
       var charCode = circuitRank.charCodeAt(0);
       circuitRank = String.fromCharCode(--charCode);
     }
+  }
+
+  GetCircuitRankValue(circuitRank: string): number {
+    var rankValue = 1;
+
+    while (circuitRank.length > 1) {
+      var currentLength = circuitRank.length;
+      rankValue += 26;
+      circuitRank = circuitRank.substring(1);
+
+      if (circuitRank.length >= currentLength) //break while loop just in case there is an issue, I hate while loops
+        circuitRank = '';
+    }
+
+    var charCode = circuitRank.charCodeAt(0);
+    rankValue += charCode - 64; //A is 65
+
+    return rankValue;
+  }
+
+  GenerateCircuitRaceRewards(circuitRank: string): ResourceValue[] {
+    var numericRank = this.GetCircuitRankValue(circuitRank);
+    var moneyFactor = 1.1;
+    var baseMoney = 50;
+
+    var baseRenown = 1.1;
+    var renownFactor = 1.05;
+
+    var rewards: ResourceValue[] = [];
+
+    var currentRenownResource = this.globalVar.resources.find(item => item.name === "Renown");
+    var currentRenown = 1;
+    
+    if (currentRenownResource !== undefined)
+      currentRenown = currentRenownResource.amount;
+
+    rewards.push(new ResourceValue("Money", baseMoney * (moneyFactor ** numericRank) * currentRenown));
+    rewards.push(new ResourceValue("Renown", baseRenown * (renownFactor ** numericRank)));
+    return rewards;
   }
 
   GenerateRaceLegPaths(leg: RaceLeg, totalDistance: number): RacePath[] {
@@ -492,6 +490,7 @@ export class GlobalService {
       if (i === 0) {
         path.length = pathLength;
         path.routeDesign = RaceDesignEnum.Regular;
+        path.setStumbleFields();
         paths.push(path);
         continue;
       }
@@ -499,6 +498,7 @@ export class GlobalService {
       if (i === totalRoutes - 1) {
         path.length = totalLegLengthRemaining;
         path.routeDesign = RaceDesignEnum.Regular;
+        path.setStumbleFields();
         paths.push(path);
         continue;
       }
@@ -513,8 +513,11 @@ export class GlobalService {
       if (totalLegLengthRemaining < 0)
         totalLegLengthRemaining = 0;
 
-      if (!lastRouteSpecial)
+      if (!lastRouteSpecial) {
         path.routeDesign = this.GetSpecialRoute(leg.courseType);
+        leg.specialPathCount += 1;
+        path.isSpecialPath = true;
+      }
       else
         path.routeDesign = RaceDesignEnum.Regular;
 
@@ -523,6 +526,7 @@ export class GlobalService {
       else
         lastRouteSpecial = false;
 
+      path.setStumbleFields();
       paths.push(path);
     }
 
@@ -586,22 +590,23 @@ export class GlobalService {
     var breedLevelStatModifier = this.globalVar.modifiers.find(item => item.text === "breedLevelStatModifier");
     if (breedLevelStatModifier !== undefined && breedLevelStatModifier !== null)
       breedLevelStatModifierValue = breedLevelStatModifier.value;
-    breedLevelStatModifierValue = 1 + (breedLevelStatModifierValue * (animal.breedLevel-1));
+    breedLevelStatModifierValue = 1 + (breedLevelStatModifierValue * (animal.breedLevel - 1));
 
-    //do the calculations  
-    animal.currentStats.maxSpeedMs = animal.currentStats.topSpeed * (totalMaxSpeedModifier * breedLevelStatModifierValue);
-    animal.currentStats.accelerationMs = animal.currentStats.acceleration * (totalAccelerationModifier * breedLevelStatModifierValue);
-    animal.currentStats.stamina = animal.currentStats.endurance * (totalStaminaModifier * breedLevelStatModifierValue);
-    animal.currentStats.powerMs = animal.currentStats.power * (totalPowerModifier * breedLevelStatModifierValue);
-    animal.currentStats.focusMs = animal.currentStats.focus * (totalFocusModifier * breedLevelStatModifierValue);
-    animal.currentStats.adaptabilityMs = animal.currentStats.adaptability * (totalAdaptabilityModifier * breedLevelStatModifierValue);
+    //do the calculations      
+    animal.currentStats.maxSpeedMs = animal.currentStats.calculateMaxSpeed(totalMaxSpeedModifier * breedLevelStatModifierValue);
+    animal.currentStats.accelerationMs = animal.currentStats.calculateTrueAcceleration(totalAccelerationModifier * breedLevelStatModifierValue);
+    animal.currentStats.stamina = animal.currentStats.calculateStamina(totalStaminaModifier * breedLevelStatModifierValue);
+    animal.currentStats.powerMs = animal.currentStats.calculateTruePower(totalPowerModifier * breedLevelStatModifierValue);
+    animal.currentStats.focusMs = animal.currentStats.calculateTrueFocus(totalFocusModifier * breedLevelStatModifierValue);
+    animal.currentStats.adaptabilityMs = animal.currentStats.calculateTrueAdaptability(totalAdaptabilityModifier * breedLevelStatModifierValue);
+    animal.currentStats.burstChance = animal.currentStats.calculateBurstChance();
+    animal.currentStats.burstDistance = animal.currentStats.calculateBurstDistance();
   }
 
-  IncreaseAnimalBreedGauge(animal: Animal, amount: number) {    
+  IncreaseAnimalBreedGauge(animal: Animal, amount: number) {
     animal.breedGaugeXp += amount;
 
-    if (animal.breedGaugeXp >= animal.breedGaugeMax)
-    {
+    if (animal.breedGaugeXp >= animal.breedGaugeMax) {
       animal.breedGaugeXp = animal.breedGaugeMax;
     }
   }
@@ -617,6 +622,9 @@ export class GlobalService {
     animal.currentStats = new AnimalStats(animal.baseStats.topSpeed, animal.baseStats.acceleration, animal.baseStats.endurance,
       animal.baseStats.power, animal.baseStats.focus, animal.baseStats.adaptability);
     this.calculateAnimalRacingStats(animal);
-    
+  }
+
+  InitializeResources() {
+    this.globalVar.resources.push(this.initializeService.initializeResource("Money", 5000));
   }
 }

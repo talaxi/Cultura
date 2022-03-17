@@ -16,6 +16,9 @@
                 <div *ngIf="this.associatedAnimal.name === this.associatedAnimal.getAnimalType()">
                     <span>{{ this.associatedAnimal.getAnimalType() }}</span>
                 </div>
+                <div>
+                    <span>{{ this.sizeValue }}</span> <span *ngIf="this.sizeValue !== 'Large'"><button (click)="upgradeBarn()" [disabled]="canUpgrade">Upgrade</button></span>
+                </div>
                 <hr />
                 <span *ngIf="this.existingTraining !== null && this.existingTraining !== undefined">{{
                     this.existingTraining.trainingName }} </span>

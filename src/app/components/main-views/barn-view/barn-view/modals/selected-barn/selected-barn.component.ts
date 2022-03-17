@@ -1,6 +1,7 @@
 import { Component, HostListener, Input, OnInit, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
 import { Animal } from 'src/app/models/animals/animal.model';
 import { Barn } from 'src/app/models/barns/barn.model';
+import { FacilitySizeEnum } from 'src/app/models/facility-size-enum.model';
 import { TrainingOption } from 'src/app/models/training/training-option.model';
 import { GameLoopService } from 'src/app/services/game-loop/game-loop.service';
 import { GlobalService } from 'src/app/services/global-service.service';
@@ -25,6 +26,8 @@ export class SelectedBarnComponent implements OnInit {
   trainingProgressBarPercent: number;
   availableTrainings: TrainingOption[];
   availableAnimals: Animal[];
+  canUpgrade = false;
+  sizeValue: string;
 
   filterSpeed = false;
   filterAcceleration = false;
@@ -46,6 +49,7 @@ export class SelectedBarnComponent implements OnInit {
 
       if (globalBarn !== undefined) {
         this.barn = globalBarn;
+        this.getSizeValue();
 
         var associatedAnimal = this.globalService.globalVar.animals.find(item => item.associatedBarnNumber == this.selectedBarnNumber);
 
@@ -55,8 +59,7 @@ export class SelectedBarnComponent implements OnInit {
           this.associatedAnimalName = associatedAnimal.name;
           this.existingTraining = associatedAnimal.currentTraining;
 
-          this.availableTrainings = this.GetAvailableTrainingOptions(associatedAnimal);
-          console.log("Training Options: " + this.availableTrainings.length);
+          this.availableTrainings = this.GetAvailableTrainingOptions(associatedAnimal);          
         }
         else {
           this.animalAssigned = false;
@@ -117,12 +120,17 @@ export class SelectedBarnComponent implements OnInit {
       item.trainingCourseType === associatedAnimal.raceCourseType);
 
     if (this.filterAcceleration || this.filterAdaptability || this.filterEndurance || this.filterFocus || this.filterPower
-      || this.filterSpeed) {
-      trainingOptions = trainingOptions.filter(item => (this.filterAcceleration && item.affectedStatRatios.acceleration > 0) ||
-        (this.filterAdaptability && item.affectedStatRatios.adaptability > 0) ||
-        (this.filterEndurance && item.affectedStatRatios.endurance > 0) ||
-        (this.filterFocus && item.affectedStatRatios.focus > 0) || (this.filterPower && item.affectedStatRatios.power > 0) ||
-        (this.filterSpeed && item.affectedStatRatios.topSpeed > 0));
+      || this.filterSpeed || this.filterSmall || this.filterMedium || this.filterLarge) {
+      trainingOptions = trainingOptions.filter(item => (((!this.filterAcceleration && !this.filterAdaptability && !this.filterFocus &&
+        !this.filterSpeed && !this.filterPower && !this.filterEndurance) ||
+        (this.filterAcceleration && item.affectedStatRatios.acceleration > 0) ||
+          (this.filterAdaptability && item.affectedStatRatios.adaptability > 0) ||
+          (this.filterEndurance && item.affectedStatRatios.endurance > 0) ||
+          (this.filterFocus && item.affectedStatRatios.focus > 0) || (this.filterPower && item.affectedStatRatios.power > 0) ||
+          (this.filterSpeed && item.affectedStatRatios.topSpeed > 0))) && ((!this.filterSmall && !this.filterMedium && !this.filterLarge) ||
+            (this.filterSmall && item.facilitySize === FacilitySizeEnum.Small) ||
+            (this.filterMedium && item.facilitySize === FacilitySizeEnum.Medium) ||
+            (this.filterLarge && item.facilitySize === FacilitySizeEnum.Large)));
     }
 
     return trainingOptions;
@@ -209,6 +217,26 @@ export class SelectedBarnComponent implements OnInit {
     if (moneyAmount >= this.barn.purchasePrice) {
       this.barn.isLocked = false;
       this.lookupService.spendMoney(this.barn.purchasePrice);
+    }
+  }
+
+  getSizeValue() {
+    this.sizeValue = this.barn.getSize();
+  }
+
+  upgradeBarn(): void {
+    console.log("Upgrade Barn");
+    var moneyAmount = this.lookupService.getMoney();
+
+    if (moneyAmount >= this.barn.facilityUpgradePrice) {      
+      if (this.barn.size === FacilitySizeEnum.Small)
+        this.barn.size = FacilitySizeEnum.Medium;
+      else if (this.barn.size === FacilitySizeEnum.Medium)
+        this.barn.size = FacilitySizeEnum.Large;
+
+      this.getSizeValue();
+      console.log ("Upgraded to " + this.sizeValue);
+      this.lookupService.spendMoney(this.barn.facilityUpgradePrice);
     }
   }
 }

@@ -1,6 +1,8 @@
 import { Type } from "class-transformer";
 import { RaceCourseTypeEnum } from "../race-course-type-enum.model";
+import { TerrainTypeEnum } from "../terrain-type-enum.model";
 import { RacePath } from "./race-path.model";
+import { Terrain } from "./terrain.model";
 
 export class RaceLeg {
     courseType: RaceCourseTypeEnum;
@@ -8,6 +10,9 @@ export class RaceLeg {
     legComplete = false;
     @Type(() => RacePath)
     pathData: RacePath[];
+    @Type(() => Terrain)
+    terrain: Terrain;
+    specialPathCount: number;
 
     constructor(courseType?: RaceCourseTypeEnum, distance?: number) {
         if (courseType !== undefined && courseType !== null)
@@ -19,8 +24,14 @@ export class RaceLeg {
         this.pathData = [];
     }
 
-    getCourseTypeName()
-    {
+    getCourseTypeName() {
         return RaceCourseTypeEnum[this.courseType];
+    }
+
+    getTerrainName() {
+        if (this.terrain === undefined || this.terrain === null)
+            return "";
+
+        return TerrainTypeEnum[this.terrain.terrainType];
     }
 }

@@ -7,7 +7,7 @@ import { AnimalStats } from "./animal-stats.model";
 import { RaceVariables } from "./race-variables.model";
 
 export class Animal {
-    name: string;    
+    name: string;
     type: AnimalTypeEnum;
     raceCourseType: RaceCourseTypeEnum;
     @Type(() => AnimalStats)
@@ -25,12 +25,12 @@ export class Animal {
     breedLevel: number;
     breedGaugeXp: number;
     breedGaugeMax: number;
-    
+
 
     constructor() {
         this.breedLevel = 1;
         this.breedGaugeXp = 0;
-        this.breedGaugeMax = 1000;
+        this.breedGaugeMax = 10;
     }
 
     viewAbility(): string {
@@ -42,6 +42,10 @@ export class Animal {
     }
 
     useAbility(): void {
+        if (this.type === AnimalTypeEnum.Horse) {
+            this.ability.abilityInUse = true;
+            this.ability.remainingLength = this.ability.efficiency * (1 + this.currentStats.powerMs);            
+        }
     }
 
     getAnimalType(): string {
@@ -75,7 +79,7 @@ export class Horse extends Animal {
     constructor() {
         super();
         this.baseStats = new AnimalStats(5, 5, 5, 5, 5, 5);
-        this.currentStats = new AnimalStats(5, 5, 5, 5, 5, 5);        
+        this.currentStats = new AnimalStats(5, 5, 5, 5, 5, 5);
 
         this.type = AnimalTypeEnum.Horse;
         this.raceCourseType = RaceCourseTypeEnum.Flatland;
@@ -94,7 +98,7 @@ export class Horse extends Animal {
 
     override useAbility(): void {
         this.ability.abilityInUse = true;
-        this.ability.remainingLength = this.ability.efficiency * (1 + this.currentStats.powerMs);
+        this.ability.remainingLength = this.ability.efficiency * (1 + this.currentStats.powerMs);        
     }
 }
 
@@ -111,8 +115,8 @@ export class Cheetah extends Animal {
         this.ability = new Ability();
         this.ability.cooldown = 10;
         this.ability.efficiency = 4;
-        this.ability.name = "Sprint";     
-        
+        this.ability.name = "Sprint";
+
         this.raceVariables = new RaceVariables();
     }
 

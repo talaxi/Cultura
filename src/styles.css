@@ -100,3 +100,18 @@ h1
 {
     font-size: var(--h1-size);
 }
+
+.flatlandColor
+{  
+  color: #9e4d3a;   
+}
+
+.rockColor
+{
+  color: #999999;
+}
+
+.waterColor
+{
+  color: #2326c2;
+}

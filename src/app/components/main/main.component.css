@@ -2,8 +2,8 @@
     display: grid;
     width: 100vw;
     height: 100vh;
-    grid-template-columns: 85% 15%;
-    grid-template-rows: 10% 80% 10%;
+    grid-template-columns: 88% 12%;
+    grid-template-rows: 5% 90% 5%;
     justify-content: stretch;
     grid-template-areas: 
       "header header"
