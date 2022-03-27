@@ -4,6 +4,7 @@ export class AnimalDeck {
     name: string;
     selectedAnimals: Animal[];
     isPrimaryDeck: boolean;
+    deckNumber: number;
     isAvailable: boolean;
 
     constructor() {

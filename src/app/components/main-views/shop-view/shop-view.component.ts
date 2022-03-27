@@ -14,7 +14,7 @@ export class ShopViewComponent implements OnInit {
   filterFacility = false;
   filterFood = false;
   filterSpecialty = false;
-  filterEnhancers = false;
+  filterAbilities = false;
 
   constructor(private globalService: GlobalService) { }
 
@@ -51,11 +51,12 @@ export class ShopViewComponent implements OnInit {
     if (specialtyShopSection !== undefined)
       this.sections.push(specialtyShopSection);
 
-    var enhancersShopSection = this.globalService.globalVar.shop.find(item => item.name === "Enhancers" &&
-      (!filtersActive || (filtersActive && this.filterEnhancers)));
-    if (enhancersShopSection !== undefined)
-      this.sections.push(enhancersShopSection);
+    var abilitiesShopSection = this.globalService.globalVar.shop.find(item => item.name === "Abilities" &&
+      (!filtersActive || (filtersActive && this.filterAbilities)));
+    if (abilitiesShopSection !== undefined)
+      this.sections.push(abilitiesShopSection);
   }
+
 
   toggleShopFilter(sectionName: string): void {
     if (sectionName === "Animals")
@@ -68,14 +69,14 @@ export class ShopViewComponent implements OnInit {
       this.filterFood = !this.filterFood;
     if (sectionName === "Specialty")
       this.filterSpecialty = !this.filterSpecialty;
-    if (sectionName === "Enhancers")
-      this.filterEnhancers = !this.filterEnhancers;
+    if (sectionName === "Abilities")
+      this.filterAbilities = !this.filterAbilities;
 
     this.getShopOptions();
   }
 
   filtersActive(): boolean {
-    if (this.filterAnimals || this.filterEnhancers || this.filterFacility || this.filterFood || this.filterSpecialty || this.filterTrainings)
+    if (this.filterAnimals || this.filterAbilities || this.filterFacility || this.filterFood || this.filterSpecialty || this.filterTrainings)
       return true;
     else
       return false;

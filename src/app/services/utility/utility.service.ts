@@ -19,4 +19,9 @@ export class UtilityService {
   getRandomNumberPercent(): number {
     return (Math.random()  * (99) + 1);
   }  
+
+  
+  getRenownCircuitRaceModifier(totalRenown: number) {
+    return 1 + totalRenown;
+  }
 }

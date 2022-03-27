@@ -1,6 +1,9 @@
 <div class="settingsView">
-    <!--<input id="importExport" name="importExport" #importExportValue>            -->
-    <textarea id="importExport" name="importExport" rows="10" cols="200" [(ngModel)]="importExportValue">  
+    <div class="custom-control custom-switch">
+        <input type="checkbox" class="custom-control-input" id="skipDrawRace" [(ngModel)]="skipDrawRace" (input)="skipDrawRaceToggle()">
+        <label class="custom-control-label" for="skipDrawRace">Auto Skip Race Info</label>
+      </div>
+    <textarea id="importExport" name="importExport" rows="10" [(ngModel)]="importExportValue">  
     </textarea>
     <button (click)="SaveGame()">
         Export

@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { ResourceValue } from 'src/app/models/resources/resource-value.model';
 import { GlobalService } from 'src/app/services/global-service.service';
+import { LookupService } from 'src/app/services/lookup.service';
 
 @Component({
   selector: 'app-resources-view',
@@ -7,10 +9,12 @@ import { GlobalService } from 'src/app/services/global-service.service';
   styleUrls: ['./resources-view.component.css']
 })
 export class ResourcesViewComponent implements OnInit {
+  resources: ResourceValue[] = [];
 
-  constructor(private globalService: GlobalService) { }
+  constructor(private globalService: GlobalService, private lookupService: LookupService) { }
 
   ngOnInit(): void {
+    this.resources = this.globalService.globalVar.resources;
   }
 
   displayResources(): string {
@@ -21,5 +25,9 @@ export class ResourcesViewComponent implements OnInit {
     });
 
     return totalResources;
+  }
+
+  getPopover(name: string) {
+    return this.lookupService.getResourcePopover(name);
   }
 }

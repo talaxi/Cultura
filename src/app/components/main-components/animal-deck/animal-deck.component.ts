@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { AnimalDeck } from 'src/app/models/animals/animal-deck.model';
 import { GlobalService } from 'src/app/services/global-service.service';
 
@@ -9,13 +9,21 @@ import { GlobalService } from 'src/app/services/global-service.service';
 })
 export class AnimalDeckComponent implements OnInit {
   deck: AnimalDeck;
+  @Input() deckNumber: number;
 
   constructor(private globalService: GlobalService) { }
 
   ngOnInit(): void {
-    var primaryDeck = this.globalService.globalVar.animalDecks.find(item => item.isPrimaryDeck);
-    if (primaryDeck !== undefined && primaryDeck !== null)
-      this.deck = primaryDeck;
+    if (this.deckNumber === 0 || this.deckNumber === undefined || this.deckNumber === null) {
+      var primaryDeck = this.globalService.globalVar.animalDecks.find(item => item.isPrimaryDeck);
+      if (primaryDeck !== undefined && primaryDeck !== null)
+        this.deck = primaryDeck;
+    }
+    else
+    {
+      var selectedDeck = this.globalService.globalVar.animalDecks.find(item => item.deckNumber === this.deckNumber);
+      if (selectedDeck !== undefined && selectedDeck !== null)
+        this.deck = selectedDeck;
+    }
   }
-
 }

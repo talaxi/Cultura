@@ -41,6 +41,7 @@ export class GlobalService {
     this.globalVar.modifiers = [];
     this.globalVar.animalDecks = [];
     this.globalVar.barns = [];
+    this.globalVar.settings = new Map<string, boolean>();
 
     //Initialize modifiers
     this.InitializeModifiers();
@@ -58,7 +59,7 @@ export class GlobalService {
     this.InitializeBarns();
 
     //Initialize circuit race information
-    this.globalVar.circuitRank = "Z";
+    this.globalVar.circuitRank = "X";
     this.GenerateCircuitRaces();
 
     //Initialize local race information
@@ -66,6 +67,8 @@ export class GlobalService {
     //Initialize resources
     this.InitializeResources();
 
+    //Initialize settings
+    this.InitializeSettings();
   }
 
   InitializeModifiers(): void {
@@ -129,6 +132,7 @@ export class GlobalService {
 
     var monkey = new Monkey();
     monkey.name = "Monkey";
+    monkey.isAvailable = true;
     this.calculateAnimalRacingStats(monkey);
 
     var cheetah = new Cheetah();
@@ -158,6 +162,7 @@ export class GlobalService {
     this.globalVar.animalDecks.push(deck);
   }
 
+  //TODO: Move descriptions out of here and into lookup service so that this doesn't have to be stored in storage
   InitializeShop(): void {
     this.globalVar.shop = [];
 
@@ -174,7 +179,7 @@ export class GlobalService {
 
     var monkey = new ShopItem();
     monkey.name = "Monkey";
-    monkey.description = "The monkey is a rock climbing animal that can use its considerable strength to drop rocks on its opponents.";
+    monkey.description = "The monkey is a mountain climbing animal that can use its considerable strength to drop rocks on its opponents.";
     monkey.purchasePrice = 500;
     monkey.canHaveMultiples = false;
     monkey.type = ShopItemTypeEnum.Animal;
@@ -182,7 +187,7 @@ export class GlobalService {
 
     var goat = new ShopItem();
     goat.name = "Goat";
-    goat.description = "The goat is a rock climbing animal that can nimbly travel terrain.";
+    goat.description = "The goat is a mountain climbing animal that can nimbly travel terrain.";
     goat.purchasePrice = 500;
     goat.canHaveMultiples = false;
     goat.type = ShopItemTypeEnum.Animal;
@@ -228,6 +233,14 @@ export class GlobalService {
     carrot.type = ShopItemTypeEnum.Food;
     foodShopItems.push(carrot);
 
+    var turnip = new ShopItem();
+    turnip.name = "Turnip";
+    turnip.description = "+1 Focus to a single animal";
+    turnip.purchasePrice = 50;
+    turnip.canHaveMultiples = true;
+    turnip.type = ShopItemTypeEnum.Food;
+    foodShopItems.push(turnip);
+
     foodShopSection.name = "Food";
     foodShopSection.itemList = foodShopItems;
     this.globalVar.shop.push(foodShopSection);
@@ -248,6 +261,27 @@ export class GlobalService {
     trainingShopSection.name = "Trainings";
     trainingShopSection.itemList = trainingShopItems;
     this.globalVar.shop.push(trainingShopSection);
+
+    var abilityShopSection = new ShopSection();
+    var abilityShopItems: ShopItem[] = [];
+
+    this.globalVar.animals.forEach(animal => {
+      animal.availableAbilities.forEach(ability => {
+        if (!ability.isAbilityPurchased) {
+          var purchasableAbility = new ShopItem();
+          purchasableAbility.name = animal.getAnimalType() + " Ability: " + ability.name;
+          purchasableAbility.description = ability.description;
+          purchasableAbility.purchasePrice = ability.purchasePrice;
+          purchasableAbility.canHaveMultiples = false;
+          purchasableAbility.type = ShopItemTypeEnum.Ability;
+          abilityShopItems.push(purchasableAbility);
+        }
+      });
+    });
+
+    abilityShopSection.name = "Abilities";
+    abilityShopSection.itemList = abilityShopItems;
+    this.globalVar.shop.push(abilityShopSection);
   }
 
   InitializeBarns(): void {
@@ -398,7 +432,7 @@ export class GlobalService {
 
           if (leg2Normalized > 0) {
             var leg2 = new RaceLeg();
-            leg2.courseType = RaceCourseTypeEnum.Rock;
+            leg2.courseType = RaceCourseTypeEnum.Mountain;
             leg2.distance = (Math.round(baseMeters * (factor ** i) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor)) * (leg2Normalized / timeToComplete));
             raceLegs.push(leg2);
           }
@@ -429,6 +463,8 @@ export class GlobalService {
         raceIndex += 1;
       }
 
+      console.log(this.globalVar.circuitRaces);
+
       var charCode = circuitRank.charCodeAt(0);
       circuitRank = String.fromCharCode(--charCode);
     }
@@ -447,7 +483,7 @@ export class GlobalService {
     }
 
     var charCode = circuitRank.charCodeAt(0);
-    rankValue += charCode - 64; //A is 65
+    rankValue += 91 - charCode; //Z is 90
 
     return rankValue;
   }
@@ -464,12 +500,12 @@ export class GlobalService {
 
     var currentRenownResource = this.globalVar.resources.find(item => item.name === "Renown");
     var currentRenown = 1;
-    
+
     if (currentRenownResource !== undefined)
       currentRenown = currentRenownResource.amount;
 
-    rewards.push(new ResourceValue("Money", baseMoney * (moneyFactor ** numericRank) * currentRenown));
-    rewards.push(new ResourceValue("Renown", baseRenown * (renownFactor ** numericRank)));
+    rewards.push(new ResourceValue("Money", Math.round(baseMoney * (moneyFactor ** numericRank)))); //you can't do the modifier here, your renown is fixed at the very beginning when you generate
+    rewards.push(new ResourceValue("Renown", parseFloat(((baseRenown * (renownFactor ** numericRank)) / 100).toFixed(3))));
     return rewards;
   }
 
@@ -477,12 +513,12 @@ export class GlobalService {
     var paths: RacePath[] = [];
     var totalLegLengthRemaining = leg.distance;
     var pathLength = totalDistance / 20;
-    var totalRoutes = totalLegLengthRemaining / pathLength;
+    var totalRoutes = Math.round(totalLegLengthRemaining / pathLength);
     var lastRouteSpecial = false;
 
     //console.log("totalLegLengthRemaining: " + totalLegLengthRemaining);
     //console.log("pathLength: " + pathLength);
-    //console.log("totalRoutes: " + totalRoutes);
+    console.log("totalRoutes: " + totalRoutes);
 
     for (var i = 0; i < totalRoutes; i++) {
       var path = new RacePath();
@@ -492,6 +528,7 @@ export class GlobalService {
         path.routeDesign = RaceDesignEnum.Regular;
         path.setStumbleFields();
         paths.push(path);
+        totalLegLengthRemaining -= path.length;
         continue;
       }
 
@@ -545,10 +582,14 @@ export class GlobalService {
     else if (routeType === 2) {
       if (courseType === RaceCourseTypeEnum.Flatland)
         specialRoute = RaceDesignEnum.S;
+      else if (courseType === RaceCourseTypeEnum.Mountain)
+        specialRoute = RaceDesignEnum.Crevasse;
     }
     else if (routeType === 3) {
       if (courseType === RaceCourseTypeEnum.Flatland)
         specialRoute = RaceDesignEnum.Bumps;
+      else if (courseType === RaceCourseTypeEnum.Mountain)
+        specialRoute = RaceDesignEnum.Gaps;
     }
 
     return specialRoute;
@@ -626,5 +667,9 @@ export class GlobalService {
 
   InitializeResources() {
     this.globalVar.resources.push(this.initializeService.initializeResource("Money", 5000));
+  }
+
+  InitializeSettings() {
+    this.globalVar.settings.set("skipDrawRace", false);
   }
 }

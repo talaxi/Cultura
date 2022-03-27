@@ -30,5 +30,13 @@ export class RacePath {
             this.stumbleSeverity = StumbleSeverityEnum.Medium;
             this.frequencyOfStumble = 15;
         }
+        if (this.routeDesign === RaceDesignEnum.Crevasse) {
+            this.stumbleSeverity = StumbleSeverityEnum.High;
+            this.frequencyOfStumble = 10;
+        }
+        if (this.routeDesign === RaceDesignEnum.Gaps) {
+            this.stumbleSeverity = StumbleSeverityEnum.Medium;
+            this.frequencyOfStumble = 50;
+        }
     }
 }

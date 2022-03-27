@@ -116,8 +116,7 @@ export class SelectedBarnComponent implements OnInit {
       return trainingOptions;
     }
 
-    trainingOptions = this.globalService.globalVar.trainingOptions.filter(item => item.isAvailable &&
-      item.trainingCourseType === associatedAnimal.raceCourseType);
+    trainingOptions = this.globalService.globalVar.trainingOptions.filter(item => item.isAvailable);
 
     if (this.filterAcceleration || this.filterAdaptability || this.filterEndurance || this.filterFocus || this.filterPower
       || this.filterSpeed || this.filterSmall || this.filterMedium || this.filterLarge) {

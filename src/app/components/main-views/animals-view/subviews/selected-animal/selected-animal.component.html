@@ -33,7 +33,6 @@
     <br />
     <hr />
     <br />
-    <!--Grid this, split page 50/50-->
     <div class="gridContainer">
         <div class="trainableStats">
             <span ngbPopover="{{ selectedAnimal.currentStats.topSpeedPopover(maxSpeedModifierAmount) }}"
@@ -96,6 +95,17 @@
                 triggers="mouseenter:mouseleave" popoverClass="popoverClass">
                 Adaptability: ~{{ selectedAnimal.currentStats.adaptabilityMs | number : '1.2-2' }} m
             </span>
+        </div>
+    </div>
+    <div class="abilities">
+        <p>Abilities</p>
+        <div>
+            <span class="ability1" (click)="selectAbility(ability1)" [class.filterActive]="selectedAnimal.ability.name === ability1.name">{{ ability1.name }} </span>
+            <span *ngIf="ability2.isAbilityPurchased" class="ability2" (click)="selectAbility(ability2)" [class.filterActive]="selectedAnimal.ability.name === ability2.name">{{ ability2.name }} </span>
+            <span *ngIf="ability3.isAbilityPurchased" class="ability3" (click)="selectAbility(ability3)" [class.filterActive]="selectedAnimal.ability.name === ability3.name">{{ ability3.name }} </span>
+            <p>
+                {{ selectedAnimal.ability.description }}
+            </p>
         </div>
     </div>
 </div>

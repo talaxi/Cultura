@@ -11,10 +11,16 @@ declare var LZString: any;
 })
 export class SettingsViewComponent implements OnInit {
   importExportValue: string;
+  skipDrawRace: boolean;
 
   constructor(private globalService: GlobalService) { }
 
-  ngOnInit(): void {
+  ngOnInit(): void {    
+    var globalSkipDrawRace = this.globalService.globalVar.settings.get("skipDrawRace");
+    if (globalSkipDrawRace === undefined)
+      this.skipDrawRace = false;
+    else
+      this.skipDrawRace = globalSkipDrawRace;
   }
 
   public SaveGame() {
@@ -23,9 +29,14 @@ export class SettingsViewComponent implements OnInit {
     this.importExportValue = compressedData;
   }
 
-  public LoadGame() {    
+  public LoadGame() {
     var decompressedData = LZString.decompressFromBase64(this.importExportValue);
     var loadDataJson = <GlobalVariables>JSON.parse(decompressedData);
     this.globalService.globalVar = plainToInstance(GlobalVariables, loadDataJson);
+  }
+
+  skipDrawRaceToggle() {
+    this.skipDrawRace = !this.skipDrawRace;
+    this.globalService.globalVar.settings.set("skipDrawRace", this.skipDrawRace);    
   }
 }

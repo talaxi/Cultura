@@ -1,5 +1,7 @@
 export enum RaceDesignEnum {
     Regular,
     S,
-    Bumps //vvvv reversed
+    Bumps,
+    Crevasse, //deep V
+    Gaps
   }

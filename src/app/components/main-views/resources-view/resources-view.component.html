@@ -1,3 +1,8 @@
 <div class="resourcesView">
-    <p class="resources">{{ this.displayResources() }}</p>
+    <div class="resources">
+        <p *ngFor="let resource of resources;" ngbPopover="{{ this.getPopover(resource.name) }}"
+            triggers="mouseenter:mouseleave" popoverClass="popoverClass">
+            {{ resource.name }}: {{ resource.amount }}
+        </p>
+    </div>
 </div>

@@ -4,7 +4,7 @@
     <div class="items">
         <table>
             <tr *ngFor="let cells of itemsRows;">
-                <td *ngFor="let c of cells;">
+                <td *ngFor="let c of cells;"  class="cell">
                     <div>
                         <app-shopping-item [selectedItem]="c" (itemPurchased)="itemPurchased($event)"> </app-shopping-item>
                     </div>

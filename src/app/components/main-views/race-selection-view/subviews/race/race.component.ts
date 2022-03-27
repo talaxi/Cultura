@@ -1,5 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Subject } from 'rxjs';
 import { AnimalTypeEnum } from 'src/app/models/animal-type-enum.model';
+import { Ability } from 'src/app/models/animals/ability.model';
 import { Animal } from 'src/app/models/animals/animal.model';
 import { RaceVariables } from 'src/app/models/animals/race-variables.model';
 import { RacePath } from 'src/app/models/races/race-path.model';
@@ -27,12 +29,19 @@ export class RaceComponent implements OnInit {
   rewardRows: string[][];
   rewardCells: string[];
   @Output() raceFinished = new EventEmitter<boolean>();
+  skipRace: Subject<boolean> = new Subject<boolean>();
+  raceSkipped = false;
+  frameModifier = 60;
+  timeToComplete = 60;
 
   constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private utilityService: UtilityService,
     private lookupService: LookupService, private initializeService: InitializeService) { }
 
   ngOnInit(): void {
     this.runRace(this.selectedRace);
+
+    if (this.globalService.globalVar.settings.get("skipDrawRace"))
+      this.raceSkipped = true;
   }
 
   runRace(race: Race): RaceResult {
@@ -40,12 +49,13 @@ export class RaceComponent implements OnInit {
     var totalRaceDistance = 0;
     var distanceCovered = 0;
     race.raceLegs.forEach(item => totalRaceDistance += item.distance);
-    var secondsPassed = 0;
+    var framesPassed = 0;
     if (race.timeToComplete === 0 || race.timeToComplete === undefined || race.timeToComplete === null)
       race.timeToComplete = 60;
     var distancePerSecond = totalRaceDistance / race.timeToComplete;
     var selectedDeck = this.globalService.globalVar.animalDecks.find(item => item.isPrimaryDeck);
-    var completedLegCount = 0;    
+    var completedLegCount = 0;
+    this.timeToComplete = race.timeToComplete;
 
     if (selectedDeck === undefined) {
       raceResult.errorMessage = 'No animal deck selected.';
@@ -56,7 +66,7 @@ export class RaceComponent implements OnInit {
 
     race.raceUI.distanceCoveredBySecond = [];
     race.raceUI.velocityBySecond = [];
-    
+
     //calculate speed of animal based on acceleration and top speed (no obstacles)
     race.raceLegs.forEach(item => {
       var racingAnimal = this.racingAnimals.find(animal => animal.raceCourseType === item.courseType);
@@ -64,12 +74,9 @@ export class RaceComponent implements OnInit {
         //TODO: throw error? no animal found
         return;
       }
+      console.log(racingAnimal.name + " Start");
       this.PrepareRacingAnimal(racingAnimal);
-      raceResult.addRaceUpdate(secondsPassed, racingAnimal.name + " starts their leg of the race.");      
-      for (var i=0; i < item.specialPathCount; i++)
-      {
-
-      }
+      raceResult.addRaceUpdate(framesPassed, racingAnimal.name + " starts their leg of the race.");
 
       var animalMaxStamina = racingAnimal.currentStats.stamina;
       var velocity = 0;
@@ -77,7 +84,7 @@ export class RaceComponent implements OnInit {
       var currentPath = new RacePath();
       var currentPathCount = 0;
 
-      for (var i = secondsPassed; i <= race.timeToComplete; i++) {
+      for (var i = framesPassed; i <= this.timeToComplete * this.frameModifier; i++) {
         //Race logic here
         var completedLegDistance = 0;
         if (completedLegCount > 0) {
@@ -88,41 +95,40 @@ export class RaceComponent implements OnInit {
 
         var currentDistanceInLeg = distanceCovered - completedLegDistance;
         var pathFound = false;
-        var totalDistanceInLeg = 0; 
-        
-        item.pathData.forEach(path => {          
-          if (!pathFound && currentDistanceInLeg >= totalDistanceInLeg && currentDistanceInLeg < totalDistanceInLeg + path.length)
-          {
+        var totalDistanceInLeg = 0;
+
+        item.pathData.forEach(path => {
+          if (!pathFound && currentDistanceInLeg >= totalDistanceInLeg && currentDistanceInLeg < totalDistanceInLeg + path.length) {
             pathFound = true;
             currentPath = path;
           }
           path.legStartingDistance = totalDistanceInLeg;
           totalDistanceInLeg += path.length;
-          currentPathCount += 1;          
-        });        
-        
-        var didAnimalStumble = this.didAnimalStumble(racingAnimal, currentPath);
-        var didAnimalLoseFocus = this.didAnimalLoseFocus(racingAnimal);
+          currentPathCount += 1;
+        });
+
+        var didAnimalStumble = this.didAnimalStumble(racingAnimal, currentPath, framesPassed);
+        var didAnimalLoseFocus = this.didAnimalLoseFocus(racingAnimal, framesPassed);
 
         if (didAnimalLoseFocus) {
           racingAnimal.raceVariables.lostFocus = true;
           racingAnimal.raceVariables.currentLostFocusLength = racingAnimal.raceVariables.defaultLostFocusLength;
           racingAnimal.raceVariables.metersSinceLostFocus = 0;
 
-          raceResult.addRaceUpdate(secondsPassed, racingAnimal.name + " got distracted and lost focus!");
+          raceResult.addRaceUpdate(framesPassed, racingAnimal.name + " got distracted and lost focus!");
         }
 
-        if (didAnimalStumble) {          
+        if (didAnimalStumble) {
           racingAnimal.raceVariables.stumbled = true;
 
-          raceResult.addRaceUpdate(secondsPassed, racingAnimal.name + " stumbled!");          
+          raceResult.addRaceUpdate(framesPassed, racingAnimal.name + " stumbled!");
         }
 
         if (racingAnimal.currentStats.stamina === 0) {
           racingAnimal.raceVariables.recoveringStamina = true;
           velocity = velocity / 2;
-    
-          raceResult.addRaceUpdate(secondsPassed, racingAnimal.name + " ran out of stamina and must slow down.");
+
+          raceResult.addRaceUpdate(framesPassed, racingAnimal.name + " ran out of stamina and must slow down.");
         }
 
         //Handle logic for recovering stamina / lost focus / stumbled
@@ -156,71 +162,68 @@ export class RaceComponent implements OnInit {
           }
         }
         else {
-          velocity += racingAnimal.currentStats.accelerationMs;
+          velocity += racingAnimal.currentStats.accelerationMs / this.frameModifier;
         }
 
-        if (velocity > racingAnimal.currentStats.maxSpeedMs)
-          velocity = racingAnimal.currentStats.maxSpeedMs;
+        if (velocity > racingAnimal.currentStats.maxSpeedMs)// / this.frameModifier)
+          velocity = racingAnimal.currentStats.maxSpeedMs;// / this.frameModifier;
 
         //if you are entering a new path, check if you burst here
         //if so, do the necessary number adjustments
-        if (currentDistanceInLeg + velocity >= currentPath.legStartingDistance + currentPath.length)
-        {
+        if (currentDistanceInLeg + velocity >= currentPath.legStartingDistance + currentPath.length && this.isSecond(framesPassed)) {
           //Entering new path
           var doesRacerBurst = this.doesRacerBurst(racingAnimal, currentPath);
-          if (doesRacerBurst)
-          {
+          if (doesRacerBurst) {
             //do a raceupdate
             racingAnimal.raceVariables.isBursting = true;
             racingAnimal.raceVariables.remainingBurstMeters = racingAnimal.currentStats.burstDistance;
-            raceResult.addRaceUpdate(secondsPassed, "BURST! " + racingAnimal.name + " is breaking their limit!");   
+            raceResult.addRaceUpdate(framesPassed, "BURST! " + racingAnimal.name + " is breaking their limit!");
           }
         }
 
-        var modifiedVelocity = velocity;        
+        //gotta get your new speed calcs right
+        var modifiedVelocity = velocity;// / this.frameModifier;
         //do any velocity modifications here before finalizing distance traveled per sec
 
         //do modifier until you are about to run out of burst, then do it fractionally
-        if (racingAnimal.raceVariables.isBursting)
-        {
+        if (racingAnimal.raceVariables.isBursting) {
           var burstModifier = 1.25;
 
-          if (racingAnimal.raceVariables.remainingBurstMeters >= modifiedVelocity)
-          {
+          if (racingAnimal.raceVariables.remainingBurstMeters >= modifiedVelocity) {
             modifiedVelocity *= burstModifier;
             racingAnimal.raceVariables.remainingBurstMeters -= modifiedVelocity;
 
-            if (racingAnimal.raceVariables.remainingBurstMeters < 0)
-            {
+            if (racingAnimal.raceVariables.remainingBurstMeters < 0) {
               //overshot the amount, add back the excess
               modifiedVelocity += racingAnimal.raceVariables.remainingBurstMeters;
               racingAnimal.raceVariables.remainingBurstMeters = 0;
             }
           }
-          else
-          {            
-            modifiedVelocity -= racingAnimal.raceVariables.remainingBurstMeters;           
-            modifiedVelocity += racingAnimal.raceVariables.remainingBurstMeters * burstModifier;            
+          else {
+            modifiedVelocity -= racingAnimal.raceVariables.remainingBurstMeters;
+            modifiedVelocity += racingAnimal.raceVariables.remainingBurstMeters * burstModifier;
             racingAnimal.raceVariables.remainingBurstMeters = 0;
-            racingAnimal.raceVariables.isBursting = false;     
-            raceResult.addRaceUpdate(secondsPassed, racingAnimal.name + "'s burst ends.");              
+            racingAnimal.raceVariables.isBursting = false;
+            raceResult.addRaceUpdate(framesPassed, racingAnimal.name + "'s burst ends.");
           }
         }
-        
-        distanceCovered += modifiedVelocity;
-        distanceToGo -= modifiedVelocity;
+
+        //don't go further than distance to go
+        var distanceCoveredPerFrame = modifiedVelocity / this.frameModifier;
+        distanceCovered += distanceCoveredPerFrame > distanceToGo ? distanceToGo : distanceCoveredPerFrame;
+        distanceToGo -= distanceCoveredPerFrame;
         race.raceUI.distanceCoveredBySecond.push(distanceCovered);
-        race.raceUI.velocityBySecond.push(modifiedVelocity);
+        race.raceUI.velocityBySecond.push(distanceCoveredPerFrame);
 
         if (!racingAnimal.raceVariables.recoveringStamina)
-          this.handleStamina(racingAnimal, raceResult, modifiedVelocity, secondsPassed, item.terrain);
+          this.handleStamina(racingAnimal, raceResult, distanceCoveredPerFrame, framesPassed, item.terrain);
 
         //Cooldown housekeeping
         if (!didAnimalLoseFocus)
-          racingAnimal.raceVariables.metersSinceLostFocus += modifiedVelocity;
+          racingAnimal.raceVariables.metersSinceLostFocus += distanceCoveredPerFrame;
 
         if (racingAnimal.ability.abilityInUse) {
-          racingAnimal.ability.remainingLength -= modifiedVelocity;
+          racingAnimal.ability.remainingLength -= distanceCoveredPerFrame;
 
           if (racingAnimal.ability.remainingLength <= 0) {
             racingAnimal.ability.abilityInUse = false;
@@ -230,29 +233,31 @@ export class RaceComponent implements OnInit {
 
         if (racingAnimal.ability.currentCooldown <= 0 && this.abilityRedundancyCheck(racingAnimal)) {
           var timingUpdate: StringNumberPair = new StringNumberPair();
-          timingUpdate.value = secondsPassed;
+          timingUpdate.value = framesPassed;
           timingUpdate.text = racingAnimal.getAbilityUseUpdateText();
           raceResult.raceUpdates.push(timingUpdate);
-          racingAnimal.useAbility();          
+          //racingAnimal.useAbility();
+          this.useAbility(racingAnimal, race);
           racingAnimal.ability.currentCooldown = racingAnimal.ability.cooldown;
         }
 
         //Race housekeeping here
-        if (secondsPassed !== 0 && secondsPassed !== race.timeToComplete && secondsPassed % 10 === 0) {
+        if (framesPassed !== 0 && framesPassed !== this.timeToComplete && framesPassed % (10 * this.frameModifier) === 0) {
           var timingUpdate: StringNumberPair = new StringNumberPair();
-          timingUpdate.value = secondsPassed;
-          timingUpdate.text = this.getUpdateMessageByRelativeDistance(distancePerSecond, secondsPassed, distanceCovered, racingAnimal.name);
+          timingUpdate.value = framesPassed;
+          timingUpdate.text = this.getUpdateMessageByRelativeDistance(distancePerSecond, framesPassed, distanceCovered, racingAnimal.name);
           raceResult.raceUpdates.push(timingUpdate);
         }
 
-        racingAnimal.ability.currentCooldown -= 1;
-        secondsPassed += 1;
+        racingAnimal.ability.currentCooldown -= 1 / this.frameModifier;
+        framesPassed += 1;
 
         //TODO: do anything about fractional time?
         if (distanceToGo <= 0) {
-          secondsPassed = i;
-          raceResult.addRaceUpdate(secondsPassed, racingAnimal.name + " finishes their leg of the race.");
+          //framesPassed = i;
+          raceResult.addRaceUpdate(framesPassed, racingAnimal.name + " finishes their leg of the race.");
           item.legComplete = true;
+          //console.log("Leg Complete at " + framesPassed + " seconds");
           this.PrepareRacingAnimal(racingAnimal); //Reset so that stamina and such look correct on view pages
           break;
         }
@@ -265,10 +270,10 @@ export class RaceComponent implements OnInit {
       race.isCompleted = true;
       raceResult.wasSuccessful = true;
 
-      raceResult.addRaceUpdate(secondsPassed, "You won the race!");
+      raceResult.addRaceUpdate(framesPassed, "You won the race!");
     }
     else {
-      raceResult.addRaceUpdate(secondsPassed, "You lost the race...");
+      raceResult.addRaceUpdate(framesPassed, "You lost the race...");
     }
 
     //TODO: add tripping and hazards, adaptability stat
@@ -278,7 +283,7 @@ export class RaceComponent implements OnInit {
       this.raceWasSuccessfulUpdate(raceResult);
     }
     //console.log("Pre Draw Distance: ");
-    //console.log(race.raceUI.distanceCoveredBySecond);
+    console.log(race.raceUI.distanceCoveredBySecond);
     this.setupDisplayRewards(race);
     this.displayRaceUpdates(raceResult);
     return raceResult;
@@ -298,11 +303,11 @@ export class RaceComponent implements OnInit {
     return staminaModifier;
   }
 
-  handleStamina(racingAnimal: Animal, raceResult: RaceResult, velocity: number, secondsPassed: number, terrain: Terrain) {
+  handleStamina(racingAnimal: Animal, raceResult: RaceResult, distanceCoveredPerFrame: number, framesPassed: number, terrain: Terrain) {
     var staminaModifier = this.getStaminaModifier(terrain);
 
-    if (!(racingAnimal.type === AnimalTypeEnum.Horse && racingAnimal.ability.abilityInUse)) {
-      racingAnimal.currentStats.stamina -= velocity * staminaModifier;
+    if (!(racingAnimal.type === AnimalTypeEnum.Horse && racingAnimal.ability.name === "Thoroughbred" && racingAnimal.ability.abilityInUse)) {
+      racingAnimal.currentStats.stamina -= distanceCoveredPerFrame * staminaModifier;
     }
 
     if (racingAnimal.currentStats.stamina < 0)
@@ -314,17 +319,17 @@ export class RaceComponent implements OnInit {
     //  return false;
 
     var rng = this.utilityService.getRandomNumber(1, 100);
-    
+
     if (rng <= animal.currentStats.burstChance)
       return true;
 
     return false;
   }
 
-  getUpdateMessageByRelativeDistance(distancePerSecond: number, secondsPassed: number, distanceCovered: number, animalName: string): string {
+  getUpdateMessageByRelativeDistance(distancePerSecond: number, framesPassed: number, distanceCovered: number, animalName: string): string {
     var timingUpdateMessage = animalName;
 
-    var expectedDistance = distancePerSecond * secondsPassed;
+    var expectedDistance = distancePerSecond * (framesPassed / this.frameModifier);
     if (distanceCovered < expectedDistance * .9)
       timingUpdateMessage = animalName + " is falling behind the rest of the pack!";
     else if (distanceCovered >= expectedDistance * .9 && distanceCovered <= expectedDistance * 1.1)
@@ -342,8 +347,14 @@ export class RaceComponent implements OnInit {
     var subscription = this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {
       currentTime += deltaTime;
 
-      if (raceUpdates.length === 0) //also check if skip button pressed/setting to auto skip is checked
+      if (raceUpdates.length === 0 || this.raceSkipped) //also check if skip button pressed/setting to auto skip is checked
       {
+        if (this.raceSkipped) {
+          raceUpdates.forEach(update => {
+            this.incrementalRaceUpdates += update.text + "\n";
+          });
+        }
+
         if (raceResult.wasSuccessful)
           this.displayResults = true;
 
@@ -351,7 +362,7 @@ export class RaceComponent implements OnInit {
         return;
       }
 
-      if (currentTime >= raceUpdates[0].value) {
+      if ((currentTime * this.frameModifier) >= raceUpdates[0].value) {
         this.incrementalRaceUpdates += raceUpdates[0].text + "\n";
         raceUpdates.shift();
       }
@@ -402,8 +413,14 @@ export class RaceComponent implements OnInit {
         if (this.globalService.globalVar.resources !== undefined && this.globalService.globalVar.resources !== null) {
           if (this.globalService.globalVar.resources.some(x => x.name === item.name)) {
             var globalResource = this.globalService.globalVar.resources.find(x => x.name === item.name);
-            if (globalResource !== null && globalResource !== undefined)
-              globalResource.amount += item.amount;
+            if (globalResource !== null && globalResource !== undefined) {
+              if (globalResource.name === "Money") {
+                var currentRenown = this.lookupService.getRenown();
+                globalResource.amount += item.amount * this.utilityService.getRenownCircuitRaceModifier(currentRenown);
+              }
+              else
+                globalResource.amount += item.amount;
+            }
           }
           else {
             this.globalService.globalVar.resources.push(new ResourceValue(item.name, item.amount));
@@ -413,15 +430,22 @@ export class RaceComponent implements OnInit {
     }
   }
 
+  isSecond(framesPassed: number) {
+    return framesPassed % this.frameModifier === 0;
+  }
+
   PrepareRacingAnimal(animal: Animal) {
     animal.ability.currentCooldown = animal.ability.cooldown;
     this.globalService.calculateAnimalRacingStats(animal);
     animal.raceVariables = new RaceVariables();
   }
 
-  didAnimalStumble(racingAnimal: Animal, currentPath: RacePath): boolean {    
+  didAnimalStumble(racingAnimal: Animal, currentPath: RacePath, framesPassed: number): boolean {
     //each path has a stumble severity and frequency of stumble per X meters
     //adaptabilityMS decreases that frequency    
+    if (!this.isSecond(framesPassed))
+      return false;
+
     var rng = this.utilityService.getRandomNumber(1, 100);
 
     var adjustedStumbleFrequency = 1000 + racingAnimal.currentStats.adaptabilityMs;
@@ -433,7 +457,10 @@ export class RaceComponent implements OnInit {
     return false;
   }
 
-  didAnimalLoseFocus(racingAnimal: Animal): boolean {
+  didAnimalLoseFocus(racingAnimal: Animal, framesPassed: number): boolean {
+    if (!this.isSecond(framesPassed))
+      return false;
+
     //focusModifier is inverse of what percent chance the animal will lose focus right at their focusMs amount
     var focusModifier: number;
     var focusModifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "focusModifier");
@@ -460,14 +487,44 @@ export class RaceComponent implements OnInit {
 
   //only use abilities when they are actually useful/able to be used
   abilityRedundancyCheck(racingAnimal: Animal): boolean {
-    if (racingAnimal.ability.name === "Pacemaker" && racingAnimal.type === AnimalTypeEnum.Horse &&
+    if (racingAnimal.ability.name === "Thoroughbred" && racingAnimal.type === AnimalTypeEnum.Horse &&
       racingAnimal.raceVariables.recoveringStamina)
       return false;
 
     return true;
   }
 
+  useAbility(racingAnimal: Animal, race: Race) {
+    if (racingAnimal.type === AnimalTypeEnum.Horse) {
+      if (racingAnimal.ability.name === "Thoroughbred") {
+        racingAnimal.ability.abilityInUse = true;
+        racingAnimal.ability.remainingLength = racingAnimal.ability.efficiency * (1 + racingAnimal.currentStats.powerMs);
+      }
+      else if (racingAnimal.ability.name === "Inspiration") {
+        racingAnimal.ability.abilityInUse = true;
+        racingAnimal.ability.remainingLength = racingAnimal.ability.efficiency * (1 + racingAnimal.currentStats.powerMs);
+      }
+      else if (racingAnimal.ability.name === "Pacemaker") {
+        racingAnimal.ability.abilityInUse = true;
+        racingAnimal.ability.remainingLength = racingAnimal.ability.efficiency * (1 + racingAnimal.currentStats.powerMs);
+      }
+    }
+
+    if (racingAnimal.type === AnimalTypeEnum.Monkey) {
+      if (racingAnimal.ability.name === "Landslide") {
+        var effectiveDistance = racingAnimal.ability.efficiency * (1 + racingAnimal.currentStats.powerMs);
+        var averageDistancePerSecond = race.length / this.timeToComplete;
+        this.timeToComplete += effectiveDistance / averageDistancePerSecond;
+      }
+    }
+  }
+
   goToRaceSelection(): void {
     this.raceFinished.emit(true);
+  }
+
+  skipRaceAnimation(): void {
+    this.raceSkipped = true;
+    this.skipRace.next(true);
   }
 }

@@ -28,6 +28,7 @@ export class GlobalVariables {
     renownLevel: number;
     @Type(() => AnimalDeck)
     animalDecks: AnimalDeck[];
+    settings: Map<string, boolean>;
 
     constructor(existingVariables?: GlobalVariables) {
         if (existingVariables !== undefined && existingVariables !== null) {            

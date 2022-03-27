@@ -5,6 +5,8 @@
     <hr />
     <p (click)="switchView(navigationEnum.animals)" [ngClass]="selectedNavigation === navigationEnum.animals ? 'active' : ''">Animals</p>
     <hr />
+    <p (click)="switchView(navigationEnum.decks)" [ngClass]="selectedNavigation === navigationEnum.decks ? 'active' : ''">Decks</p>
+    <hr />
     <p (click)="switchView(navigationEnum.shop)" [ngClass]="selectedNavigation === navigationEnum.shop ? 'active' : ''">Shop</p>
     <hr />
     <p (click)="switchView(navigationEnum.resources)" [ngClass]="selectedNavigation === navigationEnum.resources ? 'active' : ''">Resources</p>

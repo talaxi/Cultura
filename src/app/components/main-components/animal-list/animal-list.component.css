@@ -43,7 +43,7 @@ td {
     border-bottom: none;
   }
 
-  table tr td:nth-child(-n+4) {
+  table tr:nth-child(1) td:nth-child(-n+4) {
     border-top: none;
   }
   

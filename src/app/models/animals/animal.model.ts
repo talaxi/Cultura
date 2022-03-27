@@ -25,16 +25,19 @@ export class Animal {
     breedLevel: number;
     breedGaugeXp: number;
     breedGaugeMax: number;
+    availableAbilities: Ability[];
 
 
     constructor() {
         this.breedLevel = 1;
         this.breedGaugeXp = 0;
         this.breedGaugeMax = 10;
+
+        this.availableAbilities = [];
     }
 
     viewAbility(): string {
-        return "";
+        return this.ability.name;
     }
 
     getAbilityUseUpdateText(): string {
@@ -42,10 +45,7 @@ export class Animal {
     }
 
     useAbility(): void {
-        if (this.type === AnimalTypeEnum.Horse) {
-            this.ability.abilityInUse = true;
-            this.ability.remainingLength = this.ability.efficiency * (1 + this.currentStats.powerMs);            
-        }
+        
     }
 
     getAnimalType(): string {
@@ -78,8 +78,8 @@ export class Horse extends Animal {
 
     constructor() {
         super();
-        this.baseStats = new AnimalStats(5, 5, 5, 5, 5, 5);
-        this.currentStats = new AnimalStats(5, 5, 5, 5, 5, 5);
+        this.baseStats = new AnimalStats(30, 15, 5, 5, 5, 5);
+        this.currentStats = new AnimalStats(30, 15, 5, 5, 5, 5);
 
         this.type = AnimalTypeEnum.Horse;
         this.raceCourseType = RaceCourseTypeEnum.Flatland;
@@ -87,18 +87,33 @@ export class Horse extends Animal {
         this.ability = new Ability();
         this.ability.cooldown = 10;
         this.ability.efficiency = 10;
-        this.ability.name = "Pacemaker";
+        this.ability.oneTimeEffect = false;
+        this.ability.name = "Thoroughbred";
+        this.ability.description = "Thoroughbred";
+        this.ability.isAbilityPurchased = true;
+        this.availableAbilities.push(this.ability);
+
+        var ability2 = new Ability();
+        ability2.cooldown = 10;
+        ability2.efficiency = 10;
+        ability2.oneTimeEffect = true;
+        ability2.name = "Inspiration";
+        ability2.description = "Inspiration";
+        ability2.isAbilityPurchased = false;
+        ability2.purchasePrice = 500;
+        this.availableAbilities.push(ability2);
+
+        var ability3 = new Ability();
+        ability3.cooldown = 10;
+        ability3.efficiency = 10;
+        ability3.oneTimeEffect = false;
+        ability3.name = "Pacemaker";
+        ability3.description = "Pacemaker";
+        ability3.isAbilityPurchased = false;
+        ability3.purchasePrice = 500;
+        this.availableAbilities.push(ability3);
 
         this.raceVariables = new RaceVariables();
-    }
-
-    override viewAbility(): string {
-        return "Pacemaker";
-    }
-
-    override useAbility(): void {
-        this.ability.abilityInUse = true;
-        this.ability.remainingLength = this.ability.efficiency * (1 + this.currentStats.powerMs);        
     }
 }
 
@@ -119,15 +134,6 @@ export class Cheetah extends Animal {
 
         this.raceVariables = new RaceVariables();
     }
-
-    override viewAbility(): string {
-        return "Sprint";
-    }
-
-    override useAbility(): void {
-        this.ability.abilityInUse = true;
-        this.ability.remainingLength = this.ability.efficiency * (1 + this.currentStats.powerMs);
-    }
 }
 
 export class Monkey extends Animal {
@@ -138,18 +144,22 @@ export class Monkey extends Animal {
         this.currentStats = new AnimalStats(5, 5, 5, 5, 5, 5);
 
         this.type = AnimalTypeEnum.Monkey;
-        this.raceCourseType = RaceCourseTypeEnum.Rock;
+        this.raceCourseType = RaceCourseTypeEnum.Mountain;
 
         this.ability = new Ability();
         this.ability.cooldown = 10;
         this.ability.efficiency = 10;
+        this.ability.oneTimeEffect = true;
         this.ability.name = "Landslide";
+        this.availableAbilities.push(this.ability);
+
+        var ability2 = new Ability()
+        this.availableAbilities.push(ability2);
+
+        var ability3 = new Ability()
+        this.availableAbilities.push(ability3);
 
         this.raceVariables = new RaceVariables();
-    }
-
-    override viewAbility(): string {
-        return "Landslide";
     }
 }
 
@@ -161,7 +171,7 @@ export class Goat extends Animal {
         this.currentStats = new AnimalStats(5, 5, 5, 5, 5, 5);
 
         this.type = AnimalTypeEnum.Goat;
-        this.raceCourseType = RaceCourseTypeEnum.Rock;
+        this.raceCourseType = RaceCourseTypeEnum.Mountain;
 
         this.ability = new Ability();
         this.ability.cooldown = 10;

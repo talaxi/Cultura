@@ -40,6 +40,14 @@ export class LookupService {
       resource.amount -= amountSpent;
   }
 
+  getRenown(): number {    
+    var resource = this.globalService.globalVar.resources.find(item => item.name === "Renown");
+    if (resource !== undefined)
+      return resource.amount;
+    else
+      return 0;
+  }
+
   getAnimalByType(type: AnimalTypeEnum): Animal | null {
     var globalAnimal = this.globalService.globalVar.animals.find(item => item.type === type);
     if (globalAnimal !== undefined)
@@ -202,5 +210,18 @@ export class LookupService {
       return modifierPair.value;
 
     return 0;
+  }
+
+  
+
+  getResourcePopover(name: string) {
+    if (name === "Money")
+      return "Good ol classic money. Gain from most actions and buy most things with this.";
+    else if (name === "Medals")
+      return "Rare currency gained from improving your circuit rank and winning certain special races.";
+    else if (name === "Renown")
+      return "Increases money gained from races by X%";
+
+    return "";
   }
 }

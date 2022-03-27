@@ -18,6 +18,10 @@
     grid-area: back;
 }
 
+.filterActive {
+  font-weight: bold;
+}
+
 .info {    
     display: grid;
     grid-template-columns: auto;

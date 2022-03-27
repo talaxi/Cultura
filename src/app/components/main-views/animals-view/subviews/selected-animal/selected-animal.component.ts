@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Ability } from 'src/app/models/animals/ability.model';
 import { Animal } from 'src/app/models/animals/animal.model';
 import { GlobalService } from 'src/app/services/global-service.service';
 import { LookupService } from 'src/app/services/lookup.service';
@@ -22,6 +23,10 @@ export class SelectedAnimalComponent implements OnInit {
   editingName: boolean;
   newName: string;
 
+  ability1: Ability;
+  ability2: Ability;
+  ability3: Ability;
+
   constructor(private lookupService: LookupService, private globalService: GlobalService) { }
 
   ngOnInit(): void {
@@ -32,8 +37,14 @@ export class SelectedAnimalComponent implements OnInit {
     this.focusModifierAmount = this.lookupService.getFocusModifierByAnimalType(this.selectedAnimal.type);
     this.adaptabilityModifierAmount = this.lookupService.getAdaptabilityModifierByAnimalType(this.selectedAnimal.type);
 
+    this.ability1 = this.selectedAnimal.availableAbilities[0];
+    if (this.selectedAnimal.availableAbilities.length > 1)
+    this.ability2 = this.selectedAnimal.availableAbilities[1];
+    if (this.selectedAnimal.availableAbilities.length > 2)
+    this.ability3 = this.selectedAnimal.availableAbilities[2];
+
     this.colorConditional = {'flatlandColor': this.selectedAnimal.getRaceCourseType() === 'Flatland',
-  'rockColor': this.selectedAnimal.getRaceCourseType() === 'Rock', 'waterColor': this.selectedAnimal.getRaceCourseType() === 'Water'};
+  'mountainColor': this.selectedAnimal.getRaceCourseType() === 'Mountain', 'waterColor': this.selectedAnimal.getRaceCourseType() === 'Water'};
   }
 
   returnToAnimalView(): void {
@@ -47,5 +58,10 @@ export class SelectedAnimalComponent implements OnInit {
   editName(): void {
     this.selectedAnimal.name = this.newName;
     this.editingName = false;
+  }
+
+  selectAbility(ability: Ability) {
+    this.selectedAnimal.ability = ability;
+    
   }
 }

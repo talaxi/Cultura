@@ -36,6 +36,7 @@ import { CommonModule } from '@angular/common';
 import { ShoppingListComponent } from './components/main-components/shopping-list/shopping-list.component';
 import { ShoppingItemComponent } from './components/main-components/shopping-item/shopping-item.component';
 import { AnimalDeckComponent } from './components/main-components/animal-deck/animal-deck.component';
+import { DecksViewComponent } from './components/main-views/decks-view/decks-view.component';
 
 @NgModule({
   declarations: [
@@ -47,7 +48,7 @@ import { AnimalDeckComponent } from './components/main-components/animal-deck/an
     BarnComponent,
     BarnViewComponent,
     RaceSelectionViewComponent,    
-    SelectedBarnComponent, ProgressBarComponent, CircuitViewComponent, LocalViewComponent, RaceComponent, AnimalsViewComponent, ShopViewComponent, ResourcesViewComponent, SettingsViewComponent, AnimalComponent, AnimalListComponent, SelectedAnimalComponent, DrawRaceComponent, TrainingListComponent, TrainingOptionComponent, ShoppingListComponent, ShoppingItemComponent, AnimalDeckComponent
+    SelectedBarnComponent, ProgressBarComponent, CircuitViewComponent, LocalViewComponent, RaceComponent, AnimalsViewComponent, ShopViewComponent, ResourcesViewComponent, SettingsViewComponent, AnimalComponent, AnimalListComponent, SelectedAnimalComponent, DrawRaceComponent, TrainingListComponent, TrainingOptionComponent, ShoppingListComponent, ShoppingItemComponent, AnimalDeckComponent, DecksViewComponent
   ],
   imports: [
     BrowserModule,
