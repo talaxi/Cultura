@@ -1,4 +1,5 @@
 import { StumbleSeverityEnum } from "../stumble-severity-enum.model";
+import { AnimalStats } from "./animal-stats.model";
 
 export class RaceVariables {
     recoveringStamina: boolean;
@@ -18,6 +19,10 @@ export class RaceVariables {
 
     isBursting: boolean;
     remainingBurstMeters: number;
+
+    hasRelayEffect: boolean;
+    remainingRelayMeters: number;
+    relayAffectedStatRatios: AnimalStats; 
 
     constructor() {
         this.recoveringStamina = false;

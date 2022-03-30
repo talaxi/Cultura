@@ -41,7 +41,6 @@ export class BarnComponent implements OnInit {
           this.isOccupied = false;
 
         this.isLocked = globalBarn.isLocked;
-        console.log(this.barnNumber + " - " + this.isLocked);
       }
     }
     else {
@@ -67,8 +66,7 @@ export class BarnComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    if (this.subscription !== null && this.subscription !== undefined) {
-      console.log("barn unsub");
+    if (this.subscription !== null && this.subscription !== undefined) {      
       this.subscription.unsubscribe();
     }
   }

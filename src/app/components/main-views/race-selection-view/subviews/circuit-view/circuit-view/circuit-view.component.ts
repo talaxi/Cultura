@@ -14,13 +14,27 @@ export class CircuitViewComponent implements OnInit {
 
   constructor(private globalService: GlobalService) { }
 
-  ngOnInit(): void {    
+  ngOnInit(): void {
     this.circuitRank = this.globalService.globalVar.circuitRank;
-    this.availableCircuitRaces = this.globalService.globalVar.circuitRaces.filter(item => item.requiredRank === this.circuitRank);    
+    this.availableCircuitRaces = this.globalService.globalVar.circuitRaces.filter(item => item.requiredRank === this.circuitRank);
   }
 
   selectCircuitRace(race: Race): void {
-    /* bubble back up to race selection with the chosen race, over there show the race occur */
-    this.raceSelected.emit(race);   
+    var canRace = true;
+    var racingAnimals = this.globalService.globalVar.animalDecks.find(item => item.isPrimaryDeck);
+    if (racingAnimals === undefined || racingAnimals === null || racingAnimals.selectedAnimals.length === 0) {
+      canRace = false;
+      return;
+    }
+
+    race.raceLegs.forEach(leg => {
+      if (!racingAnimals?.selectedAnimals.some(item => item.raceCourseType === leg.courseType))
+        canRace = false;
+    });
+
+    if (canRace) {
+      /* bubble back up to race selection with the chosen race, over there show the race occur */
+      this.raceSelected.emit(race);
+    }
   }
 }

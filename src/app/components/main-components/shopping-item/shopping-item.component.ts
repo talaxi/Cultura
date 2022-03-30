@@ -54,7 +54,8 @@ export class ShoppingItemComponent implements OnInit {
       if (primaryAnimalDeck !== null && primaryAnimalDeck !== undefined) {
         var typeFound = false;
         primaryAnimalDeck.selectedAnimals.forEach(item => {
-          if (item.type === animal?.type)
+          console.log(item.raceCourseType + " vs " + animal?.raceCourseType);
+          if (item.raceCourseType === animal?.raceCourseType)
             typeFound = true;
         });
 

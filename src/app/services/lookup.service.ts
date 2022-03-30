@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { AnimalTypeEnum } from '../models/animal-type-enum.model';
 import { AnimalDeck } from '../models/animals/animal-deck.model';
 import { Animal } from '../models/animals/animal.model';
+import { RaceCourseTypeEnum } from '../models/race-course-type-enum.model';
 import { GlobalService } from './global-service.service';
 
 @Injectable({
@@ -26,7 +27,7 @@ export class LookupService {
     return animals;
   }
 
-  getMoney(): number {    
+  getMoney(): number {
     var resource = this.globalService.globalVar.resources.find(item => item.name === "Money");
     if (resource !== undefined)
       return resource.amount;
@@ -40,7 +41,7 @@ export class LookupService {
       resource.amount -= amountSpent;
   }
 
-  getRenown(): number {    
+  getRenown(): number {
     var resource = this.globalService.globalVar.resources.find(item => item.name === "Renown");
     if (resource !== undefined)
       return resource.amount;
@@ -212,7 +213,7 @@ export class LookupService {
     return 0;
   }
 
-  
+
 
   getResourcePopover(name: string) {
     if (name === "Money")
@@ -223,5 +224,36 @@ export class LookupService {
       return "Increases money gained from races by X%";
 
     return "";
+  }
+
+  getAllRaceCourseTypes() {
+    var itemList = [];
+    for (let item in RaceCourseTypeEnum) {
+      if (isNaN(Number(item))) {
+        itemList.push(item);
+      }
+    }
+
+    return itemList;
+  }
+
+  getAnimalsByRaceCourseType(type: string) {
+    var itemList = [];
+    if (type === "Flatland")
+    {
+      itemList.push(AnimalTypeEnum[AnimalTypeEnum.Horse]);
+      itemList.push(AnimalTypeEnum[AnimalTypeEnum.Cheetah]);
+    }
+    else if (type === "Mountain")
+    {
+      itemList.push(AnimalTypeEnum[AnimalTypeEnum.Monkey]);
+      itemList.push(AnimalTypeEnum[AnimalTypeEnum.Goat]);
+    }
+    else if (type === "Water")
+    {
+
+    }
+
+    return itemList;
   }
 }

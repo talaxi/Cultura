@@ -193,4 +193,40 @@ export class AnimalStats {
         var diminishingReturnsExp = .6;        
         return 1 / statValue ** diminishingReturnsExp;
     }
+
+    addCurrentRacingStats(statChange: AnimalStats) {
+        this.maxSpeedMs += statChange.topSpeed;
+        this.accelerationMs += statChange.acceleration;
+        this.stamina += statChange.endurance;
+        this.powerMs += statChange.power;
+        this.focusMs += statChange.focus;
+        this.adaptabilityMs += statChange.adaptability;
+    }
+
+    subtractCurrentRacingStats(statChange: AnimalStats) {
+        this.maxSpeedMs -= statChange.topSpeed;
+        this.accelerationMs -= statChange.acceleration;
+        this.stamina -= statChange.endurance;
+        this.powerMs -= statChange.power;
+        this.focusMs -= statChange.focus;
+        this.adaptabilityMs -= statChange.adaptability;
+    }
+
+    multiplyCurrentRacingStats(statChange: AnimalStats) {
+        this.maxSpeedMs *= statChange.topSpeed;
+        this.accelerationMs *= statChange.acceleration;
+        this.stamina *= statChange.endurance;
+        this.powerMs *= statChange.power;
+        this.focusMs *= statChange.focus;
+        this.adaptabilityMs *= statChange.adaptability;
+    }
+
+    divideCurrentRacingStats(statChange: AnimalStats) {
+        this.maxSpeedMs /= statChange.topSpeed;
+        this.accelerationMs /= statChange.acceleration;
+        this.stamina /= statChange.endurance;
+        this.powerMs /= statChange.power;
+        this.focusMs /= statChange.focus;
+        this.adaptabilityMs /= statChange.adaptability;
+    }
 }

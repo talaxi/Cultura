@@ -45,7 +45,7 @@ export class Animal {
     }
 
     useAbility(): void {
-        
+
     }
 
     getAnimalType(): string {
@@ -151,12 +151,25 @@ export class Monkey extends Animal {
         this.ability.efficiency = 10;
         this.ability.oneTimeEffect = true;
         this.ability.name = "Landslide";
+        this.ability.isAbilityPurchased = true;
         this.availableAbilities.push(this.ability);
 
-        var ability2 = new Ability()
+        var ability2 = new Ability();
+        ability2.cooldown = 10;
+        ability2.efficiency = 10;
+        ability2.oneTimeEffect = true;
+        ability2.name = "Frenzy";
+        ability2.isAbilityPurchased = false;
+        ability2.purchasePrice = 500;
         this.availableAbilities.push(ability2);
 
-        var ability3 = new Ability()
+        var ability3 = new Ability();
+        ability3.cooldown = 10;
+        ability3.efficiency = 10;
+        ability3.oneTimeEffect = true;
+        ability3.name = "Leap";
+        ability3.isAbilityPurchased = false;
+        ability3.purchasePrice = 500;
         this.availableAbilities.push(ability3);
 
         this.raceVariables = new RaceVariables();

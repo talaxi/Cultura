@@ -154,12 +154,21 @@ export class GlobalService {
     deck.isPrimaryDeck = true;
     deck.isAvailable = true;
     deck.name = "Animal Deck 1";
+    deck.deckNumber = 1;
 
     var horse = this.globalVar.animals.find(item => item.getAnimalType() === "Horse");
     if (horse !== undefined)
       deck.selectedAnimals.push(horse);
 
     this.globalVar.animalDecks.push(deck);
+
+    for (var i = 0; i < 3; i++) {
+      var emptyDeck = new AnimalDeck();
+      emptyDeck.isAvailable = true;
+      emptyDeck.deckNumber = i+2;
+      emptyDeck.name = "Animal Deck " + emptyDeck.deckNumber;
+      this.globalVar.animalDecks.push(emptyDeck);
+    }
   }
 
   //TODO: Move descriptions out of here and into lookup service so that this doesn't have to be stored in storage
@@ -463,8 +472,6 @@ export class GlobalService {
         raceIndex += 1;
       }
 
-      console.log(this.globalVar.circuitRaces);
-
       var charCode = circuitRank.charCodeAt(0);
       circuitRank = String.fromCharCode(--charCode);
     }
@@ -518,7 +525,7 @@ export class GlobalService {
 
     //console.log("totalLegLengthRemaining: " + totalLegLengthRemaining);
     //console.log("pathLength: " + pathLength);
-    console.log("totalRoutes: " + totalRoutes);
+    //console.log("totalRoutes: " + totalRoutes);
 
     for (var i = 0; i < totalRoutes; i++) {
       var path = new RacePath();
