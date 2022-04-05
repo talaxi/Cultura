@@ -69,6 +69,20 @@ export class Animal {
         this.currentStats.focus += this.currentTraining.affectedStatRatios.focus * this.currentTraining.statGain;
         this.currentStats.adaptability += this.currentTraining.affectedStatRatios.adaptability * this.currentTraining.statGain;
     }
+
+    increaseStats(increaseStatAmount: AnimalStats): void {
+        if (increaseStatAmount === undefined || increaseStatAmount === null ||
+            this.currentStats === undefined || this.currentStats === null)
+            return;
+
+        this.currentStats.topSpeed += Number(increaseStatAmount.topSpeed);
+        this.currentStats.acceleration += Number(increaseStatAmount.acceleration);
+        this.currentStats.stamina += Number(increaseStatAmount.stamina);
+        this.currentStats.endurance += Number(increaseStatAmount.endurance);
+        this.currentStats.power += Number(increaseStatAmount.power);
+        this.currentStats.focus += Number(increaseStatAmount.focus);
+        this.currentStats.adaptability += Number(increaseStatAmount.adaptability);
+    }
 }
 
 
@@ -78,8 +92,8 @@ export class Horse extends Animal {
 
     constructor() {
         super();
-        this.baseStats = new AnimalStats(30, 15, 5, 5, 5, 5);
-        this.currentStats = new AnimalStats(30, 15, 5, 5, 5, 5);
+        this.baseStats = new AnimalStats(10, 10, 5, 5, 5, 5);
+        this.currentStats = new AnimalStats(10, 10, 5, 5, 5, 5);
 
         this.type = AnimalTypeEnum.Horse;
         this.raceCourseType = RaceCourseTypeEnum.Flatland;

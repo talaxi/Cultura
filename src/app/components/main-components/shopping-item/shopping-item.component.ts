@@ -1,4 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Animal } from 'src/app/models/animals/animal.model';
+import { ResourceValue } from 'src/app/models/resources/resource-value.model';
 import { ShopItemTypeEnum } from 'src/app/models/shop-item-type-enum.model';
 import { ShopItem } from 'src/app/models/shop/shop-item.model';
 import { GlobalService } from 'src/app/services/global-service.service';
@@ -12,10 +14,16 @@ import { LookupService } from 'src/app/services/lookup.service';
 export class ShoppingItemComponent implements OnInit {
   @Input() selectedItem: ShopItem;
   @Output() itemPurchased = new EventEmitter<ShopItem>();
+  shortDescription: string;
+  longDescription: string;
 
   constructor(private globalService: GlobalService, private lookupService: LookupService) { }
 
   ngOnInit(): void {
+    if (this.selectedItem.type === ShopItemTypeEnum.Ability) {
+      this.shortDescription = this.lookupService.getAnimalAbilityDescription(true, this.selectedItem.additionalIdentifier);
+      this.longDescription = this.lookupService.getAnimalAbilityDescription(false, this.selectedItem.additionalIdentifier);
+    }
   }
 
   BuyItem(): void {
@@ -54,7 +62,6 @@ export class ShoppingItemComponent implements OnInit {
       if (primaryAnimalDeck !== null && primaryAnimalDeck !== undefined) {
         var typeFound = false;
         primaryAnimalDeck.selectedAnimals.forEach(item => {
-          console.log(item.raceCourseType + " vs " + animal?.raceCourseType);
           if (item.raceCourseType === animal?.raceCourseType)
             typeFound = true;
         });
@@ -74,7 +81,16 @@ export class ShoppingItemComponent implements OnInit {
   }
 
   buyFood() {
-
+    if (this.globalService.globalVar.resources !== undefined && this.globalService.globalVar.resources !== null) {
+      if (this.globalService.globalVar.resources.some(x => x.name === this.selectedItem.name)) {
+        var globalResource = this.globalService.globalVar.resources.find(x => x.name === this.selectedItem.name);
+        if (globalResource !== null && globalResource !== undefined) {
+            globalResource.amount += 1;
+          }
+        }
+        else
+        this.globalService.globalVar.resources.push(new ResourceValue(this.selectedItem.name, 1, ShopItemTypeEnum.Food));
+      }
   }
 
   buySpecialty() {
@@ -84,9 +100,6 @@ export class ShoppingItemComponent implements OnInit {
   buyAbility() {
     var animalType = this.selectedItem.name.split(' ')[0].trim();
     var abilityName = this.selectedItem.name.split(':')[1].trim();
-
-    console.log(animalType);
-    console.log(abilityName);
 
     if (animalType === "" || abilityName === "")
       return;

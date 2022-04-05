@@ -20,6 +20,9 @@ export class DrawRaceComponent implements OnInit {
   private skipSubscription: Subscription;
   @Input() skip: Observable<boolean>;
   skipRace = false;
+  private pauseSubscription: Subscription;
+  @Input() pause: Observable<boolean>;
+  pauseRace = false;
   subscription: any;
   canvasHeight: number;
   canvasWidth: number;
@@ -54,8 +57,9 @@ export class DrawRaceComponent implements OnInit {
   constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private utilityService: UtilityService) { }
 
   ngOnInit(): void {
+    this.globalService.globalVar.userIsRacing = true;
     this.skipSubscription = this.skip.subscribe(() => { this.skipRace = true; this.isRaceFinished = true; });
-
+    this.pauseSubscription = this.pause.subscribe(() => { this.pauseRace = !this.pauseRace; });
 
     if (this.globalService.globalVar.settings.get("skipDrawRace")) {
       this.skipRace = true;
@@ -66,36 +70,38 @@ export class DrawRaceComponent implements OnInit {
   ngAfterViewInit() {
     this.totalLegs = this.race.raceLegs.length;
     this.setupCanvas();
-    this.canvasXDistanceScale = this.canvasWidth / this.race.length; //needs to be 2D
-    var raceModeXScale = 2;
-    var raceModeYScale = 2;
-    this.averageDistancePerSecond = this.race.length / this.race.timeToComplete;
+    this.canvasXDistanceScale = this.canvasWidth / this.race.length;
 
     var context = this.raceCanvas.nativeElement.getContext('2d');
-    context.lineWidth = 2;
+    context.lineWidth = 6;
 
-    var fullRaceXDistance = this.race.length * this.race.timeToComplete;
     var currentTime = 0;
 
     this.mountainClimbPercent = this.utilityService.getRandomNumber(.3, .7);
+    var effectiveTimeToComplete = this.race.raceUI.timeToCompleteByFrame[this.race.raceUI.timeToCompleteByFrame.length - 1];
 
     this.subscription = this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {
       //clear canvas
+      //var startTime = performance.now();
       context.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+      context.lineWidth = 6;
+      context.lineCap = "round";
 
-      //keep up with current time
-      currentTime += deltaTime;
-
-      //this.displayTestData(context, deltaTime);
+      if (!this.pauseRace) {
+        //keep up with current time
+        currentTime += deltaTime;
+      }
 
       //Two modes: Full Overview (shown at the very beginning of the race and then final view after race ends) and
       //Race Mode (keeps up with your animal as it progresses through each section)      
-      if (currentTime >= this.race.timeToComplete || this.isRaceFinished || this.skipRace)
+      if (currentTime >= effectiveTimeToComplete || this.isRaceFinished || this.skipRace)
         this.displayOverview(context, true);
       else {
         this.displayRace(context, currentTime);
-        //this.displayRacer(context, currentTime);
       }
+
+      //var endTime = performance.now();
+      //console.log(`Call to doSomething took ${endTime - startTime} milliseconds`);
     });
   }
 
@@ -158,11 +164,12 @@ export class DrawRaceComponent implements OnInit {
     if (this.yOffscreen < 0) {
       this.overviewYOffsetModifier = this.overviewYOffsetModifier / 1.25;
       this.yOffscreen = 0;
-      console.log(this.overviewYOffsetModifier);
     }
 
     if (raceFinished) {
-      context.lineCap = "round";
+      this.globalService.globalVar.userIsRacing = false;
+
+      //context.lineCap = "butt";
       context.globalCompositeOperation = "source-atop";
 
       var secondsTaken = this.race.raceUI.distanceCoveredBySecond.length;
@@ -201,19 +208,13 @@ export class DrawRaceComponent implements OnInit {
 
     var xRaceModeModifier = 10;
     var yRaceModeModifier = 10;
-    this.totalRaceModeXDistance = this.race.length * xRaceModeModifier; //TODO: race.length needs to broken down into x and y
+    this.totalRaceModeXDistance = this.race.length * xRaceModeModifier;
 
-    var yMountainSteepnessScale = .5; //go at a 45 degree angle so x and y are 50%
-
-    //var currentSeconds = Math.floor(currentTime);    
-    //var fractionalSeconds = currentTime - currentSeconds;
     var currentFrame = Math.floor(currentTime * this.frameModifier);
-    //var fractionalDistance = 0;
-    //if (currentSeconds < this.race.timeToComplete - 1)
-    //fractionalDistance = this.race.raceUI.distanceCoveredBySecond[currentSeconds + 1] - this.race.raceUI.distanceCoveredBySecond[currentSeconds];
-    //var currentDistanceTraveled = this.race.raceUI.distanceCoveredBySecond[currentSeconds] + (fractionalDistance * fractionalSeconds);
     var currentDistanceTraveled = this.race.raceUI.distanceCoveredBySecond[currentFrame];
     var currentYDistanceTraveled = 0;
+
+    this.averageDistancePerSecond = this.race.length / this.race.raceUI.timeToCompleteByFrame[currentFrame];
 
     var legPinpointDistance = 0;
     var previousLegDistance = 0;
@@ -232,18 +233,6 @@ export class DrawRaceComponent implements OnInit {
 
       legPinpointDistance += leg.distance;
     });
-
-
-
-    /*if (currentSeconds < this.race.raceUI.distanceCoveredBySecond.length - 1) {
-      if (this.race.raceUI.distanceCoveredBySecond[currentSeconds] < this.currentLeg.distance + previousLegDistance &&
-        this.race.raceUI.distanceCoveredBySecond[currentSeconds + 1] >= this.currentLeg.distance + previousLegDistance) {
-        console.log("Holding at " + currentDistanceTraveled);
-
-        if (currentDistanceTraveled > this.currentLeg.distance + previousLegDistance)
-          currentDistanceTraveled = this.currentLeg.distance + previousLegDistance;
-      }
-    }*/
 
     var currentDistanceInLeg = currentDistanceTraveled - previousLegDistance;
     var currentCrevasseDistance = 0;
@@ -274,10 +263,7 @@ export class DrawRaceComponent implements OnInit {
             foundCurrentPath = true;
             pathDistanceCovered = currentDistanceInLeg - totalPathDistance;
 
-            //console.log("Found Path at distance: " + totalDistance);
-            console.log("Path:" + RaceDesignEnum[path.routeDesign]);
             if (path.routeDesign === RaceDesignEnum.Crevasse) {
-              //var offset = path.length * .04;
               var scaledHalfPath = (path.length / 2) * 3;
               var scaledPathCovered = pathDistanceCovered * 3;
               if (pathDistanceCovered < path.length / 2)
@@ -307,7 +293,6 @@ export class DrawRaceComponent implements OnInit {
     this.visibleDistanceXLeft = xDistanceOffset;
     this.visibleDistanceXRight = xDistanceOffset + (this.canvasWidth);
 
-    context.lineWidth = 5;
     context.globalCompositeOperation = "source-over";
     //move canvas based on distance travelled as a relation to the scale size
     //will go in different directions based on racer type    
@@ -352,12 +337,52 @@ export class DrawRaceComponent implements OnInit {
       }
     });
 
-
-    context.fillStyle = this.getAnimalDistanceColor(currentDistanceTraveled);
-    context.lineCap = "round";
     context.globalCompositeOperation = "source-atop";
 
-    context.fillRect(0, 0, this.canvasWidth / 2, this.canvasHeight);
+    //check to see if breakpoint is visible on screen
+
+    //this works but I want to do it just for the immediate breakpoint instead of checking all of them
+    //var distanceSum = 0;
+    //for (var i = 0; i < this.race.raceLegs.length; i++) {
+    //var leg = this.race.raceLegs[i];
+    //var previousLeg = null;
+    //if (i > 1)
+    //  previousLeg = this.race.raceLegs[i - 1];
+
+    var percentOfVisibleDistance = 0;
+    var legScaledEndPoint = previousLegDistance * this.canvasXDistanceScale * xRaceModeModifier;
+    var currentLegIndex = this.race.raceLegs.indexOf(this.currentLeg);
+    var previousLeg = null;
+    if (currentLegIndex > 0) 
+      previousLeg = this.race.raceLegs[currentLegIndex - 1];
+
+      if (previousLeg !== undefined && previousLeg !== null &&
+        legScaledEndPoint >= this.visibleDistanceXLeft && legScaledEndPoint <= this.visibleDistanceXRight) {
+        console.log("breakpoint visible");
+        var totalVisibleDistance = this.visibleDistanceXRight - this.visibleDistanceXLeft;
+        var amountOfVisibleDistance = legScaledEndPoint - this.visibleDistanceXLeft;
+        percentOfVisibleDistance = amountOfVisibleDistance / totalVisibleDistance;
+
+        context.fillStyle = this.getAnimalDistanceColorByType(previousLeg.courseType);
+        context.fillRect(0, 0, (this.canvasWidth * percentOfVisibleDistance), this.canvasHeight);
+        context.fillStyle = this.getAnimalDistanceColorByType(this.currentLeg.courseType);
+        context.fillRect((this.canvasWidth * percentOfVisibleDistance), 0, (this.canvasWidth / 2) - (this.canvasWidth * percentOfVisibleDistance), this.canvasHeight);
+      }    
+    else {
+      console.log("one racer");
+      context.fillStyle = this.getAnimalDistanceColor(currentDistanceTraveled);
+      context.fillRect(0, 0, this.canvasWidth / 2, this.canvasHeight);
+    }
+
+    //distanceSum += leg.distance;
+    //}
+
+    //if breakpoint visible on screen
+    //get its location
+    //one rect up to that breakpoint, another after
+    //else
+    //do below
+    //context.fillRect(0, 0, this.canvasWidth / 2, this.canvasHeight);
 
     context.fillStyle = this.getAnimalRacerColor(currentDistanceTraveled);
     context.fillRect(this.canvasWidth / 2 - 5, 0, 5, this.canvasHeight);
@@ -484,6 +509,7 @@ export class DrawRaceComponent implements OnInit {
     if (yDistanceOffset === undefined || yDistanceOffset === null)
       yDistanceOffset = 0;
 
+    context.beginPath();
     context.moveTo(this.lastPathEndingX - xDistanceOffset, this.lastPathEndingY + yDistanceOffset);
     context.lineTo(this.lastPathEndingX + horizontalLength - xDistanceOffset, this.canvasHeight / 2 + yDistanceOffset);
     //context.fillText('End', this.lastPathEndingX + horizontalLength, this.canvasHeight / 2);    
@@ -532,14 +558,22 @@ export class DrawRaceComponent implements OnInit {
     context.beginPath();
     context.moveTo(startingX, startingY);
     context.lineTo(startingX + xRegularOffset, startingY);
+    context.stroke();
 
+    context.beginPath();
+    context.moveTo(startingX + xRegularOffset, startingY);
     context.bezierCurveTo(startingX + xRegularOffset, startingY, startingX + curve1Point1XOffset, startingY + curve1Point1YOffset, startingX + curve1Point2XOffset, startingY + curve1Point2YOffset);
     context.bezierCurveTo(startingX + curve1Point2XOffset, startingY + curve1Point2YOffset, startingX + curve2Point1XOffset, startingY + curve2Point1YOffset, startingX + curve2Point2XOffset, startingY);
+    context.stroke();
 
-    //Everything is mirrored here
+    context.beginPath();
+    context.moveTo(startingX + curve2Point2XOffset, startingY);
     context.bezierCurveTo(startingX + curve2Point2XOffset, startingY, startingX + curve3Point1XOffset, startingY - curve3Point1YOffset, startingX + curve3Point2XOffset, startingY - curve3Point2YOffset);
     context.bezierCurveTo(startingX + curve3Point2XOffset, startingY - curve3Point2YOffset, startingX + curve4Point1XOffset, startingY - curve4Point1YOffset, startingX + curve4Point1XOffset, startingY);
+    context.stroke();
 
+    context.beginPath();
+    context.moveTo(startingX + curve4Point1XOffset, startingY);
     context.lineTo(startingX + curve4Point2XOffset + xRegularOffset, startingY);
 
     context.stroke();
@@ -564,34 +598,64 @@ export class DrawRaceComponent implements OnInit {
     var xFullBump = .115 * horizontalLength;
     var yFullBump = xFullBump / 3;
 
+    //context.lineCap = "butt";
     context.beginPath();
     context.moveTo(startingX, startingY);
     context.lineTo(startingX + xRegularOffset, startingY);
+    context.stroke();
 
+    context.beginPath();
+    context.moveTo(startingX + xRegularOffset, startingY);
     context.lineTo(startingX + xRegularOffset + xFullBump / 2, startingY - yFullBump);
     context.lineTo(startingX + xRegularOffset + xFullBump, startingY);
+    //console.log("FirstBump: (" + (startingX + xRegularOffset + xFullBump / 2) +", " + (startingY - yFullBump));
+    //console.log("FirstBumpEnd: (" + (startingX + xRegularOffset + xFullBump) +", " + (startingY));
+    context.stroke();
 
+    context.beginPath();
+    context.moveTo(startingX + xRegularOffset + xFullBump, startingY);
     context.lineTo(startingX + xRegularOffset + xFullBump + xFullBump / 2, startingY - yFullBump);
     context.lineTo(startingX + xRegularOffset + 2 * xFullBump, startingY);
+    context.stroke();
 
+    context.beginPath();
+    context.moveTo(startingX + xRegularOffset + 2 * xFullBump, startingY);
     context.lineTo(startingX + xRegularOffset + 2 * xFullBump + xFullBump / 2, startingY - yFullBump);
     context.lineTo(startingX + xRegularOffset + 3 * xFullBump, startingY);
+    context.stroke();
 
+    context.beginPath();
+    context.moveTo(startingX + xRegularOffset + 3 * xFullBump, startingY);
     context.lineTo(startingX + xRegularOffset + 3 * xFullBump + xFullBump / 2, startingY - yFullBump);
     context.lineTo(startingX + xRegularOffset + 4 * xFullBump, startingY);
+    context.stroke();
 
+    context.beginPath();
+    context.moveTo(startingX + xRegularOffset + 4 * xFullBump, startingY);
     context.lineTo(startingX + xRegularOffset + 4 * xFullBump + xFullBump / 2, startingY - yFullBump);
     context.lineTo(startingX + xRegularOffset + 5 * xFullBump, startingY);
+    context.stroke();
 
+    context.beginPath();
+    context.moveTo(startingX + xRegularOffset + 5 * xFullBump, startingY);
     context.lineTo(startingX + xRegularOffset + 5 * xFullBump + xFullBump / 2, startingY - yFullBump);
     context.lineTo(startingX + xRegularOffset + 6 * xFullBump, startingY);
+    context.stroke();
 
+    context.beginPath();
+    context.moveTo(startingX + xRegularOffset + 6 * xFullBump, startingY);
     context.lineTo(startingX + xRegularOffset + 6 * xFullBump + xFullBump / 2, startingY - yFullBump);
     context.lineTo(startingX + xRegularOffset + 7 * xFullBump, startingY);
+    context.stroke();
 
+    context.beginPath();
+    context.moveTo(startingX + xRegularOffset + 7 * xFullBump, startingY);
     context.lineTo(startingX + xRegularOffset + 7 * xFullBump + xFullBump / 2, startingY - yFullBump);
     context.lineTo(startingX + xRegularOffset + 8 * xFullBump, startingY);
+    context.stroke();
 
+    context.beginPath();
+    context.moveTo(startingX + xRegularOffset + 8 * xFullBump, startingY);
     context.lineTo(startingX + xRegularOffset + 8 * xFullBump + xRegularOffset, startingY);
     context.stroke();
 
@@ -608,6 +672,7 @@ export class DrawRaceComponent implements OnInit {
     if (yDistanceOffset === undefined || yDistanceOffset === null)
       yDistanceOffset = 0;
 
+    context.beginPath();
     context.moveTo(this.lastPathEndingX - xDistanceOffset, this.lastPathEndingY + yDistanceOffset);
 
     if (goingUp) {
@@ -640,6 +705,7 @@ export class DrawRaceComponent implements OnInit {
     var regularDistanceY = verticalLength;
     var crevasseLength = regularDistanceY * 2;
 
+    context.beginPath();
     context.moveTo(this.lastPathEndingX - xDistanceOffset, this.lastPathEndingY + yDistanceOffset);
 
     if (goingUp) { //small x, big x
@@ -681,6 +747,7 @@ export class DrawRaceComponent implements OnInit {
     var gapSizeY = verticalLength * .115;
     var regularOffsetY = .04 * verticalLength;
 
+    context.beginPath();
     context.moveTo(startingX, startingY);
 
     if (goingUp) {
@@ -719,5 +786,7 @@ export class DrawRaceComponent implements OnInit {
     }
 
     this.skipSubscription.unsubscribe();
+    this.pauseSubscription.unsubscribe();
+    this.globalService.globalVar.userIsRacing = false;
   }
 }

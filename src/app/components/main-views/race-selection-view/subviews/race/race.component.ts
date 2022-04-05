@@ -32,7 +32,9 @@ export class RaceComponent implements OnInit {
   rewardCells: string[];
   @Output() raceFinished = new EventEmitter<boolean>();
   skipRace: Subject<boolean> = new Subject<boolean>();
+  pauseRace: Subject<boolean> = new Subject<boolean>();
   raceSkipped = false;
+  racePaused = false;
   frameModifier = 60;
   timeToComplete = 60;
 
@@ -69,6 +71,7 @@ export class RaceComponent implements OnInit {
 
     race.raceUI.distanceCoveredBySecond = [];
     race.raceUI.velocityBySecond = [];
+    race.raceUI.timeToCompleteByFrame = [];
 
     //calculate speed of animal based on acceleration and top speed (no obstacles)
     race.raceLegs.forEach(item => {
@@ -95,6 +98,7 @@ export class RaceComponent implements OnInit {
           }
         }
 
+        distancePerSecond = totalRaceDistance / this.timeToComplete;
         var currentDistanceInLeg = distanceCovered - completedLegDistance;
         var pathFound = false;
         var totalDistanceInLeg = 0;
@@ -219,7 +223,7 @@ export class RaceComponent implements OnInit {
         var distanceCoveredPerFrame = modifiedVelocity / this.frameModifier;
 
         if (racingAnimal.type === AnimalTypeEnum.Monkey && racingAnimal.ability.name === "Leap") {          
-          var leapDistance = racingAnimal.ability.efficiency * (1 + racingAnimal.currentStats.powerMs);          
+          var leapDistance = this.lookupService.GetAbilityEffectiveAmount(racingAnimal);
           if (leapDistance >= distanceToGo)
           {
             raceResult.addRaceUpdate(framesPassed, racingAnimal.name + " leaps the remaining distance of their leg.");
@@ -231,6 +235,7 @@ export class RaceComponent implements OnInit {
         distanceToGo -= distanceCoveredPerFrame;
         race.raceUI.distanceCoveredBySecond.push(distanceCovered);
         race.raceUI.velocityBySecond.push(distanceCoveredPerFrame);
+        race.raceUI.timeToCompleteByFrame.push(this.timeToComplete);
 
         if (!racingAnimal.raceVariables.recoveringStamina)
           this.handleStamina(racingAnimal, raceResult, distanceCoveredPerFrame, framesPassed, item.terrain);
@@ -248,7 +253,7 @@ export class RaceComponent implements OnInit {
           }
         }
 
-        if (racingAnimal.ability.currentCooldown <= 0 && this.abilityRedundancyCheck(racingAnimal)) {
+        if (racingAnimal.ability.currentCooldown <= 0 && this.abilityRedundancyCheck(racingAnimal, velocity)) {
           var timingUpdate: StringNumberPair = new StringNumberPair();
           timingUpdate.value = framesPassed;
           timingUpdate.text = racingAnimal.getAbilityUseUpdateText();
@@ -375,7 +380,8 @@ export class RaceComponent implements OnInit {
     var currentTime = 0;
     this.incrementalRaceUpdates = "";
     var subscription = this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {
-      currentTime += deltaTime;
+      if (!this.racePaused)
+        currentTime += deltaTime;
 
       if (raceUpdates.length === 0 || this.raceSkipped) //also check if skip button pressed/setting to auto skip is checked
       {
@@ -538,9 +544,13 @@ export class RaceComponent implements OnInit {
   }
 
   //only use abilities when they are actually useful/able to be used
-  abilityRedundancyCheck(racingAnimal: Animal): boolean {
+  abilityRedundancyCheck(racingAnimal: Animal, velocity: number): boolean {
     if (racingAnimal.ability.name === "Thoroughbred" && racingAnimal.type === AnimalTypeEnum.Horse &&
       racingAnimal.raceVariables.recoveringStamina)
+      return false;
+
+      if (racingAnimal.ability.name === "Pacemaker" && racingAnimal.type === AnimalTypeEnum.Horse &&
+      velocity === racingAnimal.currentStats.maxSpeedMs)
       return false;
 
     return true;
@@ -548,23 +558,20 @@ export class RaceComponent implements OnInit {
 
   useAbility(racingAnimal: Animal, race: Race) {
     if (racingAnimal.type === AnimalTypeEnum.Horse) {
-      if (racingAnimal.ability.name === "Thoroughbred") {
+      if (racingAnimal.ability.name === "Thoroughbred" || 
+      racingAnimal.ability.name === "Pacemaker") {
         racingAnimal.ability.abilityInUse = true;
-        racingAnimal.ability.remainingLength = racingAnimal.ability.efficiency * (1 + racingAnimal.currentStats.powerMs);
+        racingAnimal.ability.remainingLength = this.lookupService.GetAbilityEffectiveAmount(racingAnimal);
       }
       else if (racingAnimal.ability.name === "Inspiration") {
-        racingAnimal.ability.abilityInUse = true;
-        racingAnimal.ability.remainingLength = racingAnimal.ability.efficiency * (1 + racingAnimal.currentStats.powerMs);
-      }
-      else if (racingAnimal.ability.name === "Pacemaker") {
-        racingAnimal.ability.abilityInUse = true;
-        racingAnimal.ability.remainingLength = racingAnimal.ability.efficiency * (1 + racingAnimal.currentStats.powerMs);
+        //racingAnimal.ability.abilityInUse = true;
+        //racingAnimal.ability.remainingLength = racingAnimal.ability.efficiency * (1 + racingAnimal.currentStats.powerMs);
       }
     }
 
     if (racingAnimal.type === AnimalTypeEnum.Monkey) {
       if (racingAnimal.ability.name === "Landslide") {
-        var effectiveDistance = racingAnimal.ability.efficiency * (1 + racingAnimal.currentStats.powerMs);
+        var effectiveDistance = this.lookupService.GetAbilityEffectiveAmount(racingAnimal);
         var averageDistancePerSecond = race.length / this.timeToComplete;
         this.timeToComplete += effectiveDistance / averageDistancePerSecond;
       }
@@ -578,5 +585,10 @@ export class RaceComponent implements OnInit {
   skipRaceAnimation(): void {
     this.raceSkipped = true;
     this.skipRace.next(true);
+  }
+
+  pauseRaceAnimation(): void {
+    this.racePaused = !this.racePaused;
+    this.pauseRace.next(true);
   }
 }

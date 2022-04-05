@@ -36,7 +36,6 @@ export class DecksViewComponent implements OnInit {
 
   }
 
-  //just keep it in this component, update fields from here based on deck number
   editDeck(content: any, deck: AnimalDeck) {
     this.selectedDeck = deck;
     this.newAnimalList = [];

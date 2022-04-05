@@ -1,7 +1,7 @@
 <div id="raceInfo">
     <div class="updates">
         <div class="drawRace">
-            <app-draw-race [race]="selectedRace" [skip]="skipRace.asObservable()"></app-draw-race>
+            <app-draw-race [race]="selectedRace" [skip]="skipRace.asObservable()" [pause]="pauseRace.asObservable()"></app-draw-race>
         </div>
         <div class="raceUpdates">
             {{ incrementalRaceUpdates.trim() }}
@@ -24,5 +24,8 @@
     </div>
     <div class="back">
         <button (click)="skipRaceAnimation()">Skip</button>
+    </div>
+    <div class="back">
+        <button (click)="pauseRaceAnimation()">Pause</button>
     </div>
 </div>

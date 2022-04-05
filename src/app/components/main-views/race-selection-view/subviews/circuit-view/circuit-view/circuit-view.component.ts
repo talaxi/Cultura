@@ -9,6 +9,7 @@ import { GlobalService } from 'src/app/services/global-service.service';
 })
 export class CircuitViewComponent implements OnInit {
   circuitRank: string;
+  circuitRankUpDescription: string;
   availableCircuitRaces: Race[];
   @Output() raceSelected = new EventEmitter<Race>();
 
@@ -16,6 +17,7 @@ export class CircuitViewComponent implements OnInit {
 
   ngOnInit(): void {
     this.circuitRank = this.globalService.globalVar.circuitRank;
+    this.circuitRankUpDescription = this.globalService.globalVar.circuitRankUpRewardDescription;
     this.availableCircuitRaces = this.globalService.globalVar.circuitRaces.filter(item => item.requiredRank === this.circuitRank);
   }
 

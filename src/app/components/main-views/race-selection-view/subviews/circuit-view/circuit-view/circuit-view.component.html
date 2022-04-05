@@ -1,5 +1,6 @@
 <div class="circuitViewDiv">
-    <div class="circuitRaceHeader">Rank {{ circuitRank }} Circuit</div>
+    <div class="circuitRaceHeader" ngbPopover="{{ circuitRankUpDescription }}"
+    triggers="mouseenter:mouseleave" popoverClass="popoverClass">Rank {{ circuitRank }} Circuit</div>
     <app-animal-deck></app-animal-deck>
     <hr />
     <div class="circuitRaceGrid">

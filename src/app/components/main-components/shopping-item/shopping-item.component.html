@@ -1,8 +1,9 @@
-<div>
+<div ngbPopover="{{ longDescription }}"
+triggers="mouseenter:mouseleave" popoverClass="popoverClass">
     {{ selectedItem.name }}
     <br />
     <br />
-    {{ selectedItem.description }}
+    {{ shortDescription }}
     <br />
     <br />
     ${{ selectedItem.purchasePrice }}

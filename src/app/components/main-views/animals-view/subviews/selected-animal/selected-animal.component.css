@@ -48,3 +48,13 @@
   .racingStats {
     grid-area: racingStats;    
   }
+
+  ::ng-deep ngb-modal-backdrop {
+    z-index: 1050 !important;
+  }
+
+.modalClass {
+    background-color: var(--background-secondary);
+    border-color: var(--background-tertiary);
+    color: var(--foreground-default);
+}

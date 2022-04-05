@@ -21,8 +21,7 @@ export class RaceSelectionViewComponent implements OnInit {
   }
 
   raceSelected(race: Race)
-  {   
-    console.log("Race Selected");
+  {       
     this.selectedRace = race;    
     this.showRace = true;
   }

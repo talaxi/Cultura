@@ -239,21 +239,127 @@ export class LookupService {
 
   getAnimalsByRaceCourseType(type: string) {
     var itemList = [];
-    if (type === "Flatland")
-    {
+    if (type === "Flatland") {
       itemList.push(AnimalTypeEnum[AnimalTypeEnum.Horse]);
       itemList.push(AnimalTypeEnum[AnimalTypeEnum.Cheetah]);
     }
-    else if (type === "Mountain")
-    {
+    else if (type === "Mountain") {
       itemList.push(AnimalTypeEnum[AnimalTypeEnum.Monkey]);
       itemList.push(AnimalTypeEnum[AnimalTypeEnum.Goat]);
     }
-    else if (type === "Water")
-    {
+    else if (type === "Water") {
 
     }
 
     return itemList;
+  }
+
+  GetAbilityEffectiveAmount(animal: Animal) {
+    if (animal.ability === undefined || animal.ability === null ||
+      animal.ability.name === undefined || animal.ability.name === null)
+      return -1;
+
+    if (animal.ability.name === "Thoroughbred") {
+      return animal.ability.efficiency * (1 + animal.currentStats.powerMs);
+    }
+    if (animal.ability.name === "Inspiration") {
+      return animal.ability.efficiency * (1 + animal.currentStats.powerMs);
+    }
+    if (animal.ability.name === "Pacemaker") {
+      return animal.ability.efficiency * (1 + animal.currentStats.powerMs);
+    }
+    if (animal.ability.name === "Landslide") {
+      return animal.ability.efficiency * (1 + animal.currentStats.powerMs);
+    }
+    if (animal.ability.name === "Leap") {
+      return animal.ability.efficiency * (1 + animal.currentStats.powerMs);
+    }
+
+    return -1;
+  }
+
+  getAnimalAbilityDescription(shortDescription: boolean, abilityName: string, animal?: Animal) {
+    if (shortDescription) {
+      if (abilityName === "Thoroughbred") {
+        return "Stamina does not go down for a short period";
+      }
+      if (abilityName === "Inspiration") {
+        return "Increase next racer's max speed on relay";
+      }
+      if (abilityName === "Pacemaker") {
+        return "Increase acceleration for a short period";
+      }
+      if (abilityName === "Sprint") {
+        return "Short TODO";
+      }
+      if (abilityName === "Giving Chase") {
+        return "Short TODO";
+      }
+      if (abilityName === "On The Hunt") {
+        return "Short TODO";
+      }
+      if (abilityName === "Landslide") {
+        return "Delay other racers";
+      }
+      if (abilityName === "Frenzy") {
+        return "Short TODO";
+      }
+      if (abilityName === "Leap") {
+        return "Jump to the finish line";
+      }
+    }
+    else {
+      var cooldownDisplay = "";
+      if (animal === undefined || animal === null)
+      {
+        this.globalService.globalVar.animals.forEach(possibleAnimal => {
+          possibleAnimal.availableAbilities.forEach(ability => {
+            
+            if (ability.name === abilityName)
+            {
+              animal = possibleAnimal;               
+              cooldownDisplay = ability.cooldown.toString();
+            }
+          });
+        });
+      }
+
+      if (animal !== undefined && animal !== null) {
+        var effectiveAmountDisplay = this.GetAbilityEffectiveAmount(animal).toFixed(2);       
+
+        if (cooldownDisplay === "")
+          cooldownDisplay = animal.ability.cooldown.toString();        
+
+        if (abilityName === "Thoroughbred") {
+          return "Stamina does not go down for " + effectiveAmountDisplay + " meters. " + cooldownDisplay + " second cooldown.";
+        }
+        if (abilityName === "Inspiration") {
+          return "When the next racer starts, they gain 25% of your Max Speed for " + effectiveAmountDisplay + " meters.";
+        }
+        if (abilityName === "Pacemaker") {
+          return "Increase acceleration by 25% for " + effectiveAmountDisplay + " meters. " + cooldownDisplay + " second cooldown.";
+        }
+        if (abilityName === "Sprint") {
+          return "Long TODO";
+        }
+        if (abilityName === "Giving Chase") {
+          return "Long TODO";
+        }
+        if (abilityName === "On The Hunt") {
+          return "Long TODO";
+        }
+        if (abilityName === "Landslide") {
+          return "Drop rocks on competitors, delaying them " + effectiveAmountDisplay + " meters. " + cooldownDisplay + " second cooldown.";
+        }
+        if (abilityName === "Frenzy") {
+          return "Long TODO";
+        }
+        if (abilityName === "Leap") {
+          return "When you are " + effectiveAmountDisplay + " meters from the finish line, leap straight to the end.";
+        }
+      }
+    }
+
+    return "";
   }
 }

@@ -15,6 +15,8 @@ export class AppComponent {
   title = 'Cultura';
   newGame = true;
   saveTime = 0;
+  saveFrequency = 10; //in seconds
+  racingSaveFrequency = 120; // in seconds
 
   constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private lookupService: LookupService) {
 
@@ -37,17 +39,21 @@ export class AppComponent {
 
     this.gameLoopService.Update();
 
-    var subscription = this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {
+    var subscription = this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {    
       this.gameCheckup(deltaTime); 
       this.saveTime += deltaTime;
 
-      //TODO: This causes frame drops and cannot run frequently when drawing. 
-      //set up a global variable to change this to 5 sec or 60 sec depending on if you are racing
-      if (this.saveTime >= 60)
+      var frequency = this.saveFrequency;
+
+      if (this.globalService.globalVar.userIsRacing)
+        frequency = this.racingSaveFrequency;
+
+      if (this.saveTime >= frequency)
       {
+        console.log("Save");
         this.saveTime = 0;
         this.saveGame();
-      }
+      }    
     });
   }
 

@@ -59,7 +59,8 @@ export class GlobalService {
     this.InitializeBarns();
 
     //Initialize circuit race information
-    this.globalVar.circuitRank = "X";
+    this.globalVar.circuitRank = "Z";
+    this.globalVar.circuitRankUpRewardDescription = "Monkey";
     this.GenerateCircuitRaces();
 
     //Initialize local race information
@@ -132,7 +133,6 @@ export class GlobalService {
 
     var monkey = new Monkey();
     monkey.name = "Monkey";
-    monkey.isAvailable = true;
     this.calculateAnimalRacingStats(monkey);
 
     var cheetah = new Cheetah();
@@ -165,7 +165,7 @@ export class GlobalService {
     for (var i = 0; i < 3; i++) {
       var emptyDeck = new AnimalDeck();
       emptyDeck.isAvailable = true;
-      emptyDeck.deckNumber = i+2;
+      emptyDeck.deckNumber = i + 2;
       emptyDeck.name = "Animal Deck " + emptyDeck.deckNumber;
       this.globalVar.animalDecks.push(emptyDeck);
     }
@@ -177,27 +177,28 @@ export class GlobalService {
 
     var animalShopSection = new ShopSection();
     var animalShopItems: ShopItem[] = [];
+    var baseAnimalPrice = 5000;
 
     var cheetah = new ShopItem();
     cheetah.name = "Cheetah";
     cheetah.description = "The cheetah is a flat land racing animal that prioritizes quickness over stamina.";
-    cheetah.purchasePrice = 500;
+    cheetah.purchasePrice = baseAnimalPrice;
     cheetah.canHaveMultiples = false;
     cheetah.type = ShopItemTypeEnum.Animal;
     animalShopItems.push(cheetah);
 
-    var monkey = new ShopItem();
+    /*var monkey = new ShopItem();
     monkey.name = "Monkey";
     monkey.description = "The monkey is a mountain climbing animal that can use its considerable strength to drop rocks on its opponents.";
     monkey.purchasePrice = 500;
     monkey.canHaveMultiples = false;
     monkey.type = ShopItemTypeEnum.Animal;
-    animalShopItems.push(monkey);
+    animalShopItems.push(monkey);*/
 
     var goat = new ShopItem();
     goat.name = "Goat";
     goat.description = "The goat is a mountain climbing animal that can nimbly travel terrain.";
-    goat.purchasePrice = 500;
+    goat.purchasePrice = baseAnimalPrice;
     goat.canHaveMultiples = false;
     goat.type = ShopItemTypeEnum.Animal;
     animalShopItems.push(goat);
@@ -209,11 +210,12 @@ export class GlobalService {
 
     var foodShopSection = new ShopSection();
     var foodShopItems: ShopItem[] = [];
+    var baseFoodPrice = 50;
 
     var apple = new ShopItem();
     apple.name = "Apple";
     apple.description = "+1 Acceleration to a single animal";
-    apple.purchasePrice = 50;
+    apple.purchasePrice = baseFoodPrice;
     apple.canHaveMultiples = true;
     apple.type = ShopItemTypeEnum.Food;
     foodShopItems.push(apple);
@@ -221,15 +223,15 @@ export class GlobalService {
     var banana = new ShopItem();
     banana.name = "Banana";
     banana.description = "+1 Top Speed to a single animal";
-    banana.purchasePrice = 50;
+    banana.purchasePrice = baseFoodPrice;
     banana.canHaveMultiples = true;
     banana.type = ShopItemTypeEnum.Food;
     foodShopItems.push(banana);
 
     var strawberry = new ShopItem();
     strawberry.name = "Strawberry";
-    strawberry.description = "+1 Focus to a single animal";
-    strawberry.purchasePrice = 50;
+    strawberry.description = "+1 Endurance to a single animal";
+    strawberry.purchasePrice = baseFoodPrice;
     strawberry.canHaveMultiples = true;
     strawberry.type = ShopItemTypeEnum.Food;
     foodShopItems.push(strawberry);
@@ -237,7 +239,7 @@ export class GlobalService {
     var carrot = new ShopItem();
     carrot.name = "Carrot";
     carrot.description = "+1 Power to a single animal";
-    carrot.purchasePrice = 50;
+    carrot.purchasePrice = baseFoodPrice;
     carrot.canHaveMultiples = true;
     carrot.type = ShopItemTypeEnum.Food;
     foodShopItems.push(carrot);
@@ -245,10 +247,18 @@ export class GlobalService {
     var turnip = new ShopItem();
     turnip.name = "Turnip";
     turnip.description = "+1 Focus to a single animal";
-    turnip.purchasePrice = 50;
+    turnip.purchasePrice = baseFoodPrice;
     turnip.canHaveMultiples = true;
     turnip.type = ShopItemTypeEnum.Food;
     foodShopItems.push(turnip);
+
+    var orange = new ShopItem();
+    orange.name = "Orange";
+    orange.description = "+1 Adaptability to a single animal";
+    orange.purchasePrice = baseFoodPrice;
+    orange.canHaveMultiples = true;
+    orange.type = ShopItemTypeEnum.Food;
+    foodShopItems.push(orange);
 
     foodShopSection.name = "Food";
     foodShopSection.itemList = foodShopItems;
@@ -279,10 +289,10 @@ export class GlobalService {
         if (!ability.isAbilityPurchased) {
           var purchasableAbility = new ShopItem();
           purchasableAbility.name = animal.getAnimalType() + " Ability: " + ability.name;
-          purchasableAbility.description = ability.description;
           purchasableAbility.purchasePrice = ability.purchasePrice;
           purchasableAbility.canHaveMultiples = false;
           purchasableAbility.type = ShopItemTypeEnum.Ability;
+          purchasableAbility.additionalIdentifier = ability.name;
           abilityShopItems.push(purchasableAbility);
         }
       });
@@ -370,6 +380,44 @@ export class GlobalService {
     });
 
     this.globalVar.circuitRank = nextCircuitRank;
+    this.checkCircuitRankRewards();
+  }
+
+  //TODO: Make some sort of checkup that says if circuitrank is > 3 then make sure monkey is available?
+  checkCircuitRankRewards(): void {
+    var numericValue = this.utilityService.getNumericValueOfCircuitRank(this.globalVar.circuitRank);
+    if (numericValue === 3) {
+      var monkey = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Monkey);
+      if (monkey !== undefined && monkey !== null) {
+        monkey.isAvailable = true;
+
+        var primaryAnimalDeck = this.globalVar.animalDecks.find(item => item.isPrimaryDeck);
+        if (primaryAnimalDeck !== null && primaryAnimalDeck !== undefined) {
+          var typeFound = false;
+          primaryAnimalDeck.selectedAnimals.forEach(item => {
+            if (item.raceCourseType === monkey?.raceCourseType)
+              typeFound = true;
+          });
+
+          if (!typeFound)
+            primaryAnimalDeck.selectedAnimals.push(monkey);
+        }
+      }
+
+      this.globalVar.circuitRankUpRewardDescription = "Next Description";
+    }
+    else if (numericValue === 5) //5
+    {
+      //some sort of minor reward, 1 of each food maybe?
+    }
+    else if (numericValue === 10) //10
+    {
+      //add water animal to line up
+    }
+    else if (numericValue === 15) //15
+    {
+
+    }
   }
 
   //TODO: tweak progression as needed
@@ -522,10 +570,6 @@ export class GlobalService {
     var pathLength = totalDistance / 20;
     var totalRoutes = Math.round(totalLegLengthRemaining / pathLength);
     var lastRouteSpecial = false;
-
-    //console.log("totalLegLengthRemaining: " + totalLegLengthRemaining);
-    //console.log("pathLength: " + pathLength);
-    //console.log("totalRoutes: " + totalRoutes);
 
     for (var i = 0; i < totalRoutes; i++) {
       var path = new RacePath();

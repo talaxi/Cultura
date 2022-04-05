@@ -29,6 +29,9 @@ export class GlobalVariables {
     @Type(() => AnimalDeck)
     animalDecks: AnimalDeck[];
     settings: Map<string, boolean>;
+    circuitRankUpRewardDescription: string;
+    
+    userIsRacing = false;    
 
     constructor(existingVariables?: GlobalVariables) {
         if (existingVariables !== undefined && existingVariables !== null) {            

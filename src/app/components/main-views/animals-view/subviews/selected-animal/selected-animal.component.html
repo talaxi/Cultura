@@ -5,14 +5,14 @@
                 <div *ngIf="selectedAnimal.name !== selectedAnimal.getAnimalType()">
                     <div *ngIf="!editingName">
                         <span>{{ selectedAnimal.name }}</span>
-                        <span><button (click)="editingName = !editingName">Edit Name</button></span>                        
+                        <span><button (click)="editingName = !editingName">Edit Name</button></span>
                     </div>
                     <div *ngIf="editingName">
                         <span><input id="newName" name="newName" [(ngModel)]="newName"></span>
                         <span><button (click)="editName()">Save</button></span>
                         <span><button (click)="editingName = !editingName">Cancel</button></span>
-                    </div>                    
-                        <span>{{ selectedAnimal.getAnimalType() }}</span>
+                    </div>
+                    <span>{{ selectedAnimal.getAnimalType() }}</span>
                 </div>
                 <div *ngIf="selectedAnimal.name === selectedAnimal.getAnimalType()">
                     <span>{{ selectedAnimal.getAnimalType() }}</span>
@@ -25,6 +25,9 @@
             <span>Breed XP: {{selectedAnimal.breedGaugeXp | number : '1.2-2'}}/{{selectedAnimal.breedGaugeMax}}
                 <button (click)="breed()">Breed</button>
             </span>
+            <!--TODO: Move this to one of the sides of dead space-->
+            <br />
+            <button (click)="openItemModal(content)">Use Item</button>
         </div>
         <div class="back" (click)="returnToAnimalView()">
             <span>Back</span>
@@ -97,15 +100,53 @@
             </span>
         </div>
     </div>
+    <br />
     <div class="abilities">
         <p>Abilities</p>
         <div>
-            <span class="ability1" (click)="selectAbility(ability1)" [class.filterActive]="selectedAnimal.ability.name === ability1.name">{{ ability1.name }} </span>
-            <span *ngIf="ability2.isAbilityPurchased" class="ability2" (click)="selectAbility(ability2)" [class.filterActive]="selectedAnimal.ability.name === ability2.name">{{ ability2.name }} </span>
-            <span *ngIf="ability3.isAbilityPurchased" class="ability3" (click)="selectAbility(ability3)" [class.filterActive]="selectedAnimal.ability.name === ability3.name">{{ ability3.name }} </span>
+            <span class="ability1" (click)="selectAbility(ability1)"
+                [class.filterActive]="selectedAnimal.ability.name === ability1.name">{{ ability1.name }} </span>
+            <span *ngIf="ability2.isAbilityPurchased" class="ability2" (click)="selectAbility(ability2)"
+                [class.filterActive]="selectedAnimal.ability.name === ability2.name">{{ ability2.name }} </span>
+            <span *ngIf="ability3.isAbilityPurchased" class="ability3" (click)="selectAbility(ability3)"
+                [class.filterActive]="selectedAnimal.ability.name === ability3.name">{{ ability3.name }} </span>
             <p>
-                {{ selectedAnimal.ability.description }}
+                {{ longDescription }}
             </p>
         </div>
     </div>
 </div>
+
+
+
+<ng-template #content let-modal>
+    <div class="modalClass">
+        <form>
+            <div class="modal-header">
+                <h4 class="modal-title" id="modal-basic-title">Use Item</h4>
+                <button type="button" aria-label="Close" (click)="modal.dismiss()">X</button>
+            </div>
+            <div class="modal-body">                
+                <div class="itemContainer">
+                    <table>
+                        <tr *ngFor="let cells of itemsRows;">
+                            <td *ngFor="let c of cells;" class="cell">
+                                <div (click)="selectItem(c)">
+                                     {{ c.name }} ({{ c.amount }})
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div *ngIf="selectedItem !== undefined && selectedItem !== null" class="modal-footer">                            
+                <div class="mb-3">
+                    <span>{{selectedItem.name}}</span>    
+                    <label for="deck-name">Amount: </label>
+                    <input id="deck-name" type="text" [(ngModel)]="selectedItemQuantity">
+                </div>
+                <button type="button" (click)="useItem()">Use</button>
+            </div>
+        </form>
+    </div>
+</ng-template>
