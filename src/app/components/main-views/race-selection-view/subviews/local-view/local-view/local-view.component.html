@@ -3,13 +3,22 @@
     <app-animal-deck></app-animal-deck>
     <hr />
     <div class="localRaceGrid">
-        <div class="localRace{{i+1}}" (click)="selectLocalRace(race)"
+        <div (click)="selectLocalRace(availableMonoRace)" class="monoRace" *ngIf="availableMonoRace !== undefined && availableMonoRace !== null">
+            <span class="s4Heading">Mono Race <strong>{{ availableMonoRace.requiredRank }}</strong> </span>
+            <br />
+            <app-race-description [race]="availableMonoRace" [showStartText]="true"></app-race-description>
+        </div>
+        <div class="monoRace" *ngIf="availableMonoRace === undefined || availableMonoRace == null">
+            Next Mono Race Available After Circuit Rank Up
+        </div>
+        <hr/>
+        <!--<div class="localRace{{i+1}}" (click)="selectLocalRace(race)"
             *ngFor="let race of availableLocalRaces; let i = index">
-            <span>Race {{ i+1 }} </span>
+            <span>Mono Race {{ i+1 }} </span>
             <br />
             <p *ngFor="let raceLeg of race.raceLegs">{{ raceLeg.distance | number :
                 '1.2-2' }} Meters of {{ raceLeg.getCourseTypeName() }}  </p>
             <p>{{ race.isCompleted ? "Completed" : "Start" }}</p>
-        </div>
+        </div>-->
     </div>
 </div>

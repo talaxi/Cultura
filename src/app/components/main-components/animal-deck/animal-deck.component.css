@@ -3,3 +3,7 @@
     font-weight: bold;
     font-size-adjust: 0.75;
 }
+
+.defaultColor {
+    color: var(--foreground-default);     
+}

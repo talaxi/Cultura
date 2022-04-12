@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { AnimalDeck } from 'src/app/models/animals/animal-deck.model';
+import { Animal } from 'src/app/models/animals/animal.model';
 import { GlobalService } from 'src/app/services/global-service.service';
 
 @Component({
@@ -25,5 +26,14 @@ export class AnimalDeckComponent implements OnInit {
       if (selectedDeck !== undefined && selectedDeck !== null)
         this.deck = selectedDeck;
     }
+  }
+
+  getColorClass(animal: Animal) {
+    var colorConditional = {
+      'flatlandColor': animal.getRaceCourseType() === 'Flatland',
+      'mountainColor': animal.getRaceCourseType() === 'Mountain',
+       'waterColor': animal.getRaceCourseType() === 'Water'
+    };
+    return colorConditional;    
   }
 }

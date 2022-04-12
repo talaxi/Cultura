@@ -22,6 +22,7 @@ import { FacilitySizeEnum } from '../models/facility-size-enum.model';
 import { AnimalDeck } from '../models/animals/animal-deck.model';
 import { Terrain } from '../models/races/terrain.model';
 import { TerrainTypeEnum } from '../models/terrain-type-enum.model';
+import { LocalRaceTypeEnum } from '../models/local-race-type-enum.model';
 
 @Injectable({
   providedIn: 'root'
@@ -37,11 +38,13 @@ export class GlobalService {
     this.globalVar.animals = [];
     this.globalVar.trainingOptions = [];
     this.globalVar.circuitRaces = [];
+    this.globalVar.localRaces = [];
     this.globalVar.resources = [];
     this.globalVar.modifiers = [];
     this.globalVar.animalDecks = [];
     this.globalVar.barns = [];
     this.globalVar.settings = new Map<string, boolean>();
+    this.globalVar.unlockables = new Map<string, boolean>();
 
     //Initialize modifiers
     this.InitializeModifiers();
@@ -60,16 +63,19 @@ export class GlobalService {
 
     //Initialize circuit race information
     this.globalVar.circuitRank = "Z";
-    this.globalVar.circuitRankUpRewardDescription = "Monkey";
     this.GenerateCircuitRaces();
 
     //Initialize local race information
+    this.GenerateLocalRaces();
 
     //Initialize resources
     this.InitializeResources();
 
     //Initialize settings
     this.InitializeSettings();
+
+    //Initialize settings
+    this.InitializeUnlockables();
   }
 
   InitializeModifiers(): void {
@@ -80,6 +86,9 @@ export class GlobalService {
     this.globalVar.modifiers.push(new StringNumberPair(1, "localBreedGaugeIncrease"));
 
     this.globalVar.modifiers.push(new StringNumberPair(.01, "breedLevelStatModifier"));
+
+    this.globalVar.modifiers.push(new StringNumberPair(5, "facilityLevelModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(.02, "animalHandlerModifier"));
 
     var baseMaxSpeedModifier = .3;
     var baseAccelerationModifier = .1;
@@ -181,24 +190,16 @@ export class GlobalService {
 
     var cheetah = new ShopItem();
     cheetah.name = "Cheetah";
-    cheetah.description = "The cheetah is a flat land racing animal that prioritizes quickness over stamina.";
-    cheetah.purchasePrice = baseAnimalPrice;
+    cheetah.shortDescription = "The cheetah is a flat land racing animal that prioritizes quickness over stamina.";
+    cheetah.purchasePrice.push(new ResourceValue("Money", baseAnimalPrice));
     cheetah.canHaveMultiples = false;
     cheetah.type = ShopItemTypeEnum.Animal;
     animalShopItems.push(cheetah);
 
-    /*var monkey = new ShopItem();
-    monkey.name = "Monkey";
-    monkey.description = "The monkey is a mountain climbing animal that can use its considerable strength to drop rocks on its opponents.";
-    monkey.purchasePrice = 500;
-    monkey.canHaveMultiples = false;
-    monkey.type = ShopItemTypeEnum.Animal;
-    animalShopItems.push(monkey);*/
-
     var goat = new ShopItem();
     goat.name = "Goat";
-    goat.description = "The goat is a mountain climbing animal that can nimbly travel terrain.";
-    goat.purchasePrice = baseAnimalPrice;
+    goat.shortDescription = "The goat is a mountain climbing animal that can nimbly travel terrain.";
+    goat.purchasePrice.push(new ResourceValue("Money", baseAnimalPrice));
     goat.canHaveMultiples = false;
     goat.type = ShopItemTypeEnum.Animal;
     animalShopItems.push(goat);
@@ -207,57 +208,62 @@ export class GlobalService {
     animalShopSection.itemList = animalShopItems;
     this.globalVar.shop.push(animalShopSection);
 
-
     var foodShopSection = new ShopSection();
     var foodShopItems: ShopItem[] = [];
     var baseFoodPrice = 50;
 
     var apple = new ShopItem();
     apple.name = "Apple";
-    apple.description = "+1 Acceleration to a single animal";
-    apple.purchasePrice = baseFoodPrice;
+    apple.shortDescription = "+1 Acceleration to a single animal";
+    apple.purchasePrice.push(new ResourceValue("Money", baseFoodPrice));
     apple.canHaveMultiples = true;
     apple.type = ShopItemTypeEnum.Food;
+    apple.infiniteAmount = true;
     foodShopItems.push(apple);
 
     var banana = new ShopItem();
     banana.name = "Banana";
-    banana.description = "+1 Top Speed to a single animal";
-    banana.purchasePrice = baseFoodPrice;
+    banana.shortDescription = "+1 Top Speed to a single animal";
+    banana.purchasePrice.push(new ResourceValue("Money", baseFoodPrice));
     banana.canHaveMultiples = true;
     banana.type = ShopItemTypeEnum.Food;
+    banana.infiniteAmount = true;
     foodShopItems.push(banana);
 
     var strawberry = new ShopItem();
     strawberry.name = "Strawberry";
-    strawberry.description = "+1 Endurance to a single animal";
-    strawberry.purchasePrice = baseFoodPrice;
+    strawberry.shortDescription = "+1 Endurance to a single animal";
+    strawberry.purchasePrice.push(new ResourceValue("Money", baseFoodPrice));
     strawberry.canHaveMultiples = true;
     strawberry.type = ShopItemTypeEnum.Food;
+    strawberry.infiniteAmount = true;
     foodShopItems.push(strawberry);
 
     var carrot = new ShopItem();
     carrot.name = "Carrot";
-    carrot.description = "+1 Power to a single animal";
-    carrot.purchasePrice = baseFoodPrice;
+    carrot.shortDescription = "+1 Power to a single animal";
+    carrot.purchasePrice.push(new ResourceValue("Money", baseFoodPrice));
     carrot.canHaveMultiples = true;
     carrot.type = ShopItemTypeEnum.Food;
+    carrot.infiniteAmount = true;
     foodShopItems.push(carrot);
 
     var turnip = new ShopItem();
     turnip.name = "Turnip";
-    turnip.description = "+1 Focus to a single animal";
-    turnip.purchasePrice = baseFoodPrice;
+    turnip.shortDescription = "+1 Focus to a single animal";
+    turnip.purchasePrice.push(new ResourceValue("Money", baseFoodPrice));
     turnip.canHaveMultiples = true;
     turnip.type = ShopItemTypeEnum.Food;
+    turnip.infiniteAmount = true;
     foodShopItems.push(turnip);
 
     var orange = new ShopItem();
     orange.name = "Orange";
-    orange.description = "+1 Adaptability to a single animal";
-    orange.purchasePrice = baseFoodPrice;
+    orange.shortDescription = "+1 Adaptability to a single animal";
+    orange.purchasePrice.push(new ResourceValue("Money", baseFoodPrice));
     orange.canHaveMultiples = true;
     orange.type = ShopItemTypeEnum.Food;
+    orange.infiniteAmount = true;
     foodShopItems.push(orange);
 
     foodShopSection.name = "Food";
@@ -270,8 +276,8 @@ export class GlobalService {
     this.globalVar.trainingOptions.filter(item => !item.isAvailable).forEach(item => {
       var purchasableTraining = new ShopItem();
       purchasableTraining.name = item.trainingName;
-      purchasableTraining.description = item.getStatGainDescription();
-      purchasableTraining.purchasePrice = item.purchasePrice;
+      purchasableTraining.shortDescription = item.getStatGainDescription();
+      purchasableTraining.purchasePrice.push(new ResourceValue("Money", item.purchasePrice));
       purchasableTraining.canHaveMultiples = false;
       purchasableTraining.type = ShopItemTypeEnum.Training;
       trainingShopItems.push(purchasableTraining);
@@ -289,7 +295,7 @@ export class GlobalService {
         if (!ability.isAbilityPurchased) {
           var purchasableAbility = new ShopItem();
           purchasableAbility.name = animal.getAnimalType() + " Ability: " + ability.name;
-          purchasableAbility.purchasePrice = ability.purchasePrice;
+          purchasableAbility.purchasePrice.push(new ResourceValue("Money", ability.purchasePrice));
           purchasableAbility.canHaveMultiples = false;
           purchasableAbility.type = ShopItemTypeEnum.Ability;
           purchasableAbility.additionalIdentifier = ability.name;
@@ -301,6 +307,52 @@ export class GlobalService {
     abilityShopSection.name = "Abilities";
     abilityShopSection.itemList = abilityShopItems;
     this.globalVar.shop.push(abilityShopSection);
+
+    var specialtyShopSection = new ShopSection();
+    var specialtyShopItems: ShopItem[] = [];
+
+    var stopwatch = new ShopItem();
+    stopwatch.name = "Stopwatch";
+    stopwatch.shortDescription = "Reduce training time by 5%";
+    stopwatch.purchasePrice.push(this.getMedalResourceValue(10));
+    stopwatch.quantityMultiplier = 10;
+    stopwatch.totalShopQuantity = 2;
+    stopwatch.canHaveMultiples = true;
+    stopwatch.type = ShopItemTypeEnum.Specialty;
+    specialtyShopItems.push(stopwatch);
+
+    var animalHandler = new ShopItem();
+    animalHandler.name = "Animal Handler";
+    animalHandler.shortDescription = "Retain 2% of trained stats after breeding";
+    animalHandler.purchasePrice.push(this.getMoneyResourceValue(2000));
+    animalHandler.quantityMultiplier = 2;
+    animalHandler.totalShopQuantity = 20;
+    animalHandler.canHaveMultiples = true;
+    animalHandler.type = ShopItemTypeEnum.Specialty;
+    specialtyShopItems.push(animalHandler);
+
+    var raceMaps = new ShopItem();
+    raceMaps.name = "Race Maps";
+    raceMaps.shortDescription = "Increase your chance to burst during special routes by 25%";
+    raceMaps.purchasePrice.push(this.getMedalResourceValue(2));
+    raceMaps.quantityMultiplier = 2;
+    raceMaps.totalShopQuantity = 4;
+    raceMaps.canHaveMultiples = true;
+    raceMaps.type = ShopItemTypeEnum.Specialty;
+    specialtyShopItems.push(raceMaps);
+
+    var stockbreeder = new ShopItem();
+    stockbreeder.name = "Stockbreeder";
+    stockbreeder.shortDescription = "Add option to auto breed when Breed XP is full";
+    stockbreeder.purchasePrice.push(this.getMoneyResourceValue(5000));
+    stockbreeder.canHaveMultiples = false;
+    stockbreeder.type = ShopItemTypeEnum.Specialty;
+    specialtyShopItems.push(stockbreeder);
+
+    specialtyShopSection.name = "Specialty";
+    specialtyShopSection.itemList = specialtyShopItems;
+    this.globalVar.shop.push(specialtyShopSection);
+
   }
 
   InitializeBarns(): void {
@@ -383,9 +435,20 @@ export class GlobalService {
     this.checkCircuitRankRewards();
   }
 
+  getRewardReceiveText(numericValue: number) {
+    return "Reach Circuit Rank " + this.utilityService.getCircuitRankFromNumericValue(numericValue) + "To Receive: \n";
+  }
+
   //TODO: Make some sort of checkup that says if circuitrank is > 3 then make sure monkey is available?
   checkCircuitRankRewards(): void {
     var numericValue = this.utilityService.getNumericValueOfCircuitRank(this.globalVar.circuitRank);
+    this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(2) + "Mono Races";
+
+    if (numericValue === 2) {
+      this.globalVar.unlockables.set("monoRace", true);
+
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(3) + "Monkey";
+    }
     if (numericValue === 3) {
       var monkey = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Monkey);
       if (monkey !== undefined && monkey !== null) {
@@ -404,11 +467,30 @@ export class GlobalService {
         }
       }
 
-      this.globalVar.circuitRankUpRewardDescription = "Next Description";
+      var renownAmount = 1;
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(5) + renownAmount + " Renown";
     }
-    else if (numericValue === 5) //5
+    else if (numericValue === 5)
     {
-      //some sort of minor reward, 1 of each food maybe?
+      var renownAmount = 1;
+      var renownResource = this.globalVar.resources.find(item => item.name === "Renown");
+      if (renownResource === null || renownResource === undefined)
+        this.globalVar.resources.push(new ResourceValue("Renown", renownAmount));
+      else
+        renownResource.amount += renownAmount;
+
+      var appleAmount = 5;
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(7) + appleAmount + " Apples";
+    }
+    else if (numericValue === 7) {
+      var appleAmount = 1;
+      var appleResource = this.globalVar.resources.find(item => item.name === "Apples");
+      if (appleResource === null || appleResource === undefined)
+        this.globalVar.resources.push(new ResourceValue("Apples", appleAmount));
+      else
+        appleResource.amount += appleAmount;
+
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(10) + "Dolphin";
     }
     else if (numericValue === 10) //10
     {
@@ -458,7 +540,7 @@ export class GlobalService {
             else if (j === 1)
               leg.terrain = new Terrain(TerrainTypeEnum.Rainy);
             else if (j === 2)
-              leg.terrain = new Terrain(TerrainTypeEnum.Storms);
+              leg.terrain = new Terrain(TerrainTypeEnum.Stormy);
           }
           leg.distance = Math.round(baseMeters * (factor ** i) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor));
           raceLegs.push(leg);
@@ -512,10 +594,7 @@ export class GlobalService {
           leg.pathData = this.GenerateRaceLegPaths(leg, totalDistance);
         });
 
-        //TODO: need to include rewards as well
-
-
-        this.globalVar.circuitRaces.push(new Race(raceLegs, circuitRank, true, raceIndex, totalDistance, this.GenerateCircuitRaceRewards(circuitRank)));
+        this.globalVar.circuitRaces.push(new Race(raceLegs, circuitRank, true, raceIndex, totalDistance, timeToComplete, this.GenerateCircuitRaceRewards(circuitRank)));
 
         raceIndex += 1;
       }
@@ -559,9 +638,58 @@ export class GlobalService {
     if (currentRenownResource !== undefined)
       currentRenown = currentRenownResource.amount;
 
-    rewards.push(new ResourceValue("Money", Math.round(baseMoney * (moneyFactor ** numericRank)))); //you can't do the modifier here, your renown is fixed at the very beginning when you generate
+    rewards.push(new ResourceValue("Money", Math.round(baseMoney * (moneyFactor ** numericRank))));
     rewards.push(new ResourceValue("Renown", parseFloat(((baseRenown * (renownFactor ** numericRank)) / 100).toFixed(3))));
     return rewards;
+  }
+
+  GenerateMonoRaceRewards(): ResourceValue[] {
+    var rewards: ResourceValue[] = [];
+    rewards.push(new ResourceValue("Facility Level", 1));
+    return rewards;
+  }
+
+  GenerateLocalRaces(): void {
+    this.GenerateMonoRaces();
+  }
+
+  GenerateMonoRaces(): void {
+    var raceIndex = 1;
+    var timeToComplete = 90;
+
+    var baseMeters = 140;
+    var factor = 1.175;
+
+    var maxRandomFactor = 1.1;
+    var minRandomFactor = 0.9;
+    var circuitRank = "Y";
+
+    for (var i = 0; i < 25; i++) //Circuit rank Z-A
+    {
+      var raceLegs: RaceLeg[] = [];
+
+      var leg = new RaceLeg();
+      if (i === 1)
+        leg.courseType = RaceCourseTypeEnum.Flatland;
+      else
+        leg.courseType = this.utilityService.getRandomRaceCourseType();
+      leg.terrain = new Terrain(this.utilityService.getRandomTerrain());
+      leg.distance = Math.round(baseMeters * (factor ** i) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor));
+      raceLegs.push(leg);
+
+      var totalDistance = leg.distance;
+
+      raceLegs.forEach(leg => {
+        leg.pathData = this.GenerateRaceLegPaths(leg, totalDistance);
+      });
+
+      this.globalVar.localRaces.push(new Race(raceLegs, circuitRank, false, raceIndex, totalDistance, timeToComplete, this.GenerateMonoRaceRewards(), LocalRaceTypeEnum.Mono));
+
+      raceIndex += 1;
+
+      var charCode = circuitRank.charCodeAt(0);
+      circuitRank = String.fromCharCode(--charCode);
+    }
   }
 
   GenerateRaceLegPaths(leg: RaceLeg, totalDistance: number): RacePath[] {
@@ -684,13 +812,19 @@ export class GlobalService {
       breedLevelStatModifierValue = breedLevelStatModifier.value;
     breedLevelStatModifierValue = 1 + (breedLevelStatModifierValue * (animal.breedLevel - 1));
 
+    var diminishingReturnsThreshold = animal.currentStats.diminishingReturnsDefaultStatThreshold;
+    var facilityLevelModifier = this.globalVar.modifiers.find(item => item.text === "facilityLevelModifier");
+    var facilityLevel = this.globalVar.resources.find(item => item.name === "Facility Level");
+    if (facilityLevelModifier !== undefined && facilityLevel !== undefined)
+      diminishingReturnsThreshold += facilityLevel.amount * facilityLevelModifier.value;
+
     //do the calculations      
-    animal.currentStats.maxSpeedMs = animal.currentStats.calculateMaxSpeed(totalMaxSpeedModifier * breedLevelStatModifierValue);
-    animal.currentStats.accelerationMs = animal.currentStats.calculateTrueAcceleration(totalAccelerationModifier * breedLevelStatModifierValue);
-    animal.currentStats.stamina = animal.currentStats.calculateStamina(totalStaminaModifier * breedLevelStatModifierValue);
-    animal.currentStats.powerMs = animal.currentStats.calculateTruePower(totalPowerModifier * breedLevelStatModifierValue);
-    animal.currentStats.focusMs = animal.currentStats.calculateTrueFocus(totalFocusModifier * breedLevelStatModifierValue);
-    animal.currentStats.adaptabilityMs = animal.currentStats.calculateTrueAdaptability(totalAdaptabilityModifier * breedLevelStatModifierValue);
+    animal.currentStats.maxSpeedMs = animal.currentStats.calculateMaxSpeed(totalMaxSpeedModifier * breedLevelStatModifierValue, diminishingReturnsThreshold);
+    animal.currentStats.accelerationMs = animal.currentStats.calculateTrueAcceleration(totalAccelerationModifier * breedLevelStatModifierValue, diminishingReturnsThreshold);
+    animal.currentStats.stamina = animal.currentStats.calculateStamina(totalStaminaModifier * breedLevelStatModifierValue, diminishingReturnsThreshold);
+    animal.currentStats.powerMs = animal.currentStats.calculateTruePower(totalPowerModifier * breedLevelStatModifierValue, diminishingReturnsThreshold);
+    animal.currentStats.focusMs = animal.currentStats.calculateTrueFocus(totalFocusModifier * breedLevelStatModifierValue, diminishingReturnsThreshold);
+    animal.currentStats.adaptabilityMs = animal.currentStats.calculateTrueAdaptability(totalAdaptabilityModifier * breedLevelStatModifierValue, diminishingReturnsThreshold);
     animal.currentStats.burstChance = animal.currentStats.calculateBurstChance();
     animal.currentStats.burstDistance = animal.currentStats.calculateBurstDistance();
   }
@@ -700,6 +834,9 @@ export class GlobalService {
 
     if (animal.breedGaugeXp >= animal.breedGaugeMax) {
       animal.breedGaugeXp = animal.breedGaugeMax;
+
+      if (animal.autoBreedActive)
+        this.BreedAnimal(animal);
     }
   }
 
@@ -711,16 +848,53 @@ export class GlobalService {
     animal.breedGaugeXp = 0;
     //increase max total
 
-    animal.currentStats = new AnimalStats(animal.baseStats.topSpeed, animal.baseStats.acceleration, animal.baseStats.endurance,
-      animal.baseStats.power, animal.baseStats.focus, animal.baseStats.adaptability);
+    var handlers = this.globalVar.resources.find(item => item.name === "Animal Handler");
+    var handlerModifier = this.globalVar.modifiers.find(item => item.text === "animalHandlerModifier");
+    if (handlers !== null && handlers !== undefined && handlerModifier !== undefined && handlerModifier != null && handlers.amount > 0) {
+      var statRetainPercent = handlers.amount * handlerModifier.value;
+      var retainedTopSpeed = Math.round((animal.currentStats.topSpeed - animal.baseStats.topSpeed) * statRetainPercent);
+      var retainedAcceleration = Math.round((animal.currentStats.acceleration - animal.baseStats.acceleration) * statRetainPercent);
+      var retainedEndurance = Math.round((animal.currentStats.endurance - animal.baseStats.endurance) * statRetainPercent);
+      var retainedPower = Math.round((animal.currentStats.power - animal.baseStats.power) * statRetainPercent);
+      var retainedFocus = Math.round((animal.currentStats.focus - animal.baseStats.focus) * statRetainPercent);
+      var retainedAdaptability = Math.round((animal.currentStats.adaptability - animal.baseStats.adaptability) * statRetainPercent);
+
+      animal.currentStats = new AnimalStats(animal.baseStats.topSpeed + retainedTopSpeed,
+        animal.baseStats.acceleration + retainedAcceleration, animal.baseStats.endurance + retainedEndurance,
+        animal.baseStats.power + retainedPower, animal.baseStats.focus + retainedFocus,
+        animal.baseStats.adaptability + retainedAdaptability);
+    }
+    else {
+      animal.currentStats = new AnimalStats(animal.baseStats.topSpeed, animal.baseStats.acceleration, animal.baseStats.endurance,
+        animal.baseStats.power, animal.baseStats.focus, animal.baseStats.adaptability);
+    }
     this.calculateAnimalRacingStats(animal);
   }
 
   InitializeResources() {
-    this.globalVar.resources.push(this.initializeService.initializeResource("Money", 5000));
+    this.globalVar.resources.push(this.initializeService.initializeResource("Money", 50000));
+    this.globalVar.resources.push(this.initializeService.initializeResource("Medals", 150));
   }
 
   InitializeSettings() {
     this.globalVar.settings.set("skipDrawRace", false);
+  }
+
+  InitializeUnlockables() {
+    this.globalVar.unlockables.set("monoRace", false);
+    this.globalVar.unlockables.set("duoRace", false);
+    this.globalVar.unlockables.set("rainbowRace", false);
+    this.globalVar.unlockables.set("barnRow2", false);
+    this.globalVar.unlockables.set("barnRow3", false);
+    this.globalVar.unlockables.set("attractionSpecialization", false);
+    this.globalVar.unlockables.set("researchFacilitySpecialization", false);
+  }
+
+  getMoneyResourceValue(amount: number) {
+    return new ResourceValue("Money", amount);
+  }
+
+  getMedalResourceValue(amount: number) {
+    return new ResourceValue("Medals", amount);
   }
 }

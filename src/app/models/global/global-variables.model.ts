@@ -19,6 +19,8 @@ export class GlobalVariables {
     @Type(() => Race)
     circuitRaces: Race[];
     circuitRank: string;
+    @Type(() => Race)
+    localRaces: Race[];
     @Type(() => ResourceValue)
     resources: ResourceValue[];
     @Type(() => StringNumberPair)
@@ -29,6 +31,7 @@ export class GlobalVariables {
     @Type(() => AnimalDeck)
     animalDecks: AnimalDeck[];
     settings: Map<string, boolean>;
+    unlockables: Map<string, boolean>;
     circuitRankUpRewardDescription: string;
     
     userIsRacing = false;    
@@ -40,6 +43,7 @@ export class GlobalVariables {
             this.trainingOptions = existingVariables.trainingOptions;
             this.circuitRaces = existingVariables.circuitRaces;
             this.circuitRank = existingVariables.circuitRank;
+            this.localRaces = existingVariables.localRaces;
             this.resources = existingVariables.resources;
             this.modifiers = existingVariables.modifiers;
             this.shop = existingVariables.shop;

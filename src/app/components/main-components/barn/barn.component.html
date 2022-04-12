@@ -7,6 +7,9 @@
         <br />
         <p><ngb-progressbar type="success" [value]="this.trainingProgressBarPercent"></ngb-progressbar></p>        
     </div>
+    <div class="unassigned" *ngIf="!this.isOccupied && !this.isLocked">
+        <span>Unassigned</span>
+    </div>
     <div class="locked" *ngIf="this.isLocked">
         <span>Locked</span>
     </div>

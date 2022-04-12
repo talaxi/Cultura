@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { RaceCourseTypeEnum } from 'src/app/models/race-course-type-enum.model';
+import { TerrainTypeEnum } from 'src/app/models/terrain-type-enum.model';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +21,14 @@ export class UtilityService {
   getRandomNumberPercent(): number {
     return (Math.random()  * (99) + 1);
   }  
+
+  getRandomTerrain(): TerrainTypeEnum {
+    return TerrainTypeEnum.Sunny;
+  }
+
+  getRandomRaceCourseType(): RaceCourseTypeEnum {
+    return RaceCourseTypeEnum.Flatland;
+  } 
   
   getRenownCircuitRaceModifier(totalRenown: number) {
     return 1 + totalRenown;
@@ -32,6 +42,18 @@ export class UtilityService {
     }
 
     circuitValue += 91 - circuitRank.charCodeAt(circuitRank.length - 1);
+    return circuitValue;
+  }
+
+  getCircuitRankFromNumericValue(numericValue: number) {
+    var circuitValue = "";
+    while (numericValue > 26)
+    {
+      circuitValue += "A";
+      numericValue -= 26;
+    }
+    
+    circuitValue += String.fromCharCode(65 + numericValue);
     return circuitValue;
   }
 }

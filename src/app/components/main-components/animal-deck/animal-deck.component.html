@@ -2,8 +2,8 @@
     <div *ngIf="deck.isPrimaryDeck && this.deckNumber !== undefined && this.deckNumber > 0" class="primaryText">
         PRIMARY
     </div>
-    {{deck.name}} - <span *ngFor="let animal of deck.selectedAnimals; let i = index;">
-        {{animal.name}}<span *ngIf="i < deck.selectedAnimals.length - 1"> / </span>
+    <strong>{{deck.name}}</strong> - <span *ngFor="let animal of deck.selectedAnimals; let i = index;" class="coloredText" [ngClass]="getColorClass(animal)">
+        {{animal.name}}<span *ngIf="i < deck.selectedAnimals.length - 1" class="defaultColor"> / </span>
     </span>
 </div>
 <!-- maybe Name of Deck - Animal1 / Animal2 / Animal3    Edit Button that sends you to decks tab-->

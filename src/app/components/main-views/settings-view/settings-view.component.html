@@ -1,8 +1,5 @@
 <div class="settingsView">
-    <div class="custom-control custom-switch">
-        <input type="checkbox" class="custom-control-input" id="skipDrawRace" [(ngModel)]="skipDrawRace" (input)="skipDrawRaceToggle()">
-        <label class="custom-control-label" for="skipDrawRace">Auto Skip Race Info</label>
-      </div>
+      <app-toggle [callbackFunction]="skipDrawRaceToggle" [label]="'Auto Skip Race Info'" [model]="skipDrawRace"></app-toggle>
     <textarea id="importExport" name="importExport" rows="10" [(ngModel)]="importExportValue">  
     </textarea>
     <button (click)="SaveGame()">

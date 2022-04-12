@@ -3,5 +3,6 @@ export enum ShopItemTypeEnum {
     Food,
     Training,
     Ability,
-    Specialty
+    Specialty,
+    Equipment
   }

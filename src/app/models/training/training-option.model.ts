@@ -23,31 +23,43 @@ export class TrainingOption {
         this.purchasePrice = 50;
     }
 
+    //make copy, make time adjustments to the copy
+    makeCopy(originalTrainingOption: TrainingOption)
+    {
+        var copy = new TrainingOption();
+        copy.affectedStatRatios = originalTrainingOption.affectedStatRatios;
+        copy.facilitySize = originalTrainingOption.facilitySize;
+        copy.isAvailable = originalTrainingOption.isAvailable;
+        copy.purchasePrice = originalTrainingOption.purchasePrice;
+        copy.statGain = originalTrainingOption.statGain;
+        copy.timeToComplete = originalTrainingOption.timeToComplete;
+        copy.timeTrained = originalTrainingOption.timeTrained;
+        copy.trainingCourseType = originalTrainingOption.trainingCourseType;
+        copy.trainingName = originalTrainingOption.trainingName;
+        copy.trainingType = originalTrainingOption.trainingType;
+        return copy;
+    }
+
     getFacilitySize(): string {
         return FacilitySizeEnum[this.facilitySize];
     }
-
-    //TODO: maybe do <br/> instead of commas?
+    
     getStatGainDescription(): string {
         var statGainDescription = "";
 
         if (this.affectedStatRatios.topSpeed > 0)
-            statGainDescription += this.statGain * this.affectedStatRatios.topSpeed + " top speed, ";
+            statGainDescription += "+" + this.statGain * this.affectedStatRatios.topSpeed + " Top Speed\n";
         if (this.affectedStatRatios.acceleration > 0)
-            statGainDescription += this.statGain * this.affectedStatRatios.acceleration + " acceleration, ";
+            statGainDescription += "+" + this.statGain * this.affectedStatRatios.acceleration + " Acceleration\n";
         if (this.affectedStatRatios.endurance > 0)
-            statGainDescription += this.statGain * this.affectedStatRatios.endurance + " endurance, ";
+            statGainDescription += "+" + this.statGain * this.affectedStatRatios.endurance + " Endurance\n";
         if (this.affectedStatRatios.focus > 0)
-            statGainDescription += this.statGain * this.affectedStatRatios.focus + " focus, ";
+            statGainDescription += "+" +  this.statGain * this.affectedStatRatios.focus + " Focus\n";
         if (this.affectedStatRatios.power > 0)
-            statGainDescription += this.statGain * this.affectedStatRatios.power + " power, ";
+            statGainDescription += "+" +  this.statGain * this.affectedStatRatios.power + " Power\n";
             if (this.affectedStatRatios.adaptability > 0)
-            statGainDescription += this.statGain * this.affectedStatRatios.adaptability + " adaptability, ";
+            statGainDescription += "+" +  this.statGain * this.affectedStatRatios.adaptability + " Adaptability\n";
 
-        if (statGainDescription.length > 0)
-        {            
-            statGainDescription = statGainDescription.substring(0, statGainDescription.length - 2);
-        }
         return statGainDescription;
     }    
 }

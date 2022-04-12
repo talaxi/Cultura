@@ -32,7 +32,7 @@ export class AppComponent {
     }
 
     //PURELY for testing, should be false when deployed
-    var overrideNewGame = true;
+    var overrideNewGame = false;
 
     if (this.newGame || overrideNewGame)
       this.globalService.initializeGlobalVariables();

@@ -16,6 +16,7 @@ export class ShoppingItemComponent implements OnInit {
   @Output() itemPurchased = new EventEmitter<ShopItem>();
   shortDescription: string;
   longDescription: string;
+  purchaseResourcesRequired: string;
 
   constructor(private globalService: GlobalService, private lookupService: LookupService) { }
 
@@ -24,13 +25,25 @@ export class ShoppingItemComponent implements OnInit {
       this.shortDescription = this.lookupService.getAnimalAbilityDescription(true, this.selectedItem.additionalIdentifier);
       this.longDescription = this.lookupService.getAnimalAbilityDescription(false, this.selectedItem.additionalIdentifier);
     }
+    else {
+      this.shortDescription = this.selectedItem.shortDescription;
+      this.longDescription = this.selectedItem.longDescription;
+    }
+
+    this.selectedItem.purchasePrice.forEach(resource => {
+      this.purchaseResourcesRequired = resource.amount + " " + resource.name + ", ";
+    });
+
+    
+    if (this.purchaseResourcesRequired.length > 0)
+    {            
+      this.purchaseResourcesRequired = this.purchaseResourcesRequired.substring(0, this.purchaseResourcesRequired.length - 2);
+    }
   }
 
   BuyItem(): void {
-    var moneyAmount = this.lookupService.getMoney();
-
-    if (moneyAmount >= this.selectedItem.purchasePrice) {
-      this.lookupService.spendMoney(this.selectedItem.purchasePrice);
+    if (this.canBuyItem()) {
+      this.spendResourcesOnItem();
 
       if (this.selectedItem.type === ShopItemTypeEnum.Animal) {
         this.buyAnimal();
@@ -50,6 +63,23 @@ export class ShoppingItemComponent implements OnInit {
 
       this.itemPurchased.emit(this.selectedItem);
     }
+  }
+
+  canBuyItem() {
+    var canBuy = true;
+    this.selectedItem.purchasePrice.forEach(resource => {
+      var userResourceAmount = this.lookupService.getResourceByName(resource.name);
+      if (userResourceAmount < resource.amount)
+        canBuy = false;
+    });
+
+    return canBuy;
+  }
+
+  spendResourcesOnItem() {
+    this.selectedItem.purchasePrice.forEach(resource => {
+      this.lookupService.spendResourceByName(resource.name, resource.amount);
+    });
   }
 
   buyAnimal() {
@@ -85,16 +115,27 @@ export class ShoppingItemComponent implements OnInit {
       if (this.globalService.globalVar.resources.some(x => x.name === this.selectedItem.name)) {
         var globalResource = this.globalService.globalVar.resources.find(x => x.name === this.selectedItem.name);
         if (globalResource !== null && globalResource !== undefined) {
-            globalResource.amount += 1;
-          }
+          globalResource.amount += 1;
         }
-        else
-        this.globalService.globalVar.resources.push(new ResourceValue(this.selectedItem.name, 1, ShopItemTypeEnum.Food));
       }
+      else
+        this.globalService.globalVar.resources.push(new ResourceValue(this.selectedItem.name, 1, ShopItemTypeEnum.Food));
+    }
   }
 
   buySpecialty() {
+    this.selectedItem.amountPurchased += 1;
 
+    if (this.globalService.globalVar.resources !== undefined && this.globalService.globalVar.resources !== null) {
+      if (this.globalService.globalVar.resources.some(x => x.name === this.selectedItem.name)) {
+        var globalResource = this.globalService.globalVar.resources.find(x => x.name === this.selectedItem.name);
+        if (globalResource !== null && globalResource !== undefined) {
+          globalResource.amount += 1;
+        }
+      }
+      else
+        this.globalService.globalVar.resources.push(new ResourceValue(this.selectedItem.name, 1, ShopItemTypeEnum.Specialty));
+    }
   }
 
   buyAbility() {

@@ -35,7 +35,7 @@ export class SettingsViewComponent implements OnInit {
     this.globalService.globalVar = plainToInstance(GlobalVariables, loadDataJson);
   }
 
-  skipDrawRaceToggle() {
+  skipDrawRaceToggle = () => {
     this.skipDrawRace = !this.skipDrawRace;
     this.globalService.globalVar.settings.set("skipDrawRace", this.skipDrawRace);    
   }

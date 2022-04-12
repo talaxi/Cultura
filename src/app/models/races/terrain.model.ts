@@ -9,6 +9,8 @@ export class Terrain {
     constructor(terrainType?: TerrainTypeEnum) {
         if (terrainType !== null)
         {
+            this.terrainType = terrainType!;
+
             //increase stamina loss due to heat
             if (terrainType === TerrainTypeEnum.Sunny)
             {
@@ -22,7 +24,7 @@ export class Terrain {
             }
 
             //increase chance of losing focus due to loud thunder
-            if (terrainType === TerrainTypeEnum.Storms)
+            if (terrainType === TerrainTypeEnum.Stormy)
             {
 
             }

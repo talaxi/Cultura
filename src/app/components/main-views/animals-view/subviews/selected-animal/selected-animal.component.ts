@@ -1,3 +1,4 @@
+import { ConsoleLogger } from '@angular/compiler-cli/private/localize';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Ability } from 'src/app/models/animals/ability.model';
@@ -27,7 +28,9 @@ export class SelectedAnimalComponent implements OnInit {
   colorConditional: any;
   editingName: boolean;
   newName: string;
-  longDescription: string;
+  longDescription: string;  
+  autoBreedActive: boolean;
+  canAutoBreed = false;
 
   ability1: Ability;
   ability2: Ability;
@@ -38,20 +41,6 @@ export class SelectedAnimalComponent implements OnInit {
   itemsCells: ResourceValue[]; //for display purposes
   selectedItem: ResourceValue;
   selectedItemQuantity: number;
-
-  //get food item list, display it in the html, when selected it goes down into a pane with the description and quantity
-  //so Title
-  // -------
-  //
-  //   List
-  //
-  // -------
-  // Description
-  // Quantity / Buy
-
-  /*useItemForm = new FormGroup({
-    deckName: new FormControl(''),
-  });*/
 
 
   constructor(private lookupService: LookupService, private modalService: NgbModal, private globalService: GlobalService) { }
@@ -64,6 +53,14 @@ export class SelectedAnimalComponent implements OnInit {
     this.focusModifierAmount = this.lookupService.getFocusModifierByAnimalType(this.selectedAnimal.type);
     this.adaptabilityModifierAmount = this.lookupService.getAdaptabilityModifierByAnimalType(this.selectedAnimal.type);
 
+    var stockbreeder = this.lookupService.getStockbreeder();
+    
+    if (stockbreeder !== null && stockbreeder !== undefined && stockbreeder > 0)
+      this.canAutoBreed = true;
+
+    if (this.canAutoBreed)
+      this.autoBreedActive = this.selectedAnimal.autoBreedActive;
+
     this.ability1 = this.selectedAnimal.availableAbilities[0];
     if (this.selectedAnimal.availableAbilities.length > 1)
       this.ability2 = this.selectedAnimal.availableAbilities[1];
@@ -74,7 +71,8 @@ export class SelectedAnimalComponent implements OnInit {
 
     this.colorConditional = {
       'flatlandColor': this.selectedAnimal.getRaceCourseType() === 'Flatland',
-      'mountainColor': this.selectedAnimal.getRaceCourseType() === 'Mountain', 'waterColor': this.selectedAnimal.getRaceCourseType() === 'Water'
+      'mountainColor': this.selectedAnimal.getRaceCourseType() === 'Mountain',
+      'waterColor': this.selectedAnimal.getRaceCourseType() === 'Water'
     };
 
     this.usableItemsList = [];
@@ -161,5 +159,10 @@ export class SelectedAnimalComponent implements OnInit {
 
   selectItem(item: ResourceValue) {
     this.selectedItem = item;
+  }
+
+  toggleAutoBreed = (): void => {
+    this.autoBreedActive = !this.autoBreedActive;
+    this.selectedAnimal.autoBreedActive = this.autoBreedActive;
   }
 }

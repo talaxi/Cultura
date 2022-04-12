@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { AnimalTypeEnum } from '../models/animal-type-enum.model';
 import { AnimalDeck } from '../models/animals/animal-deck.model';
-import { Animal } from '../models/animals/animal.model';
+import { Animal, Monkey } from '../models/animals/animal.model';
 import { RaceCourseTypeEnum } from '../models/race-course-type-enum.model';
+import { ResourceValue } from '../models/resources/resource-value.model';
+import { TerrainTypeEnum } from '../models/terrain-type-enum.model';
 import { GlobalService } from './global-service.service';
 
 @Injectable({
@@ -11,6 +13,12 @@ import { GlobalService } from './global-service.service';
 export class LookupService {
 
   constructor(private globalService: GlobalService) { }
+
+  recalculateAllAnimalStats() {
+    this.globalService.globalVar.animals.forEach(animal => {
+      this.globalService.calculateAnimalRacingStats(animal);
+    });
+  }
 
   getAnimalsFromAnimalDeck(deck: AnimalDeck): Animal[] {
     var animals: Animal[] = [];
@@ -27,6 +35,33 @@ export class LookupService {
     return animals;
   }
 
+  getPrimaryDeck(): AnimalDeck | undefined {
+    var primaryDeck = this.globalService.globalVar.animalDecks.find(item => item.isPrimaryDeck);
+    return primaryDeck;
+  }
+
+  getResourceByName(name: string) {
+    var resource = this.globalService.globalVar.resources.find(item => item.name === name);
+    if (resource !== undefined)
+      return resource.amount;
+    else
+      return 0;
+  }
+
+  spendResourceByName(name: string, amountSpent: number): void {
+    var resource = this.globalService.globalVar.resources.find(item => item.name === name);
+    if (resource !== undefined)
+      resource.amount -= amountSpent;
+  }
+
+  getFacilityLevel(): number {
+    var resource = this.globalService.globalVar.resources.find(item => item.name === "Facility Level");
+    if (resource !== undefined)
+      return resource.amount;
+    else
+      return 0;
+  }
+
   getMoney(): number {
     var resource = this.globalService.globalVar.resources.find(item => item.name === "Money");
     if (resource !== undefined)
@@ -41,8 +76,30 @@ export class LookupService {
       resource.amount -= amountSpent;
   }
 
+  getMedals(): number {
+    var resource = this.globalService.globalVar.resources.find(item => item.name === "Medals");
+    if (resource !== undefined)
+      return resource.amount;
+    else
+      return 0;
+  }
+
+  spendMedals(amountSpent: number): void {
+    var resource = this.globalService.globalVar.resources.find(item => item.name === "Medals");
+    if (resource !== undefined)
+      resource.amount -= amountSpent;
+  }
+
   getRenown(): number {
     var resource = this.globalService.globalVar.resources.find(item => item.name === "Renown");
+    if (resource !== undefined)
+      return resource.amount;
+    else
+      return 0;
+  }   
+
+  getStockbreeder(): number {
+    var resource = this.globalService.globalVar.resources.find(item => item.name === "Stockbreeder");
     if (resource !== undefined)
       return resource.amount;
     else
@@ -213,7 +270,14 @@ export class LookupService {
     return 0;
   }
 
+  getDiminishingReturnsThreshold(animal: Animal): number {
+    var threshold = animal.currentStats.diminishingReturnsDefaultStatThreshold;
+    var facilityLevelModifier = this.globalService.globalVar.modifiers.find(item => item.text === "facilityLevelModifier");
+    if (facilityLevelModifier !== undefined)
+      threshold += this.getFacilityLevel() * facilityLevelModifier.value;
 
+    return threshold;
+  }
 
   getResourcePopover(name: string) {
     if (name === "Money")
@@ -361,5 +425,25 @@ export class LookupService {
     }
 
     return "";
+  }
+
+  getResourcesForBarnUpgrade(currentLevel: number): ResourceValue[] {
+    var allResourcesRequired: ResourceValue[] = [];
+    var money = new ResourceValue("Money", 100);    
+    money.amount *= currentLevel;
+    allResourcesRequired.push(money);
+    return allResourcesRequired;
+  }
+
+  getTerrainPopoverText(terrain: TerrainTypeEnum)
+  {
+    var popoverText = "The terrain for this race is " + TerrainTypeEnum[terrain] + ":\n";
+
+    if (terrain === TerrainTypeEnum.Sunny)
+    {
+      popoverText += "+20% Stamina Cost";
+    }
+
+    return popoverText;
   }
 }

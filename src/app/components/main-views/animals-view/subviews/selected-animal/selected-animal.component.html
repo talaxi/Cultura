@@ -28,6 +28,13 @@
             <!--TODO: Move this to one of the sides of dead space-->
             <br />
             <button (click)="openItemModal(content)">Use Item</button>
+            <br />
+            <!--<div class="custom-control custom-switch">
+                <input type="checkbox" class="custom-control-input" id="autoBreed" [(ngModel)]="autoBreedActive"
+                    (input)="toggleAutoBreed()">
+                <label class="custom-control-label" for="autoBreed">Auto Breed</label>
+            </div>-->
+            <app-toggle *ngIf="canAutoBreed" [callbackFunction]="toggleAutoBreed" [label]="'Auto Breed'" [model]="autoBreedActive"></app-toggle>
         </div>
         <div class="back" (click)="returnToAnimalView()">
             <span>Back</span>
@@ -126,22 +133,22 @@
                 <h4 class="modal-title" id="modal-basic-title">Use Item</h4>
                 <button type="button" aria-label="Close" (click)="modal.dismiss()">X</button>
             </div>
-            <div class="modal-body">                
+            <div class="modal-body">
                 <div class="itemContainer">
                     <table>
                         <tr *ngFor="let cells of itemsRows;">
                             <td *ngFor="let c of cells;" class="cell">
                                 <div (click)="selectItem(c)">
-                                     {{ c.name }} ({{ c.amount }})
+                                    {{ c.name }} ({{ c.amount }})
                                 </div>
                             </td>
                         </tr>
                     </table>
                 </div>
             </div>
-            <div *ngIf="selectedItem !== undefined && selectedItem !== null" class="modal-footer">                            
+            <div *ngIf="selectedItem !== undefined && selectedItem !== null" class="modal-footer">
                 <div class="mb-3">
-                    <span>{{selectedItem.name}}</span>    
+                    <span>{{selectedItem.name}}</span>
                     <label for="deck-name">Amount: </label>
                     <input id="deck-name" type="text" [(ngModel)]="selectedItemQuantity">
                 </div>

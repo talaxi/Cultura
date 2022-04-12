@@ -1,8 +1,18 @@
 <div class="selectedBarnModal" *ngIf="animalAssigned && !barn.isLocked">
     <div class="infoText">
         <div class="infoGridContainer">
-            <div class="unassign" (click)="unassignAnimal()">
-                <span>Unassign</span>
+            <div class="unassign">
+                <span (click)="unassignAnimal()">Unassign</span>
+                <br/>
+                <br/>
+                <div>
+                    <span [ngbPopover]="totalBarnStatsContent"
+                    triggers="mouseenter:mouseleave" popoverClass="popoverClass">Barn Level {{ barn.barnUpgrades.barnLevel }}</span>
+                    <br/>
+
+                    <button (click)="upgradeBarn()" [disabled]="canUpgrade" [ngbPopover]="upgradeBarnContent"
+                    triggers="mouseenter:mouseleave" popoverClass="popoverClass">Upgrade</button>
+                </div>
             </div>
             <div class="info">
                 <span>Barn {{ this.selectedBarnNumber }}</span>
@@ -17,7 +27,7 @@
                     <span>{{ this.associatedAnimal.getAnimalType() }}</span>
                 </div>
                 <div>
-                    <span>{{ this.sizeValue }}</span> <span *ngIf="this.sizeValue !== 'Large'"><button (click)="upgradeBarn()" [disabled]="canUpgrade">Upgrade</button></span>
+                    <span>{{ this.sizeValue }}</span> <span *ngIf="this.sizeValue !== 'Large'"><button (click)="upgradeBarnSize()" [disabled]="canUpgrade">Upgrade</button></span>
                 </div>
                 <hr />
                 <span *ngIf="this.existingTraining !== null && this.existingTraining !== undefined">{{
@@ -118,3 +128,15 @@
         </div>
     </div>
 </div>
+
+<ng-template #totalBarnStatsContent>
+    <div class="popoverClass" *ngIf="totalBarnStatsPopover !== ''">
+        {{ totalBarnStatsPopover }}
+    </div>
+</ng-template>
+
+<ng-template #upgradeBarnContent>
+    <div class="popoverClass" *ngIf="upgradeBarnPopover !== ''">
+        {{ upgradeBarnPopover }}
+    </div>
+</ng-template>

@@ -106,3 +106,7 @@
 .statFilter {
   grid-area: statFilter;
 }
+
+.popoverClass {
+  white-space: pre-line;
+}

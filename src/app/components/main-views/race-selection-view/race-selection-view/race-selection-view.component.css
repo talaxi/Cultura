@@ -19,14 +19,12 @@
 
   .circuit {
     grid-area: circuit;
-    text-align: center;
-    width: 50%; 
+    text-align: center;    
   }
 
   .local {
     grid-area: local;
-    text-align: center;
-    width: 50%;
+    text-align: center;    
   }
 
   .raceDiv {

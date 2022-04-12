@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Subject } from 'rxjs';
+import { race, Subject } from 'rxjs';
 import { AnimalTypeEnum } from 'src/app/models/animal-type-enum.model';
 import { Ability } from 'src/app/models/animals/ability.model';
 import { AnimalStats } from 'src/app/models/animals/animal-stats.model';
@@ -192,7 +192,7 @@ export class RaceComponent implements OnInit {
             raceResult.addRaceUpdate(framesPassed, "BURST! " + racingAnimal.name + " is breaking their limit!");
           }
         }
-        
+
         var modifiedVelocity = velocity;
         //do any velocity modifications here before finalizing distance traveled per sec
 
@@ -222,14 +222,13 @@ export class RaceComponent implements OnInit {
         //don't go further than distance to go
         var distanceCoveredPerFrame = modifiedVelocity / this.frameModifier;
 
-        if (racingAnimal.type === AnimalTypeEnum.Monkey && racingAnimal.ability.name === "Leap") {          
+        if (racingAnimal.type === AnimalTypeEnum.Monkey && racingAnimal.ability.name === "Leap") {
           var leapDistance = this.lookupService.GetAbilityEffectiveAmount(racingAnimal);
-          if (leapDistance >= distanceToGo)
-          {
+          if (leapDistance >= distanceToGo) {
             raceResult.addRaceUpdate(framesPassed, racingAnimal.name + " leaps the remaining distance of their leg.");
             distanceCoveredPerFrame = leapDistance;
           }
-        }        
+        }
 
         distanceCovered += distanceCoveredPerFrame > distanceToGo ? distanceToGo : distanceCoveredPerFrame;
         distanceToGo -= distanceCoveredPerFrame;
@@ -257,20 +256,19 @@ export class RaceComponent implements OnInit {
           var timingUpdate: StringNumberPair = new StringNumberPair();
           timingUpdate.value = framesPassed;
           timingUpdate.text = racingAnimal.getAbilityUseUpdateText();
-          raceResult.raceUpdates.push(timingUpdate);          
+          raceResult.raceUpdates.push(timingUpdate);
           this.useAbility(racingAnimal, race);
           racingAnimal.ability.currentCooldown = racingAnimal.ability.cooldown;
         }
 
-        if (racingAnimal.raceVariables.hasRelayEffect) {          
-          if (racingAnimal.raceVariables.remainingRelayMeters <= modifiedVelocity) {            
+        if (racingAnimal.raceVariables.hasRelayEffect) {
+          if (racingAnimal.raceVariables.remainingRelayMeters <= modifiedVelocity) {
             racingAnimal.raceVariables.remainingRelayMeters = 0;
             racingAnimal.raceVariables.hasRelayEffect = false;
-            racingAnimal.currentStats.divideCurrentRacingStats(racingAnimal.raceVariables.relayAffectedStatRatios);            
+            racingAnimal.currentStats.divideCurrentRacingStats(racingAnimal.raceVariables.relayAffectedStatRatios);
             raceResult.addRaceUpdate(framesPassed, racingAnimal.name + "'s relay effect ends.");
           }
-          else
-          {
+          else {
             racingAnimal.raceVariables.remainingRelayMeters -= modifiedVelocity;
           }
         }
@@ -425,24 +423,34 @@ export class RaceComponent implements OnInit {
 
   raceWasSuccessfulUpdate(raceResult: RaceResult): void {
     var globalCircuitRank = this.globalService.globalVar.circuitRank;
+    var globalRaceVal: Race | undefined;
+    var breedGaugeIncrease = 0;
 
-    //TODO: This is just for circuit -- need local as well
-    var globalRaceVal = this.globalService.globalVar.circuitRaces.find(item => item.raceId === this.selectedRace.raceId);
-    if (globalRaceVal === undefined || globalRaceVal === null)
-      return;
+    //TODO: This is just for circuit -- need local as 
+    if (this.selectedRace.isCircuitRace) {
+      globalRaceVal = this.globalService.globalVar.circuitRaces.find(item => item.raceId === this.selectedRace.raceId);
+      breedGaugeIncrease = this.lookupService.getCircuitBreedGaugeIncrease();
 
-    var circuitRankRaces = this.globalService.globalVar.circuitRaces.filter(item => item.requiredRank === globalCircuitRank);
-    if (circuitRankRaces.every(item => item.isCompleted)) {
-      this.globalService.IncreaseCircuitRank();
-      this.selectedRace.rewards.push(this.initializeService.initializeResource("Medals", 1));
+      var circuitRankRaces = this.globalService.globalVar.circuitRaces.filter(item => item.requiredRank === globalCircuitRank);
+      if (circuitRankRaces.every(item => item.isCompleted)) {
+        this.globalService.IncreaseCircuitRank();
+        this.selectedRace.rewards.push(this.initializeService.initializeResource("Medals", 1));
+      }
+    }
+    else
+    {
+      globalRaceVal = this.globalService.globalVar.localRaces
+      .find(item => item.raceId === this.selectedRace.raceId && item.localRaceType === this.selectedRace.localRaceType);    
+      breedGaugeIncrease = this.lookupService.getLocalBreedGaugeIncrease();  
     }
 
-    globalRaceVal.isCompleted = true;
-    var breedGaugeIncrease = this.lookupService.getCircuitBreedGaugeIncrease();
+    if (globalRaceVal === undefined)
+      return;
+
+    globalRaceVal.isCompleted = true;    
     this.racingAnimals.forEach(animal => {
       this.globalService.IncreaseAnimalBreedGauge(animal, breedGaugeIncrease);
     });
-
 
     if (this.selectedRace.rewards !== undefined && this.selectedRace.rewards !== null) {
       this.selectedRace.rewards.forEach(item => {
@@ -453,6 +461,11 @@ export class RaceComponent implements OnInit {
               if (globalResource.name === "Money") {
                 var currentRenown = this.lookupService.getRenown();
                 globalResource.amount += item.amount * this.utilityService.getRenownCircuitRaceModifier(currentRenown);
+              }
+              else if (globalResource.name === "Facility Level")
+              {
+                globalResource.amount += item.amount;
+                this.lookupService.recalculateAllAnimalStats();
               }
               else
                 globalResource.amount += item.amount;
@@ -474,20 +487,17 @@ export class RaceComponent implements OnInit {
     animal.ability.currentCooldown = animal.ability.cooldown;
     this.globalService.calculateAnimalRacingStats(animal);
     animal.raceVariables = new RaceVariables();
-    
-    if (completedAnimals !== undefined && completedAnimals !== null && completedAnimals.length > 0)
-    {
+
+    if (completedAnimals !== undefined && completedAnimals !== null && completedAnimals.length > 0) {
       var lastCompletedAnimal = completedAnimals[completedAnimals.length - 1];
-      if (lastCompletedAnimal.ability.name === "Inspiration" && lastCompletedAnimal.type === AnimalTypeEnum.Horse)
-      {
+      if (lastCompletedAnimal.ability.name === "Inspiration" && lastCompletedAnimal.type === AnimalTypeEnum.Horse) {
         //add max speed to animal but only for a certain number of meters
         var length = lastCompletedAnimal.ability.efficiency * (1 + lastCompletedAnimal.currentStats.powerMs);
-        this.AddRelayEffect(animal, length, new AnimalStats(1.25, 1, 1, 1, 1, 1));        
-      }      
+        this.AddRelayEffect(animal, length, new AnimalStats(1.25, 1, 1, 1, 1, 1));
+      }
     }
 
-    if (animal.raceVariables.hasRelayEffect)
-    {
+    if (animal.raceVariables.hasRelayEffect) {
       animal.currentStats.multiplyCurrentRacingStats(animal.raceVariables.relayAffectedStatRatios);
     }
   }
@@ -549,7 +559,7 @@ export class RaceComponent implements OnInit {
       racingAnimal.raceVariables.recoveringStamina)
       return false;
 
-      if (racingAnimal.ability.name === "Pacemaker" && racingAnimal.type === AnimalTypeEnum.Horse &&
+    if (racingAnimal.ability.name === "Pacemaker" && racingAnimal.type === AnimalTypeEnum.Horse &&
       velocity === racingAnimal.currentStats.maxSpeedMs)
       return false;
 
@@ -558,8 +568,8 @@ export class RaceComponent implements OnInit {
 
   useAbility(racingAnimal: Animal, race: Race) {
     if (racingAnimal.type === AnimalTypeEnum.Horse) {
-      if (racingAnimal.ability.name === "Thoroughbred" || 
-      racingAnimal.ability.name === "Pacemaker") {
+      if (racingAnimal.ability.name === "Thoroughbred" ||
+        racingAnimal.ability.name === "Pacemaker") {
         racingAnimal.ability.abilityInUse = true;
         racingAnimal.ability.remainingLength = this.lookupService.GetAbilityEffectiveAmount(racingAnimal);
       }

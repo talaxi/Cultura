@@ -1,16 +1,15 @@
 <div class="circuitViewDiv">
-    <div class="circuitRaceHeader" ngbPopover="{{ circuitRankUpDescription }}"
-    triggers="mouseenter:mouseleave" popoverClass="popoverClass">Rank {{ circuitRank }} Circuit</div>
+    <div class="circuitRaceHeader s4Heading">
+        <span  ngbPopover="{{ circuitRankUpDescription }}"
+            triggers="mouseenter:mouseleave" popoverClass="popoverClass">Rank <strong>{{ circuitRank }}</strong>
+            Circuit</span>
+    </div>
     <app-animal-deck></app-animal-deck>
     <hr />
     <div class="circuitRaceGrid">
         <div class="circuitRace{{i+1}}" (click)="selectCircuitRace(race)"
             *ngFor="let race of availableCircuitRaces; let i = index">
-            <span>Race {{ i+1 }} </span>
-            <br />
-            <p *ngFor="let raceLeg of race.raceLegs">{{ raceLeg.distance | number :
-                '1.2-2' }} Meters of {{ raceLeg.getTerrainName() }} {{ raceLeg.getCourseTypeName() }}  </p>
-            <p>{{ race.isCompleted ? "Completed" : "Start" }}</p>
+            <app-race-description [index]="i" [race]="race" [showStartText]="true"></app-race-description>
         </div>
     </div>
 </div>

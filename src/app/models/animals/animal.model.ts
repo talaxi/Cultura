@@ -25,6 +25,7 @@ export class Animal {
     breedLevel: number;
     breedGaugeXp: number;
     breedGaugeMax: number;
+    autoBreedActive: boolean;
     availableAbilities: Ability[];
 
 

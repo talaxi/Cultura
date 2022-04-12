@@ -1,0 +1,13 @@
+.raceDescription, .popoverClass {
+    white-space: pre-line; 
+}
+
+.noRacer {
+    opacity: 0.5;
+    color: var(--grayedOut-Text) !important;
+}
+
+
+.raceNotAllowed {
+    cursor: not-allowed;
+}

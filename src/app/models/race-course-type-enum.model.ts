@@ -1,4 +1,4 @@
-export enum RaceCourseTypeEnum {
+export enum RaceCourseTypeEnum {    
     Flatland,
     Mountain,
     Water

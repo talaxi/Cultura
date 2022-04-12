@@ -25,6 +25,8 @@
   --error-dark: #800600;
   --error-light: #ffcecc;
 
+  --grayedOut-Text: #797c80;
+
   /* Shadows */
   --background-tertiary-shadow: 0 1px 3px 0 rgba(92, 125, 153, 0.5);
 
@@ -52,14 +54,6 @@
   --h6-size: 1.25rem;
   --h6-weight: 700;
   --h6-spacing: -0.15px;
-
-  --s1-size: 1rem;
-  --s1-weight: 400;
-  --s1-spacing: 0.15px;
-
-  --s2-size: 0.875rem;
-  --s2-weight: 700;
-  --s2-spacing: 0.1px;
 
   --b1-size: 1rem;
   --b1-weight: 400;
@@ -90,6 +84,26 @@
   --c2-size: 0.875rem;
   --c2-weight: 700;
   --c2-spacing: 0.1px;
+
+  --s1-size: 2rem;
+  --s1-weight: 600;
+  --s1-spacing: 0.15px;
+
+  --s2-size: 1.75rem;
+  --s2-weight: 500;
+  --s2-spacing: 0.1px;
+
+  --s3-size: 1.25rem;
+  --s3-weight: 550;
+  --s3-spacing: 0.15px;
+
+  --s4-size: 1.25rem;
+  --s4-weight: 400;
+  --s4-spacing: 0.1px;
+
+  --s5-size: 1.15rem;
+  --s5-weight: 100;
+  --s5-spacing: 0.1px;
 }
 
 body {
@@ -114,6 +128,41 @@ h1
 {
   font-size: var(--c1-size);
   font-weight: var(--c1-weight);  
+}
+
+.s1Heading
+{
+  font-size: var(--s1-size);
+  font-weight: var(--s1-weight);  
+}
+
+.s2Heading
+{
+  font-size: var(--s2-size);
+  font-weight: var(--s2-weight);  
+}
+
+.s3Heading
+{
+  font-size: var(--s3-size);
+  font-weight: var(--s3-weight);  
+}
+
+.s4Heading
+{
+  font-size: var(--s4-size);
+  font-weight: var(--s4-weight);  
+}
+
+.s5Heading
+{
+  font-size: var(--s5-size);
+  font-weight: var(--s5-weight);  
+}
+
+.coloredText
+{
+  font-weight: 550;
 }
 
 .flatlandColor
