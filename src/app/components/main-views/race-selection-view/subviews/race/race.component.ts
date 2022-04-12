@@ -16,7 +16,6 @@ import { GlobalService } from 'src/app/services/global-service.service';
 import { LookupService } from 'src/app/services/lookup.service';
 import { InitializeService } from 'src/app/services/utility/initialize.service';
 import { UtilityService } from 'src/app/services/utility/utility.service';
-import { NumberLiteralType } from 'typescript';
 
 @Component({
   selector: 'app-race',

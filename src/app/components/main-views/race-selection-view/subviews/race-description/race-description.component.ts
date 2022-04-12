@@ -43,12 +43,17 @@ export class RaceDescriptionComponent implements OnInit {
   }
 
   getColorClass(leg: RaceLeg) {
-    var colorConditional = {
-      'flatlandColor': leg.getCourseTypeName() === 'Flatland',
-      'mountainColor': leg.getCourseTypeName() === 'Mountain',
-      'waterColor': leg.getCourseTypeName() === 'Water'
-    };
-    return colorConditional;
+    if (leg !== null && leg !== undefined) {
+      var colorConditional = {
+        'flatlandColor': leg.getCourseTypeName() === 'Flatland',
+        'mountainColor': leg.getCourseTypeName() === 'Mountain',
+        'waterColor': leg.getCourseTypeName() === 'Water'
+      };
+      return colorConditional;
+    }
+    else {
+      return {};
+    }
   }
 
   getNoRacerClass(leg: RaceLeg) {

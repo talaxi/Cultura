@@ -32,7 +32,7 @@ export class Animal {
     constructor() {
         this.breedLevel = 1;
         this.breedGaugeXp = 0;
-        this.breedGaugeMax = 10;
+        this.breedGaugeMax = 50;
 
         this.availableAbilities = [];
     }

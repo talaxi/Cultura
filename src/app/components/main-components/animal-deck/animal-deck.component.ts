@@ -20,8 +20,7 @@ export class AnimalDeckComponent implements OnInit {
       if (primaryDeck !== undefined && primaryDeck !== null)
         this.deck = primaryDeck;
     }
-    else
-    {
+    else {
       var selectedDeck = this.globalService.globalVar.animalDecks.find(item => item.deckNumber === this.deckNumber);
       if (selectedDeck !== undefined && selectedDeck !== null)
         this.deck = selectedDeck;
@@ -29,11 +28,15 @@ export class AnimalDeckComponent implements OnInit {
   }
 
   getColorClass(animal: Animal) {
-    var colorConditional = {
-      'flatlandColor': animal.getRaceCourseType() === 'Flatland',
-      'mountainColor': animal.getRaceCourseType() === 'Mountain',
-       'waterColor': animal.getRaceCourseType() === 'Water'
-    };
-    return colorConditional;    
+    if (animal !== null && animal !== undefined) {
+      var colorConditional = {
+        'flatlandColor': animal.getRaceCourseType() === 'Flatland',
+        'mountainColor': animal.getRaceCourseType() === 'Mountain',
+        'waterColor': animal.getRaceCourseType() === 'Water'
+      };
+      return colorConditional;
+    }
+    else
+      return {};
   }
 }

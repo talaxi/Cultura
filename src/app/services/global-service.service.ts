@@ -64,6 +64,7 @@ export class GlobalService {
     //Initialize circuit race information
     this.globalVar.circuitRank = "Z";
     this.GenerateCircuitRaces();
+    this.checkCircuitRankRewards();
 
     //Initialize local race information
     this.GenerateLocalRaces();
@@ -435,8 +436,8 @@ export class GlobalService {
     this.checkCircuitRankRewards();
   }
 
-  getRewardReceiveText(numericValue: number) {
-    return "Reach Circuit Rank " + this.utilityService.getCircuitRankFromNumericValue(numericValue) + "To Receive: \n";
+  getRewardReceiveText(numericValue: number) {    
+    return "Reach circuit rank " + this.utilityService.getCircuitRankFromNumericValue(numericValue) + " to receive: \n";
   }
 
   //TODO: Make some sort of checkup that says if circuitrank is > 3 then make sure monkey is available?
@@ -872,8 +873,8 @@ export class GlobalService {
   }
 
   InitializeResources() {
-    this.globalVar.resources.push(this.initializeService.initializeResource("Money", 50000));
-    this.globalVar.resources.push(this.initializeService.initializeResource("Medals", 150));
+    this.globalVar.resources.push(this.initializeService.initializeResource("Money", 500));
+    //this.globalVar.resources.push(this.initializeService.initializeResource("Medals", 150));
   }
 
   InitializeSettings() {

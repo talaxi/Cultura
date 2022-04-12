@@ -53,7 +53,7 @@ export class UtilityService {
       numericValue -= 26;
     }
     
-    circuitValue += String.fromCharCode(65 + numericValue);
+    circuitValue += String.fromCharCode(91 - numericValue);
     return circuitValue;
   }
 }

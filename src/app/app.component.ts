@@ -39,8 +39,8 @@ export class AppComponent {
 
     this.gameLoopService.Update();
 
-    var subscription = this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {    
-      this.gameCheckup(deltaTime); 
+    var subscription = this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {
+      this.gameCheckup(deltaTime);
       this.saveTime += deltaTime;
 
       var frequency = this.saveFrequency;
@@ -48,12 +48,11 @@ export class AppComponent {
       if (this.globalService.globalVar.userIsRacing)
         frequency = this.racingSaveFrequency;
 
-      if (this.saveTime >= frequency)
-      {
+      if (this.saveTime >= frequency) {
         console.log("Save");
         this.saveTime = 0;
         this.saveGame();
-      }    
+      }
     });
   }
 
@@ -74,9 +73,9 @@ export class AppComponent {
           while (animal.currentTraining.timeTrained >= animal.currentTraining.timeToComplete) {
             animal.increaseStatsFromCurrentTraining();
             this.globalService.calculateAnimalRacingStats(animal);
-            var breedGaugeIncrease = this.lookupService.getTrainingBreedGaugeIncrease();            
-            this.globalService.IncreaseAnimalBreedGauge(animal, breedGaugeIncrease); 
-            
+            var breedGaugeIncrease = this.lookupService.getTrainingBreedGaugeIncrease();
+            this.globalService.IncreaseAnimalBreedGauge(animal, breedGaugeIncrease);
+
             animal.currentTraining.timeTrained -= animal.currentTraining.timeToComplete;
           }
         }
