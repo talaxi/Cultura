@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { LookupService } from 'src/app/services/lookup.service';
 
 @Component({
   selector: 'app-barn-view',
@@ -7,8 +8,10 @@ import { Component, OnInit } from '@angular/core';
 })
 export class BarnViewComponent implements OnInit {
   selectedBarn = 0;
+  barnRow2IsUnlocked = false;
+  barnRow3IsUnlocked = false;
 
-  constructor() { }
+  constructor(private lookupService: LookupService) { }
 
   ngOnInit(): void {    
   }
@@ -16,5 +19,7 @@ export class BarnViewComponent implements OnInit {
   goToBarn(selectedBarnNumber: number): void 
   {
     this.selectedBarn = selectedBarnNumber;
+    this.barnRow2IsUnlocked = this.lookupService.isItemUnlocked("BarnRow2");
+    this.barnRow3IsUnlocked = this.lookupService.isItemUnlocked("BarnRow3");
   }
 }

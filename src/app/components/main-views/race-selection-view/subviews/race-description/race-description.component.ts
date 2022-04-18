@@ -87,8 +87,17 @@ export class RaceDescriptionComponent implements OnInit {
   getSuccessfulPopoverText() {
     var popoverText = "";
 
-    if (this.race.raceLegs[0].terrain !== undefined && this.race.raceLegs[0].terrain !== null)
-      popoverText = this.lookupService.getTerrainPopoverText(this.race.raceLegs[0].terrain.terrainType);
+    var legCount = 1;
+    this.race.raceLegs.forEach(leg => {
+      if (leg.terrain !== undefined && leg.terrain !== null)
+        popoverText += this.lookupService.getTerrainPopoverText(leg.terrain, leg);
+
+      if (legCount < this.race.raceLegs.length)
+        popoverText += "\n";
+
+      legCount+=1;
+    });
+    
 
     return popoverText;
   }

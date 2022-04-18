@@ -1,10 +1,15 @@
 import { Injectable } from '@angular/core';
 import { AnimalTypeEnum } from '../models/animal-type-enum.model';
 import { AnimalDeck } from '../models/animals/animal-deck.model';
-import { Animal, Monkey } from '../models/animals/animal.model';
+import { Animal } from '../models/animals/animal.model';
+import { BarnSpecializationEnum } from '../models/barn-specialization-enum.model';
+import { BarnUpgrades } from '../models/barns/barn-upgrades.model';
 import { RaceCourseTypeEnum } from '../models/race-course-type-enum.model';
+import { RaceLeg } from '../models/races/race-leg.model';
+import { Terrain } from '../models/races/terrain.model';
 import { ResourceValue } from '../models/resources/resource-value.model';
 import { TerrainTypeEnum } from '../models/terrain-type-enum.model';
+import { TrainingOption } from '../models/training/training-option.model';
 import { GlobalService } from './global-service.service';
 
 @Injectable({
@@ -96,7 +101,7 @@ export class LookupService {
       return resource.amount;
     else
       return 0;
-  }   
+  }
 
   getStockbreeder(): number {
     var resource = this.globalService.globalVar.resources.find(item => item.name === "Stockbreeder");
@@ -301,42 +306,71 @@ export class LookupService {
     return itemList;
   }
 
+  getAllBarnSpecializations() {
+    var itemList = [];
+    itemList.push("Breeding Grounds");
+    itemList.push("Training Facility");
+    if (this.isItemUnlocked("Attraction"))
+      itemList.push("Attraction");
+    if (this.isItemUnlocked("Research Center"))
+      itemList.push("Research Center");
+    return itemList;
+  }
+
+  isItemUnlocked(name: string) {
+    var isUnlocked = false;
+
+    var item = this.globalService.globalVar.unlockables.get(name);
+    if (item !== undefined && item !== null)
+      isUnlocked = item;
+
+    return isUnlocked;
+  }
+
   getAnimalsByRaceCourseType(type: string) {
     var itemList = [];
     if (type === "Flatland") {
       itemList.push(AnimalTypeEnum[AnimalTypeEnum.Horse]);
       itemList.push(AnimalTypeEnum[AnimalTypeEnum.Cheetah]);
+      itemList.push(AnimalTypeEnum[AnimalTypeEnum.Hare]);
     }
     else if (type === "Mountain") {
       itemList.push(AnimalTypeEnum[AnimalTypeEnum.Monkey]);
       itemList.push(AnimalTypeEnum[AnimalTypeEnum.Goat]);
+      itemList.push(AnimalTypeEnum[AnimalTypeEnum.Gecko]);
     }
     else if (type === "Water") {
-
+      itemList.push(AnimalTypeEnum[AnimalTypeEnum.Dolphin]);
+      itemList.push(AnimalTypeEnum[AnimalTypeEnum.Shark]);
     }
 
     return itemList;
   }
 
-  GetAbilityEffectiveAmount(animal: Animal) {
+  GetAbilityEffectiveAmount(animal: Animal, terrainModifier?: number) {
     if (animal.ability === undefined || animal.ability === null ||
       animal.ability.name === undefined || animal.ability.name === null)
       return -1;
 
+    if (terrainModifier === null || terrainModifier === undefined)
+      terrainModifier = 1;
+
+    var modifiedPower = animal.currentStats.powerMs * terrainModifier;
+
     if (animal.ability.name === "Thoroughbred") {
-      return animal.ability.efficiency * (1 + animal.currentStats.powerMs);
+      return animal.ability.efficiency * (1 + modifiedPower);
     }
     if (animal.ability.name === "Inspiration") {
-      return animal.ability.efficiency * (1 + animal.currentStats.powerMs);
+      return animal.ability.efficiency * (1 + modifiedPower);
     }
     if (animal.ability.name === "Pacemaker") {
-      return animal.ability.efficiency * (1 + animal.currentStats.powerMs);
+      return animal.ability.efficiency * (1 + modifiedPower);
     }
     if (animal.ability.name === "Landslide") {
-      return animal.ability.efficiency * (1 + animal.currentStats.powerMs);
+      return animal.ability.efficiency * (1 + modifiedPower);
     }
     if (animal.ability.name === "Leap") {
-      return animal.ability.efficiency * (1 + animal.currentStats.powerMs);
+      return animal.ability.efficiency * (1 + modifiedPower);
     }
 
     return -1;
@@ -374,25 +408,24 @@ export class LookupService {
     }
     else {
       var cooldownDisplay = "";
-      if (animal === undefined || animal === null)
-      {
+      if (animal === undefined || animal === null) {
         this.globalService.globalVar.animals.forEach(possibleAnimal => {
           possibleAnimal.availableAbilities.forEach(ability => {
-            
-            if (ability.name === abilityName)
-            {
-              animal = possibleAnimal;               
-              cooldownDisplay = ability.cooldown.toString();
+
+            if (ability.name === abilityName) {
+              animal = possibleAnimal;
+              if (ability.cooldown !== undefined && ability.cooldown !== null)
+                cooldownDisplay = ability.cooldown.toString();
             }
           });
         });
       }
 
       if (animal !== undefined && animal !== null) {
-        var effectiveAmountDisplay = this.GetAbilityEffectiveAmount(animal).toFixed(2);       
+        var effectiveAmountDisplay = this.GetAbilityEffectiveAmount(animal).toFixed(2);
 
-        if (cooldownDisplay === "")
-          cooldownDisplay = animal.ability.cooldown.toString();        
+        if (cooldownDisplay === "" && animal.ability.cooldown !== undefined && animal.ability.cooldown !== null)
+          cooldownDisplay = animal.ability.cooldown.toString();
 
         if (abilityName === "Thoroughbred") {
           return "Stamina does not go down for " + effectiveAmountDisplay + " meters. " + cooldownDisplay + " second cooldown.";
@@ -429,21 +462,126 @@ export class LookupService {
 
   getResourcesForBarnUpgrade(currentLevel: number): ResourceValue[] {
     var allResourcesRequired: ResourceValue[] = [];
-    var money = new ResourceValue("Money", 100);    
+    var money = new ResourceValue("Money", 100);
     money.amount *= currentLevel;
     allResourcesRequired.push(money);
     return allResourcesRequired;
   }
 
-  getTerrainPopoverText(terrain: TerrainTypeEnum)
-  {
-    var popoverText = "The terrain for this race is " + TerrainTypeEnum[terrain] + ":\n";
+  getTerrainPopoverText(terrain: Terrain, raceLeg: RaceLeg) {
+    var popoverText = "The terrain for the " + raceLeg.getCourseTypeName() + " leg is " + terrain.getTerrainType() + ":\n";
 
-    if (terrain === TerrainTypeEnum.Sunny)
-    {
-      popoverText += "+20% Stamina Cost";
+    if (terrain.staminaModifier !== null && terrain.staminaModifier !== undefined && terrain.staminaModifier !== 0) {
+      popoverText += "+" + (terrain.staminaModifier * 100).toFixed(0) + "% stamina cost\n";
+    }
+
+    if (terrain.maxSpeedModifier !== null && terrain.maxSpeedModifier !== undefined && terrain.maxSpeedModifier !== 1) {
+      if (terrain.maxSpeedModifier > 1)
+        popoverText += "+" + ((terrain.maxSpeedModifier - 1) * 100).toFixed(0) + "% max speed\n";
+      else
+        popoverText += "-" + ((1 - terrain.maxSpeedModifier) * 100).toFixed(0) + "% max speed\n";
+    }
+
+    if (terrain.accelerationModifier !== null && terrain.accelerationModifier !== undefined && terrain.accelerationModifier !== 1) {
+      if (terrain.accelerationModifier > 1)
+        popoverText += "+" + ((terrain.accelerationModifier - 1) * 100).toFixed(0) + "% acceleration\n";
+      else
+        popoverText += "-" + ((1 - terrain.accelerationModifier) * 100).toFixed(0) + "% acceleration\n";
+    }
+
+    if (terrain.powerModifier !== null && terrain.powerModifier !== undefined && terrain.powerModifier !== 1) {
+      if (terrain.powerModifier > 1)
+        popoverText += "+" + ((terrain.powerModifier - 1) * 100).toFixed(0) + "% power efficiency\n";
+      else
+        popoverText += "-" + ((1 - terrain.powerModifier) * 100).toFixed(0) + "% power efficiency\n";
+    }
+
+    if (terrain.focusModifier !== null && terrain.focusModifier !== undefined && terrain.focusModifier !== 1) {
+      if (terrain.focusModifier > 1)
+        popoverText += "+" + ((terrain.focusModifier - 1) * 100).toFixed(0) + "% meters before losing focus\n";
+      else
+        popoverText += "-" + ((1 - terrain.focusModifier) * 100).toFixed(0) + "% meters before losing focus\n";
+    }
+
+    if (terrain.adaptabilityModifier !== null && terrain.adaptabilityModifier !== undefined && terrain.adaptabilityModifier !== 1) {
+      if (terrain.adaptabilityModifier > 1)
+        popoverText += "+" + ((terrain.adaptabilityModifier - 1) * 100).toFixed(0) + "% meters before stumbling\n";
+      else
+        popoverText += "-" + ((1 - terrain.adaptabilityModifier) * 100).toFixed(0) + "% meters before stumbling\n";
     }
 
     return popoverText;
+  }
+
+  getSpecializationDescription(specializationName: string) {
+    var description = "";
+
+    if (specializationName === "Breeding Grounds") {
+      description = "Turn your barn into a habitat based around the optimal breeding environment for your animals. As you progress, your animals will gain more breeding XP from their training.";
+    }
+    else if (specializationName === "Training Facility") {
+      description = "Pull out all the stops giving your animals the best environment to improve. As you progress, your animals will train faster and gain stats from training at a higher rate.";
+    }
+    else if (specializationName === "Attraction") {
+      description = "Give the people what they want and turn your barn into a tourist attraction. As you progress, your barn will provide passive income at a steady rate.";
+    }
+    else if (specializationName === "Research Center") {
+      description = "Bring in the top names in animal research to optimize your training process. As you progress, your animal will gain reduced stats from training but split its improvements with other animals."
+    }
+
+    return description;
+  }
+
+  //no lookups for string enums so gotta do it myself
+  convertSpecializationNameToEnum(specializationName: string): BarnSpecializationEnum {
+    if (specializationName === "Breeding Grounds")
+      return BarnSpecializationEnum.BreedingGrounds;
+    if (specializationName === "Training Facility")
+      return BarnSpecializationEnum.TrainingFacility;
+    if (specializationName === "Attraction")
+      return BarnSpecializationEnum.Attraction;
+    if (specializationName === "Research Center")
+      return BarnSpecializationEnum.ResearchCenter;
+
+    return BarnSpecializationEnum.None;
+  }
+
+  convertSpecializationEnumToName(specializationEnum: BarnSpecializationEnum) {
+    if (specializationEnum === BarnSpecializationEnum.BreedingGrounds)
+      return "Breeding Grounds";
+    if (specializationEnum === BarnSpecializationEnum.TrainingFacility)
+      return "Training Facility";
+    if (specializationEnum === BarnSpecializationEnum.Attraction)
+      return "Attraction";
+    if (specializationEnum === BarnSpecializationEnum.ResearchCenter)
+      return "Research Center";
+
+    return "None";
+  }
+
+  getTrainingTimeReductionFromTrainingFacility(barnUpgrades: BarnUpgrades) {
+    if (barnUpgrades.specialization === BarnSpecializationEnum.TrainingFacility) {
+      return barnUpgrades.specializationLevel * .01;
+    }
+
+    return 0;
+  }
+
+  getTrainingProgressionAnimationText(training: TrainingOption) {
+    var text = "";
+    if (training.affectedStatRatios.topSpeed > 0)
+      text += "+SPD\n";
+    if (training.affectedStatRatios.acceleration > 0)
+      text += "+ACC\n";
+    if (training.affectedStatRatios.endurance > 0)
+      text += "+END\n";
+    if (training.affectedStatRatios.power > 0)
+      text += "+PWR\n";
+    if (training.affectedStatRatios.focus > 0)
+      text += "+FCS\n";
+    if (training.affectedStatRatios.adaptability > 0)
+      text += "+ADP\n";
+
+    return text;
   }
 }

@@ -30,9 +30,13 @@ export class GlobalVariables {
     renownLevel: number;
     @Type(() => AnimalDeck)
     animalDecks: AnimalDeck[];
+    @Type(() => Map)
     settings: Map<string, boolean>;
+    @Type(() => Map)
     unlockables: Map<string, boolean>;
     circuitRankUpRewardDescription: string;
+    tutorialCompleted: boolean;
+    currentTutorialId: number;
     
     userIsRacing = false;    
 

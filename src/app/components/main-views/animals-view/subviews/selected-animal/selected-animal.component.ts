@@ -4,9 +4,11 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Ability } from 'src/app/models/animals/ability.model';
 import { AnimalStats } from 'src/app/models/animals/animal-stats.model';
 import { Animal } from 'src/app/models/animals/animal.model';
+import { NavigationEnum } from 'src/app/models/navigation-enum.model';
 import { ResourceValue } from 'src/app/models/resources/resource-value.model';
 import { ShopItemTypeEnum } from 'src/app/models/shop-item-type-enum.model';
 import { ShopItem } from 'src/app/models/shop/shop-item.model';
+import { ComponentCommunicationService } from 'src/app/services/component-communication.service';
 import { GlobalService } from 'src/app/services/global-service.service';
 import { LookupService } from 'src/app/services/lookup.service';
 
@@ -43,7 +45,8 @@ export class SelectedAnimalComponent implements OnInit {
   selectedItemQuantity: number;
 
 
-  constructor(private lookupService: LookupService, private modalService: NgbModal, private globalService: GlobalService) { }
+  constructor(private lookupService: LookupService, private modalService: NgbModal, private globalService: GlobalService,
+    private componentCommunicationService: ComponentCommunicationService) { }
 
   ngOnInit(): void {
     this.maxSpeedModifierAmount = this.lookupService.getMaxSpeedModifierByAnimalType(this.selectedAnimal.type);
@@ -82,6 +85,8 @@ export class SelectedAnimalComponent implements OnInit {
         this.usableItemsList.push(food);
       }
     });
+
+    this.componentCommunicationService.setAnimalView(NavigationEnum.animals, new Animal());
   }
 
   returnToAnimalView(): void {

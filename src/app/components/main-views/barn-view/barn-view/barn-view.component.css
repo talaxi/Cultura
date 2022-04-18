@@ -1,8 +1,15 @@
+#barnViewDiv {
+  height: 100%;
+  background-color: var(--background-secondary);
+  border-color: var(--background-tertiary);
+  color: var(--foreground-default);
+}
+
 .gridContainer {
     height: 100%;
     display: grid;
-    grid-template-columns: auto;
-    grid-template-rows: auto;
+    grid-template-columns: 33.333%;
+    grid-template-rows: 33.333%;
     justify-content: stretch;
     grid-template-areas: 
       "barn1 barn2 barn3"
@@ -24,6 +31,10 @@
     color: var(--foreground-default);
 
     border: 1px solid rgba(0,0,0,.1) /*var(--foreground-default)*/;
+  }
+
+  .lockedBarnRow {
+    border: none !important;
   }
 
   .barn1 {

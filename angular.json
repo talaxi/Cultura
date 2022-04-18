@@ -34,7 +34,8 @@
             "scripts": [
               "jquery/dist/jquery.min.js",
               "bootstrap/dist/js/bootstrap.min.js"
-            ]
+            ],
+            "webWorkerTsConfig": "tsconfig.worker.json"
           },
           "configurations": {
             "production": {
@@ -101,7 +102,8 @@
             "styles": [
               "src/styles.css"
             ],
-            "scripts": []
+            "scripts": [],
+            "webWorkerTsConfig": "tsconfig.worker.json"
           }
         }
       }

@@ -1,3 +1,7 @@
+::ng-deep ngb-modal-backdrop {
+  z-index: 1050 !important;
+}
+
 .selectedBarnModal {    
     height: 100%;
     background-color: var(--background-secondary);    
@@ -60,7 +64,7 @@
 {
     height: 100%;
     display: grid;
-    grid-template-columns: auto;
+    grid-template-columns: 1fr 1fr 1fr;
     grid-template-rows: auto;
     justify-content: stretch;
     grid-template-areas: 
@@ -88,7 +92,7 @@
 {
     height: 100%;
     display: grid;
-    grid-template-columns: auto;
+    grid-template-columns: 1fr 1fr 1fr;
     grid-template-rows: auto;
     justify-content: stretch;
     grid-template-areas: 
@@ -109,4 +113,17 @@
 
 .popoverClass {
   white-space: pre-line;
+}
+
+.modalClass {
+  background-color: var(--background-secondary);
+  border-color: var(--background-tertiary);
+  color: var(--foreground-default);
+}
+
+.specializationType {
+  width: 10%;
+  text-decoration: underline solid transparent;
+  transition: text-decoration .3s ease;
+  display: inline-block;
 }

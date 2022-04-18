@@ -1,13 +1,32 @@
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, Input, OnInit, HostListener, EventEmitter, Output } from '@angular/core';
 import { AnimalTypeEnum } from 'src/app/models/animal-type-enum.model';
 import { Barn } from 'src/app/models/barns/barn.model';
 import { GameLoopService } from 'src/app/services/game-loop/game-loop.service';
 import { GlobalService } from 'src/app/services/global-service.service';
+import { LookupService } from 'src/app/services/lookup.service';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @Component({
   selector: 'app-barn',
   templateUrl: './barn.component.html',
-  styleUrls: ['./barn.component.css']
+  styleUrls: ['./barn.component.css'],
+  /*animations: [
+    trigger('trainingComplete', [
+      state('notComplete',
+        style({ opacity: .5}),//, transform: 'translateY(0px)' }),
+      ),
+      state('complete',
+        style({ opacity: 0,}),// transform: 'translateY(-30px)' }),
+      ),
+      transition('notComplete => complete', [
+        animate('3s')
+      ]),
+      transition('complete => notComplete', [
+        animate('1s')
+      ])
+    ])
+  ]*/
 })
 export class BarnComponent implements OnInit {
   @Input() barnNumber: number;
@@ -17,11 +36,15 @@ export class BarnComponent implements OnInit {
   isLocked: boolean;
   isOccupied: boolean;
   subscription: any;
+  trainingCompleteText = "";
+  showTrainingAnimation = false;
+  previousTrainedAmount: number;
+  readyToBreed: boolean;
 
   @Output() selectedBarn = new EventEmitter<number>();
   trainingProgressBarPercent: number;
 
-  constructor(private globalService: GlobalService, private gameLoopService: GameLoopService) { }
+  constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private lookupService: LookupService) { }
 
   ngOnInit(): void {
     if (this.barnNumber > 0 && this.barnNumber <= this.globalService.globalVar.barns.length + 1) {
@@ -58,15 +81,41 @@ export class BarnComponent implements OnInit {
           //UI updates          
           if (associatedAnimal.currentTraining === undefined || associatedAnimal.currentTraining === null)
             return;
+          
+          if (associatedAnimal.currentTraining.timeTrained < this.previousTrainedAmount) {            
+            this.trainingCompleteText = this.lookupService.getTrainingProgressionAnimationText(associatedAnimal.currentTraining);
+            this.showTrainingAnimation = true;
 
+            setTimeout(() => {
+              this.showTrainingAnimation = false;
+              this.trainingCompleteText = "";
+            }, 3000);
+          }
+
+          this.readyToBreed = associatedAnimal.breedGaugeXp >= associatedAnimal.breedGaugeMax;
+
+          this.previousTrainedAmount = associatedAnimal.currentTraining.timeTrained;
           this.trainingProgressBarPercent = ((associatedAnimal.currentTraining.timeTrained / associatedAnimal.currentTraining.timeToComplete) * 100);
         }
       });
     }
   }
 
+  /*
+  onTrainingAnimationStart($event: any) {
+    this.trainingCompleteText = "";
+    this.showTrainingAnimation = false;
+  }
+
+  onTrainingAnimationEnd($event: any) {
+    this.trainingCompleteText = "";
+    this.showTrainingAnimation = false;
+  }*/
+
   ngOnDestroy() {
-    if (this.subscription !== null && this.subscription !== undefined) {      
+    this.previousTrainedAmount = 0;
+
+    if (this.subscription !== null && this.subscription !== undefined) {
       this.subscription.unsubscribe();
     }
   }

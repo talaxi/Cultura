@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { GlobalVariables } from '../models/global/global-variables.model';
 import { AnimalTypeEnum } from '../models/animal-type-enum.model';
 import { AnimalStats } from '../models/animals/animal-stats.model';
-import { Animal, Cheetah, Goat, Horse, Monkey } from '../models/animals/animal.model';
+import { Animal, Cheetah, Dolphin, Gecko, Goat, Hare, Horse, Monkey, Shark } from '../models/animals/animal.model';
 import { RaceCourseTypeEnum } from '../models/race-course-type-enum.model';
 import { TrainingOptionsEnum } from '../models/training-options-enum.model';
 import { TrainingOption } from '../models/training/training-option.model';
@@ -45,6 +45,8 @@ export class GlobalService {
     this.globalVar.barns = [];
     this.globalVar.settings = new Map<string, boolean>();
     this.globalVar.unlockables = new Map<string, boolean>();
+    this.globalVar.tutorialCompleted = false;
+    this.globalVar.currentTutorialId = 1;
 
     //Initialize modifiers
     this.InitializeModifiers();
@@ -77,6 +79,8 @@ export class GlobalService {
 
     //Initialize settings
     this.InitializeUnlockables();
+
+    console.log(this.globalVar);
   }
 
   InitializeModifiers(): void {
@@ -119,6 +123,13 @@ export class GlobalService {
     this.globalVar.modifiers.push(new StringNumberPair(baseFocusModifier, "cheetahDefaultFocusModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(baseAdaptabilityModifier * minorDetriment, "cheetahDefaultAdaptabilityModifier"));
 
+    this.globalVar.modifiers.push(new StringNumberPair(baseMaxSpeedModifier, "hareDefaultMaxSpeedModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseAccelerationModifier * mediumImprovement, "hareDefaultAccelerationModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseStaminaModifier, "hareDefaultStaminaModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(basePowerModifier * minorImprovement, "hareDefaultPowerModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseFocusModifier * mediumDetriment, "hareDefaultFocusModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseAdaptabilityModifier, "hareDefaultAdaptabilityModifier"));
+
     this.globalVar.modifiers.push(new StringNumberPair(baseMaxSpeedModifier, "monkeyDefaultMaxSpeedModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(baseAccelerationModifier * mediumDetriment, "monkeyDefaultAccelerationModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(baseStaminaModifier, "monkeyDefaultStaminaModifier"));
@@ -132,6 +143,27 @@ export class GlobalService {
     this.globalVar.modifiers.push(new StringNumberPair(basePowerModifier * minorDetriment, "goatDefaultPowerModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(baseFocusModifier * minorDetriment, "goatDefaultFocusModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(baseAdaptabilityModifier * majorImprovement, "goatDefaultAdaptabilityModifier"));
+
+    this.globalVar.modifiers.push(new StringNumberPair(baseMaxSpeedModifier * mediumDetriment, "geckoDefaultMaxSpeedModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseAccelerationModifier, "geckoDefaultAccelerationModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseStaminaModifier * mediumImprovement, "geckoDefaultStaminaModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(basePowerModifier, "geckoDefaultPowerModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseFocusModifier * majorImprovement, "geckoDefaultFocusModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseAdaptabilityModifier, "geckoDefaultAdaptabilityModifier"));
+
+    this.globalVar.modifiers.push(new StringNumberPair(baseMaxSpeedModifier * minorDetriment, "dolphinDefaultMaxSpeedModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseAccelerationModifier * minorImprovement, "dolphinDefaultAccelerationModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseStaminaModifier, "dolphinDefaultStaminaModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(basePowerModifier * majorImprovement, "dolphinDefaultPowerModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseFocusModifier, "dolphinDefaultFocusModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseAdaptabilityModifier * minorDetriment, "dolphinDefaultAdaptabilityModifier"));
+
+    this.globalVar.modifiers.push(new StringNumberPair(baseMaxSpeedModifier * majorImprovement, "sharkDefaultMaxSpeedModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseAccelerationModifier, "sharkDefaultAccelerationModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseStaminaModifier * minorDetriment, "sharkDefaultStaminaModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(basePowerModifier * minorImprovement, "sharkDefaultPowerModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseFocusModifier * mediumDetriment, "sharkDefaultFocusModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseAdaptabilityModifier * mediumDetriment, "sharkDefaultAdaptabilityModifier"));
   }
 
   InitializeAnimals(): void {
@@ -144,6 +176,10 @@ export class GlobalService {
     var monkey = new Monkey();
     monkey.name = "Monkey";
     this.calculateAnimalRacingStats(monkey);
+    
+    var hare = new Hare();
+    hare.name = "Hare";
+    this.calculateAnimalRacingStats(hare);
 
     var cheetah = new Cheetah();
     cheetah.name = "Cheetah";
@@ -152,11 +188,27 @@ export class GlobalService {
     var goat = new Goat();
     goat.name = "Goat";
     this.calculateAnimalRacingStats(goat);
+    
+    var gecko = new Gecko();
+    gecko.name = "Gecko";
+    this.calculateAnimalRacingStats(gecko);
+    
+    var dolphin = new Dolphin();
+    dolphin.name = "Dolphin";
+    this.calculateAnimalRacingStats(dolphin);
+    
+    var shark = new Shark();
+    shark.name = "Shark";
+    this.calculateAnimalRacingStats(shark);
 
     this.globalVar.animals.push(horse);
     this.globalVar.animals.push(cheetah);
+    this.globalVar.animals.push(hare);
     this.globalVar.animals.push(goat);
     this.globalVar.animals.push(monkey);
+    this.globalVar.animals.push(gecko);
+    this.globalVar.animals.push(dolphin);
+    this.globalVar.animals.push(shark);
   }
 
   InitializeAnimalDecks(): void {
@@ -359,6 +411,8 @@ export class GlobalService {
   InitializeBarns(): void {
     if (this.globalVar.barns === null || this.globalVar.barns === undefined ||
       this.globalVar.barns.length === 0) {
+      var facilityUpgradePrice = 500;
+
 
       this.globalVar.barns = [];
       var barn1 = new Barn();
@@ -366,7 +420,7 @@ export class GlobalService {
       barn1.isLocked = false;
       barn1.size = FacilitySizeEnum.Small;
       barn1.purchasePrice = 0;
-      barn1.facilityUpgradePrice = 500;
+      barn1.facilityUpgradePrice = facilityUpgradePrice;
       barn1.upgradePrice = 500;
 
       if (this.globalVar.animals !== null && this.globalVar.animals !== undefined &&
@@ -387,6 +441,7 @@ export class GlobalService {
         newBarn.barnNumber = i;
         newBarn.isLocked = true;
         newBarn.purchasePrice = 500 * i;
+        newBarn.facilityUpgradePrice = facilityUpgradePrice;
         newBarn.size = FacilitySizeEnum.Small;
 
         this.globalVar.barns.push(newBarn);
@@ -443,7 +498,9 @@ export class GlobalService {
   //TODO: Make some sort of checkup that says if circuitrank is > 3 then make sure monkey is available?
   checkCircuitRankRewards(): void {
     var numericValue = this.utilityService.getNumericValueOfCircuitRank(this.globalVar.circuitRank);
-    this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(2) + "Mono Races";
+
+    if (numericValue === 1)
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(2) + "Mono Races";
 
     if (numericValue === 2) {
       this.globalVar.unlockables.set("monoRace", true);
@@ -495,17 +552,102 @@ export class GlobalService {
     }
     else if (numericValue === 10) //10
     {
-      //add water animal to line up
-    }
-    else if (numericValue === 15) //15
-    {
+      var dolphin = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Dolphin);
+      if (dolphin !== undefined && dolphin !== null) {
+        dolphin.isAvailable = true;
 
+        var primaryAnimalDeck = this.globalVar.animalDecks.find(item => item.isPrimaryDeck);
+        if (primaryAnimalDeck !== null && primaryAnimalDeck !== undefined) {
+          var typeFound = false;
+          primaryAnimalDeck.selectedAnimals.forEach(item => {
+            if (item.raceCourseType === dolphin?.raceCourseType)
+              typeFound = true;
+          });
+
+          if (!typeFound)
+            primaryAnimalDeck.selectedAnimals.push(dolphin);
+        }
+      }
+
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(12) + "Attraction Specialization";
+    }
+    else if (numericValue === 12)
+    {
+      this.globalVar.unlockables.set("attractionSpecialization", true);
+
+      var moneyAmount = 1500;
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(15) + moneyAmount + " Money";
+    }
+    else if (numericValue === 15)
+    {
+      var moneyAmount = 1500;
+      var resource = this.globalVar.resources.find(item => item.name === "Money");
+      if (resource === null || resource === undefined)
+        this.globalVar.resources.push(new ResourceValue("Money", moneyAmount));
+      else
+        resource.amount += moneyAmount;
+
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(18) + "Barn Row 2";
+    }
+    else if (numericValue === 18)
+    {
+      this.globalVar.unlockables.set("barnRow2", true);
+
+      var renownAmount = 1;
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(20) + renownAmount + " Renown";
+    }
+    else if (numericValue === 20)
+    {
+      var renownAmount = 1;
+      var renownResource = this.globalVar.resources.find(item => item.name === "Renown");
+      if (renownResource === null || renownResource === undefined)
+        this.globalVar.resources.push(new ResourceValue("Renown", renownAmount));
+      else
+        renownResource.amount += renownAmount;
+
+      var orangeAmount = 5;
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(22) + orangeAmount + " Oranges";
+    }
+    else if (numericValue === 22) {
+      var orangeAmount = 1;
+      var resource = this.globalVar.resources.find(item => item.name === "Oranges");
+      if (resource === null || resource === undefined)
+        this.globalVar.resources.push(new ResourceValue("Oranges", orangeAmount));
+      else
+      resource.amount += orangeAmount;
+
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(25) + "Research Facility Specialization";
+    }
+    else if (numericValue === 25)
+    {
+      this.globalVar.unlockables.set("researchFacilitySpecialization", true);
+
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(27) + "Rainbow Races";
+    }
+    else if (numericValue === 27)
+    {
+      this.globalVar.unlockables.set("rainbowRace", true);
+
+      var moneyAmount = 5000;
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(30) + moneyAmount + " Money";
+    }
+    else if (numericValue === 30)
+    {
+      var moneyAmount = 5000;
+      var resource = this.globalVar.resources.find(item => item.name === "Money");
+      if (resource === null || resource === undefined)
+        this.globalVar.resources.push(new ResourceValue("Money", moneyAmount));
+      else
+        resource.amount += moneyAmount;
+
+      var turnipAmount = 15;
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(33) + turnipAmount + " Turnips";
     }
   }
 
   //TODO: tweak progression as needed
   GenerateCircuitRaces(): void {
-    //use basic algorithm to go ahead and auto generate these
+    //TODO: do this once and store it so everyone has the same races
     var circuitRank = "Z";
     var raceIndex = 1;
     var timeToComplete = 60;
@@ -522,14 +664,13 @@ export class GlobalService {
 
     for (var i = 0; i < 26; i++) //Circuit rank Z-A
     {
-      var circuitRaces = 5;
+      var circuitRaces = 3;
       if (i === 0)
         circuitRaces = 1;
       else if (i == 1)
-        circuitRaces = 3;
+        circuitRaces = 2;
       for (var j = 0; j < circuitRaces; j++) {
         var raceLegs: RaceLeg[] = [];
-        var uniqueRacingTypes: RaceCourseTypeEnum[] = []; //if you're premaking these, you can't base it on the user's available animals at the time
 
         if (i < 2) //make these breakpoints configurable, figure out your time horizon on new races
         {
@@ -540,13 +681,19 @@ export class GlobalService {
               leg.terrain = new Terrain(TerrainTypeEnum.Sunny);
             else if (j === 1)
               leg.terrain = new Terrain(TerrainTypeEnum.Rainy);
-            else if (j === 2)
-              leg.terrain = new Terrain(TerrainTypeEnum.Stormy);
           }
+          else
+            leg.terrain = new Terrain(TerrainTypeEnum.Sunny);
+
           leg.distance = Math.round(baseMeters * (factor ** i) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor));
           raceLegs.push(leg);
         }
-        else if (i <= 10) {
+        else if (i < 9) {
+          var availableCourses: RaceCourseTypeEnum[] = [];
+          availableCourses.push(RaceCourseTypeEnum.Flatland);
+          availableCourses.push(RaceCourseTypeEnum.Mountain);
+          var randomizedCourseList = this.getCourseTypeInRandomOrder(availableCourses);
+
           var leg1Distance = this.utilityService.getRandomNumber(legMinimumDistance, legMaximumDistance);
           var leg2Distance = this.utilityService.getRandomNumber(legMinimumDistance, legMaximumDistance);
           var sum = leg1Distance + leg2Distance;
@@ -565,25 +712,80 @@ export class GlobalService {
 
           if (leg1Normalized > 0) {
             var leg1 = new RaceLeg();
-            leg1.courseType = RaceCourseTypeEnum.Flatland;
+            leg1.courseType = randomizedCourseList[0];
             leg1.distance = (Math.round(baseMeters * (factor ** i) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor)) * (leg1Normalized / timeToComplete));
+            leg1.terrain = this.getRandomTerrain(leg1.courseType);
             raceLegs.push(leg1);
           }
 
           if (leg2Normalized > 0) {
             var leg2 = new RaceLeg();
-            leg2.courseType = RaceCourseTypeEnum.Mountain;
+            leg2.courseType = randomizedCourseList[1];
             leg2.distance = (Math.round(baseMeters * (factor ** i) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor)) * (leg2Normalized / timeToComplete));
+            leg2.terrain = this.getRandomTerrain(leg2.courseType);
             raceLegs.push(leg2);
           }
         }
-        else {
-          //make it 3 race types but variable on what they are based on what the user has?
-          var leg = new RaceLeg();
-          leg.courseType = RaceCourseTypeEnum.Flatland;
-          leg.distance = Math.round(baseMeters * (factor ** i) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor));
-          raceLegs.push(leg);
+        else if (i < 26) {
+          legLengthCutoff = timeToComplete / 6;
+
+          var availableCourses: RaceCourseTypeEnum[] = [];
+          availableCourses.push(RaceCourseTypeEnum.Flatland);
+          availableCourses.push(RaceCourseTypeEnum.Mountain);
+          availableCourses.push(RaceCourseTypeEnum.Water);
+          var randomizedCourseList = this.getCourseTypeInRandomOrder(availableCourses);
+          
+          var leg1Distance = this.utilityService.getRandomNumber(legMinimumDistance, legMaximumDistance);
+          var leg2Distance = this.utilityService.getRandomNumber(legMinimumDistance, legMaximumDistance);
+          var leg3Distance = this.utilityService.getRandomNumber(legMinimumDistance, legMaximumDistance);
+          var sum = leg1Distance + leg2Distance + leg3Distance;
+          var normalizeValue = timeToComplete / sum;
+          var leg1Normalized = leg1Distance * normalizeValue;
+          var leg2Normalized = leg2Distance * normalizeValue;
+          var leg3Normalized = leg3Distance * normalizeValue;
+
+          if (leg1Normalized < legLengthCutoff) {            
+            leg2Normalized += leg1Normalized / 2;
+            leg3Normalized += leg1Normalized / 2;
+            leg1Normalized = 0;
+          }
+          else if (leg2Normalized < legLengthCutoff) {
+            leg1Normalized += leg2Normalized / 2;
+            leg3Normalized += leg2Normalized / 2;
+            leg2Normalized = 0;            
+          }
+          else if (leg3Normalized < legLengthCutoff) {
+            leg1Normalized += leg3Normalized / 2;
+            leg2Normalized += leg3Normalized / 2;
+            leg3Normalized = 0;  
+          }
+
+          if (leg1Normalized > 0) {
+            var leg1 = new RaceLeg();
+            leg1.courseType = randomizedCourseList[0];            
+            leg1.distance = (Math.round(baseMeters * (factor ** i) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor)) * (leg1Normalized / timeToComplete));
+            leg1.terrain = this.getRandomTerrain(leg1.courseType);
+            raceLegs.push(leg1);
+          }
+
+          if (leg2Normalized > 0) {
+            var leg2 = new RaceLeg();
+            leg2.courseType = randomizedCourseList[1];            
+            leg2.distance = (Math.round(baseMeters * (factor ** i) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor)) * (leg2Normalized / timeToComplete));
+            leg2.terrain = this.getRandomTerrain(leg2.courseType);
+            raceLegs.push(leg2);
+          }
+
+          if (leg3Normalized > 0) {
+            var leg3 = new RaceLeg();
+            leg3.courseType = randomizedCourseList[2];
+            leg3.distance = (Math.round(baseMeters * (factor ** i) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor)) * (leg3Normalized / timeToComplete));
+            leg3.terrain = this.getRandomTerrain(leg3.courseType);
+            raceLegs.push(leg3);
+          }
+          console.log(raceLegs);
         }
+        
 
         var totalDistance = 0;
 
@@ -604,6 +806,51 @@ export class GlobalService {
       circuitRank = String.fromCharCode(--charCode);
     }
   }
+
+  getCourseTypeInRandomOrder(courseList: RaceCourseTypeEnum[])
+  {
+    var randomizedList: RaceCourseTypeEnum[] = [];
+    var length = courseList.length;
+    for (var i = 0; i < length; i++)
+    {
+      var rng = this.utilityService.getRandomInteger(1, courseList.length);      
+      randomizedList.push(courseList[rng-1]);
+      courseList = courseList.filter(item => item !== courseList[rng-1]);
+    }
+   
+    return randomizedList;
+  }
+
+  getRandomTerrain(raceCourseType: RaceCourseTypeEnum) {
+    var availableTerrainsList: TerrainTypeEnum[] = [];
+
+    if (raceCourseType === RaceCourseTypeEnum.Flatland)
+    {
+        availableTerrainsList.push(TerrainTypeEnum.Sunny);
+        availableTerrainsList.push(TerrainTypeEnum.Rainy);
+        availableTerrainsList.push(TerrainTypeEnum.Stormy);
+        availableTerrainsList.push(TerrainTypeEnum.Torrid); 
+        availableTerrainsList.push(TerrainTypeEnum.Snow);                       
+    }
+    else if (raceCourseType === RaceCourseTypeEnum.Mountain)
+    {
+        availableTerrainsList.push(TerrainTypeEnum.Sunny);
+        availableTerrainsList.push(TerrainTypeEnum.Rainy);
+        availableTerrainsList.push(TerrainTypeEnum.Stormy);
+        availableTerrainsList.push(TerrainTypeEnum.Torrid); 
+        availableTerrainsList.push(TerrainTypeEnum.Snow);                               
+    } 
+    else if (raceCourseType === RaceCourseTypeEnum.Water)
+    {
+        availableTerrainsList.push(TerrainTypeEnum.Sunny);
+        availableTerrainsList.push(TerrainTypeEnum.Maelstrom);
+        availableTerrainsList.push(TerrainTypeEnum.Stormy);
+        availableTerrainsList.push(TerrainTypeEnum.Snow);                       
+    }
+
+    var rng = this.utilityService.getRandomInteger(1, availableTerrainsList.length);
+    return new Terrain(availableTerrainsList[rng-1]);
+}
 
   GetCircuitRankValue(circuitRank: string): number {
     var rankValue = 1;
@@ -874,7 +1121,6 @@ export class GlobalService {
 
   InitializeResources() {
     this.globalVar.resources.push(this.initializeService.initializeResource("Money", 500));
-    //this.globalVar.resources.push(this.initializeService.initializeResource("Medals", 150));
   }
 
   InitializeSettings() {
@@ -897,5 +1143,19 @@ export class GlobalService {
 
   getMedalResourceValue(amount: number) {
     return new ResourceValue("Medals", amount);
+  }
+
+  devModeInitialize(circuitRankNumeric: number) {
+    var money = this.globalVar.resources.find(item => item.name === "Money");
+    if (money !== undefined)
+      money.amount = 50000;
+    this.globalVar.resources.push(this.initializeService.initializeResource("Medals", 150));
+    
+    for (var i = 1; i <= circuitRankNumeric; i++)
+    {
+      var rank = this.utilityService.getCircuitRankFromNumericValue(i);
+      this.globalVar.circuitRank = rank;
+      this.checkCircuitRankRewards();
+    }
   }
 }

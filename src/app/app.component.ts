@@ -15,7 +15,7 @@ export class AppComponent {
   title = 'Cultura';
   newGame = true;
   saveTime = 0;
-  saveFrequency = 10; //in seconds
+  saveFrequency = 20; //in seconds
   racingSaveFrequency = 120; // in seconds
 
   constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private lookupService: LookupService) {
@@ -32,14 +32,20 @@ export class AppComponent {
     }
 
     //PURELY for testing, should be false when deployed
-    var overrideNewGame = false;
+    var overrideNewGame = true;
+    var devMode = true;
 
     if (this.newGame || overrideNewGame)
       this.globalService.initializeGlobalVariables();
 
+    if (devMode) {
+      this.globalService.globalVar.tutorialCompleted = true;
+      this.globalService.devModeInitialize(10);
+    }
+
     this.gameLoopService.Update();
 
-    var subscription = this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {
+    var subscription = this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {
       this.gameCheckup(deltaTime);
       this.saveTime += deltaTime;
 
@@ -49,9 +55,10 @@ export class AppComponent {
         frequency = this.racingSaveFrequency;
 
       if (this.saveTime >= frequency) {
-        console.log("Save");
         this.saveTime = 0;
+        console.log("Pre save");
         this.saveGame();
+        console.log("Save");
       }
     });
   }
@@ -84,8 +91,22 @@ export class AppComponent {
   }
 
   public saveGame() {
-    var globalData = JSON.stringify(this.globalService.globalVar);
-    var compressedData = LZString.compressToBase64(globalData);
-    localStorage.setItem("gameData", compressedData);
+    if (typeof Worker !== 'undefined') {
+      // Create a new
+      const worker = new Worker(new URL('./app.worker', import.meta.url));
+      worker.onmessage = ({ data }) => {
+        console.log('Data Saved');
+        localStorage.setItem("gameData", data);
+      };
+      worker.postMessage(this.globalService.globalVar);
+    } else {
+      // Web Workers are not supported in this environment.
+      // You should add a fallback so that your program still executes correctly.
+      const data = this.globalService.globalVar;
+      var globalData = JSON.stringify(data);
+      var compressedData = LZString.compressToBase64(globalData);
+      localStorage.setItem("gameData", compressedData);
+      console.log("Storage set");
+    }
   }
 }

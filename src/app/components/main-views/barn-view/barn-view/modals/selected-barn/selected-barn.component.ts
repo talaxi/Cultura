@@ -1,24 +1,26 @@
-import { Component, HostListener, Input, OnInit, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter, ViewEncapsulation, ViewChild, ElementRef } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Animal } from 'src/app/models/animals/animal.model';
-import { BarnUpgrades } from 'src/app/models/barns/barn-upgrades.model';
+import { BarnSpecializationEnum } from 'src/app/models/barn-specialization-enum.model';
 import { Barn } from 'src/app/models/barns/barn.model';
 import { FacilitySizeEnum } from 'src/app/models/facility-size-enum.model';
+import { NavigationEnum } from 'src/app/models/navigation-enum.model';
 import { ResourceValue } from 'src/app/models/resources/resource-value.model';
 import { TrainingOption } from 'src/app/models/training/training-option.model';
+import { ComponentCommunicationService } from 'src/app/services/component-communication.service';
 import { GameLoopService } from 'src/app/services/game-loop/game-loop.service';
 import { GlobalService } from 'src/app/services/global-service.service';
 import { LookupService } from 'src/app/services/lookup.service';
-import { UtilityService } from 'src/app/services/utility/utility.service';
 
 @Component({
   selector: 'app-selected-barn',
   templateUrl: './selected-barn.component.html',
-  styleUrls: ['./selected-barn.component.css'],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['./selected-barn.component.css']
 })
 export class SelectedBarnComponent implements OnInit {
   @Input() selectedBarnNumber: number;
   @Output() returnToBarnEmitter = new EventEmitter<number>();
+  @ViewChild('specializationModal', { static: true }) specializationModal: ElementRef;
 
   barn: Barn;
   animalAssigned: boolean;
@@ -32,6 +34,10 @@ export class SelectedBarnComponent implements OnInit {
   sizeValue: string;
   totalBarnStatsPopover: string;
   upgradeBarnPopover: string;
+  upgradeText: string;
+  specializationOptions: string[];
+  selectedSpecialization: string;
+  specializationDescription: string;
 
   filterSpeed = false;
   filterAcceleration = false;
@@ -43,11 +49,14 @@ export class SelectedBarnComponent implements OnInit {
   filterMedium = false;
   filterLarge = false;
 
-
-  constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private lookupService: LookupService) {
+  constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private modalService: NgbModal
+    , private lookupService: LookupService, private componentCommunicationService: ComponentCommunicationService) {
   }
 
   ngOnInit(): void {
+    this.specializationOptions = this.lookupService.getAllBarnSpecializations();
+    this.upgradeText = "Upgrade";
+
     if (this.selectedBarnNumber > 0 && this.selectedBarnNumber <= this.globalService.globalVar.barns.length + 1) {
       var globalBarn = this.globalService.globalVar.barns.find(item => item.barnNumber === this.selectedBarnNumber);
 
@@ -56,6 +65,9 @@ export class SelectedBarnComponent implements OnInit {
         this.getSizeValue();
         this.totalBarnStatsPopover = this.getTotalBarnStatsPopover();
         this.upgradeBarnPopover = this.getUpgradeBarnPopover();
+
+        if (this.barn.barnUpgrades.barnLevel === 9)
+          this.upgradeText = "Specialize";
 
         var associatedAnimal = this.globalService.globalVar.animals.find(item => item.associatedBarnNumber == this.selectedBarnNumber);
 
@@ -122,16 +134,22 @@ export class SelectedBarnComponent implements OnInit {
       return trainingOptions;
     }
 
-    trainingOptions = this.globalService.globalVar.trainingOptions.filter(item => item.isAvailable);
+    trainingOptions = this.globalService.globalVar.trainingOptions.filter(item => item.isAvailable && 
+      (item.facilitySize === FacilitySizeEnum.Small ||
+      item.facilitySize === FacilitySizeEnum.Medium && (this.barn.size === FacilitySizeEnum.Medium || this.barn.size === FacilitySizeEnum.Large) ||
+      item.facilitySize === FacilitySizeEnum.Large && this.barn.size === FacilitySizeEnum.Large));
 
     var modifiedTrainingOptions: TrainingOption[] = [];
     trainingOptions.forEach(option => {
       var modifiedOption = option.makeCopy(option);
 
+      var trainingTimeReduction = this.lookupService.getTrainingTimeReductionFromTrainingFacility(this.barn.barnUpgrades);
       var stopwatch = this.lookupService.getResourceByName("Stopwatch");
-      if (stopwatch !== undefined && stopwatch !== null && stopwatch > 0) {
-        modifiedOption.timeToComplete *= (1 - stopwatch * .05);
-      }
+      if (stopwatch === undefined || stopwatch === null)
+        stopwatch = 0;
+
+      modifiedOption.timeToComplete *= 1 - (stopwatch * .05 + trainingTimeReduction);
+      modifiedOption.timeToComplete = Math.round((modifiedOption.timeToComplete + Number.EPSILON) * 100) / 100;
 
       modifiedTrainingOptions.push(modifiedOption);
     });
@@ -228,6 +246,20 @@ export class SelectedBarnComponent implements OnInit {
     this.availableTrainings = this.GetAvailableTrainingOptions(this.associatedAnimal);
   }
 
+  resetFilters() {
+    this.filterSpeed = false;
+    this.filterAcceleration = false;
+    this.filterEndurance = false;
+    this.filterFocus = false;
+    this.filterPower = false;
+    this.filterAdaptability = false;
+    this.filterSmall = false;
+    this.filterMedium = false;
+    this.filterLarge = false;
+
+    this.availableTrainings = this.GetAvailableTrainingOptions(this.associatedAnimal);
+  }
+
   purchaseBarn(): void {
     var moneyAmount = this.lookupService.getMoney();
 
@@ -251,42 +283,55 @@ export class SelectedBarnComponent implements OnInit {
         this.barn.size = FacilitySizeEnum.Large;
 
       this.getSizeValue();
+      this.availableTrainings = this.GetAvailableTrainingOptions(this.associatedAnimal);
       this.lookupService.spendMoney(this.barn.facilityUpgradePrice);
     }
   }
 
+
   upgradeBarn(): void {
-    var moneyAmount = this.lookupService.getMoney();
     var requiredResources = this.lookupService.getResourcesForBarnUpgrade(this.barn.barnUpgrades.barnLevel);
     var canBuy = this.canUpgradeBarn(requiredResources);
 
+    //console.log("Mod: " + this.barn.barnUpgrades.barnLevel % 10);
     if (!canBuy)
       return; //TODO: Add Error
 
-    requiredResources.forEach(resource => {
-      this.lookupService.spendResourceByName(resource.name, resource.amount);
-    });
+    if (this.barn.barnUpgrades.barnLevel === 9) {
+      this.modalService.open(this.specializationModal, { ariaLabelledBy: 'modal-basic-title', size: 'lg' });
+    }
+    else {
+      requiredResources.forEach(resource => {
+        this.lookupService.spendResourceByName(resource.name, resource.amount);
+      });
+      
+      this.barn.barnUpgrades.barnLevel += 1;
 
-    var defaultStatGain = .1;
-    //TODO: Come up with barn specializations/upgrades
-    //need to subtract specialization upgrades from level to get proper stat gain     
-    if (this.barn.barnUpgrades.barnLevel % 6 === 0)
-      this.barn.barnUpgrades.upgradedStatGain.topSpeed += defaultStatGain;
-    else if (this.barn.barnUpgrades.barnLevel % 6 === 5)
-      this.barn.barnUpgrades.upgradedStatGain.acceleration += defaultStatGain;
-    else if (this.barn.barnUpgrades.barnLevel % 6 === 4)
-      this.barn.barnUpgrades.upgradedStatGain.endurance += defaultStatGain;
-    else if (this.barn.barnUpgrades.barnLevel % 6 === 3)
-      this.barn.barnUpgrades.upgradedStatGain.power += defaultStatGain;
-    else if (this.barn.barnUpgrades.barnLevel % 6 === 2)
-      this.barn.barnUpgrades.upgradedStatGain.focus += defaultStatGain;
-    else if (this.barn.barnUpgrades.barnLevel % 6 === 1)
-      this.barn.barnUpgrades.upgradedStatGain.adaptability += defaultStatGain;
+      var defaultStatGain = .1;
+      if (this.barn.barnUpgrades.barnLevel % 10 === 0) {
+        this.barn.barnUpgrades.specializationLevel += 1;
+      }
+      else {
+        var statBarnLevel = this.barn.barnUpgrades.barnLevel - this.barn.barnUpgrades.specializationLevel;
+        if (statBarnLevel % 6 === 0)
+          this.barn.barnUpgrades.upgradedStatGain.topSpeed += defaultStatGain;
+        else if (statBarnLevel % 6 === 5)
+          this.barn.barnUpgrades.upgradedStatGain.acceleration += defaultStatGain;
+        else if (statBarnLevel % 6 === 4)
+          this.barn.barnUpgrades.upgradedStatGain.endurance += defaultStatGain;
+        else if (statBarnLevel % 6 === 3)
+          this.barn.barnUpgrades.upgradedStatGain.power += defaultStatGain;
+        else if (statBarnLevel % 6 === 2)
+          this.barn.barnUpgrades.upgradedStatGain.focus += defaultStatGain;
+        else if (statBarnLevel % 6 === 1)
+          this.barn.barnUpgrades.upgradedStatGain.adaptability += defaultStatGain;
+      }
 
-    this.barn.barnUpgrades.barnLevel += 1;
+      this.totalBarnStatsPopover = this.getTotalBarnStatsPopover();
+      this.upgradeBarnPopover = this.getUpgradeBarnPopover();
+    }
 
-    this.totalBarnStatsPopover = this.getTotalBarnStatsPopover();
-    this.upgradeBarnPopover = this.getUpgradeBarnPopover();
+    this.availableTrainings = this.GetAvailableTrainingOptions(this.associatedAnimal);
   }
 
   canUpgradeBarn(requiredResources: ResourceValue[]): boolean {
@@ -306,8 +351,13 @@ export class SelectedBarnComponent implements OnInit {
   getTotalBarnStatsPopover() {
     var popover = "Upgrade to gain barn bonuses";
 
-    if (this.barn.barnUpgrades.barnLevel > 1)
+    if (this.barn.barnUpgrades.barnLevel >= 1)
       popover = "Barn Upgrades: \n"
+
+    if (this.barn.barnUpgrades.specialization === BarnSpecializationEnum.TrainingFacility) {
+      if (this.barn.barnUpgrades.specializationLevel <= 20)
+        popover += "Training Time Reduction: " + this.barn.barnUpgrades.specializationLevel + "%\n";
+    }
 
     if (this.barn.barnUpgrades.upgradedStatGain.adaptability > 0)
       popover += "Adaptability: " + this.barn.barnUpgrades.upgradedStatGain.adaptability.toFixed(1) + "\n";
@@ -337,5 +387,33 @@ export class SelectedBarnComponent implements OnInit {
     });
 
     return popover;
+  }
+
+  filterSpecialization(specialization: string) {
+    this.selectedSpecialization = specialization;
+    this.specializationDescription = this.lookupService.getSpecializationDescription(specialization);
+  }
+
+  selectSpecialization() {
+    var requiredResources = this.lookupService.getResourcesForBarnUpgrade(this.barn.barnUpgrades.barnLevel);
+    requiredResources.forEach(resource => {
+      this.lookupService.spendResourceByName(resource.name, resource.amount);
+    });
+
+    this.barn.barnUpgrades.specialization = this.lookupService.convertSpecializationNameToEnum(this.selectedSpecialization);
+    this.barn.barnUpgrades.specializationLevel += 1;
+
+    this.barn.barnUpgrades.barnLevel += 1;
+    if (this.barn.barnUpgrades.specialization === BarnSpecializationEnum.TrainingFacility) {
+      this.availableTrainings = this.GetAvailableTrainingOptions(this.associatedAnimal);
+    }
+    this.totalBarnStatsPopover = this.getTotalBarnStatsPopover();
+    this.upgradeBarnPopover = this.getUpgradeBarnPopover();
+
+    this.modalService.dismissAll();
+  }
+
+  goToAnimal() {
+    this.componentCommunicationService.setAnimalView(NavigationEnum.animals, this.associatedAnimal);
   }
 }

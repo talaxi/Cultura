@@ -28,12 +28,7 @@
             <!--TODO: Move this to one of the sides of dead space-->
             <br />
             <button (click)="openItemModal(content)">Use Item</button>
-            <br />
-            <!--<div class="custom-control custom-switch">
-                <input type="checkbox" class="custom-control-input" id="autoBreed" [(ngModel)]="autoBreedActive"
-                    (input)="toggleAutoBreed()">
-                <label class="custom-control-label" for="autoBreed">Auto Breed</label>
-            </div>-->
+            <br />            
             <app-toggle *ngIf="canAutoBreed" [callbackFunction]="toggleAutoBreed" [label]="'Auto Breed'" [model]="autoBreedActive"></app-toggle>
         </div>
         <div class="back" (click)="returnToAnimalView()">

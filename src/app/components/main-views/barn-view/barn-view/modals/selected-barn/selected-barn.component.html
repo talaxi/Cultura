@@ -11,19 +11,19 @@
                     <br/>
 
                     <button (click)="upgradeBarn()" [disabled]="canUpgrade" [ngbPopover]="upgradeBarnContent"
-                    triggers="mouseenter:mouseleave" popoverClass="popoverClass">Upgrade</button>
+                    triggers="mouseenter:mouseleave" popoverClass="popoverClass">{{ upgradeText }}</button>
                 </div>
             </div>
             <div class="info">
                 <span>Barn {{ this.selectedBarnNumber }}</span>
                 <br />
-                <div *ngIf="this.associatedAnimal.name !== this.associatedAnimal.getAnimalType()">
+                <div *ngIf="this.associatedAnimal.name !== this.associatedAnimal.getAnimalType()" (click)="goToAnimal()">
                     <span *ngIf="this.associatedAnimal.name !== this.associatedAnimal.getAnimalType()">{{
                         this.associatedAnimal.name }}</span>
                     <br />
                     <span>{{ this.associatedAnimal.getAnimalType() }}</span>
                 </div>
-                <div *ngIf="this.associatedAnimal.name === this.associatedAnimal.getAnimalType()">
+                <div *ngIf="this.associatedAnimal.name === this.associatedAnimal.getAnimalType()" (click)="goToAnimal()">
                     <span>{{ this.associatedAnimal.getAnimalType() }}</span>
                 </div>
                 <div>
@@ -61,7 +61,7 @@
                 </span>
             </div>
             <div class="changeTrainingHeader">
-                <span>Change Training</span>
+                <span (click)="resetFilters()">Change Training</span>
             </div>
             <div class="statFilter">
                 <span (click)="toggleStatFilter('Speed')" id="speedFilter" [class.filterActive]="filterSpeed">SPD
@@ -138,5 +138,30 @@
 <ng-template #upgradeBarnContent>
     <div class="popoverClass" *ngIf="upgradeBarnPopover !== ''">
         {{ upgradeBarnPopover }}
+    </div>
+</ng-template>
+
+<ng-template #specializationModal let-modal>
+    <div class="modalClass">
+        <form>
+            <div class="modal-header">
+                <h4 class="modal-title" id="modal-basic-title">Choose Barn Specialization</h4>
+                <button type="button" aria-label="Close" (click)="modal.dismiss()">X</button>
+            </div>
+            <div class="modal-body">                
+                <div class="typeContainer" *ngIf="specializationOptions.length > 0">
+                    <span *ngFor="let specialization of specializationOptions" class="raceType subHeading" (click)="filterSpecialization(specialization)">
+                        {{specialization.trim()}}
+                    </span>
+                    <hr/>
+                    <div *ngIf="specializationDescription !== '' && specializationDescription !== undefined">
+                        {{ specializationDescription }}
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">                
+                <button type="button" (click)="selectSpecialization()">Select</button>
+            </div>
+        </form>
     </div>
 </ng-template>

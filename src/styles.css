@@ -160,9 +160,17 @@ h1
   font-weight: var(--s5-weight);  
 }
 
+.keyword {
+  font-weight: 550;
+}
+
 .coloredText
 {
   font-weight: 550;
+}
+
+.progressBarColor {
+  color: #28a745;
 }
 
 .flatlandColor

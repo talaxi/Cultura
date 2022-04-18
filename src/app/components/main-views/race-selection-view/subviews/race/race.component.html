@@ -1,5 +1,10 @@
 <div id="raceInfo">
-    <div class="updates">
+    <div class="headerInfo">
+        <div><button (click)="skipRaceAnimation()">Skip</button></div>
+        <div>Velocity: {{ getVelocityByFrame() }} / MxSpd/s</div>
+        <div><button (click)="pauseRaceAnimation()">Pause</button></div>
+    </div>
+    <div class="updates">        
         <div class="drawRace">
             <app-draw-race [race]="selectedRace" [skip]="skipRace.asObservable()" [pause]="pauseRace.asObservable()"></app-draw-race>
         </div>
@@ -7,13 +12,13 @@
             {{ incrementalRaceUpdates.trim() }}
         </div>
     </div>
-    <div class="results" *ngIf="displayResults">
-        <hr />
-        <span>Rewards</span>
+    <br />
+    <div class="results" *ngIf="displayResults">        
+        <span class="s4Heading">Rewards</span>
         <div class="rewards">
             <table>
                 <tr *ngFor="let cells of rewardRows;">
-                    <td *ngFor="let c of cells;">{{c}}</td>
+                    <td *ngFor="let c of cells;"><span class="keyword">{{c.name}}</span>: {{c.amount}}</td>
                 </tr>
             </table>
         </div>
@@ -21,11 +26,5 @@
     <br />
     <div class="back">
         <button (click)="goToRaceSelection()">Back</button>
-    </div>
-    <div class="back">
-        <button (click)="skipRaceAnimation()">Skip</button>
-    </div>
-    <div class="back">
-        <button (click)="pauseRaceAnimation()">Pause</button>
     </div>
 </div>

@@ -61,7 +61,7 @@ export class InitializeService {
 
     if (trainingType === TrainingOptionsEnum.MoveLogs) {      
       training.trainingName = "Move Logs";
-      training.isAvailable = true;
+      training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Small;
       training.timeToComplete = 30;
       training.trainingType = TrainingOptionsEnum.MoveLogs;
@@ -72,7 +72,7 @@ export class InitializeService {
 
     if (trainingType === TrainingOptionsEnum.Footwork) {      
       training.trainingName = "Footwork";
-      training.isAvailable = true;
+      training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Small;
       training.timeToComplete = 45;
       training.trainingType = TrainingOptionsEnum.Footwork;
@@ -83,7 +83,7 @@ export class InitializeService {
 
     if (trainingType === TrainingOptionsEnum.PracticeCommands) {      
       training.trainingName = "Practice Commands";
-      training.isAvailable = true;
+      training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Small;
       training.timeToComplete = 60;
       training.trainingType = TrainingOptionsEnum.PracticeCommands;
@@ -94,7 +94,7 @@ export class InitializeService {
 
     if (trainingType === TrainingOptionsEnum.ScentTraining) {      
       training.trainingName = "Scent Training";
-      training.isAvailable = true;
+      training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Small;
       training.timeToComplete = 45;
       training.trainingType = TrainingOptionsEnum.ScentTraining;
@@ -105,7 +105,7 @@ export class InitializeService {
 
     if (trainingType === TrainingOptionsEnum.SmallWagonTow) {      
       training.trainingName = "Small Wagon Tow";
-      training.isAvailable = true;
+      training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Small;
       training.timeToComplete = 45;
       training.trainingType = TrainingOptionsEnum.SmallWagonTow;
@@ -116,7 +116,7 @@ export class InitializeService {
 
     if (trainingType === TrainingOptionsEnum.Sidestep) {      
       training.trainingName = "Sidestep";
-      training.isAvailable = true;
+      training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Small;
       training.timeToComplete = 35;
       training.trainingType = TrainingOptionsEnum.Sidestep;
@@ -127,7 +127,7 @@ export class InitializeService {
 
     if (trainingType === TrainingOptionsEnum.MediumTrackRunning) {      
       training.trainingName = "Medium Track Running";
-      training.isAvailable = true;
+      training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Medium;
       training.timeToComplete = 75;
       training.trainingType = TrainingOptionsEnum.MediumTrackRunning;
@@ -138,7 +138,7 @@ export class InitializeService {
 
     if (trainingType === TrainingOptionsEnum.UphillRun) {      
       training.trainingName = "Uphill Run";
-      training.isAvailable = true;
+      training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Medium;
       training.timeToComplete = 90;
       training.trainingType = TrainingOptionsEnum.UphillRun;
@@ -149,7 +149,7 @@ export class InitializeService {
 
     if (trainingType === TrainingOptionsEnum.Puzzles) {      
       training.trainingName = "Puzzles";
-      training.isAvailable = true;
+      training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Medium;
       training.timeToComplete = 75;
       training.trainingType = TrainingOptionsEnum.Puzzles;
@@ -160,7 +160,7 @@ export class InitializeService {
     
     if (trainingType === TrainingOptionsEnum.MoveRocks) {      
       training.trainingName = "Move Rocks";
-      training.isAvailable = true;
+      training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Medium;
       training.timeToComplete = 75;
       training.trainingType = TrainingOptionsEnum.MoveRocks;
@@ -171,7 +171,7 @@ export class InitializeService {
 
     if (trainingType === TrainingOptionsEnum.DodgeBall) {      
       training.trainingName = "Dodge Ball";
-      training.isAvailable = true;
+      training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Medium;
       training.timeToComplete = 90;
       training.trainingType = TrainingOptionsEnum.DodgeBall;
@@ -182,7 +182,7 @@ export class InitializeService {
 
     if (trainingType === TrainingOptionsEnum.BurstPractice) {      
       training.trainingName = "Burst Practice";
-      training.isAvailable = true;
+      training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Medium;
       training.timeToComplete = 90;
       training.trainingType = TrainingOptionsEnum.BurstPractice;
@@ -193,7 +193,7 @@ export class InitializeService {
 
     if (trainingType === TrainingOptionsEnum.Acrobatics) {      
       training.trainingName = "Acrobatics";
-      training.isAvailable = true;
+      training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Medium;
       training.timeToComplete = 90;
       training.trainingType = TrainingOptionsEnum.Acrobatics;
@@ -204,7 +204,7 @@ export class InitializeService {
     
     if (trainingType === TrainingOptionsEnum.LongTrackRunning) {      
       training.trainingName = "Long Track Running";
-      training.isAvailable = true;
+      training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Large;
       training.timeToComplete = 120;
       training.trainingType = TrainingOptionsEnum.LongTrackRunning;

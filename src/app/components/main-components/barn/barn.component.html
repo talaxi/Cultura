@@ -5,7 +5,15 @@
         <span>{{ this.associatedAnimalType }}</span>
         <br />
         <br />
-        <p><ngb-progressbar type="success" [value]="this.trainingProgressBarPercent"></ngb-progressbar></p>        
+        <p><ngb-progressbar type="success" [value]="this.trainingProgressBarPercent"></ngb-progressbar></p> 
+        <div [ngClass]="{'floatingProgressTextAnimation': showTrainingAnimation}" class="floatingProgressText progressBarColor keyword">
+            {{ trainingCompleteText }}
+        </div> 
+        <br/>
+        <br/>
+        <div *ngIf="readyToBreed">
+            Ready to Breed
+        </div>      
     </div>
     <div class="unassigned" *ngIf="!this.isOccupied && !this.isLocked">
         <span>Unassigned</span>

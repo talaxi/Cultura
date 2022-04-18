@@ -151,8 +151,12 @@ export class DrawRaceComponent implements OnInit {
 
             mountainLegDistance += path.length;
           }
-          this.lengthCompleted += path.length;
+          else if (leg.courseType === RaceCourseTypeEnum.Water)
+          {
 
+          }
+
+          this.lengthCompleted += path.length;
 
           if (this.lastPathEndingY < 0) {
             this.yOffscreen = this.lastPathEndingY;

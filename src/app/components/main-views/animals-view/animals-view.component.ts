@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Animal } from 'src/app/models/animals/animal.model';
+import { ComponentCommunicationService } from 'src/app/services/component-communication.service';
 import { GlobalService } from 'src/app/services/global-service.service';
 
 @Component({
@@ -10,12 +11,19 @@ import { GlobalService } from 'src/app/services/global-service.service';
 export class AnimalsViewComponent implements OnInit {
   availableAnimals: Animal[];
   animalSelected = false;
-  animal: Animal; 
+  animal: Animal;
 
-  constructor(private globalService: GlobalService) { }
+  constructor(private globalService: GlobalService, private componentCommunicationService: ComponentCommunicationService) { }
 
   ngOnInit(): void {
-    this.availableAnimals = this.globalService.globalVar.animals.filter(item => item.isAvailable);    
+    this.availableAnimals = this.globalService.globalVar.animals.filter(item => item.isAvailable);
+
+    this.componentCommunicationService.getAnimalView().subscribe((value) => {
+      if (value.type !== undefined && value.type !== null) {
+        this.animalSelected = true;
+        this.animal = value;
+      }
+    });
   }
 
   selectedAnimal($event: Animal): void {
@@ -23,8 +31,7 @@ export class AnimalsViewComponent implements OnInit {
     this.animal = $event;
   }
 
-  returnToAnimalView($event: boolean)
-  {    
-    this.animalSelected = false;   
+  returnToAnimalView($event: boolean) {
+    this.animalSelected = false;
   }
 }

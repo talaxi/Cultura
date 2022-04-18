@@ -1,23 +1,24 @@
 .barn {
-    /*border-radius: 25px;
-    border: 2px solid #73AD21;
-    padding: 30px;  */
     text-align: center;
     width: 25%;
     margin: auto;
   }
 
-  .progressBarBackground
-  {
-    background-color: black;
-    border-radius: 13px;
-    padding: 3px;
-  }
+  .floatingProgressText {     
+    float: right;
+    position: relative;
+    text-align: right;
+    top: -2em;
+}
 
-  .progressBar
-  {
-    height:24px;  
-    background-color: red;
-    border-radius: 10px;
-    height: 20px;
-  }
+.floatingProgressTextAnimation {
+  animation-name: floatingProgressTextAnimation;
+    animation-duration: 3s;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-in-out;
+}
+ 
+@keyframes floatingProgressTextAnimation {
+    0% { transform: translate(0,  0px); }
+    100%   { transform: translate(0, -30px); opacity: 0; }   
+}

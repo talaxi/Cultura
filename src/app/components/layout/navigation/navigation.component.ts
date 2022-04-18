@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Output, OnInit } from '@angular/core';
+import { ComponentCommunicationService } from 'src/app/services/component-communication.service';
 import { NavigationEnum } from '../../../models/navigation-enum.model';
 
 @Component({
@@ -11,9 +12,13 @@ export class NavigationComponent implements OnInit {
   public navigationEnum = NavigationEnum;
   public selectedNavigation = 0;
 
-  constructor() { }
+  constructor(private componentCommunicationService: ComponentCommunicationService) { }
 
   ngOnInit(): void {
+    this.componentCommunicationService.getNewView().subscribe((value) => {
+      this.viewChanged.emit(value);
+      this.selectedNavigation = value;
+    });
   }
 
   switchView(selectedView: NavigationEnum) 
