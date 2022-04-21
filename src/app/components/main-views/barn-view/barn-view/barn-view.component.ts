@@ -14,12 +14,12 @@ export class BarnViewComponent implements OnInit {
   constructor(private lookupService: LookupService) { }
 
   ngOnInit(): void {    
+    this.barnRow2IsUnlocked = this.lookupService.isItemUnlocked("barnRow2");    
+    this.barnRow3IsUnlocked = this.lookupService.isItemUnlocked("barnRow3");
   }
 
   goToBarn(selectedBarnNumber: number): void 
   {
     this.selectedBarn = selectedBarnNumber;
-    this.barnRow2IsUnlocked = this.lookupService.isItemUnlocked("BarnRow2");
-    this.barnRow3IsUnlocked = this.lookupService.isItemUnlocked("BarnRow3");
   }
 }

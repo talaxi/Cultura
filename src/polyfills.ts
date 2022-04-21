@@ -51,7 +51,7 @@ import '@angular/localize/init';
  */
 import 'zone.js';  // Included with Angular CLI.
 import 'reflect-metadata';
-import 'lz-string';
+import './assets/js/lz-string';
 
 /***************************************************************************************************
  * APPLICATION IMPORTS

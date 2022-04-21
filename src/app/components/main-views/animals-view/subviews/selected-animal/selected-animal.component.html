@@ -69,6 +69,11 @@
                 triggers="mouseenter:mouseleave" popoverClass="popoverClass">
                 Adaptability: {{ selectedAnimal.currentStats.adaptability | number : '1.2-2' }}
             </span>
+            <br />
+            <span ngbPopover="{{ getDiminishingReturnsPopover() }}"
+                triggers="mouseenter:mouseleave" popoverClass="popoverClass">
+                Diminishing Returns: {{ diminishingReturnsAmount | number : '1.0-0' }}
+            </span>
         </div>
         <div class="racingStats">
             <span ngbPopover="{{ selectedAnimal.currentStats.maxSpeedMsPopover() }}" triggers="mouseenter:mouseleave"
@@ -99,6 +104,16 @@
             <span ngbPopover="{{ selectedAnimal.currentStats.adaptabilityMsPopover() }}"
                 triggers="mouseenter:mouseleave" popoverClass="popoverClass">
                 Adaptability: ~{{ selectedAnimal.currentStats.adaptabilityMs | number : '1.2-2' }} m
+            </span>
+            <br />
+            <span ngbPopover="{{ selectedAnimal.currentStats.burstChancePopover() }}" triggers="mouseenter:mouseleave"
+                popoverClass="popoverClass">
+                Burst Chance: {{ selectedAnimal.currentStats.burstChance | number : '1.2-2' }}%
+            </span>
+            <br />
+            <span ngbPopover="{{ selectedAnimal.currentStats.burstDistancePopover() }}"
+                triggers="mouseenter:mouseleave" popoverClass="popoverClass">
+                Burst Distance: {{ selectedAnimal.currentStats.burstDistance | number : '1.2-2' }} m
             </span>
         </div>
     </div>

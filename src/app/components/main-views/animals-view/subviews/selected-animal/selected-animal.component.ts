@@ -1,4 +1,3 @@
-import { ConsoleLogger } from '@angular/compiler-cli/private/localize';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Ability } from 'src/app/models/animals/ability.model';
@@ -7,7 +6,6 @@ import { Animal } from 'src/app/models/animals/animal.model';
 import { NavigationEnum } from 'src/app/models/navigation-enum.model';
 import { ResourceValue } from 'src/app/models/resources/resource-value.model';
 import { ShopItemTypeEnum } from 'src/app/models/shop-item-type-enum.model';
-import { ShopItem } from 'src/app/models/shop/shop-item.model';
 import { ComponentCommunicationService } from 'src/app/services/component-communication.service';
 import { GlobalService } from 'src/app/services/global-service.service';
 import { LookupService } from 'src/app/services/lookup.service';
@@ -27,6 +25,7 @@ export class SelectedAnimalComponent implements OnInit {
   powerModifierAmount: number;
   focusModifierAmount: number;
   adaptabilityModifierAmount: number;
+  diminishingReturnsAmount: number;
   colorConditional: any;
   editingName: boolean;
   newName: string;
@@ -55,6 +54,7 @@ export class SelectedAnimalComponent implements OnInit {
     this.powerModifierAmount = this.lookupService.getPowerModifierByAnimalType(this.selectedAnimal.type);
     this.focusModifierAmount = this.lookupService.getFocusModifierByAnimalType(this.selectedAnimal.type);
     this.adaptabilityModifierAmount = this.lookupService.getAdaptabilityModifierByAnimalType(this.selectedAnimal.type);
+    this.diminishingReturnsAmount = this.globalService.GetAnimalDiminishingReturns(this.selectedAnimal);
 
     var stockbreeder = this.lookupService.getStockbreeder();
     
@@ -169,5 +169,9 @@ export class SelectedAnimalComponent implements OnInit {
   toggleAutoBreed = (): void => {
     this.autoBreedActive = !this.autoBreedActive;
     this.selectedAnimal.autoBreedActive = this.autoBreedActive;
+  }
+
+  getDiminishingReturnsPopover() {
+    return "Once a trainable stat is over this number, additional gains in this stat will be reduced. Increase with Facility Level.";
   }
 }

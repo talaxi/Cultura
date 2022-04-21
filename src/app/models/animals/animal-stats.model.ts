@@ -201,6 +201,14 @@ export class AnimalStats {
         return "This is the average distance your animal can go without stumbling, causing them to slow down.";
     }
 
+    burstChancePopover(): string {
+        return "This is your chance per second that you will enter burst mode. Increase by improving Focus and Adaptability.";
+    }
+
+    burstDistancePopover(): string {
+        return "This is how far you can go while bursting. Increase by improving Power.";
+    }
+
     calculateDiminishingReturns(statValue: number): number {
         var diminishingReturnsExp = .6;        
         return 1 / statValue ** diminishingReturnsExp;

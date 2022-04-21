@@ -52,14 +52,23 @@ export class Terrain {
 
             if (terrainType === TerrainTypeEnum.Maelstrom)
             {
+                this.accelerationModifier = minorDetriment;
+                this.maxSpeedModifier = minorDetriment;
+                this.adaptabilityModifier = minorImprovement;
             }
 
             if (terrainType === TerrainTypeEnum.Hailstorm)
             {
+                this.focusModifier = minorDetriment;
+                this.adaptabilityModifier = minorDetriment;
+                this.maxSpeedModifier = minorDetriment;
             }
 
             if (terrainType === TerrainTypeEnum.Ashfall)
             {
+                this.staminaModifier = staminaIncrease;
+                this.accelerationModifier = minorDetriment;
+                this.powerModifier = minorDetriment;
             }
 
             if (terrainType === TerrainTypeEnum.Snow)

@@ -1,7 +1,7 @@
 <div id="raceInfo">
     <div class="headerInfo">
         <div><button (click)="skipRaceAnimation()">Skip</button></div>
-        <div>Velocity: {{ getVelocityByFrame() }} / MxSpd/s</div>
+        <div>Velocity: {{ velocityAtCurrentFrame }} / {{ maxSpeedAtCurrentFrame }}m/s Stamina: {{ staminaAtCurrentFrame }}%</div>
         <div><button (click)="pauseRaceAnimation()">Pause</button></div>
     </div>
     <div class="updates">        

@@ -2,6 +2,7 @@ import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { RaceCourseTypeEnum } from 'src/app/models/race-course-type-enum.model';
 import { RaceDesignEnum } from 'src/app/models/race-design-enum.model';
+import { RacerEffectEnum } from 'src/app/models/racer-effect-enum.model';
 import { RaceLeg } from 'src/app/models/races/race-leg.model';
 import { RacePath } from 'src/app/models/races/race-path.model';
 import { Race } from 'src/app/models/races/race.model';
@@ -33,6 +34,7 @@ export class DrawRaceComponent implements OnInit {
   averageDistancePerSecond: number;
   currentLeg: RaceLeg;
   frameModifier = 60;
+  mountainEndingY = 0;
 
   lastPathEndingX = 0;
   lastPathEndingY = 0;
@@ -85,7 +87,7 @@ export class DrawRaceComponent implements OnInit {
       //var startTime = performance.now();
       context.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
       context.lineWidth = 6;
-      context.lineCap = "round";
+      //context.lineCap = "round";
 
       if (!this.pauseRace) {
         //keep up with current time
@@ -126,6 +128,7 @@ export class DrawRaceComponent implements OnInit {
     this.lastPathEndingY = this.canvasHeight / 2;
 
     var mountainLegDistance = 0;
+    var waterGoingUp = true;
     this.race.raceLegs.forEach(leg => {
       if (leg.pathData !== undefined && leg.pathData.length !== 0) {
         leg.pathData.forEach(path => {
@@ -151,9 +154,15 @@ export class DrawRaceComponent implements OnInit {
 
             mountainLegDistance += path.length;
           }
-          else if (leg.courseType === RaceCourseTypeEnum.Water)
-          {
+          else if (leg.courseType === RaceCourseTypeEnum.Water) {
+            if (path.routeDesign === RaceDesignEnum.Regular)
+              this.drawRegularWaterOverview(context, path, 1, 1, waterGoingUp);
+            if (path.routeDesign === RaceDesignEnum.Waves)
+              this.drawWavesWaterOverview(context, path, 1, 1, waterGoingUp);
+            if (path.routeDesign === RaceDesignEnum.Dive)
+              this.drawDiveWaterOverview(context, path, 1, 1, waterGoingUp);
 
+            waterGoingUp = !waterGoingUp;
           }
 
           this.lengthCompleted += path.length;
@@ -176,8 +185,8 @@ export class DrawRaceComponent implements OnInit {
       //context.lineCap = "butt";
       context.globalCompositeOperation = "source-atop";
 
-      var secondsTaken = this.race.raceUI.distanceCoveredBySecond.length;
-      var completedDistance = this.race.raceUI.distanceCoveredBySecond[secondsTaken - 1] / this.race.length; //as a percentage
+      var secondsTaken = this.race.raceUI.distanceCoveredByFrame.length;
+      var completedDistance = this.race.raceUI.distanceCoveredByFrame[secondsTaken - 1] / this.race.length; //as a percentage
 
       var totalDistance = 0;
       var previousPercent = 0;
@@ -215,7 +224,7 @@ export class DrawRaceComponent implements OnInit {
     this.totalRaceModeXDistance = this.race.length * xRaceModeModifier;
 
     var currentFrame = Math.floor(currentTime * this.frameModifier);
-    var currentDistanceTraveled = this.race.raceUI.distanceCoveredBySecond[currentFrame];
+    var currentDistanceTraveled = this.race.raceUI.distanceCoveredByFrame[currentFrame];
     var currentYDistanceTraveled = 0;
 
     this.averageDistancePerSecond = this.race.length / this.race.raceUI.timeToCompleteByFrame[currentFrame];
@@ -287,7 +296,12 @@ export class DrawRaceComponent implements OnInit {
         currentYDistanceTraveled = currentDistanceInLeg + currentCrevasseDistance;
       else
         currentYDistanceTraveled = goingUpTotal - (currentDistanceInLeg - goingUpTotal) + currentCrevasseDistance;
+
+      this.mountainEndingY = currentYDistanceTraveled;
     }
+
+    //if the above code is skipped, set Y equal to what mountain ended on
+    currentYDistanceTraveled = this.mountainEndingY;
 
     //current distance traveled, scaled with the canvas and modifier, minus getting the coloring in the middle of the screen
     var xDistanceOffset = (currentDistanceTraveled * this.canvasXDistanceScale * xRaceModeModifier) - (this.canvasWidth / 2);
@@ -303,17 +317,19 @@ export class DrawRaceComponent implements OnInit {
     //when setting last x,y distances, you have to ignore xdistanceoffset. 
     //that way you can have the full picture and apply the offset to that    
 
-    if (currentDistanceTraveled >= this.race.length || currentFrame > this.race.raceUI.distanceCoveredBySecond.length) {
+    if (currentDistanceTraveled >= this.race.length || currentFrame > this.race.raceUI.distanceCoveredByFrame.length) {
       this.isRaceFinished = true;
       return;
     }
 
     var mountainLegDistance = 0; //used to determine climbing distance
+    var waterGoingUp = true;
     this.race.raceLegs.forEach(leg => {
       if (leg.pathData !== undefined && leg.pathData.length !== 0) {
         leg.pathData.forEach(path => {
 
           if (leg.courseType === RaceCourseTypeEnum.Flatland) {
+            context.lineCap = "round";
             if (path.routeDesign === RaceDesignEnum.Regular)
               this.drawRegularFlatlandOverview(context, path, xRaceModeModifier, yRaceModeModifier, xDistanceOffset, yDistanceOffset);
             if (path.routeDesign === RaceDesignEnum.S)
@@ -322,7 +338,8 @@ export class DrawRaceComponent implements OnInit {
               this.drawBumpsFlatlandOverview(context, path, xRaceModeModifier, yRaceModeModifier, xDistanceOffset, yDistanceOffset);
           }
           else if (leg.courseType === RaceCourseTypeEnum.Mountain) {
-            var goingUp = this.getCurrentAnimalRacingCourse(currentDistanceTraveled) !== RaceCourseTypeEnum.Mountain || mountainLegDistance < leg.distance * this.mountainClimbPercent;
+            context.lineCap = "round";
+            var goingUp = mountainLegDistance < leg.distance * this.mountainClimbPercent;
             if (path.routeDesign === RaceDesignEnum.Regular) {
               this.drawRegularMountainOverview(context, path, xRaceModeModifier, yRaceModeModifier, goingUp, xDistanceOffset, yDistanceOffset);
             }
@@ -335,6 +352,17 @@ export class DrawRaceComponent implements OnInit {
 
             mountainLegDistance += path.length;
           }
+          else if (leg.courseType === RaceCourseTypeEnum.Water) {
+            context.lineCap = "round";
+            if (path.routeDesign === RaceDesignEnum.Regular)
+              this.drawRegularWaterOverview(context, path, xRaceModeModifier, yRaceModeModifier, waterGoingUp, xDistanceOffset, yDistanceOffset);
+            if (path.routeDesign === RaceDesignEnum.Waves)
+              this.drawWavesWaterOverview(context, path, xRaceModeModifier, yRaceModeModifier, waterGoingUp, xDistanceOffset, yDistanceOffset);
+            if (path.routeDesign === RaceDesignEnum.Dive)
+              this.drawDiveWaterOverview(context, path, xRaceModeModifier, yRaceModeModifier, waterGoingUp, xDistanceOffset, yDistanceOffset);
+
+            waterGoingUp = !waterGoingUp;
+          }
 
           this.lengthCompleted += path.length;
         });
@@ -345,57 +373,43 @@ export class DrawRaceComponent implements OnInit {
 
     //check to see if breakpoint is visible on screen
 
-    //this works but I want to do it just for the immediate breakpoint instead of checking all of them
-    //var distanceSum = 0;
-    //for (var i = 0; i < this.race.raceLegs.length; i++) {
-    //var leg = this.race.raceLegs[i];
-    //var previousLeg = null;
-    //if (i > 1)
-    //  previousLeg = this.race.raceLegs[i - 1];
-
     var percentOfVisibleDistance = 0;
     var legScaledEndPoint = previousLegDistance * this.canvasXDistanceScale * xRaceModeModifier;
     var currentLegIndex = this.race.raceLegs.indexOf(this.currentLeg);
     var previousLeg = null;
-    if (currentLegIndex > 0) 
+    if (currentLegIndex > 0)
       previousLeg = this.race.raceLegs[currentLegIndex - 1];
 
-      if (previousLeg !== undefined && previousLeg !== null &&
-        legScaledEndPoint >= this.visibleDistanceXLeft && legScaledEndPoint <= this.visibleDistanceXRight) {
-        console.log("breakpoint visible");
-        var totalVisibleDistance = this.visibleDistanceXRight - this.visibleDistanceXLeft;
-        var amountOfVisibleDistance = legScaledEndPoint - this.visibleDistanceXLeft;
-        percentOfVisibleDistance = amountOfVisibleDistance / totalVisibleDistance;
+    if (previousLeg !== undefined && previousLeg !== null &&
+      legScaledEndPoint >= this.visibleDistanceXLeft && legScaledEndPoint <= this.visibleDistanceXRight) {
+      var totalVisibleDistance = this.visibleDistanceXRight - this.visibleDistanceXLeft;
+      var amountOfVisibleDistance = legScaledEndPoint - this.visibleDistanceXLeft;
+      percentOfVisibleDistance = amountOfVisibleDistance / totalVisibleDistance;
 
-        context.fillStyle = this.getAnimalDistanceColorByType(previousLeg.courseType);
-        context.fillRect(0, 0, (this.canvasWidth * percentOfVisibleDistance), this.canvasHeight);
-        context.fillStyle = this.getAnimalDistanceColorByType(this.currentLeg.courseType);
-        context.fillRect((this.canvasWidth * percentOfVisibleDistance), 0, (this.canvasWidth / 2) - (this.canvasWidth * percentOfVisibleDistance), this.canvasHeight);
-      }    
+      context.fillStyle = this.getAnimalDistanceColorByType(previousLeg.courseType);
+      context.fillRect(0, 0, (this.canvasWidth * percentOfVisibleDistance), this.canvasHeight);
+      context.fillStyle = this.getAnimalDistanceColorByType(this.currentLeg.courseType);
+      context.fillRect((this.canvasWidth * percentOfVisibleDistance), 0, (this.canvasWidth / 2) - (this.canvasWidth * percentOfVisibleDistance), this.canvasHeight);
+    }
     else {
-      console.log("one racer");
       context.fillStyle = this.getAnimalDistanceColor(currentDistanceTraveled);
       context.fillRect(0, 0, this.canvasWidth / 2, this.canvasHeight);
     }
 
-    //distanceSum += leg.distance;
-    //}
-
-    //if breakpoint visible on screen
-    //get its location
-    //one rect up to that breakpoint, another after
-    //else
-    //do below
-    //context.fillRect(0, 0, this.canvasWidth / 2, this.canvasHeight);
-
-    context.fillStyle = this.getAnimalRacerColor(currentDistanceTraveled);
+    var racerColor = this.getAnimalRacerColor(currentDistanceTraveled);
+    if (this.race.raceUI.racerEffectByFrame[currentFrame] === RacerEffectEnum.LostFocus ||
+      this.race.raceUI.racerEffectByFrame[currentFrame] === RacerEffectEnum.LostStamina ||
+      this.race.raceUI.racerEffectByFrame[currentFrame] === RacerEffectEnum.Stumble) {
+        racerColor = this.utilityService.shadeColor(racerColor, -50);
+    }
+    context.fillStyle = racerColor;
     context.fillRect(this.canvasWidth / 2 - 5, 0, 5, this.canvasHeight);
 
-
+    //var currentFrame = Math.floor(currentTime * this.frameModifier);
     //average speed
-    var averageDistance = this.averageDistancePerSecond * currentTime;
-    //add canvasWidth to offset the fact that we start at half the screen
-    var averageDistanceScaled = (averageDistance * this.canvasXDistanceScale * xRaceModeModifier);// + (this.canvasWidth / 2);
+    var averageDistance = (this.averageDistancePerSecond / this.frameModifier) * currentFrame;
+
+    var averageDistanceScaled = (averageDistance * this.canvasXDistanceScale * xRaceModeModifier);
     this.drawRacer(context, averageDistanceScaled, "black");
     this.drawBreakpoints(context, xRaceModeModifier);
   }
@@ -410,6 +424,8 @@ export class DrawRaceComponent implements OnInit {
           color = "#8f1c14";
         if (leg.courseType === RaceCourseTypeEnum.Mountain)
           color = "#4d6b48";
+        if (leg.courseType === RaceCourseTypeEnum.Water)
+          color = "#16148f";
       }
 
       totalDistance += leg.distance;
@@ -425,6 +441,8 @@ export class DrawRaceComponent implements OnInit {
       color = "#8f1c14";
     if (courseType === RaceCourseTypeEnum.Mountain)
       color = "#4d6b48";
+    if (courseType === RaceCourseTypeEnum.Water)
+      color = "#16148f";
 
     return color;
   }
@@ -439,6 +457,8 @@ export class DrawRaceComponent implements OnInit {
           color = "#eb3023";
         if (leg.courseType === RaceCourseTypeEnum.Mountain)
           color = "#a1db97";
+        if (leg.courseType === RaceCourseTypeEnum.Water)
+          color = "#0000ff";
       }
 
       totalDistance += leg.distance;
@@ -459,6 +479,20 @@ export class DrawRaceComponent implements OnInit {
 
       totalDistance += leg.distance;
     });
+
+    return courseType;
+  }
+
+  getNextAnimalRacingCourse(currentLeg: RaceLeg): RaceCourseTypeEnum {
+    var courseType: RaceCourseTypeEnum;
+    courseType = RaceCourseTypeEnum.Flatland;
+
+    var indexOfLeg = this.race.raceLegs.indexOf(currentLeg);
+
+    if (this.race.raceLegs.length > indexOfLeg) {
+      var nextLeg = this.race.raceLegs[indexOfLeg + 1];
+      courseType = nextLeg.courseType;
+    }
 
     return courseType;
   }
@@ -515,12 +549,11 @@ export class DrawRaceComponent implements OnInit {
 
     context.beginPath();
     context.moveTo(this.lastPathEndingX - xDistanceOffset, this.lastPathEndingY + yDistanceOffset);
-    context.lineTo(this.lastPathEndingX + horizontalLength - xDistanceOffset, this.canvasHeight / 2 + yDistanceOffset);
+    context.lineTo(this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY + yDistanceOffset);
     //context.fillText('End', this.lastPathEndingX + horizontalLength, this.canvasHeight / 2);    
     context.stroke();
 
     this.lastPathEndingX = this.lastPathEndingX + horizontalLength;
-    this.lastPathEndingY = this.canvasHeight / 2;
   }
 
   drawSFlatlandOverview(context: any, path: RacePath, xRaceModeModifier: number, yRaceModeModifier: number, xDistanceOffset?: number, yDistanceOffset?: number): void {
@@ -602,7 +635,6 @@ export class DrawRaceComponent implements OnInit {
     var xFullBump = .115 * horizontalLength;
     var yFullBump = xFullBump / 3;
 
-    //context.lineCap = "butt";
     context.beginPath();
     context.moveTo(startingX, startingY);
     context.lineTo(startingX + xRegularOffset, startingY);
@@ -782,6 +814,155 @@ export class DrawRaceComponent implements OnInit {
 
     this.lastPathEndingX = this.lastPathEndingX + horizontalLength;
     this.lastPathEndingY = goingUp ? this.lastPathEndingY - verticalLength : this.lastPathEndingY + verticalLength;
+  }
+
+  drawRegularWaterOverview(context: any, path: RacePath, xRaceModeModifier: number, yRaceModeModifier: number, goingUp: boolean, xDistanceOffset?: number, yDistanceOffset?: number): void {
+    var horizontalLength = (path.length / this.race.length) * this.canvasWidth * xRaceModeModifier;
+
+    if (xDistanceOffset === undefined || xDistanceOffset === null)
+      xDistanceOffset = 0;
+
+    if (yDistanceOffset === undefined || yDistanceOffset === null)
+      yDistanceOffset = 0;
+
+    var startingX = this.lastPathEndingX - xDistanceOffset;
+    var startingY = this.lastPathEndingY + yDistanceOffset;
+    var horizontalDistanceBetweenPoints = horizontalLength / 3;
+    var waveAmplitude = horizontalLength / 6;
+
+    var bezierX1 = startingX + horizontalDistanceBetweenPoints;
+    var bezierY1 = goingUp ? startingY + waveAmplitude : startingY - waveAmplitude;
+    var bezierX2 = startingX + (2 * horizontalDistanceBetweenPoints);
+    var bezierY2 = goingUp ? startingY + waveAmplitude : startingY - waveAmplitude;
+    var finishPointX = startingX + (3 * horizontalDistanceBetweenPoints);
+    var finishPointY = startingY;
+
+    context.beginPath();
+    context.moveTo(startingX, startingY);
+    context.bezierCurveTo(bezierX1, bezierY1, bezierX2, bezierY2, finishPointX, finishPointY);
+    context.stroke();
+
+    this.lastPathEndingX = this.lastPathEndingX + horizontalLength;
+  }
+
+  drawWavesWaterOverview(context: any, path: RacePath, xRaceModeModifier: number, yRaceModeModifier: number, goingUp: boolean, xDistanceOffset?: number, yDistanceOffset?: number): void {
+    var horizontalLength = (path.length / this.race.length) * this.canvasWidth * xRaceModeModifier;
+
+    if (xDistanceOffset === undefined || xDistanceOffset === null)
+      xDistanceOffset = 0;
+
+    if (yDistanceOffset === undefined || yDistanceOffset === null)
+      yDistanceOffset = 0;
+
+    var startingX = this.lastPathEndingX - xDistanceOffset;
+    var startingY = this.lastPathEndingY + yDistanceOffset;
+    var horizontalWaveLength = horizontalLength / 3;
+    var waveHeight = horizontalLength / 3;
+
+    var wave1BezierX1 = startingX + horizontalWaveLength / 3;
+    var wave1BezierY1 = startingY;
+    var wave1BezierX2 = startingX + horizontalWaveLength / 3;
+    var wave1BezierY2 = startingY - waveHeight;
+    var wave1FinishPointX = startingX + horizontalWaveLength;
+    var wave1FinishPointY = startingY - (3 / 5) * waveHeight;
+
+    context.beginPath();
+    context.moveTo(startingX, startingY);
+    context.bezierCurveTo(wave1BezierX1, wave1BezierY1, wave1BezierX2, wave1BezierY2, wave1FinishPointX, wave1FinishPointY);
+    context.stroke();
+
+    var wave1BezierX3 = wave1FinishPointX - horizontalWaveLength / 3;
+    var wave1BezierY3 = wave1FinishPointY - (waveHeight / 10);
+    var wave1BezierX4 = wave1FinishPointX - horizontalWaveLength / 3;
+    var wave1BezierY4 = wave1FinishPointY + (2 / 5) * waveHeight;
+    var wave1FinishPoint2X = wave1FinishPointX;
+    var wave1FinishPoint2Y = startingY;
+
+    context.beginPath();
+    context.moveTo(wave1FinishPointX, wave1FinishPointY);
+    context.bezierCurveTo(wave1BezierX3, wave1BezierY3, wave1BezierX4, wave1BezierY4, wave1FinishPoint2X, wave1FinishPoint2Y);
+    context.stroke();
+
+    //wave 2
+    var wave2BezierX1 = wave1FinishPoint2X + horizontalWaveLength / 3;
+    var wave2BezierY1 = wave1FinishPoint2Y;
+    var wave2BezierX2 = wave1FinishPoint2X + horizontalWaveLength / 3;
+    var wave2BezierY2 = wave1FinishPoint2Y - waveHeight;
+    var wave2FinishPointX = wave1FinishPoint2X + horizontalWaveLength;
+    var wave2FinishPointY = wave1FinishPoint2Y - (3 / 5) * waveHeight;
+
+    context.beginPath();
+    context.moveTo(wave1FinishPoint2X, wave1FinishPoint2Y);
+    context.bezierCurveTo(wave2BezierX1, wave2BezierY1, wave2BezierX2, wave2BezierY2, wave2FinishPointX, wave2FinishPointY);
+    context.stroke();
+
+    var wave2BezierX3 = wave2FinishPointX - horizontalWaveLength / 3;
+    var wave2BezierY3 = wave2FinishPointY - (waveHeight / 10);
+    var wave2BezierX4 = wave2FinishPointX - horizontalWaveLength / 3;
+    var wave2BezierY4 = wave2FinishPointY + (2 / 5) * waveHeight;
+    var wave2FinishPoint2X = wave2FinishPointX;
+    var wave2FinishPoint2Y = startingY;
+
+    context.beginPath();
+    context.moveTo(wave2FinishPointX, wave2FinishPointY);
+    context.bezierCurveTo(wave2BezierX3, wave2BezierY3, wave2BezierX4, wave2BezierY4, wave2FinishPoint2X, wave2FinishPoint2Y);
+    context.stroke();
+
+    //wave 3
+    var wave3BezierX1 = wave2FinishPoint2X + horizontalWaveLength / 3;
+    var wave3BezierY1 = wave2FinishPoint2Y;
+    var wave3BezierX2 = wave2FinishPoint2X + horizontalWaveLength / 3;
+    var wave3BezierY2 = wave2FinishPoint2Y - waveHeight;
+    var wave3FinishPointX = wave2FinishPoint2X + horizontalWaveLength;
+    var wave3FinishPointY = wave2FinishPoint2Y - (3 / 5) * waveHeight;
+
+    context.beginPath();
+    context.moveTo(wave2FinishPoint2X, wave2FinishPoint2Y);
+    context.bezierCurveTo(wave3BezierX1, wave3BezierY1, wave3BezierX2, wave3BezierY2, wave3FinishPointX, wave3FinishPointY);
+    context.stroke();
+
+    var wave3BezierX3 = wave3FinishPointX - horizontalWaveLength / 3;
+    var wave3BezierY3 = wave3FinishPointY - (waveHeight / 10);
+    var wave3BezierX4 = wave3FinishPointX - horizontalWaveLength / 3;
+    var wave3BezierY4 = wave3FinishPointY + (2 / 5) * waveHeight;
+    var wave3FinishPoint2X = wave3FinishPointX;
+    var wave3FinishPoint2Y = startingY;
+
+    context.beginPath();
+    context.moveTo(wave3FinishPointX, wave3FinishPointY);
+    context.bezierCurveTo(wave3BezierX3, wave3BezierY3, wave3BezierX4, wave3BezierY4, wave3FinishPoint2X, wave3FinishPoint2Y);
+    context.stroke();
+
+    this.lastPathEndingX = this.lastPathEndingX + horizontalLength;
+  }
+
+  drawDiveWaterOverview(context: any, path: RacePath, xRaceModeModifier: number, yRaceModeModifier: number, goingUp: boolean, xDistanceOffset?: number, yDistanceOffset?: number): void {
+    var horizontalLength = (path.length / this.race.length) * this.canvasWidth * xRaceModeModifier;
+
+    if (xDistanceOffset === undefined || xDistanceOffset === null)
+      xDistanceOffset = 0;
+
+    if (yDistanceOffset === undefined || yDistanceOffset === null)
+      yDistanceOffset = 0;
+
+    var startingX = this.lastPathEndingX - xDistanceOffset;
+    var startingY = this.lastPathEndingY + yDistanceOffset;
+    var horizontalDistanceBetweenPoints = horizontalLength / 3;
+    var waveAmplitude = horizontalLength / 2;
+
+    var bezierX1 = startingX;
+    var bezierY1 = goingUp ? startingY + waveAmplitude * 2 : startingY - waveAmplitude * 2;
+    var bezierX2 = startingX + (2 * horizontalDistanceBetweenPoints);
+    var bezierY2 = goingUp ? startingY + waveAmplitude / 4 : startingY - waveAmplitude / 4;
+    var finishPointX = startingX + (3 * horizontalDistanceBetweenPoints);
+    var finishPointY = startingY;
+
+    context.beginPath();
+    context.moveTo(startingX, startingY);
+    context.bezierCurveTo(bezierX1, bezierY1, bezierX2, bezierY2, finishPointX, finishPointY);
+    context.stroke();
+
+    this.lastPathEndingX = this.lastPathEndingX + horizontalLength;
   }
 
   ngOnDestroy() {

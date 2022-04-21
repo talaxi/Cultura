@@ -2,6 +2,8 @@ export enum RaceDesignEnum {
     Regular,
     S,
     Bumps,
-    Crevasse, //deep V
-    Gaps
+    Crevasse, 
+    Gaps,
+    Waves,
+    Dive
   }

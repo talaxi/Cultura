@@ -1,10 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, ComponentFactoryResolver, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { race, Subject } from 'rxjs';
 import { AnimalTypeEnum } from 'src/app/models/animal-type-enum.model';
 import { Ability } from 'src/app/models/animals/ability.model';
 import { AnimalStats } from 'src/app/models/animals/animal-stats.model';
 import { Animal } from 'src/app/models/animals/animal.model';
 import { RaceVariables } from 'src/app/models/animals/race-variables.model';
+import { RacerEffectEnum } from 'src/app/models/racer-effect-enum.model';
 import { RaceLeg } from 'src/app/models/races/race-leg.model';
 import { RacePath } from 'src/app/models/races/race-path.model';
 import { RaceResult } from 'src/app/models/races/race-result.model';
@@ -37,6 +38,10 @@ export class RaceComponent implements OnInit {
   racePaused = false;
   frameModifier = 60;
   timeToComplete = 60;
+  velocityAtCurrentFrame: any;
+  maxSpeedAtCurrentFrame: any;
+  staminaAtCurrentFrame: any;
+  frameByFrameSubscription: any;
 
   constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private utilityService: UtilityService,
     private lookupService: LookupService, private initializeService: InitializeService) { }
@@ -48,10 +53,14 @@ export class RaceComponent implements OnInit {
       this.raceSkipped = true;
   }
 
+  ngOnDestroy() {
+    this.frameByFrameSubscription.unsubscribe();
+  }
+
   runRace(race: Race): RaceResult {
     var raceResult = new RaceResult();
     var totalRaceDistance = 0;
-    var distanceCovered = 0;
+    var distanceCovered = 0;    
     race.raceLegs.forEach(item => totalRaceDistance += item.distance);
     var framesPassed = 0;
     if (race.timeToComplete === 0 || race.timeToComplete === undefined || race.timeToComplete === null)
@@ -62,6 +71,7 @@ export class RaceComponent implements OnInit {
     this.timeToComplete = race.timeToComplete;
     var completedAnimals: Animal[] = [];
     var completedLegs: RaceLeg[] = [];
+    var currentRacerEffect = RacerEffectEnum.None;
 
     if (selectedDeck === undefined) {
       raceResult.errorMessage = 'No animal deck selected.';
@@ -70,8 +80,8 @@ export class RaceComponent implements OnInit {
 
     this.racingAnimals = this.lookupService.getAnimalsFromAnimalDeck(selectedDeck);
 
-    race.raceUI.distanceCoveredBySecond = [];
-    race.raceUI.velocityBySecond = [];
+    race.raceUI.distanceCoveredByFrame = [];
+    race.raceUI.velocityByFrame = [];
     race.raceUI.timeToCompleteByFrame = [];
 
     //calculate speed of animal based on acceleration and top speed (no obstacles)
@@ -96,6 +106,7 @@ export class RaceComponent implements OnInit {
 
       for (var i = framesPassed; i <= this.timeToComplete * this.frameModifier; i++) {
         //Race logic here
+        currentRacerEffect = RacerEffectEnum.None;
         var completedLegDistance = 0;
         if (completedLegCount > 0) {
           for (var x = 0; x < completedLegCount; x++) {
@@ -146,6 +157,7 @@ export class RaceComponent implements OnInit {
         if (racingAnimal.raceVariables.recoveringStamina || racingAnimal.raceVariables.lostFocus || racingAnimal.raceVariables.stumbled) {
           if (racingAnimal.raceVariables.recoveringStamina) {
             console.log("Recovering Stamina");
+            currentRacerEffect = RacerEffectEnum.LostStamina;
             racingAnimal.raceVariables.currentRecoveringStaminaLength -= 1;
             //velocity += racingAnimal.currentStats.accelerationMs / 2;
 
@@ -158,6 +170,7 @@ export class RaceComponent implements OnInit {
 
           if (racingAnimal.raceVariables.lostFocus) {
             console.log("Lost Focus");
+            currentRacerEffect = RacerEffectEnum.LostFocus;
             velocity = velocity / 2;
             racingAnimal.raceVariables.currentLostFocusLength -= 1;
 
@@ -168,6 +181,7 @@ export class RaceComponent implements OnInit {
           }
 
           if (racingAnimal.raceVariables.stumbled) {
+            currentRacerEffect = RacerEffectEnum.Stumble;
             velocity = velocity * currentPath.stumbleSeverity;
             racingAnimal.raceVariables.stumbled = false;
           }
@@ -208,6 +222,7 @@ export class RaceComponent implements OnInit {
 
         //do modifier until you are about to run out of burst, then do it fractionally
         if (racingAnimal.raceVariables.isBursting) {
+          currentRacerEffect = RacerEffectEnum.Burst;
           var burstModifier = 1.25;
 
           if (racingAnimal.raceVariables.remainingBurstMeters >= modifiedVelocity) {
@@ -242,9 +257,12 @@ export class RaceComponent implements OnInit {
 
         distanceCovered += distanceCoveredPerFrame > distanceToGo ? distanceToGo : distanceCoveredPerFrame;
         distanceToGo -= distanceCoveredPerFrame;
-        race.raceUI.distanceCoveredBySecond.push(distanceCovered);
-        race.raceUI.velocityBySecond.push(distanceCoveredPerFrame);
+        race.raceUI.distanceCoveredByFrame.push(distanceCovered);
+        race.raceUI.velocityByFrame.push(distanceCoveredPerFrame);
         race.raceUI.timeToCompleteByFrame.push(this.timeToComplete);
+        race.raceUI.maxSpeedByFrame.push(modifiedMaxSpeed);
+        race.raceUI.staminaPercentByFrame.push(racingAnimal.currentStats.stamina / animalMaxStamina);
+        race.raceUI.racerEffectByFrame.push(currentRacerEffect);
 
         if (!racingAnimal.raceVariables.recoveringStamina)
           this.handleStamina(racingAnimal, raceResult, distanceCoveredPerFrame, framesPassed, item.terrain);
@@ -325,11 +343,10 @@ export class RaceComponent implements OnInit {
     //TODO: add stopping, focus stat    
     if (raceResult.wasSuccessful) {
       this.raceWasSuccessfulUpdate(raceResult);
-    }
-    //console.log("Pre Draw Distance: ");
-    console.log(race.raceUI.distanceCoveredBySecond);
+    }     
     this.setupDisplayRewards(race);
     this.displayRaceUpdates(raceResult);
+    this.getFrameByFrameStats();    
     return raceResult;
   }
 
@@ -341,7 +358,7 @@ export class RaceComponent implements OnInit {
     else
       staminaModifier = staminaModifierPair.value;
 
-    if (terrain !== undefined && terrain !== null)
+    if (terrain !== undefined && terrain !== null && terrain.staminaModifier !== undefined && terrain.staminaModifier !== null)
       staminaModifier += terrain.staminaModifier;
 
     return staminaModifier;
@@ -613,7 +630,25 @@ export class RaceComponent implements OnInit {
     this.pauseRace.next(true);
   }
 
-  getVelocityByFrame() {
+  getFrameByFrameStats() {
+    var currentTime = 0;
 
+    this.frameByFrameSubscription = this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {
+      if (!this.racePaused)
+        currentTime += deltaTime;
+      var currentFrame = Math.floor(currentTime * this.frameModifier);
+
+      if (this.selectedRace.raceUI.velocityByFrame.length <= currentFrame || this.raceSkipped) {
+        var lastFrameCount = this.selectedRace.raceUI.velocityByFrame.length - 1;
+        this.velocityAtCurrentFrame = (this.selectedRace.raceUI.velocityByFrame[lastFrameCount] * this.frameModifier).toFixed(2); //needs to be m/s
+        this.staminaAtCurrentFrame = (this.selectedRace.raceUI.staminaPercentByFrame[lastFrameCount] * 100).toFixed(2);
+        this.maxSpeedAtCurrentFrame = this.selectedRace.raceUI.maxSpeedByFrame[lastFrameCount].toFixed(2);
+      }
+      else {
+        this.velocityAtCurrentFrame = (this.selectedRace.raceUI.velocityByFrame[currentFrame] * this.frameModifier).toFixed(2);
+        this.staminaAtCurrentFrame = (this.selectedRace.raceUI.staminaPercentByFrame[currentFrame] * 100).toFixed(2);
+        this.maxSpeedAtCurrentFrame = this.selectedRace.raceUI.maxSpeedByFrame[currentFrame].toFixed(2);
+      }
+    });
   }
 }

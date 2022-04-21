@@ -55,10 +55,8 @@ export class AppComponent {
         frequency = this.racingSaveFrequency;
 
       if (this.saveTime >= frequency) {
-        this.saveTime = 0;
-        console.log("Pre save");
-        this.saveGame();
-        console.log("Save");
+        this.saveTime = 0;        
+        this.saveGame();        
       }
     });
   }
@@ -105,8 +103,7 @@ export class AppComponent {
       const data = this.globalService.globalVar;
       var globalData = JSON.stringify(data);
       var compressedData = LZString.compressToBase64(globalData);
-      localStorage.setItem("gameData", compressedData);
-      console.log("Storage set");
+      localStorage.setItem("gameData", compressedData);      
     }
   }
 }
