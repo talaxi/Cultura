@@ -122,8 +122,13 @@
 }
 
 .specializationType {
-  width: 10%;
+  width: 25%;
   text-decoration: underline solid transparent;
   transition: text-decoration .3s ease;
   display: inline-block;
+}
+
+.selectedSpecialization {
+  font-weight: bold;
+  text-decoration: underline solid Currentcolor;
 }

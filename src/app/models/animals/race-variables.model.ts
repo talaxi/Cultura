@@ -25,16 +25,18 @@ export class RaceVariables {
     relayAffectedStatRatios: AnimalStats; 
 
     constructor() {
+        this.metersSinceLostFocus = 0;
+        
         this.recoveringStamina = false;
         this.defaultRecoveringStaminaLength = 3;
         this.currentRecoveringStaminaLength = this.defaultRecoveringStaminaLength;
 
         this.lostFocus = false;
-        this.defaultLostFocusLength = 2;
+        this.defaultLostFocusLength = 60;
         this.currentLostFocusLength = this.defaultLostFocusLength;
 
         this.stumbled = false;
-        this.defaultStumbledLength = 1;
+        this.defaultStumbledLength = 10;
         this.currentStumbledLength = this.defaultStumbledLength;
     }
 }

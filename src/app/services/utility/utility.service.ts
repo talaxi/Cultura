@@ -11,12 +11,17 @@ export class UtilityService {
   //circular dependency with global, use lookup for global variables instead
   constructor() { }
 
+  getRandomSeededInteger(min: number, max: number, seedValue: string = "seeded"): number {
+    var prng = seedrandom(seedValue);
+    return Math.round(prng() * (max - min) + min);
+  }
+
   getRandomInteger(min: number, max: number): number {
     return Math.round((Math.random() * (max - min) + min));
   }
 
-  getRandomSeededNumber(min: number, max: number) {
-    var prng = seedrandom('seeded');
+  getRandomSeededNumber(min: number, max: number, seedValue: string = "seeded") {
+    var prng = seedrandom(seedValue);
     return (prng() * (max - min) + min);
   }
 
@@ -28,13 +33,13 @@ export class UtilityService {
     return (Math.random() * (99) + 1);
   }
 
-  getRandomTerrain(): TerrainTypeEnum {
+  /*getRandomTerrain(): TerrainTypeEnum {
     return TerrainTypeEnum.Sunny;
   }
 
   getRandomRaceCourseType(): RaceCourseTypeEnum {
     return RaceCourseTypeEnum.Flatland;
-  }
+  }*/
 
   getRenownCircuitRaceModifier(totalRenown: number) {
     return 1 + totalRenown;

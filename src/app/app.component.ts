@@ -4,6 +4,9 @@ import { GameLoopService } from './services/game-loop/game-loop.service';
 import { GlobalService } from './services/global-service.service';
 import { plainToInstance } from 'class-transformer';
 import { LookupService } from './services/lookup.service';
+import { AnimalStats } from './models/animals/animal-stats.model';
+import { BarnSpecializationEnum } from './models/barn-specialization-enum.model';
+import { SpecializationService } from './services/specialization.service';
 declare var LZString: any;
 
 @Component({
@@ -18,7 +21,8 @@ export class AppComponent {
   saveFrequency = 20; //in seconds
   racingSaveFrequency = 120; // in seconds
 
-  constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private lookupService: LookupService) {
+  constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private lookupService: LookupService,
+    private specializationService: SpecializationService) {
 
   }
 
@@ -40,7 +44,7 @@ export class AppComponent {
 
     if (devMode) {
       this.globalService.globalVar.tutorialCompleted = true;
-      this.globalService.devModeInitialize(10);
+      this.globalService.devModeInitialize(8);
     }
 
     this.gameLoopService.Update();
@@ -74,14 +78,34 @@ export class AppComponent {
       allTrainingAnimals.forEach(animal => {
         if (animal.currentTraining !== null && animal.currentTraining !== undefined) {
           animal.currentTraining.timeTrained += deltaTime;
+          this.specializationService.handleAttractionRevenue(deltaTime);
 
           while (animal.currentTraining.timeTrained >= animal.currentTraining.timeToComplete) {
-            animal.increaseStatsFromCurrentTraining();
+            var associatedBarn = this.globalService.globalVar.barns.find(item => item.barnNumber === animal.associatedBarnNumber);
+            var breedingGroundsSpecializationLevel = 0;
+
+            if (associatedBarn !== undefined && associatedBarn !== null && associatedBarn.barnUpgrades.specialization === BarnSpecializationEnum.BreedingGrounds)
+              breedingGroundsSpecializationLevel = associatedBarn.barnUpgrades.specializationLevel;
+
+            //split stat gain for Research Center
+            if (associatedBarn !== undefined && associatedBarn !== null && associatedBarn.barnUpgrades.specialization === BarnSpecializationEnum.ResearchCenter)
+            {
+              this.specializationService.handleResearchCenterStatIncrease(animal, associatedBarn);
+            }
+            else
+              animal.increaseStatsFromCurrentTraining();
             this.globalService.calculateAnimalRacingStats(animal);
-            var breedGaugeIncrease = this.lookupService.getTrainingBreedGaugeIncrease();
-            this.globalService.IncreaseAnimalBreedGauge(animal, breedGaugeIncrease);
+            var breedGaugeIncrease = this.lookupService.getTrainingBreedGaugeIncrease(breedingGroundsSpecializationLevel);
+            this.globalService.IncreaseAnimalBreedGauge(animal, breedGaugeIncrease);            
 
             animal.currentTraining.timeTrained -= animal.currentTraining.timeToComplete;
+
+            if (animal.queuedTraining !== undefined && animal.queuedTraining !== null)
+            {
+              console.log("Switch to queued training: " + animal.queuedTraining);
+              animal.currentTraining = animal.queuedTraining;
+              animal.queuedTraining = null;
+            }
           }
         }
       });

@@ -1,19 +1,20 @@
 <div id="raceInfo">
     <div class="headerInfo">
         <div><button (click)="skipRaceAnimation()">Skip</button></div>
-        <div>Velocity: {{ velocityAtCurrentFrame }} / {{ maxSpeedAtCurrentFrame }}m/s Stamina: {{ staminaAtCurrentFrame }}%</div>
+        <div>Velocity: {{ velocityAtCurrentFrame }} / {{ maxSpeedAtCurrentFrame }}m/s Stamina: {{ staminaAtCurrentFrame
+            }}%</div>
         <div><button (click)="pauseRaceAnimation()">Pause</button></div>
     </div>
-    <div class="updates">        
+    <div class="updates">
         <div class="drawRace">
-            <app-draw-race [race]="selectedRace" [skip]="skipRace.asObservable()" [pause]="pauseRace.asObservable()"></app-draw-race>
+            <app-draw-race [race]="selectedRace" [skip]="skipRace.asObservable()" [pause]="pauseRace.asObservable()">
+            </app-draw-race>
         </div>
-        <div class="raceUpdates">
-            {{ incrementalRaceUpdates.trim() }}
+        <div class="raceUpdates">{{incrementalRaceUpdates.trim()}}
         </div>
     </div>
     <br />
-    <div class="results" *ngIf="displayResults">        
+    <div class="results" *ngIf="displayResults">
         <span class="s4Heading">Rewards</span>
         <div class="rewards">
             <table>
@@ -28,3 +29,19 @@
         <button (click)="goToRaceSelection()">Back</button>
     </div>
 </div>
+
+<ng-template #circuitRewardModal let-modal>
+    <div class="modalClass">
+        <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">Circuit Rank Reward!</h4>
+            <button type="button" aria-label="Close" (click)="modal.dismiss()">X</button>
+        </div>
+        <div class="modal-body">
+            After ranking up, you receive:
+            Test
+        </div>
+        <div>
+            <button type="button" (click)="modal.dismiss()">Continue</button>
+        </div>
+    </div>
+</ng-template>

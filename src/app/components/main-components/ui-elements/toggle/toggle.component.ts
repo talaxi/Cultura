@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { UtilityService } from 'src/app/services/utility/utility.service';
 
 @Component({
   selector: 'app-toggle',
@@ -8,14 +9,22 @@ import { Component, Input, OnInit } from '@angular/core';
 export class ToggleComponent implements OnInit {
   @Input() model: any;
   @Input() label: any;
-  @Input() callbackFunction: () => void;
+  @Input() id: string;
+  @Input() popoverText: string;
+  @Input() callbackFunction: () => void;  
 
-  constructor() { }
+  constructor(private utilityService: UtilityService) { }
 
   ngOnInit(): void {
+  
   }
 
   toggle(): void {
-    this.callbackFunction();
+    if (this.callbackFunction !== undefined && this.callbackFunction !== null)
+      this.callbackFunction();
+  }
+
+  getId() {
+    return "cbxInput" + this.id;
   }
 }

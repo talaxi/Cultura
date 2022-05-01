@@ -5,8 +5,11 @@ export class Ability {
     currentCooldown: number;
     efficiency: number;
     oneTimeEffect: boolean;
-    remainingLength: number;
+    abilityUsed: boolean;
+    remainingLength: number; //in meters    
     abilityInUse: boolean;
     isAbilityPurchased: boolean;
     purchasePrice: number;
+    totalFrames: number; 
+    remainingFrames: number; //in frames
 }

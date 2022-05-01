@@ -59,6 +59,12 @@ export class LookupService {
       resource.amount -= amountSpent;
   }
 
+  gainResourceByName(name: string, amountGained: number) {
+    var resource = this.globalService.globalVar.resources.find(item => item.name === name);
+    if (resource !== undefined)
+      resource.amount += amountGained;
+  }
+
   getFacilityLevel(): number {
     var resource = this.globalService.globalVar.resources.find(item => item.name === "Facility Level");
     if (resource !== undefined)
@@ -67,16 +73,16 @@ export class LookupService {
       return 0;
   }
 
-  getMoney(): number {
-    var resource = this.globalService.globalVar.resources.find(item => item.name === "Money");
+  getCoins(): number {
+    var resource = this.globalService.globalVar.resources.find(item => item.name === "Coins");
     if (resource !== undefined)
       return resource.amount;
     else
       return 0;
   }
 
-  spendMoney(amountSpent: number): void {
-    var resource = this.globalService.globalVar.resources.find(item => item.name === "Money");
+  spendCoins(amountSpent: number): void {
+    var resource = this.globalService.globalVar.resources.find(item => item.name === "Coins");
     if (resource !== undefined)
       resource.amount -= amountSpent;
   }
@@ -251,12 +257,20 @@ export class LookupService {
     return totalModifier;
   }
 
-  getTrainingBreedGaugeIncrease(): number {
+  getTrainingBreedGaugeIncrease(breedingGroundsSpecializationLevel: number): number {
+    var increaseAmount = 0;
     var modifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "trainingBreedGaugeIncrease");
     if (modifierPair !== null && modifierPair !== undefined)
-      return modifierPair.value;
+      increaseAmount = modifierPair.value;
 
-    return 0;
+    if (breedingGroundsSpecializationLevel > 0) {
+      var breedingGroundsModifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "breedingGroundsSpecializationModifier");
+      if (breedingGroundsModifierPair !== null && breedingGroundsModifierPair !== undefined) {
+        increaseAmount *= 1 + (breedingGroundsSpecializationLevel * breedingGroundsModifierPair.value);
+      }
+    }
+
+    return increaseAmount;
   }
 
   getCircuitBreedGaugeIncrease(): number {
@@ -285,12 +299,12 @@ export class LookupService {
   }
 
   getResourcePopover(name: string) {
-    if (name === "Money")
-      return "Good ol classic money. Gain from most actions and buy most things with this.";
+    if (name === "Coins")
+      return "Good ol classic Coins. Gain from most actions and buy most things with this.";
     else if (name === "Medals")
       return "Rare currency gained from improving your circuit rank and winning certain special races.";
     else if (name === "Renown")
-      return "Increases money gained from races by X%";
+      return "Increases Coins gained from races by X%";
 
     return "";
   }
@@ -310,9 +324,9 @@ export class LookupService {
     var itemList = [];
     itemList.push("Breeding Grounds");
     itemList.push("Training Facility");
-    if (this.isItemUnlocked("Attraction"))
+    if (this.isItemUnlocked("attractionSpecialization"))
       itemList.push("Attraction");
-    if (this.isItemUnlocked("Research Center"))
+    if (this.isItemUnlocked("researchCenterSpecialization"))
       itemList.push("Research Center");
     return itemList;
   }
@@ -372,8 +386,8 @@ export class LookupService {
     if (animal.ability.name === "Leap") {
       return animal.ability.efficiency * (1 + modifiedPower);
     }
-
-    return -1;
+    else
+      return animal.ability.efficiency * (1 + modifiedPower);
   }
 
   getAnimalAbilityDescription(shortDescription: boolean, abilityName: string, animal?: Animal) {
@@ -388,22 +402,67 @@ export class LookupService {
         return "Increase acceleration for a short period";
       }
       if (abilityName === "Sprint") {
-        return "Short TODO";
+        return "Increase max speed, acceleration, stamina cost for a short period";
       }
       if (abilityName === "Giving Chase") {
-        return "Short TODO";
+        return "Increase acceleration the further behind you are";
       }
       if (abilityName === "On The Hunt") {
-        return "Short TODO";
+        return "Gain max speed after each burst";
+      }
+      if (abilityName === "Awareness") {
+        return "Increase adaptability, focus for a short period";
+      }
+      if (abilityName === "Prey Instinct") {
+        return "Start in extended burst mode";
+      }
+      if (abilityName === "Nap") {
+        return "Delay leg start, increase acceleration and focus";
       }
       if (abilityName === "Landslide") {
-        return "Delay other racers";
+        return "Delay competitors";
       }
       if (abilityName === "Frenzy") {
-        return "Short TODO";
+        return "Increase burst distance, cannot stumble or lose focus during burst";
       }
       if (abilityName === "Leap") {
         return "Jump to the finish line";
+      }
+      if (abilityName === "Breach") {
+        return "Jump a short distance";
+      }
+      if (abilityName === "Echolocation") {
+        return "Increase adaptability, ignore negative terrain effects for a short period";
+      }
+      if (abilityName === "Flowing Current") {
+        return "Increase next racer's acceleration on relay";
+      }
+      if (abilityName === "Apex Predator") {
+        return "Slow competitors if they pass you";
+      }
+      if (abilityName === "Feeding Frenzy") {
+        return "Slow next and previous racers, increase max speed and acceleration for a distance";
+      }
+      if (abilityName === "Blood in the Water") {
+        return "increase max speed when ahead of competitors";
+      }
+      if (abilityName === "Sure-footed") {
+        return "Increase adaptability after not stumbling through path";
+      }
+      if (abilityName === "Deep Breathing") {
+        return "Regain stamina after burst, permanently increase endurance";
+      }
+      if (abilityName === "In the Rhythm") {
+        return "Increase burst speed bonus";
+      }
+      if (abilityName === "Sticky") {
+        return "Cannot stumble for a short period";
+      }
+      if (abilityName === "Night Vision") {
+        return "Increase max speed by keeping focused";
+      }
+      if (abilityName === "Camouflage") {
+        return "Increase previous and next racer's adaptability";
       }
     }
     else {
@@ -431,28 +490,73 @@ export class LookupService {
           return "Stamina does not go down for " + effectiveAmountDisplay + " meters. " + cooldownDisplay + " second cooldown.";
         }
         if (abilityName === "Inspiration") {
-          return "When the next racer starts, they gain 25% of your Max Speed for " + effectiveAmountDisplay + " meters.";
+          return "When the next racer starts, they gain 25% of your Max Speed for " + effectiveAmountDisplay + " meters. Passive.";
         }
         if (abilityName === "Pacemaker") {
           return "Increase acceleration by 25% for " + effectiveAmountDisplay + " meters. " + cooldownDisplay + " second cooldown.";
         }
         if (abilityName === "Sprint") {
-          return "Long TODO";
+          return " Gain 25% Max Speed and 10% Acceleration for " + effectiveAmountDisplay + " meters, but lose twice as much stamina as normal." + cooldownDisplay + " second cooldown.";
         }
         if (abilityName === "Giving Chase") {
-          return "Long TODO";
+          return "Acceleration increases by " + effectiveAmountDisplay + "% for every second behind the average pace per second. Passive.";
         }
         if (abilityName === "On The Hunt") {
-          return "Long TODO";
+          return "Every time you Burst, increase your max speed by " + effectiveAmountDisplay + "%. Passive.";
+        }
+        if (abilityName === "Awareness") {
+          return "Boosts focus and adaptability by 25% for " + effectiveAmountDisplay + " meters. " + cooldownDisplay + " second cooldown.";
+        }
+        if (abilityName === "Prey Instinct") {
+          return "Starts its leg in burst mode that continues for an additional " + effectiveAmountDisplay + " meters. Passive.";
+        }
+        if (abilityName === "Nap") {
+          return "Sleep until the competition is " + effectiveAmountDisplay + " meters from the end of your leg. Acceleration and focus are then doubled. Passive.";
         }
         if (abilityName === "Landslide") {
           return "Drop rocks on competitors, delaying them " + effectiveAmountDisplay + " meters. " + cooldownDisplay + " second cooldown.";
         }
         if (abilityName === "Frenzy") {
-          return "Long TODO";
+          return "Increase burst distance by " + effectiveAmountDisplay + " meters. You do not stumble or lose focus while bursting. " + cooldownDisplay + " second cooldown.";
         }
         if (abilityName === "Leap") {
-          return "When you are " + effectiveAmountDisplay + " meters from the finish line, leap straight to the end.";
+          return "When you are " + effectiveAmountDisplay + " meters from the finish line, leap straight to the end over .25 seconds. Passive.";
+        }
+        if (abilityName === "Sure-footed") {
+          return "When you make it through a special path without stumbling, increase your adaptability by " + effectiveAmountDisplay + "%. Passive.";
+        }
+        if (abilityName === "Deep Breathing") {
+          return "Every time you burst, regain " + effectiveAmountDisplay + "% of your stamina, up to 100%. If this brings you to your max stamina, permanently gain an endurance stat point. Passive.";
+        }
+        if (abilityName === "In The Rhythm") {
+          return "Increase your max speed bonus while bursting by " + effectiveAmountDisplay + "%. Passive.";
+        }
+        if (abilityName === "Sticky") {
+          return "Cannot stumble for " + effectiveAmountDisplay + " meters. " + cooldownDisplay + " second cooldown.";
+        }
+        if (abilityName === "Night Vision") {
+          return "Every second of the average pace per second that you don't lose focus, increase Max Speed by " + effectiveAmountDisplay + "%. Passive.";
+        }
+        if (abilityName === "Camouflage") {
+          return "Assist the previous racer and next racer, boosting their adaptability by 25% of your max for the last and first " + effectiveAmountDisplay + " meters of their legs respectively. Passive.";
+        }
+        if (abilityName === "Breach") {
+          return "Jump " + effectiveAmountDisplay + " meters over .25 seconds. " + cooldownDisplay + " second cooldown.";
+        }
+        if (abilityName === "Echolocation") {
+          return "Increase your adaptability by 50% for " + effectiveAmountDisplay + " meters and ignore any negative effects from the terrain. " + cooldownDisplay + " second cooldown.";
+        }
+        if (abilityName === "Flowing Current") {
+          return "When relaying, increase the acceleration of your next racer by 25% of your acceleration for " + effectiveAmountDisplay + " meters. Passive.";
+        }
+        if (abilityName === "Apex Predator") {
+          return "If the competitors moving at the average pace pass the shark during its leg, immediately bite them, slowing their pace by 50% for " + effectiveAmountDisplay + " meters. Can only occur once. Passive.";
+        }
+        if (abilityName === "Feeding Frenzy") {
+          return "Increase Max Speed and Acceleration by 50% for the first and last " + effectiveAmountDisplay + " meters of your leg. Your next and previous racers have a 10% Max Speed reduction. Passive.";
+        }
+        if (abilityName === "Blood In The Water") {
+          return "While you are ahead of the average pace, increase max speed by " + effectiveAmountDisplay + "%. Passive.";
         }
       }
     }
@@ -462,9 +566,9 @@ export class LookupService {
 
   getResourcesForBarnUpgrade(currentLevel: number): ResourceValue[] {
     var allResourcesRequired: ResourceValue[] = [];
-    var money = new ResourceValue("Money", 100);
-    money.amount *= currentLevel;
-    allResourcesRequired.push(money);
+    var Coins = new ResourceValue("Coins", 100);
+    Coins.amount *= (currentLevel + 1);
+    allResourcesRequired.push(Coins);
     return allResourcesRequired;
   }
 
@@ -523,10 +627,65 @@ export class LookupService {
       description = "Pull out all the stops giving your animals the best environment to improve. As you progress, your animals will train faster and gain stats from training at a higher rate.";
     }
     else if (specializationName === "Attraction") {
-      description = "Give the people what they want and turn your barn into a tourist attraction. As you progress, your barn will provide passive income at a steady rate.";
+      description = "Give the people what they want and turn your barn into a tourist attraction. As you progress, your barn will provide passive income at a steady rate while training.";
     }
     else if (specializationName === "Research Center") {
       description = "Bring in the top names in animal research to optimize your training process. As you progress, your animal will gain reduced stats from training but split its improvements with other animals."
+    }
+
+    return description;
+  }
+
+  getInDepthSpecializationDescription(specializationName: string) {
+    var description = "";
+
+    if (specializationName === "Breeding Grounds") {
+      var increaseAmount = 0;
+      var modifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "trainingBreedGaugeIncrease");
+      if (modifierPair !== null && modifierPair !== undefined)
+        increaseAmount = modifierPair.value;
+
+      description = "For every 10 levels, gain " + increaseAmount + "% additional breed XP when completing a training.";
+    }
+    else if (specializationName === "Training Facility") {
+      description = "For every 10 levels up to level 200, gain 1% training time reduction. For every 10 levels after level 200, gain a .1 stat multiplier for every stat.";
+    }
+    else if (specializationName === "Attraction") {
+      var timeToCollect = 60;
+      var timeToCollectPair = this.globalService.globalVar.modifiers.find(item => item.text === "attractionTimeToCollectModifier");
+
+      if (timeToCollectPair !== undefined && timeToCollectPair !== null)
+        timeToCollect = timeToCollectPair.value;
+
+      var amountEarned = 0;
+      var amountEarnedPair = this.globalService.globalVar.modifiers.find(item => item.text === "attractionAmountModifier");
+
+      if (amountEarnedPair !== undefined && amountEarnedPair !== null)
+        amountEarned = amountEarnedPair.value;
+
+      description = "For every 10 levels, gain " + amountEarned + " Coins every " + timeToCollect + " seconds while an animal trains in this barn.";
+    }
+    else if (specializationName === "Research Center") {
+      var statGainIncrementsModifier = this.globalService.globalVar.modifiers.find(item => item.text === "researchCenterIncrementsModifier");
+      var trainingAnimalDefaultModifier = this.globalService.globalVar.modifiers.find(item => item.text === "researchCenterTrainingAnimalModifier");
+      var studyingAnimalDefaultModifier = this.globalService.globalVar.modifiers.find(item => item.text === "researchCenterStudyingAnimalModifier");
+      var maxStatGainModifier = this.globalService.globalVar.modifiers.find(item => item.text === "researchCenterMaxStatGainModifier");
+  
+      var statGainIncrements = .05;
+      var trainingAnimalDefault = .45;
+      var studyingAnimalDefault = .25;
+      var maxStatGain = .5;
+
+      if (statGainIncrementsModifier !== undefined && statGainIncrementsModifier !== null)
+        statGainIncrements = statGainIncrementsModifier.value;
+      if (trainingAnimalDefaultModifier !== undefined && trainingAnimalDefaultModifier !== null)
+        trainingAnimalDefault = trainingAnimalDefaultModifier.value;
+      if (studyingAnimalDefaultModifier !== undefined && studyingAnimalDefaultModifier !== null)
+        studyingAnimalDefault = studyingAnimalDefaultModifier.value;
+      if (maxStatGainModifier !== undefined && maxStatGainModifier !== null)
+        maxStatGain = maxStatGainModifier.value;
+
+      description = "To start, the animal training only gains " + ((trainingAnimalDefault + statGainIncrements) * 100) + "% of the stats from their training. An animal at random will gain " + (studyingAnimalDefault * 100) + "% of the stats from training, prioritizing animals of the same course type. For every 10 levels, " + (statGainIncrements * 100) + "% additional stat gain will be distributed up to " + (maxStatGain * 100) + "% starting with the training animal. Additional animals will gain stats after maxing out the previous.";
     }
 
     return description;

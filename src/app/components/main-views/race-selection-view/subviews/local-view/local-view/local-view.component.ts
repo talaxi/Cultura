@@ -234,7 +234,7 @@ export class LocalViewComponent implements OnInit {
       });
 
       this.availableLocalRaces.push(new Race(raceLegs, this.globalService.globalVar.circuitRank, false,
-        1, totalDistance, timeToComplete, this.globalService.GenerateLocalRaceRewards(this.globalService.globalVar.circuitRank)));
+        1, totalDistance, timeToComplete, this.globalService.GenerateLocalRaceRewards(this.globalService.globalVar.circuitRank), LocalRaceTypeEnum.Local));
     }
   }
 }

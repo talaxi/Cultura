@@ -1,11 +1,20 @@
 <div class="settingsView">
-      <app-toggle [callbackFunction]="skipDrawRaceToggle" [label]="'Auto Skip Race Info'" [model]="skipDrawRace"></app-toggle>
-    <textarea id="importExport" name="importExport" rows="10" [(ngModel)]="importExportValue">  
+    <div class="toggles">
+        <app-toggle [callbackFunction]="skipDrawRaceToggle" [label]="'Auto Skip Race Info'" 
+        [model]="skipDrawRace" [popoverText]="skipDrawRacePopoverText" [id]="'skipRace'"></app-toggle>
+        <app-toggle [callbackFunction]="finishTrainingBeforeSwitchingToggle" [label]="'Finish Training Before Switching'" 
+        [model]="finishTrainingBeforeSwitching" [popoverText]="finishTrainingBeforeSwitchingPopoverText" [id]="'finishTraining'"></app-toggle>                
+    </div>
+    <textarea id="importExport" name="importExport" rows="10" [(ngModel)]="importExportValue">
     </textarea>
-    <button (click)="SaveGame()">
-        Export
-    </button>
     <button (click)="LoadGame()">
         Import
     </button>
+    <button (click)="SaveGame()">
+        Export
+    </button>
+    <!--<button (click)="ExportToEmail()">
+        Export To Email
+    </button>
+    <span><input id="exportEmail" name="exportEmail" placeholder="Email Address" [(ngModel)]="exportEmail"></span>-->
 </div>

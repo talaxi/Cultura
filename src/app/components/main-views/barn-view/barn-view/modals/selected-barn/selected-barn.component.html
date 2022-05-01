@@ -5,7 +5,7 @@
                 <span (click)="unassignAnimal()">Unassign</span>
                 <br/>
                 <br/>
-                <div>
+                <div *ngIf="barnSpecializationsUnlocked">
                     <span [ngbPopover]="totalBarnStatsContent"
                     triggers="mouseenter:mouseleave" popoverClass="popoverClass">Barn Level {{ barn.barnUpgrades.barnLevel }}</span>
                     <br/>
@@ -150,12 +150,15 @@
             </div>
             <div class="modal-body">                
                 <div class="typeContainer" *ngIf="specializationOptions.length > 0">
-                    <span *ngFor="let specialization of specializationOptions" class="raceType subHeading" (click)="filterSpecialization(specialization)">
+                    <span *ngFor="let specialization of specializationOptions" class="specializationType subHeading" [ngClass]="{'selectedSpecialization': selectedSpecialization === specialization}" (click)="filterSpecialization(specialization)">
                         {{specialization.trim()}}
                     </span>
                     <hr/>
                     <div *ngIf="specializationDescription !== '' && specializationDescription !== undefined">
                         {{ specializationDescription }}
+                        <br/>
+                        <br/>
+                        <strong> {{ inDepthSpecializationDescription }} </strong>
                     </div>
                 </div>
             </div>

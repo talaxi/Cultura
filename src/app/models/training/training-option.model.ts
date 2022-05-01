@@ -27,16 +27,16 @@ export class TrainingOption {
     makeCopy(originalTrainingOption: TrainingOption)
     {
         var copy = new TrainingOption();
-        copy.affectedStatRatios = originalTrainingOption.affectedStatRatios;
-        copy.facilitySize = originalTrainingOption.facilitySize;
-        copy.isAvailable = originalTrainingOption.isAvailable;
-        copy.purchasePrice = originalTrainingOption.purchasePrice;
-        copy.statGain = originalTrainingOption.statGain;
-        copy.timeToComplete = originalTrainingOption.timeToComplete;
-        copy.timeTrained = originalTrainingOption.timeTrained;
-        copy.trainingCourseType = originalTrainingOption.trainingCourseType;
-        copy.trainingName = originalTrainingOption.trainingName;
-        copy.trainingType = originalTrainingOption.trainingType;
+        copy.affectedStatRatios = JSON.parse(JSON.stringify(originalTrainingOption.affectedStatRatios));
+        copy.facilitySize = JSON.parse(JSON.stringify(originalTrainingOption.facilitySize));
+        copy.isAvailable = JSON.parse(JSON.stringify(originalTrainingOption.isAvailable));
+        copy.purchasePrice = JSON.parse(JSON.stringify(originalTrainingOption.purchasePrice));
+        copy.statGain = JSON.parse(JSON.stringify(originalTrainingOption.statGain));
+        copy.timeToComplete = JSON.parse(JSON.stringify(originalTrainingOption.timeToComplete));
+        copy.timeTrained = JSON.parse(JSON.stringify(originalTrainingOption.timeTrained));
+        copy.trainingCourseType = JSON.parse(JSON.stringify(originalTrainingOption.trainingCourseType));
+        copy.trainingName = JSON.parse(JSON.stringify(originalTrainingOption.trainingName));
+        copy.trainingType = JSON.parse(JSON.stringify(originalTrainingOption.trainingType));
         return copy;
     }
 

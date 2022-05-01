@@ -180,6 +180,17 @@ export class InitializeService {
       training.affectedStatRatios = new AnimalStats(0, 2.5, 0, 0, 0, .5);
     }
 
+    if (trainingType === TrainingOptionsEnum.LateralVerticalDrill) {      
+      training.trainingName = "Lateral Vertical Drill";
+      training.isAvailable = false;
+      training.facilitySize = FacilitySizeEnum.Medium;
+      training.timeToComplete = 75;
+      training.trainingType = TrainingOptionsEnum.LateralVerticalDrill;
+      training.trainingCourseType = RaceCourseTypeEnum.Flatland;
+      training.statGain = 1;
+      training.affectedStatRatios = new AnimalStats(1.5, 0, 0, 0, 2, 0);
+    }
+
     if (trainingType === TrainingOptionsEnum.BurstPractice) {      
       training.trainingName = "Burst Practice";
       training.isAvailable = false;

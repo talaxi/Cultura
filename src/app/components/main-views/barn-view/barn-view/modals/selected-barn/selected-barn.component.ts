@@ -11,6 +11,8 @@ import { ComponentCommunicationService } from 'src/app/services/component-commun
 import { GameLoopService } from 'src/app/services/game-loop/game-loop.service';
 import { GlobalService } from 'src/app/services/global-service.service';
 import { LookupService } from 'src/app/services/lookup.service';
+import { SpecializationService } from 'src/app/services/specialization.service';
+//import * as cloneDeep from 'lodash/cloneDeep';
 
 @Component({
   selector: 'app-selected-barn',
@@ -38,6 +40,8 @@ export class SelectedBarnComponent implements OnInit {
   specializationOptions: string[];
   selectedSpecialization: string;
   specializationDescription: string;
+  inDepthSpecializationDescription: string;
+  barnSpecializationsUnlocked = false;
 
   filterSpeed = false;
   filterAcceleration = false;
@@ -50,12 +54,14 @@ export class SelectedBarnComponent implements OnInit {
   filterLarge = false;
 
   constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private modalService: NgbModal
-    , private lookupService: LookupService, private componentCommunicationService: ComponentCommunicationService) {
+    , private lookupService: LookupService, private componentCommunicationService: ComponentCommunicationService,
+    private specializationService: SpecializationService) {
   }
 
   ngOnInit(): void {
     this.specializationOptions = this.lookupService.getAllBarnSpecializations();
     this.upgradeText = "Upgrade";
+    this.barnSpecializationsUnlocked = this.lookupService.isItemUnlocked("barnSpecializations");
 
     if (this.selectedBarnNumber > 0 && this.selectedBarnNumber <= this.globalService.globalVar.barns.length + 1) {
       var globalBarn = this.globalService.globalVar.barns.find(item => item.barnNumber === this.selectedBarnNumber);
@@ -95,6 +101,9 @@ export class SelectedBarnComponent implements OnInit {
               if (associatedAnimal.currentTraining === undefined || associatedAnimal.currentTraining === null)
                 return;
 
+              if (associatedAnimal.currentTraining !== this.existingTraining)
+                this.existingTraining = associatedAnimal.currentTraining;
+
               if (this.trainingProgressBarPercent >= 100) {
                 this.trainingProgressBarPercent = 100;
               }
@@ -117,10 +126,19 @@ export class SelectedBarnComponent implements OnInit {
     if (animal === undefined || animal === null)
       return;
 
-    if (animal.currentTraining !== null && animal.currentTraining !== undefined)
-      animal.currentTraining.timeTrained = 0;
-
     var newTraining = Object.assign({}, training);
+    
+    if (animal.currentTraining !== null && animal.currentTraining !== undefined)
+    {
+      if (this.globalService.globalVar.settings.get("finishTrainingBeforeSwitching")) {
+        animal.queuedTraining = newTraining;
+        console.log("Name: "+ animal.queuedTraining.trainingName);
+        return;
+      }
+
+      animal.currentTraining.timeTrained = 0;
+    }
+
     animal.currentTraining = newTraining;
     this.existingTraining = newTraining;
   }
@@ -134,12 +152,13 @@ export class SelectedBarnComponent implements OnInit {
       return trainingOptions;
     }
 
-    trainingOptions = this.globalService.globalVar.trainingOptions.filter(item => item.isAvailable && 
+    trainingOptions = this.globalService.globalVar.trainingOptions.filter(item => item.isAvailable &&
       (item.facilitySize === FacilitySizeEnum.Small ||
-      item.facilitySize === FacilitySizeEnum.Medium && (this.barn.size === FacilitySizeEnum.Medium || this.barn.size === FacilitySizeEnum.Large) ||
-      item.facilitySize === FacilitySizeEnum.Large && this.barn.size === FacilitySizeEnum.Large));
+        item.facilitySize === FacilitySizeEnum.Medium && (this.barn.size === FacilitySizeEnum.Medium || this.barn.size === FacilitySizeEnum.Large) ||
+        item.facilitySize === FacilitySizeEnum.Large && this.barn.size === FacilitySizeEnum.Large));
 
     var modifiedTrainingOptions: TrainingOption[] = [];
+
     trainingOptions.forEach(option => {
       var modifiedOption = option.makeCopy(option);
 
@@ -150,6 +169,20 @@ export class SelectedBarnComponent implements OnInit {
 
       modifiedOption.timeToComplete *= 1 - (stopwatch * .05 + trainingTimeReduction);
       modifiedOption.timeToComplete = Math.round((modifiedOption.timeToComplete + Number.EPSILON) * 100) / 100;
+
+      modifiedOption.affectedStatRatios.topSpeed *= this.barn.barnUpgrades.upgradedStatGain.topSpeed;
+      modifiedOption.affectedStatRatios.acceleration *= this.barn.barnUpgrades.upgradedStatGain.acceleration;
+      modifiedOption.affectedStatRatios.endurance *= this.barn.barnUpgrades.upgradedStatGain.endurance;
+      modifiedOption.affectedStatRatios.power *= this.barn.barnUpgrades.upgradedStatGain.power;
+      modifiedOption.affectedStatRatios.focus *= this.barn.barnUpgrades.upgradedStatGain.focus;
+      modifiedOption.affectedStatRatios.adaptability *= this.barn.barnUpgrades.upgradedStatGain.adaptability;
+
+      modifiedOption.affectedStatRatios.topSpeed = Math.round((modifiedOption.affectedStatRatios.topSpeed + Number.EPSILON) * 100) / 100;
+      modifiedOption.affectedStatRatios.acceleration = Math.round((modifiedOption.affectedStatRatios.acceleration + Number.EPSILON) * 100) / 100;
+      modifiedOption.affectedStatRatios.endurance = Math.round((modifiedOption.affectedStatRatios.endurance + Number.EPSILON) * 100) / 100;
+      modifiedOption.affectedStatRatios.power = Math.round((modifiedOption.affectedStatRatios.power + Number.EPSILON) * 100) / 100;
+      modifiedOption.affectedStatRatios.focus = Math.round((modifiedOption.affectedStatRatios.focus + Number.EPSILON) * 100) / 100;
+      modifiedOption.affectedStatRatios.adaptability = Math.round((modifiedOption.affectedStatRatios.adaptability + Number.EPSILON) * 100) / 100;
 
       modifiedTrainingOptions.push(modifiedOption);
     });
@@ -261,11 +294,11 @@ export class SelectedBarnComponent implements OnInit {
   }
 
   purchaseBarn(): void {
-    var moneyAmount = this.lookupService.getMoney();
+    var CoinsAmount = this.lookupService.getCoins();
 
-    if (moneyAmount >= this.barn.purchasePrice) {
+    if (CoinsAmount >= this.barn.purchasePrice) {
       this.barn.isLocked = false;
-      this.lookupService.spendMoney(this.barn.purchasePrice);
+      this.lookupService.spendCoins(this.barn.purchasePrice);
     }
   }
 
@@ -274,9 +307,9 @@ export class SelectedBarnComponent implements OnInit {
   }
 
   upgradeBarnSize(): void {
-    var moneyAmount = this.lookupService.getMoney();
+    var CoinsAmount = this.lookupService.getCoins();
 
-    if (moneyAmount >= this.barn.facilityUpgradePrice) {
+    if (CoinsAmount >= this.barn.facilityUpgradePrice) {
       if (this.barn.size === FacilitySizeEnum.Small)
         this.barn.size = FacilitySizeEnum.Medium;
       else if (this.barn.size === FacilitySizeEnum.Medium)
@@ -284,7 +317,7 @@ export class SelectedBarnComponent implements OnInit {
 
       this.getSizeValue();
       this.availableTrainings = this.GetAvailableTrainingOptions(this.associatedAnimal);
-      this.lookupService.spendMoney(this.barn.facilityUpgradePrice);
+      this.lookupService.spendCoins(this.barn.facilityUpgradePrice);
     }
   }
 
@@ -304,7 +337,7 @@ export class SelectedBarnComponent implements OnInit {
       requiredResources.forEach(resource => {
         this.lookupService.spendResourceByName(resource.name, resource.amount);
       });
-      
+
       this.barn.barnUpgrades.barnLevel += 1;
 
       var defaultStatGain = .1;
@@ -337,7 +370,7 @@ export class SelectedBarnComponent implements OnInit {
   canUpgradeBarn(requiredResources: ResourceValue[]): boolean {
     var canUpgrade = true;
     requiredResources.forEach(resource => {
-      if (resource.name === "Money" && resource.amount > this.lookupService.getMoney()) {
+      if (resource.name === "Coins" && resource.amount > this.lookupService.getCoins()) {
         canUpgrade = false;
       }
       else if (resource.name === "Medals" && resource.amount > this.lookupService.getMedals()) {
@@ -354,25 +387,41 @@ export class SelectedBarnComponent implements OnInit {
     if (this.barn.barnUpgrades.barnLevel >= 1)
       popover = "Barn Upgrades: \n"
 
+    //TODO: Condense this entire if condition into the getspecializationpopovertext call
     if (this.barn.barnUpgrades.specialization === BarnSpecializationEnum.TrainingFacility) {
       if (this.barn.barnUpgrades.specializationLevel <= 20)
         popover += "Training Time Reduction: " + this.barn.barnUpgrades.specializationLevel + "%\n";
+      else
+        popover += "Training Time Reduction: 20%\n All Stat Multiplier: " + ((this.barn.barnUpgrades.specializationLevel - 20) / 10);
+    }
+    else if (this.barn.barnUpgrades.specialization === BarnSpecializationEnum.BreedingGrounds) {
+      var breedingGroundsModifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "breedingGroundsSpecializationModifier");
+      if (breedingGroundsModifierPair !== null && breedingGroundsModifierPair !== undefined) {
+        popover += "Training Breed XP Multipler: " + (this.barn.barnUpgrades.specializationLevel * (breedingGroundsModifierPair.value * 100)) + "%\n";
+      }
+    }
+    else if (this.barn.barnUpgrades.specialization === BarnSpecializationEnum.Attraction) {
+      var popoverSpecializationText = this.specializationService.getSpecializationPopoverText(BarnSpecializationEnum.Attraction, this.barn.barnUpgrades.specializationLevel);
+      popover += popoverSpecializationText;
+    }
+    else if (this.barn.barnUpgrades.specialization === BarnSpecializationEnum.ResearchCenter) {
+      var popoverSpecializationText = this.specializationService.getSpecializationPopoverText(BarnSpecializationEnum.ResearchCenter, this.barn.barnUpgrades.specializationLevel);
+      popover += popoverSpecializationText;
     }
 
-    if (this.barn.barnUpgrades.upgradedStatGain.adaptability > 0)
-      popover += "Adaptability: " + this.barn.barnUpgrades.upgradedStatGain.adaptability.toFixed(1) + "\n";
-    if (this.barn.barnUpgrades.upgradedStatGain.focus > 0)
-      popover += "Focus: " + this.barn.barnUpgrades.upgradedStatGain.focus.toFixed(1) + "\n";
-    if (this.barn.barnUpgrades.upgradedStatGain.power > 0)
-      popover += "Power: " + this.barn.barnUpgrades.upgradedStatGain.power.toFixed(1) + "\n";
-    if (this.barn.barnUpgrades.upgradedStatGain.endurance > 0)
-      popover += "Endurance: " + this.barn.barnUpgrades.upgradedStatGain.endurance.toFixed(1) + "\n";
-    if (this.barn.barnUpgrades.upgradedStatGain.acceleration > 0)
-      popover += "Acceleration: " + this.barn.barnUpgrades.upgradedStatGain.acceleration.toFixed(1) + "\n";
-    if (this.barn.barnUpgrades.upgradedStatGain.topSpeed > 0)
-      popover += "Top Speed: " + this.barn.barnUpgrades.upgradedStatGain.topSpeed.toFixed(1) + "\n";
 
-    //specialization stuff
+    if (this.barn.barnUpgrades.upgradedStatGain.adaptability > 1)
+      popover += "Adaptability Multiplier: " + this.barn.barnUpgrades.upgradedStatGain.adaptability.toFixed(1) + "\n";
+    if (this.barn.barnUpgrades.upgradedStatGain.focus > 1)
+      popover += "Focus Multiplier: " + this.barn.barnUpgrades.upgradedStatGain.focus.toFixed(1) + "\n";
+    if (this.barn.barnUpgrades.upgradedStatGain.power > 1)
+      popover += "Power Multiplier: " + this.barn.barnUpgrades.upgradedStatGain.power.toFixed(1) + "\n";
+    if (this.barn.barnUpgrades.upgradedStatGain.endurance > 1)
+      popover += "Endurance Multiplier: " + this.barn.barnUpgrades.upgradedStatGain.endurance.toFixed(1) + "\n";
+    if (this.barn.barnUpgrades.upgradedStatGain.acceleration > 1)
+      popover += "Acceleration Multiplier: " + this.barn.barnUpgrades.upgradedStatGain.acceleration.toFixed(1) + "\n";
+    if (this.barn.barnUpgrades.upgradedStatGain.topSpeed > 1)
+      popover += "Top Speed Multiplier: " + this.barn.barnUpgrades.upgradedStatGain.topSpeed.toFixed(1) + "\n";
 
     return popover;
   }
@@ -392,6 +441,7 @@ export class SelectedBarnComponent implements OnInit {
   filterSpecialization(specialization: string) {
     this.selectedSpecialization = specialization;
     this.specializationDescription = this.lookupService.getSpecializationDescription(specialization);
+    this.inDepthSpecializationDescription = this.lookupService.getInDepthSpecializationDescription(specialization);
   }
 
   selectSpecialization() {

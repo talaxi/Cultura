@@ -4,9 +4,11 @@ export class RaceResult {
     wasSuccessful: boolean;
     raceUpdates: StringNumberPair[];
     errorMessage: string; 
+    circuitReward: string;
 
     constructor() {
         this.raceUpdates = [];
+        this.circuitReward = "";
     }
 
     addRaceUpdate(time: number, update: string) {

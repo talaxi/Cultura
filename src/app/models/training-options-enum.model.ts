@@ -12,6 +12,7 @@ export enum TrainingOptionsEnum {
     UphillRun,
     Puzzles,
     MoveRocks,
+    LateralVerticalDrill,
     DodgeBall,
     BurstPractice,
     Acrobatics,
