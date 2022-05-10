@@ -102,7 +102,6 @@ export class AppComponent {
 
             if (animal.queuedTraining !== undefined && animal.queuedTraining !== null)
             {
-              console.log("Switch to queued training: " + animal.queuedTraining);
               animal.currentTraining = animal.queuedTraining;
               animal.queuedTraining = null;
             }

@@ -5,10 +5,13 @@ export class RaceResult {
     raceUpdates: StringNumberPair[];
     errorMessage: string; 
     circuitReward: string;
+    totalFramesPassed: number; //how long it took to finish
+    beatMoneyMark: boolean;
 
     constructor() {
         this.raceUpdates = [];
         this.circuitReward = "";
+        this.beatMoneyMark = false;
     }
 
     addRaceUpdate(time: number, update: string) {

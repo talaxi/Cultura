@@ -5,5 +5,7 @@ export enum RaceDesignEnum {
     Crevasse, 
     Gaps,
     Waves,
-    Dive
+    Dive,
+    IcyPatchBegin,
+    IcyPatchEnd
   }

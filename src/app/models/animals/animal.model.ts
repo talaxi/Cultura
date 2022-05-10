@@ -1,9 +1,11 @@
 import { Type } from "class-transformer";
 import { AnimalTypeEnum } from "../animal-type-enum.model";
 import { RaceCourseTypeEnum } from "../race-course-type-enum.model";
+import { ResourceValue } from "../resources/resource-value.model";
 import { TrainingOption } from "../training/training-option.model";
 import { Ability } from "./ability.model";
 import { AnimalStats } from "./animal-stats.model";
+import { Equipment } from "./equipment.model";
 import { RaceVariables } from "./race-variables.model";
 
 export class Animal {
@@ -23,6 +25,8 @@ export class Animal {
     ability: Ability;
     @Type(() => RaceVariables)
     raceVariables: RaceVariables;
+    @Type(() => ResourceValue)
+    equippedItem: ResourceValue;
     breedLevel: number;
     breedGaugeXp: number;
     breedGaugeMax: number;
@@ -35,7 +39,7 @@ export class Animal {
         this.breedGaugeXp = 0;
         this.breedGaugeMax = 50;
 
-        this.availableAbilities = [];
+        this.availableAbilities = [];        
     }
 
     viewAbility(): string {
@@ -56,6 +60,13 @@ export class Animal {
 
     getRaceCourseType(): string {
         return RaceCourseTypeEnum[this.raceCourseType];
+    }
+
+    getEquippedItemName() {
+        if (this.equippedItem !== undefined && this.equippedItem !== null)
+            return this.equippedItem.name;
+
+        return undefined;
     }
 
     increaseStatsFromCurrentTraining(): void {
@@ -126,9 +137,7 @@ export class Horse extends Animal {
         ability3.description = "Pacemaker";
         ability3.isAbilityPurchased = false;
         ability3.purchasePrice = 500;
-        this.availableAbilities.push(ability3);
-
-        this.raceVariables = new RaceVariables();
+        this.availableAbilities.push(ability3);        
     }
 }
 
@@ -167,9 +176,7 @@ export class Cheetah extends Animal {
         ability3.description = "On The Hunt";
         ability3.isAbilityPurchased = false;
         ability3.purchasePrice = 500;
-        this.availableAbilities.push(ability3);
-
-        this.raceVariables = new RaceVariables();
+        this.availableAbilities.push(ability3);        
     }
 }
 
@@ -210,9 +217,7 @@ export class Hare extends Animal {
         ability3.description = "Nap";
         ability3.isAbilityPurchased = false;
         ability3.purchasePrice = 500;
-        this.availableAbilities.push(ability3);
-
-        this.raceVariables = new RaceVariables();
+        this.availableAbilities.push(ability3);        
     }
 }
 
@@ -234,8 +239,7 @@ export class Monkey extends Animal {
         this.ability.isAbilityPurchased = true;
         this.availableAbilities.push(this.ability);
 
-        var ability2 = new Ability();
-        ability2.cooldown = 10;
+        var ability2 = new Ability();        
         ability2.efficiency = 10;
         ability2.oneTimeEffect = true;
         ability2.name = "Frenzy";
@@ -251,9 +255,7 @@ export class Monkey extends Animal {
         ability3.isAbilityPurchased = false;
         ability3.purchasePrice = 500;
         ability3.totalFrames = 15;
-        this.availableAbilities.push(ability3);
-
-        this.raceVariables = new RaceVariables();
+        this.availableAbilities.push(ability3);        
     }
 }
 
@@ -290,9 +292,7 @@ export class Goat extends Animal {
         ability3.isAbilityPurchased = false;
         ability3.purchasePrice = 500;
         ability3.totalFrames = 15;
-        this.availableAbilities.push(ability3);
-
-        this.raceVariables = new RaceVariables();
+        this.availableAbilities.push(ability3);        
     }
 }
 
@@ -309,9 +309,7 @@ export class Gecko extends Animal {
         this.ability = new Ability();
         this.ability.cooldown = 10;
         this.ability.efficiency = 10;
-        this.ability.name = "";
-
-        this.raceVariables = new RaceVariables();
+        this.ability.name = "";        
     }
 }
 
@@ -350,8 +348,6 @@ export class Dolphin extends Animal {
         ability3.isAbilityPurchased = false;
         ability3.purchasePrice = 500;
         this.availableAbilities.push(ability3);
-
-        this.raceVariables = new RaceVariables();
     }
 }
 
@@ -369,7 +365,5 @@ export class Shark extends Animal {
         this.ability.cooldown = 10;
         this.ability.efficiency = 10;
         this.ability.name = "";
-
-        this.raceVariables = new RaceVariables();
     }
 }

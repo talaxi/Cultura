@@ -1,5 +1,16 @@
 <div class="selectedAnimalView">
     <div class="info">
+        <div class="equippable">
+            <div>
+                <span *ngIf="selectedAnimal.equippedItem !== undefined && selectedAnimal.equippedItem !== null"
+                    [ngbPopover]="getEquipmentShortDescription(selectedAnimal.equippedItem.name)"
+                    triggers="mouseenter:mouseleave" popoverClass="popoverClass"> {{ selectedAnimal.equippedItem.name
+                    }}</span>
+                <br />
+
+                <button (click)="openEquipmentModal(equipment)">Change Equipment</button>
+            </div>
+        </div>
         <div class="animalInfo">
             <div [ngClass]="colorConditional">
                 <div *ngIf="selectedAnimal.name !== selectedAnimal.getAnimalType()">
@@ -28,8 +39,9 @@
             <!--TODO: Move this to one of the sides of dead space-->
             <br />
             <button (click)="openItemModal(content)">Use Item</button>
-            <br />            
-            <app-toggle *ngIf="canAutoBreed" [callbackFunction]="toggleAutoBreed" [label]="'Auto Breed'" [model]="autoBreedActive"></app-toggle>
+            <br />
+            <app-toggle *ngIf="canAutoBreed" [callbackFunction]="toggleAutoBreed" [label]="'Auto Breed'"
+                [model]="autoBreedActive"></app-toggle>
         </div>
         <div class="back" (click)="returnToAnimalView()">
             <span>Back</span>
@@ -70,8 +82,8 @@
                 Adaptability: {{ selectedAnimal.currentStats.adaptability | number : '1.2-2' }}
             </span>
             <br />
-            <span ngbPopover="{{ getDiminishingReturnsPopover() }}"
-                triggers="mouseenter:mouseleave" popoverClass="popoverClass">
+            <span ngbPopover="{{ getDiminishingReturnsPopover() }}" triggers="mouseenter:mouseleave"
+                popoverClass="popoverClass">
                 Diminishing Returns: {{ diminishingReturnsAmount | number : '1.0-0' }}
             </span>
         </div>
@@ -111,8 +123,8 @@
                 Burst Chance: {{ selectedAnimal.currentStats.burstChance | number : '1.2-2' }}%
             </span>
             <br />
-            <span ngbPopover="{{ selectedAnimal.currentStats.burstDistancePopover() }}"
-                triggers="mouseenter:mouseleave" popoverClass="popoverClass">
+            <span ngbPopover="{{ selectedAnimal.currentStats.burstDistancePopover() }}" triggers="mouseenter:mouseleave"
+                popoverClass="popoverClass">
                 Burst Distance: {{ selectedAnimal.currentStats.burstDistance | number : '1.2-2' }} m
             </span>
         </div>
@@ -143,26 +155,75 @@
                 <h4 class="modal-title" id="modal-basic-title">Use Item</h4>
                 <button type="button" aria-label="Close" (click)="modal.dismiss()">X</button>
             </div>
-            <div class="modal-body">
-                <div class="itemContainer">
-                    <table>
-                        <tr *ngFor="let cells of itemsRows;">
-                            <td *ngFor="let c of cells;" class="cell">
-                                <div (click)="selectItem(c)">
-                                    {{ c.name }} ({{ c.amount }})
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
+            <div *ngIf="usableItemsList.length > 0">
+                <div class="modal-body">
+                    <div class="itemContainer">
+                        <table>
+                            <tr *ngFor="let cells of itemsRows;">
+                                <td *ngFor="let c of cells;" class="cell">
+                                    <div (click)="selectItem(c)">
+                                        {{ c.name }} ({{ c.amount }})
+                                        <br />
+                                        {{ this.getItemShortDescription(c.name) }}
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div *ngIf="selectedItem !== undefined && selectedItem !== null" class="modal-footer">
+
+                    <span class="selectedItemSpan">
+                        <span>{{selectedItem.name}} - {{ this.getItemShortDescription(selectedItem.name) }} </span>
+
+                        <span class="rightAlign">
+                            <label for="deck-name">Amount: </label>
+                            <input id="deck-name" class="spaced" type="text" [(ngModel)]="selectedItemQuantity">
+                            <button type="button" class="spaced" (click)="useItem()">Use</button>
+                        </span>
+                    </span>
                 </div>
             </div>
-            <div *ngIf="selectedItem !== undefined && selectedItem !== null" class="modal-footer">
-                <div class="mb-3">
-                    <span>{{selectedItem.name}}</span>
-                    <label for="deck-name">Amount: </label>
-                    <input id="deck-name" type="text" [(ngModel)]="selectedItemQuantity">
+            <div *ngIf="usableItemsList.length == 0">
+                No items available.
+            </div>
+        </form>
+    </div>
+</ng-template>
+
+<ng-template #equipment let-modal>
+    <div class="modalClass">
+        <form>
+            <div class="modal-header">
+                <h4 class="modal-title" id="modal-basic-title">Change Equipment</h4>
+                <button type="button" aria-label="Close" (click)="modal.dismiss()">X</button>
+            </div>
+            <div>
+                <div class="modal-body">
+                    <div class="equipmentContainer">
+                        <table>
+                            <tr *ngFor="let cells of equipmentRows;">
+                                <td *ngFor="let c of cells;" class="cell">
+                                    <div (click)="selectEquipment(c)">
+                                        {{ c.name }} ({{ c.amount }})
+                                        <br />
+                                        {{ this.getEquipmentShortDescription(c.name) }}
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
-                <button type="button" (click)="useItem()">Use</button>
+                <div *ngIf="selectedEquipment !== undefined && selectedEquipment !== null" class="modal-footer">
+                    <div class="mb-3">
+                        <label>Selected Equipment: <span>{{selectedEquipment.name}}</span></label>
+
+                    </div>
+                    <button type="button" (click)="equipItem()">Equip</button>
+                </div>
+            </div>
+            <div *ngIf="equipmentList.length == 0">
+                No equipment available.
             </div>
         </form>
     </div>

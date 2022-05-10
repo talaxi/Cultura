@@ -8,6 +8,7 @@ import { RacePath } from 'src/app/models/races/race-path.model';
 import { Race } from 'src/app/models/races/race.model';
 import { GameLoopService } from 'src/app/services/game-loop/game-loop.service';
 import { GlobalService } from 'src/app/services/global-service.service';
+import { LookupService } from 'src/app/services/lookup.service';
 import { UtilityService } from 'src/app/services/utility/utility.service';
 
 @Component({
@@ -56,7 +57,8 @@ export class DrawRaceComponent implements OnInit {
   mountainClimbPercent = .5; //what percentage of mountain is going up vs going down
 
 
-  constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private utilityService: UtilityService) { }
+  constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private utilityService: UtilityService, 
+    private lookupService: LookupService) { }
 
   ngOnInit(): void {
     this.globalService.globalVar.userIsRacing = true;
@@ -400,17 +402,29 @@ export class DrawRaceComponent implements OnInit {
     if (this.race.raceUI.racerEffectByFrame[currentFrame] === RacerEffectEnum.LostFocus ||
       this.race.raceUI.racerEffectByFrame[currentFrame] === RacerEffectEnum.LostStamina ||
       this.race.raceUI.racerEffectByFrame[currentFrame] === RacerEffectEnum.Stumble) {
-        racerColor = this.utilityService.shadeColor(racerColor, -50);
+      racerColor = this.utilityService.shadeColor(racerColor, -90);
     }
     context.fillStyle = racerColor;
     context.fillRect(this.canvasWidth / 2 - 5, 0, 5, this.canvasHeight);
 
-    //var currentFrame = Math.floor(currentTime * this.frameModifier);
     //average speed
     var averageDistance = (this.averageDistancePerSecond / this.frameModifier) * currentFrame;
 
     var averageDistanceScaled = (averageDistance * this.canvasXDistanceScale * xRaceModeModifier);
     this.drawRacer(context, averageDistanceScaled, "black");
+
+    var moneyMarkIsUnlocked = this.lookupService.getResourceByName("Money Mark");
+    if (moneyMarkIsUnlocked > 0) {
+      var defaultMoneyMarkPace = .75;
+      var moneyMarkPace = this.globalService.globalVar.modifiers.find(item => item.text === "moneyMarkPaceModifier");
+      if (moneyMarkPace !== undefined && moneyMarkPace !== null)
+        defaultMoneyMarkPace = moneyMarkPace.value;
+
+      var inverseMoneyMarkPace = (1 - defaultMoneyMarkPace) + 1;
+
+      var moneyMarkDistanceScaled = (averageDistance * this.canvasXDistanceScale * xRaceModeModifier) * inverseMoneyMarkPace;
+      this.drawRacer(context, moneyMarkDistanceScaled, "gold");
+    }
     this.drawBreakpoints(context, xRaceModeModifier);
   }
 
@@ -421,7 +435,7 @@ export class DrawRaceComponent implements OnInit {
       if (currentDistanceTraveled >= totalDistance && currentDistanceTraveled < totalDistance + leg.distance) {
         //we are in this leg
         if (leg.courseType === RaceCourseTypeEnum.Flatland)
-          color = "#8f1c14";
+          color = "#7d3f00";//"#8f1c14";
         if (leg.courseType === RaceCourseTypeEnum.Mountain)
           color = "#4d6b48";
         if (leg.courseType === RaceCourseTypeEnum.Water)
@@ -438,7 +452,7 @@ export class DrawRaceComponent implements OnInit {
     var color = "";
 
     if (courseType === RaceCourseTypeEnum.Flatland)
-      color = "#8f1c14";
+      color = "#7d3f00";//"#8f1c14";
     if (courseType === RaceCourseTypeEnum.Mountain)
       color = "#4d6b48";
     if (courseType === RaceCourseTypeEnum.Water)
@@ -454,7 +468,7 @@ export class DrawRaceComponent implements OnInit {
       if (currentDistanceTraveled >= totalDistance && currentDistanceTraveled < totalDistance + leg.distance) {
         //we are in this leg
         if (leg.courseType === RaceCourseTypeEnum.Flatland)
-          color = "#eb3023";
+          color = "#d16900";//"#eb3023";
         if (leg.courseType === RaceCourseTypeEnum.Mountain)
           color = "#a1db97";
         if (leg.courseType === RaceCourseTypeEnum.Water)

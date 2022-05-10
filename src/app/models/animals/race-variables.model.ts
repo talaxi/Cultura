@@ -24,6 +24,9 @@ export class RaceVariables {
     remainingRelayMeters: number;
     relayAffectedStatRatios: AnimalStats; 
 
+    //equipment effects
+    headbandStumblePreventionCount: number;
+
     constructor() {
         this.metersSinceLostFocus = 0;
         
@@ -38,5 +41,7 @@ export class RaceVariables {
         this.stumbled = false;
         this.defaultStumbledLength = 10;
         this.currentStumbledLength = this.defaultStumbledLength;
+
+        this.headbandStumblePreventionCount = 0;
     }
 }

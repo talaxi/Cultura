@@ -19,11 +19,30 @@
             <div class="modal-body">
                 <div class="mb-3">
                     <label for="deck-name">Deck Name: </label>
-                    <input id="deck-name" type="text" formControlName="deckName">
+                    <input id="deck-name" type="text" class="spaced" formControlName="deckName">
+                    <div *ngIf="displayRaceOrder" class="raceOrder">
+                        <label class="spaced">Race Order: </label>
+                        <span id="raceOrder1" draggable="true" class="flatlandColor draggable"
+                            (dragstart)="dragStart($event)" (dragover)="allowDrop($event)"
+                            (drop)="dropCourseType($event)">Flatland</span>
+                        / <span id="raceOrder2" draggable="true" class="mountainColor draggable"
+                            (dragstart)="dragStart($event)" (dragover)="allowDrop($event)"
+                            (drop)="dropCourseType($event)">Mountain</span>
+                        / <span id="raceOrder3" draggable="true" class="waterColor draggable"
+                            (dragstart)="dragStart($event)" (dragover)="allowDrop($event)"
+                            (drop)="dropCourseType($event)">Water</span>
+                        / <span id="raceOrder4" draggable="true" class="tundraColor draggable"
+                            (dragstart)="dragStart($event)" (dragover)="allowDrop($event)"
+                            (drop)="dropCourseType($event)">Tundra</span>
+                        / <span id="raceOrder5" draggable="true" class="volcanicColor draggable"
+                            (dragstart)="dragStart($event)" (dragover)="allowDrop($event)"
+                            (drop)="dropCourseType($event)">Volcanic</span>
+                    </div>
                 </div>
+                <br />
                 <div class="typeContainer">
                     <span *ngFor="let type of raceCourseTypeList" class="raceType subHeading" [ngClass]="{'selectedCourseType': selectedCourseType === type, 'flatlandColor': type === 'Flatland',
-                'mountainColor': type === 'Mountain', 'waterColor': type === 'Water'}" (click)="filterType(type)">
+                'mountainColor': type === 'Mountain', 'waterColor': type === 'Water', 'tundraColor': type === 'Tundra', 'volcanicColor': type === 'Volcanic'}" (click)="filterType(type)">
                         {{type.trim()}}
                     </span>
 

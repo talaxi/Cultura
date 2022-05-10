@@ -1,12 +1,12 @@
 import { Injectable } from "@angular/core";
-import { Theme, light, dark } from "./theme";
+import { Theme, light, white, twilight, night } from "./theme";
 
 @Injectable({
   providedIn: "root"
 })
 export class ThemeService {
   private active: Theme = light;
-  private availableThemes: Theme[] = [light, dark];
+  private availableThemes: Theme[] = [white, light, twilight, night];
 
   getAvailableThemes(): Theme[] {
     return this.availableThemes;
@@ -15,17 +15,20 @@ export class ThemeService {
   getActiveTheme(): Theme {
     return this.active;
   }
-
-  isDarkTheme(): boolean {
-    return this.active.name === dark.name;
-  }
-
-  setDarkTheme(): void {
-    this.setActiveTheme(dark);
+  setNightTheme(): void {
+    this.setActiveTheme(night);
   }
 
   setLightTheme(): void {
     this.setActiveTheme(light);
+  }
+
+  setTwilightTheme(): void {
+    this.setActiveTheme(twilight);
+  }
+
+  setWhiteTheme(): void {
+    this.setActiveTheme(white);
   }
 
   setActiveTheme(theme: Theme): void {

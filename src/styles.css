@@ -175,7 +175,7 @@ h1
 
 .flatlandColor
 {  
-  color: #eb3023;   
+  color: #d16900;/*#eb3023;   */
 }
 
 .mountainColor
@@ -188,9 +188,19 @@ h1
   color: #0000ff;
 }
 
+.tundraColor
+{
+  color: #1ca1c9;
+}
+
+.volcanicColor
+{
+  color: #d92525;
+}
+
 .flatlandSubcolor
 {  
-  color: #8f1c14;   
+  color: #7d3f00;/*#8f1c14;   */
 }
 
 .mountainSubcolor
@@ -201,4 +211,14 @@ h1
 .waterSubcolor
 {
   color: #16148f;
+}
+
+.tundraSubcolor
+{
+  color: #28809c;
+}
+
+.volanicSubcolor
+{
+  color: #8f1a1a;
 }

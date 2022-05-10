@@ -39,6 +39,7 @@ import { AnimalDeckComponent } from './components/main-components/animal-deck/an
 import { DecksViewComponent } from './components/main-views/decks-view/decks-view.component';
 import { RaceDescriptionComponent } from './components/main-views/race-selection-view/subviews/race-description/race-description.component';
 import { ToggleComponent } from './components/main-components/ui-elements/toggle/toggle.component';
+import { IncubatorViewComponent } from './components/main-views/incubator-view/incubator-view.component';
 
 @NgModule({
   declarations: [
@@ -50,7 +51,7 @@ import { ToggleComponent } from './components/main-components/ui-elements/toggle
     BarnComponent,
     BarnViewComponent,
     RaceSelectionViewComponent,    
-    SelectedBarnComponent, ProgressBarComponent, CircuitViewComponent, LocalViewComponent, RaceComponent, AnimalsViewComponent, ShopViewComponent, ResourcesViewComponent, SettingsViewComponent, AnimalComponent, AnimalListComponent, SelectedAnimalComponent, DrawRaceComponent, TrainingListComponent, TrainingOptionComponent, ShoppingListComponent, ShoppingItemComponent, AnimalDeckComponent, DecksViewComponent, RaceDescriptionComponent, ToggleComponent
+    SelectedBarnComponent, ProgressBarComponent, CircuitViewComponent, LocalViewComponent, RaceComponent, AnimalsViewComponent, ShopViewComponent, ResourcesViewComponent, SettingsViewComponent, AnimalComponent, AnimalListComponent, SelectedAnimalComponent, DrawRaceComponent, TrainingListComponent, TrainingOptionComponent, ShoppingListComponent, ShoppingItemComponent, AnimalDeckComponent, DecksViewComponent, RaceDescriptionComponent, ToggleComponent, IncubatorViewComponent
   ],
   imports: [
     BrowserModule,

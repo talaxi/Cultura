@@ -18,7 +18,7 @@
 }
 
 .raceType {
-    width: 10%;
+    width: 20%;
     text-decoration: underline solid transparent;
     transition: text-decoration .3s ease;
     display: inline-block;
@@ -58,4 +58,17 @@
 
 .primary {
     grid-area: primary;
+}
+
+.spaced {
+    margin-left: .5em;
+}
+
+.draggable {
+    cursor: move;
+    margin: 1em;
+}
+
+.raceOrder {
+    display: inline-block;
 }

@@ -4,6 +4,7 @@ export enum NavigationEnum {
     animals,
     decks,
     shop,
+    incubator,
     resources,
     settings
   }

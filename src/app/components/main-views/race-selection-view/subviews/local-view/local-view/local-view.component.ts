@@ -27,6 +27,8 @@ export class LocalViewComponent implements OnInit {
   constructor(private globalService: GlobalService, private utilityService: UtilityService, private lookupService: LookupService) { }
 
   ngOnInit(): void {
+    console.log(this.globalService.globalVar.animalDecks.find(item => item.isPrimaryDeck)?.courseTypeOrder);
+
     this.availableLocalRaces = [];
     
     var nextMonoRace = this.getNextAvailableSpecialRace(LocalRaceTypeEnum.Mono);
@@ -51,13 +53,17 @@ export class LocalViewComponent implements OnInit {
 
   getNextAvailableSpecialRace(raceType: LocalRaceTypeEnum) {
     var uncompletedRaces = this.globalService.globalVar.localRaces.filter(item => item.localRaceType === raceType && !item.isCompleted).sort();
-    console.log("Races:");
-    console.log(uncompletedRaces);
-    if (uncompletedRaces !== undefined && uncompletedRaces !== null && uncompletedRaces.length > 0) {
-      console.log("Next: " + uncompletedRaces[0].requiredRank);
+    
+    if (uncompletedRaces !== undefined && uncompletedRaces !== null && uncompletedRaces.length > 0) {    
       if (this.utilityService.getNumericValueOfCircuitRank(uncompletedRaces[0].requiredRank) <=
         this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.circuitRank))
-        return uncompletedRaces[0];
+        {
+          var primaryDeck = this.globalService.globalVar.animalDecks.find(item => item.isPrimaryDeck);
+          if (primaryDeck !== undefined)
+            uncompletedRaces[0].raceLegs = this.globalService.reorganizeLegsByDeckOrder(uncompletedRaces[0].raceLegs, primaryDeck);
+    
+          return uncompletedRaces[0];
+        }
     }
 
     return undefined;
@@ -225,6 +231,10 @@ export class LocalViewComponent implements OnInit {
       
       var totalDistance = 0;
 
+      var primaryDeck = this.globalService.globalVar.animalDecks.find(item => item.isPrimaryDeck);
+      if (primaryDeck !== undefined)
+      raceLegs = this.globalService.reorganizeLegsByDeckOrder(raceLegs, primaryDeck);
+
       raceLegs.forEach(leg => {
         totalDistance += leg.distance;
       });
@@ -234,7 +244,7 @@ export class LocalViewComponent implements OnInit {
       });
 
       this.availableLocalRaces.push(new Race(raceLegs, this.globalService.globalVar.circuitRank, false,
-        1, totalDistance, timeToComplete, this.globalService.GenerateLocalRaceRewards(this.globalService.globalVar.circuitRank), LocalRaceTypeEnum.Local));
+        1, totalDistance, timeToComplete, this.globalService.GenerateLocalRaceRewards(this.globalService.globalVar.circuitRank), LocalRaceTypeEnum.Free));
     }
   }
 }

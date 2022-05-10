@@ -13,8 +13,10 @@ export class ShopItem {
     quantityMultiplier: number; //each additional item has this multiplier
     type: ShopItemTypeEnum;
     additionalIdentifier: string; //totally useless except for abilities, contains abilityName
+    isAvailable: boolean;
 
     constructor() {
+        this.isAvailable = true;
         this.amountPurchased = 0;
         this.totalShopQuantity = 1;
         this.quantityMultiplier = 1;

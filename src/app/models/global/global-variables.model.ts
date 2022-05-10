@@ -37,7 +37,7 @@ export class GlobalVariables {
     circuitRankUpRewardDescription: string;
     tutorialCompleted: boolean;
     currentTutorialId: number;
-    
+    nationalRaceCountdown: number;
     userIsRacing = false;    
 
     constructor(existingVariables?: GlobalVariables) {
@@ -52,6 +52,7 @@ export class GlobalVariables {
             this.modifiers = existingVariables.modifiers;
             this.shop = existingVariables.shop;
             this.animalDecks = existingVariables.animalDecks;
+            this.nationalRaceCountdown = 0;
         }
     }
 }

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { GlobalVariables } from 'src/app/models/global/global-variables.model';
 import { GlobalService } from 'src/app/services/global-service.service';
 import { plainToInstance } from 'class-transformer';
+import { ThemeService } from 'src/app/theme/theme.service';
 declare var LZString: any;
 
 @Component({
@@ -16,7 +17,7 @@ export class SettingsViewComponent implements OnInit {
   finishTrainingBeforeSwitchingPopoverText: string;
   skipDrawRacePopoverText: string;
 
-  constructor(private globalService: GlobalService) { }
+  constructor(private globalService: GlobalService, private themeService: ThemeService) { }
 
   ngOnInit(): void {
     var globalSkipDrawRace = this.globalService.globalVar.settings.get("skipDrawRace");
@@ -46,13 +47,24 @@ export class SettingsViewComponent implements OnInit {
     this.globalService.globalVar = plainToInstance(GlobalVariables, loadDataJson);
   }
 
-  skipDrawRaceToggle = () => {    
+  skipDrawRaceToggle = () => {
     this.skipDrawRace = !this.skipDrawRace;
     this.globalService.globalVar.settings.set("skipDrawRace", this.skipDrawRace);
   }
 
-  finishTrainingBeforeSwitchingToggle = () => {    
+  finishTrainingBeforeSwitchingToggle = () => {
     this.finishTrainingBeforeSwitching = !this.finishTrainingBeforeSwitching;
     this.globalService.globalVar.settings.set("finishTrainingBeforeSwitching", this.finishTrainingBeforeSwitching);
+  }
+
+  changeTheme(newTheme: any) {
+    if (newTheme === "White")
+      this.themeService.setWhiteTheme();
+    if (newTheme === "Light")
+      this.themeService.setLightTheme();
+    if (newTheme === "Twilight")
+      this.themeService.setTwilightTheme();
+    if (newTheme === "Night")
+      this.themeService.setNightTheme();
   }
 }

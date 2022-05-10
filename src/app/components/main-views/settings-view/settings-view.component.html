@@ -5,6 +5,14 @@
         <app-toggle [callbackFunction]="finishTrainingBeforeSwitchingToggle" [label]="'Finish Training Before Switching'" 
         [model]="finishTrainingBeforeSwitching" [popoverText]="finishTrainingBeforeSwitchingPopoverText" [id]="'finishTraining'"></app-toggle>                
     </div>
+    <div ngbDropdown class="d-inline-block">
+      <button type="button" class="btn dropdown" id="themeDropdown" ngbDropdownToggle>Theme</button>
+      <div ngbDropdownMenu aria-labelledby="themeDropdown">
+        <button (click)="changeTheme('White')" ngbDropdownItem>White</button>
+        <button (click)="changeTheme('Light')" ngbDropdownItem>Light</button>
+        <button (click)="changeTheme('Twilight')" ngbDropdownItem>Twilight</button>
+        <button (click)="changeTheme('Night')" ngbDropdownItem>Night</button>        
+      </div>
     <textarea id="importExport" name="importExport" rows="10" [(ngModel)]="importExportValue">
     </textarea>
     <button (click)="LoadGame()">

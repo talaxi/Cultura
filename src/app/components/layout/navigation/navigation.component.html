@@ -9,6 +9,10 @@
     <hr />
     <p (click)="switchView(navigationEnum.shop)" [ngClass]="selectedNavigation === navigationEnum.shop ? 'active' : ''">Shop</p>
     <hr />
+    <div *ngIf="incubatorAvailable">
+        <p (click)="switchView(navigationEnum.incubator)" [ngClass]="selectedNavigation === navigationEnum.incubator ? 'active' : ''">Incubator</p>
+        <hr />
+    </div>
     <p (click)="switchView(navigationEnum.resources)" [ngClass]="selectedNavigation === navigationEnum.resources ? 'active' : ''">Resources</p>
     <hr />
     <p (click)="switchView(navigationEnum.settings)" [ngClass]="selectedNavigation === navigationEnum.settings ? 'active' : ''">Settings</p>

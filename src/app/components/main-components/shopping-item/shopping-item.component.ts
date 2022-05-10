@@ -60,6 +60,9 @@ export class ShoppingItemComponent implements OnInit {
       else if (this.selectedItem.type === ShopItemTypeEnum.Ability) {
         this.buyAbility();
       }
+      if (this.selectedItem.type === ShopItemTypeEnum.Equipment) {
+        this.buyEquipment();
+      }
 
       this.itemPurchased.emit(this.selectedItem);
     }
@@ -126,6 +129,19 @@ export class ShoppingItemComponent implements OnInit {
   buySpecialty() {
     this.selectedItem.amountPurchased += 1;
 
+    if (this.selectedItem.name === "National Races")
+    {
+      this.globalService.globalVar.nationalRaceCountdown = 0;
+      var specialtyShop = this.globalService.globalVar.shop.find(item => item.name === "Specialty");
+      if (specialtyShop !== undefined && specialtyShop !== null)
+      {
+        var internationalRaces = specialtyShop.itemList.find(item => item.name === "International Races");
+
+        if (internationalRaces !== undefined && internationalRaces !== null)
+          internationalRaces.isAvailable = true;
+      }
+    }
+
     if (this.globalService.globalVar.resources !== undefined && this.globalService.globalVar.resources !== null) {
       if (this.globalService.globalVar.resources.some(x => x.name === this.selectedItem.name)) {
         var globalResource = this.globalService.globalVar.resources.find(x => x.name === this.selectedItem.name);
@@ -155,5 +171,20 @@ export class ShoppingItemComponent implements OnInit {
 
     selectedAbility.isAbilityPurchased = true;
     this.selectedItem.amountPurchased = 1;
+  }
+
+  buyEquipment() {
+    this.selectedItem.amountPurchased += 1;
+
+    if (this.globalService.globalVar.resources !== undefined && this.globalService.globalVar.resources !== null) {
+      if (this.globalService.globalVar.resources.some(x => x.name === this.selectedItem.name)) {
+        var globalResource = this.globalService.globalVar.resources.find(x => x.name === this.selectedItem.name);
+        if (globalResource !== null && globalResource !== undefined) {
+          globalResource.amount += 1;
+        }
+      }
+      else
+        this.globalService.globalVar.resources.push(new ResourceValue(this.selectedItem.name, 1, ShopItemTypeEnum.Equipment));
+    }
   }
 }

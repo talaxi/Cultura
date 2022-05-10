@@ -386,6 +386,15 @@ export class LookupService {
     if (animal.ability.name === "Leap") {
       return animal.ability.efficiency * (1 + modifiedPower);
     }
+    if (animal.ability.name === "On The Hunt") { //this one is percent based
+      return (animal.ability.efficiency * (1 + modifiedPower));
+    }
+    if (animal.ability.name === "Sure-footed") { //this one is percent based
+      return (animal.ability.efficiency * (1 + modifiedPower));
+    }
+    if (animal.ability.name === "Deep Breathing") { //this one is percent based
+      return (animal.ability.efficiency * (1 + modifiedPower));
+    }
     else
       return animal.ability.efficiency * (1 + modifiedPower);
   }
@@ -452,7 +461,7 @@ export class LookupService {
       if (abilityName === "Deep Breathing") {
         return "Regain stamina after burst, permanently increase endurance";
       }
-      if (abilityName === "In the Rhythm") {
+      if (abilityName === "In The Rhythm") {
         return "Increase burst speed bonus";
       }
       if (abilityName === "Sticky") {
@@ -670,7 +679,7 @@ export class LookupService {
       var trainingAnimalDefaultModifier = this.globalService.globalVar.modifiers.find(item => item.text === "researchCenterTrainingAnimalModifier");
       var studyingAnimalDefaultModifier = this.globalService.globalVar.modifiers.find(item => item.text === "researchCenterStudyingAnimalModifier");
       var maxStatGainModifier = this.globalService.globalVar.modifiers.find(item => item.text === "researchCenterMaxStatGainModifier");
-  
+
       var statGainIncrements = .05;
       var trainingAnimalDefault = .45;
       var studyingAnimalDefault = .25;
@@ -718,6 +727,31 @@ export class LookupService {
     return "None";
   }
 
+  getEquipmentDescription(name: string) {
+    if (name === "Headband")
+      return "The first three stumbles you would have are ignored";
+
+    return "";
+  }
+
+  getItemDescription(name: string) {
+    if (name === "Apple")
+      return "+1 Acceleration to a single animal";
+    if (name === "Banana")
+      return "+1 Top Speed to a single animal";
+    if (name === "Strawberry")
+      return "+1 Endurance to a single animal";
+    if (name === "Carrot")
+      return "+1 Power to a single animal";
+    if (name === "Turnip")
+      return "+1 Focus to a single animal";
+    if (name === "Orange")
+      return "+1 Adaptability to a single animal";
+
+    return "";
+  }
+
+
   getTrainingTimeReductionFromTrainingFacility(barnUpgrades: BarnUpgrades) {
     if (barnUpgrades.specialization === BarnSpecializationEnum.TrainingFacility) {
       return barnUpgrades.specializationLevel * .01;
@@ -743,4 +777,9 @@ export class LookupService {
 
     return text;
   }
+
+  /*getEquipmentFromResource(resource: ResourceValue) {
+    var equipmentName = resource.name;
+    
+  }*/
 }

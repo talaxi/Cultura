@@ -47,7 +47,9 @@ export class RaceDescriptionComponent implements OnInit {
       var colorConditional = {
         'flatlandColor': leg.getCourseTypeName() === 'Flatland',
         'mountainColor': leg.getCourseTypeName() === 'Mountain',
-        'waterColor': leg.getCourseTypeName() === 'Water'
+        'waterColor': leg.getCourseTypeName() === 'Water',
+        'tundraColor': leg.getCourseTypeName() === 'Tundra',
+        'volcanicColor': leg.getCourseTypeName() === 'Volcanic'
       };
       return colorConditional;
     }

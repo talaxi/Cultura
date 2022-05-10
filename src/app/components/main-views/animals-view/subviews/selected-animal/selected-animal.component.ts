@@ -43,6 +43,10 @@ export class SelectedAnimalComponent implements OnInit {
   selectedItem: ResourceValue;
   selectedItemQuantity: number;
 
+  equipmentList: ResourceValue[];
+  equipmentRows: ResourceValue[][]; //for display purposes
+  equipmentCells: ResourceValue[]; //for display purposes
+  selectedEquipment: ResourceValue;
 
   constructor(private lookupService: LookupService, private modalService: NgbModal, private globalService: GlobalService,
     private componentCommunicationService: ComponentCommunicationService) { }
@@ -75,7 +79,9 @@ export class SelectedAnimalComponent implements OnInit {
     this.colorConditional = {
       'flatlandColor': this.selectedAnimal.getRaceCourseType() === 'Flatland',
       'mountainColor': this.selectedAnimal.getRaceCourseType() === 'Mountain',
-      'waterColor': this.selectedAnimal.getRaceCourseType() === 'Water'
+      'waterColor': this.selectedAnimal.getRaceCourseType() === 'Water',
+      'tundraColor': this.selectedAnimal.getRaceCourseType() === 'Tundra',
+      'volcanicColor': this.selectedAnimal.getRaceCourseType() === 'Volcanic'
     };
 
     this.usableItemsList = [];
@@ -83,6 +89,14 @@ export class SelectedAnimalComponent implements OnInit {
     this.globalService.globalVar.resources.filter(item => item.itemType === ShopItemTypeEnum.Food).forEach(food => {
       if (food !== undefined) {
         this.usableItemsList.push(food);
+      }
+    });
+
+    this.equipmentList = [];
+    //add food to list
+    this.globalService.globalVar.resources.filter(item => item.itemType === ShopItemTypeEnum.Equipment).forEach(equipment => {
+      if (equipment !== undefined) {
+        this.equipmentList.push(equipment);
       }
     });
 
@@ -125,9 +139,31 @@ export class SelectedAnimalComponent implements OnInit {
       this.itemsRows.push(this.itemsCells);
   }
 
+  setupDisplayEquipment(): void {
+    this.equipmentCells = [];
+    this.equipmentRows = [];
+
+    var maxColumns = 4;
+
+    for (var i = 1; i <= this.equipmentList.length; i++) {
+      this.equipmentCells.push(this.equipmentList[i - 1]);
+      if ((i % maxColumns) == 0) {
+        this.equipmentRows.push(this.equipmentCells);
+        this.equipmentCells = [];
+      }
+    }
+
+    if (this.equipmentCells.length !== 0)
+      this.equipmentRows.push(this.equipmentCells);
+  }
 
   openItemModal(content: any) {
     this.setupDisplayItems();
+    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'lg' });
+  }
+
+  openEquipmentModal(content: any) {
+    this.setupDisplayEquipment();
     this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'lg' });
   }
 
@@ -166,6 +202,15 @@ export class SelectedAnimalComponent implements OnInit {
     this.selectedItem = item;
   }
 
+  equipItem() {
+    this.selectedAnimal.equippedItem = this.selectedEquipment;
+    this.modalService.dismissAll();
+  }
+
+  selectEquipment(item: ResourceValue) {
+    this.selectedEquipment = item;    
+  }
+
   toggleAutoBreed = (): void => {
     this.autoBreedActive = !this.autoBreedActive;
     this.selectedAnimal.autoBreedActive = this.autoBreedActive;
@@ -173,5 +218,21 @@ export class SelectedAnimalComponent implements OnInit {
 
   getDiminishingReturnsPopover() {
     return "Once a trainable stat is over this number, additional gains in this stat will be reduced. Increase with Facility Level.";
+  }
+
+  getEquipmentShortDescription(name: string) {
+    var description = "";
+
+    description = this.lookupService.getEquipmentDescription(name);
+
+    return description;
+  }
+
+  getItemShortDescription(name: string) {
+    var description = "";
+
+    description = this.lookupService.getItemDescription(name);
+
+    return description;
   }
 }

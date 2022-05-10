@@ -31,7 +31,8 @@ export class ShoppingListComponent implements OnInit {
 
     var refinedItemList: ShopItem[] = [];
     this.section.itemList.forEach(item => {
-      if ((item.canHaveMultiples && (item.infiniteAmount || item.amountPurchased < item.totalShopQuantity)) || item.amountPurchased === 0)
+      if (item.isAvailable && ((item.canHaveMultiples && (item.infiniteAmount || item.amountPurchased < item.totalShopQuantity)) 
+      || item.amountPurchased === 0))
       {
         refinedItemList.push(item);
       }

@@ -11,7 +11,7 @@ export class ShopViewComponent implements OnInit {
   sections: ShopSection[];
   filterAnimals = false;
   filterTrainings = false;
-  filterFacility = false;
+  filterEquipment = false;
   filterFood = false;
   filterSpecialty = false;
   filterAbilities = false;
@@ -36,10 +36,10 @@ export class ShopViewComponent implements OnInit {
     if (trainingShopSection !== undefined)
       this.sections.push(trainingShopSection);
 
-    var facilityShopSection = this.globalService.globalVar.shop.find(item => item.name === "Facility" &&
-      (!filtersActive || (filtersActive && this.filterFacility)));
-    if (facilityShopSection !== undefined)
-      this.sections.push(facilityShopSection);
+    var equipmentShopSection = this.globalService.globalVar.shop.find(item => item.name === "Equipment" &&
+      (!filtersActive || (filtersActive && this.filterEquipment)));
+    if (equipmentShopSection !== undefined)
+      this.sections.push(equipmentShopSection);
 
     var foodShopSection = this.globalService.globalVar.shop.find(item => item.name === "Food" &&
       (!filtersActive || (filtersActive && this.filterFood)));
@@ -63,8 +63,8 @@ export class ShopViewComponent implements OnInit {
       this.filterAnimals = !this.filterAnimals;
     if (sectionName === "Trainings")
       this.filterTrainings = !this.filterTrainings;
-    if (sectionName === "Facility")
-      this.filterFacility = !this.filterFacility;
+    if (sectionName === "Equipment")
+      this.filterEquipment = !this.filterEquipment;
     if (sectionName === "Food")
       this.filterFood = !this.filterFood;
     if (sectionName === "Specialty")
@@ -76,7 +76,7 @@ export class ShopViewComponent implements OnInit {
   }
 
   filtersActive(): boolean {
-    if (this.filterAnimals || this.filterAbilities || this.filterFacility || this.filterFood || this.filterSpecialty || this.filterTrainings)
+    if (this.filterAnimals || this.filterAbilities || this.filterEquipment || this.filterFood || this.filterSpecialty || this.filterTrainings)
       return true;
     else
       return false;

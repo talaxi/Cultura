@@ -6,6 +6,7 @@ import { Ability } from 'src/app/models/animals/ability.model';
 import { AnimalStats } from 'src/app/models/animals/animal-stats.model';
 import { Animal } from 'src/app/models/animals/animal.model';
 import { RaceVariables } from 'src/app/models/animals/race-variables.model';
+import { EquipmentEnum } from 'src/app/models/equipment-enum.model';
 import { LocalRaceTypeEnum } from 'src/app/models/local-race-type-enum.model';
 import { RaceDesignEnum } from 'src/app/models/race-design-enum.model';
 import { RacerEffectEnum } from 'src/app/models/racer-effect-enum.model';
@@ -104,7 +105,7 @@ export class RaceComponent implements OnInit {
       var lastLeg = undefined;
       if (completedLegs.length > 0)
         lastLeg = completedLegs[completedLegs.length - 1];
-      this.PrepareRacingAnimal(racingAnimal, completedAnimals, lastLeg);
+      this.PrepareRacingAnimal(racingAnimal, completedAnimals, item, lastLeg);
       this.prepareRacingLeg(item, racingAnimal);
       raceResult.addRaceUpdate(framesPassed, racingAnimal.name + " starts their leg of the race.");
 
@@ -178,12 +179,21 @@ export class RaceComponent implements OnInit {
             console.log("Recovering Stamina");
             currentRacerEffect = RacerEffectEnum.LostStamina;
             racingAnimal.raceVariables.currentRecoveringStaminaLength -= 1;
-            //velocity += racingAnimal.currentStats.accelerationMs / 2;
 
             if (racingAnimal.raceVariables.currentRecoveringStaminaLength === 0) {
               racingAnimal.raceVariables.recoveringStamina = false;
               racingAnimal.raceVariables.currentRecoveringStaminaLength = racingAnimal.raceVariables.defaultRecoveringStaminaLength;
-              racingAnimal.currentStats.stamina = animalMaxStamina / 2; //penalty for running out of stamina, only get half back             
+
+              var regainStaminaModifier = .5; //penalty for running out of stamina, only get half back     
+
+              if (racingAnimal.getEquippedItemName() === this.globalService.getEquipmentName(EquipmentEnum.quickSnack)) {
+                regainStaminaModifier = 1;
+                var quickSnackModifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "quickSnackEquipmentModifier");
+                if (quickSnackModifierPair !== undefined)
+                  regainStaminaModifier = quickSnackModifierPair.value;
+              }
+
+              racingAnimal.currentStats.stamina = animalMaxStamina * regainStaminaModifier;
             }
           }
 
@@ -226,15 +236,18 @@ export class RaceComponent implements OnInit {
           if (racingAnimal.type === AnimalTypeEnum.Cheetah && racingAnimal.ability.name === "Sprint" && racingAnimal.ability.abilityInUse) {
             modifiedAccelerationMs *= 1.1;
           }
-          if (racingAnimal.type === AnimalTypeEnum.Cheetah && racingAnimal.ability.name === "Giving Chase" && racingAnimal.ability.abilityInUse) {
+          if (racingAnimal.type === AnimalTypeEnum.Cheetah && racingAnimal.ability.name === "Giving Chase") {
             var averageDistance = distancePerSecond * (framesPassed / this.frameModifier);
             var meterDifferential = averageDistance - distanceCovered;
             if (meterDifferential > 0) {
               var percentPerSecond = this.lookupService.GetAbilityEffectiveAmount(racingAnimal, item.terrain.powerModifier);
-              modifiedAccelerationMs *= (meterDifferential / distancePerSecond) * percentPerSecond;
+              var modifiedAmount = (meterDifferential / distancePerSecond) * percentPerSecond;
+              if (modifiedAmount >= 1)
+                modifiedAccelerationMs *= modifiedAmount;
             }
           }
 
+          //console.log("Acceleration: " + modifiedAccelerationMs);
           velocity += modifiedAccelerationMs / this.frameModifier;
         }
 
@@ -242,9 +255,10 @@ export class RaceComponent implements OnInit {
         modifiedMaxSpeed *= item.terrain.maxSpeedModifier;
 
         if (racingAnimal.type === AnimalTypeEnum.Cheetah && racingAnimal.ability.name === "Sprint" && racingAnimal.ability.abilityInUse) {
-          modifiedMaxSpeed *= 1.1;
+          modifiedMaxSpeed *= 1.25;
+          console.log("Modified max speed: " + modifiedMaxSpeed);
         }
-        if (racingAnimal.type === AnimalTypeEnum.Cheetah && racingAnimal.ability.name === "On The Hunt" && racingAnimal.ability.abilityInUse) {
+        if (racingAnimal.type === AnimalTypeEnum.Cheetah && racingAnimal.ability.name === "On The Hunt") {
           modifiedMaxSpeed *= permanentMaxSpeedIncreaseMultiplier;
         }
 
@@ -260,10 +274,28 @@ export class RaceComponent implements OnInit {
             //do a raceupdate
             racingAnimal.raceVariables.isBursting = true;
             racingAnimal.raceVariables.remainingBurstMeters = racingAnimal.currentStats.burstDistance;
+
+            if (racingAnimal.type === AnimalTypeEnum.Monkey && racingAnimal.ability.name === "Frenzy") {
+              racingAnimal.raceVariables.remainingBurstMeters += this.lookupService.GetAbilityEffectiveAmount(racingAnimal, item.terrain.powerModifier);
+            }
+
             raceResult.addRaceUpdate(framesPassed, "BURST! " + racingAnimal.name + " is breaking their limit!");
 
-            if (racingAnimal.type === AnimalTypeEnum.Cheetah && racingAnimal.ability.name === "On The Hunt" && racingAnimal.ability.abilityInUse) {
-              permanentMaxSpeedIncreaseMultiplier += this.lookupService.GetAbilityEffectiveAmount(racingAnimal, item.terrain.powerModifier);
+            if (racingAnimal.type === AnimalTypeEnum.Cheetah && racingAnimal.ability.name === "On The Hunt") {
+              permanentMaxSpeedIncreaseMultiplier += (this.lookupService.GetAbilityEffectiveAmount(racingAnimal, item.terrain.powerModifier) / 100);
+            }
+
+            if (racingAnimal.type === AnimalTypeEnum.Goat && racingAnimal.ability.name === "Deep Breathing") {
+              var staminaGain = animalMaxStamina * (this.lookupService.GetAbilityEffectiveAmount(racingAnimal, item.terrain.powerModifier) / 100);
+              racingAnimal.currentStats.stamina += staminaGain;
+
+              if (racingAnimal.currentStats.stamina > animalMaxStamina) {
+                racingAnimal.currentStats.stamina = animalMaxStamina;
+
+                var globalAnimal = this.globalService.globalVar.animals.find(item => item.type === racingAnimal?.type);
+                if (globalAnimal !== undefined && globalAnimal !== null)
+                  globalAnimal.currentStats.endurance += 1;
+              }
             }
           }
         }
@@ -338,6 +370,13 @@ export class RaceComponent implements OnInit {
           if (racingAnimal.ability.remainingLength <= 0) {
             racingAnimal.ability.abilityInUse = false;
             racingAnimal.ability.currentCooldown = racingAnimal.ability.cooldown;
+            if (racingAnimal.getEquippedItemName() === this.globalService.getEquipmentName(EquipmentEnum.pendant)) {
+              var pendantCooldownModifier = .9;
+              var pendantModifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "pendantEquipmentModifier");
+              if (pendantModifierPair !== undefined)
+                pendantCooldownModifier = pendantModifierPair.value;
+              racingAnimal.ability.currentCooldown *= pendantCooldownModifier;
+            }
           }
         }
 
@@ -352,14 +391,14 @@ export class RaceComponent implements OnInit {
         }
 
         if (racingAnimal.raceVariables.hasRelayEffect) {
-          if (racingAnimal.raceVariables.remainingRelayMeters <= modifiedVelocity) {
+          if (racingAnimal.raceVariables.remainingRelayMeters <= distanceCoveredPerFrame) {
             racingAnimal.raceVariables.remainingRelayMeters = 0;
             racingAnimal.raceVariables.hasRelayEffect = false;
             racingAnimal.currentStats.divideCurrentRacingStats(racingAnimal.raceVariables.relayAffectedStatRatios);
             raceResult.addRaceUpdate(framesPassed, racingAnimal.name + "'s relay effect ends.");
           }
           else {
-            racingAnimal.raceVariables.remainingRelayMeters -= modifiedVelocity;
+            racingAnimal.raceVariables.remainingRelayMeters -= distanceCoveredPerFrame;
           }
         }
 
@@ -393,6 +432,7 @@ export class RaceComponent implements OnInit {
     if (!race.raceLegs.some(item => !item.legComplete)) {
       race.isCompleted = true;
       raceResult.wasSuccessful = true;
+      raceResult.totalFramesPassed = framesPassed;
 
       raceResult.addRaceUpdate(framesPassed, "You won the race!");
     }
@@ -442,12 +482,31 @@ export class RaceComponent implements OnInit {
   }
 
   doesRacerBurst(animal: Animal, currentPath: RacePath): boolean {
-    //if (!currentPath.isSpecialPath)
-    //  return false;
+    var modifiedBurstChance = animal.currentStats.burstChance;
+
+    if (currentPath.isSpecialPath) {
+      var racerMaps = this.lookupService.getResourceByName("Course Maps");
+      if (racerMaps === undefined || racerMaps === null)
+        racerMaps = 0;
+
+      if (racerMaps > 0) {
+        var racerMapModifier = 1;
+
+        var racerMapModifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "racerMapsModifier");
+        if (racerMapModifierPair !== undefined && racerMapModifierPair !== null)
+          racerMapModifier = 1 + (racerMaps * racerMapModifierPair.value);
+
+        console.log("Original Chance: " + animal.currentStats.burstChance);
+        console.log("Modifier: " + racerMapModifier);
+        modifiedBurstChance *= racerMapModifier;
+
+        console.log("Modified Chance: " + modifiedBurstChance);
+      }
+    }
 
     var rng = this.utilityService.getRandomNumber(1, 100);
 
-    if (rng <= animal.currentStats.burstChance)
+    if (rng <= modifiedBurstChance)
       return true;
 
     return false;
@@ -483,10 +542,9 @@ export class RaceComponent implements OnInit {
           });
         }
 
-        if (raceResult.wasSuccessful)
-        {
+        if (raceResult.wasSuccessful) {
           this.displayResults = true;
-          
+
           if (raceResult.circuitReward !== "")
             this.modalService.open(this.circuitRewardModal, { ariaLabelledBy: 'modal-basic-title', size: 'lg' });
         }
@@ -532,6 +590,7 @@ export class RaceComponent implements OnInit {
       var circuitRankRaces = this.globalService.globalVar.circuitRaces.filter(item => item.requiredRank === globalCircuitRank);
       if (circuitRankRaces.every(item => item.isCompleted)) {
         this.globalService.IncreaseCircuitRank();
+        //TODO: Add correct circuit reward text
         raceResult.circuitReward = "Test";
         this.selectedRace.rewards.push(this.initializeService.initializeResource("Medals", 1));
       }
@@ -542,16 +601,21 @@ export class RaceComponent implements OnInit {
       breedGaugeIncrease = this.lookupService.getLocalBreedGaugeIncrease();
     }
 
-    if (this.selectedRace.localRaceType !== LocalRaceTypeEnum.Local) {
+    if (this.selectedRace.localRaceType !== LocalRaceTypeEnum.Free) {
       if (globalRaceVal === undefined)
         return;
 
       globalRaceVal.isCompleted = true;
     }
+    else {
+      this.globalService.globalVar.nationalRaceCountdown += 1;
+    }
 
     this.racingAnimals.forEach(animal => {
       this.globalService.IncreaseAnimalBreedGauge(animal, breedGaugeIncrease);
     });
+
+    raceResult.beatMoneyMark = this.checkMoneyMark(raceResult);
 
     if (this.selectedRace.rewards !== undefined && this.selectedRace.rewards !== null) {
       this.selectedRace.rewards.forEach(item => {
@@ -560,10 +624,23 @@ export class RaceComponent implements OnInit {
             var globalResource = this.globalService.globalVar.resources.find(x => x.name === item.name);
             if (globalResource !== null && globalResource !== undefined) {
               if (globalResource.name === "Coins") {
-                var currentRenown = this.lookupService.getRenown();
+                //adjust for money mark
+                if (raceResult.beatMoneyMark) {
+                  raceResult.addRaceUpdate(raceResult.totalFramesPassed, "You beat the money mark!");
+
+                  var defaultMoneyMarkModifier = 1.25;
+                  var moneyMarkModifier = this.globalService.globalVar.modifiers.find(item => item.text === "moneyMarkRewardModifier");
+                  if (moneyMarkModifier !== undefined && moneyMarkModifier !== null) {
+                    defaultMoneyMarkModifier = moneyMarkModifier.value;
+                  }
+
+                  item.amount = Math.round(item.amount * defaultMoneyMarkModifier);
+                }
+
                 //adjust for renown
+                var currentRenown = this.lookupService.getRenown();
                 item.amount = Math.round(item.amount * this.utilityService.getRenownCircuitRaceModifier(currentRenown));
-                globalResource.amount += item.amount;                
+                globalResource.amount += item.amount;
               }
               else if (globalResource.name === "Facility Level") {
                 globalResource.amount += item.amount;
@@ -581,12 +658,42 @@ export class RaceComponent implements OnInit {
     }
   }
 
+  checkMoneyMark(result: RaceResult): boolean {
+    var beatMoneyMark = false;
+
+    var moneyMarkIsUnlocked = this.lookupService.getResourceByName("Money Mark");
+    if (moneyMarkIsUnlocked === 0)
+      return beatMoneyMark;
+
+    var moneyMarkPace = this.globalService.globalVar.modifiers.find(item => item.text === "moneyMarkPaceModifier");
+    if (moneyMarkPace === undefined || moneyMarkPace === null)
+      return beatMoneyMark;
+
+    var totalRaceTime = this.timeToComplete * this.frameModifier;
+
+    console.log("Total Frames Passed: " + result.totalFramesPassed);
+    console.log("MM Pace: " + totalRaceTime * moneyMarkPace.value);
+    if (result.totalFramesPassed <= totalRaceTime * moneyMarkPace.value) {
+      beatMoneyMark = true;
+    }
+
+    return beatMoneyMark;
+  }
+
   isSecond(framesPassed: number) {
     return framesPassed % this.frameModifier === 0;
   }
 
-  PrepareRacingAnimal(animal: Animal, completedAnimals?: Animal[], previousLeg?: RaceLeg) {
+  PrepareRacingAnimal(animal: Animal, completedAnimals?: Animal[], currentLeg?: RaceLeg, previousLeg?: RaceLeg) {
     animal.ability.currentCooldown = animal.ability.cooldown;
+    if (animal.getEquippedItemName() === this.globalService.getEquipmentName(EquipmentEnum.pendant)) {
+      var pendantCooldownModifier = .9;
+      var pendantModifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "pendantEquipmentModifier");
+      if (pendantModifierPair !== undefined)
+        pendantCooldownModifier = pendantModifierPair.value;
+      animal.ability.currentCooldown *= pendantCooldownModifier;
+    }
+
     animal.ability.abilityUsed = false;
     animal.ability.abilityInUse = false;
     this.globalService.calculateAnimalRacingStats(animal);
@@ -597,14 +704,63 @@ export class RaceComponent implements OnInit {
       if (lastCompletedAnimal.ability.name === "Inspiration" && lastCompletedAnimal.type === AnimalTypeEnum.Horse) {
         //add max speed to animal but only for a certain number of meters
         if (previousLeg !== undefined && previousLeg !== null) {
-          var length = this.lookupService.GetAbilityEffectiveAmount(lastCompletedAnimal, previousLeg.terrain.powerModifier);//lastCompletedAnimal.ability.efficiency * (1 + lastCompletedAnimal.currentStats.powerMs);
+          var length = this.lookupService.GetAbilityEffectiveAmount(lastCompletedAnimal, previousLeg.terrain.powerModifier);
           this.AddRelayEffect(animal, length, new AnimalStats(1.25, 1, 1, 1, 1, 1));
         }
       }
+
+      if (currentLeg !== undefined)
+        this.batonEquipmentCheck(lastCompletedAnimal, animal, currentLeg.distance);
     }
 
     if (animal.raceVariables.hasRelayEffect) {
       animal.currentStats.multiplyCurrentRacingStats(animal.raceVariables.relayAffectedStatRatios);
+    }
+  }
+
+  batonEquipmentCheck(previousAnimal: Animal, nextAnimal: Animal, length: number) {
+
+    if (previousAnimal.getEquippedItemName() === this.globalService.getEquipmentName(EquipmentEnum.redBaton)) {
+      var defaultRedBatonModifier = 1.1;
+      var redBatonEquipmentModifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "redBatonEquipmentModifier");
+      if (redBatonEquipmentModifierPair !== undefined)
+        defaultRedBatonModifier = redBatonEquipmentModifierPair.value;
+      this.AddRelayEffect(nextAnimal, length, new AnimalStats(defaultRedBatonModifier, 1, 1, 1, 1, 1));
+    }
+    if (previousAnimal.getEquippedItemName() === this.globalService.getEquipmentName(EquipmentEnum.blueBaton)) {
+      var defaultBlueBatonModifier = 1.1;
+      var blueBatonEquipmentModifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "blueBatonEquipmentModifier");
+      if (blueBatonEquipmentModifierPair !== undefined)
+        defaultBlueBatonModifier = blueBatonEquipmentModifierPair.value;
+      this.AddRelayEffect(nextAnimal, length, new AnimalStats(1, 1, 1, 1, defaultBlueBatonModifier, 1));
+    }
+    if (previousAnimal.getEquippedItemName() === this.globalService.getEquipmentName(EquipmentEnum.violetBaton)) {
+      var defaultVioletBatonModifier = 1.1;
+      var violetBatonEquipmentModifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "violetBatonEquipmentModifier");
+      if (violetBatonEquipmentModifierPair !== undefined)
+        defaultVioletBatonModifier = violetBatonEquipmentModifierPair.value;
+      this.AddRelayEffect(nextAnimal, length, new AnimalStats(1, 1, 1, defaultVioletBatonModifier, 1, 1));
+    }
+    if (previousAnimal.getEquippedItemName() === this.globalService.getEquipmentName(EquipmentEnum.greenBaton)) {
+      var defaultGreenBatonModifier = 1.1;
+      var greenBatonEquipmentModifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "greenBatonEquipmentModifier");
+      if (greenBatonEquipmentModifierPair !== undefined)
+        defaultGreenBatonModifier = greenBatonEquipmentModifierPair.value;
+      this.AddRelayEffect(nextAnimal, length, new AnimalStats(1, 1, 1, 1, 1, defaultGreenBatonModifier));
+    }
+    if (previousAnimal.getEquippedItemName() === this.globalService.getEquipmentName(EquipmentEnum.orangeBaton)) {
+      var defaultOrangeBatonModifier = 1.1;
+      var orangeBatonEquipmentModifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "orangeBatonEquipmentModifier");
+      if (orangeBatonEquipmentModifierPair !== undefined)
+        defaultOrangeBatonModifier = orangeBatonEquipmentModifierPair.value;
+      this.AddRelayEffect(nextAnimal, length, new AnimalStats(1, defaultOrangeBatonModifier, 1, 1, 1, 1));
+    }
+    if (previousAnimal.getEquippedItemName() === this.globalService.getEquipmentName(EquipmentEnum.yellowBaton)) {
+      var defaultYellowBatonModifier = 1.1;
+      var yellowBatonEquipmentModifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "yellowBatonEquipmentModifier");
+      if (yellowBatonEquipmentModifierPair !== undefined)
+        defaultYellowBatonModifier = yellowBatonEquipmentModifierPair.value;
+      this.AddRelayEffect(nextAnimal, length, new AnimalStats(1, 1, defaultYellowBatonModifier, 1, 1, 1));
     }
   }
 
@@ -629,9 +785,13 @@ export class RaceComponent implements OnInit {
     racingAnimal.raceVariables.hasRelayEffect = true;
     racingAnimal.raceVariables.remainingRelayMeters = distance;
     racingAnimal.raceVariables.relayAffectedStatRatios = statMultiplers;
+
+    console.log("Relay Effect: ");
+    console.log(statMultiplers);
+    console.log(distance);
   }
 
-  didAnimalStumble(racingAnimal: Animal, currentPath: RacePath, currentDistanceInPath: number, terrain: Terrain, obj: {permanentAdaptabilityIncreaseMultiplier: number}): boolean {
+  didAnimalStumble(racingAnimal: Animal, currentPath: RacePath, currentDistanceInPath: number, terrain: Terrain, obj: { permanentAdaptabilityIncreaseMultiplier: number }): boolean {
     if (racingAnimal.raceVariables.stumbled)
       return false; //already stumbling
 
@@ -639,15 +799,31 @@ export class RaceComponent implements OnInit {
       return false;
     }
 
+    if (racingAnimal.type === AnimalTypeEnum.Monkey && racingAnimal.ability.name === "Frenzy" && racingAnimal.raceVariables.isBursting) {
+      return false;
+    }
+
+    if (racingAnimal.getEquippedItemName() === this.globalService.getEquipmentName(EquipmentEnum.headband)) {
+      var headbandMaxStumblePrevention = 3;
+      var headbandModifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "headbandEquipmentModifier");
+      if (headbandModifierPair !== undefined)
+        headbandMaxStumblePrevention = headbandModifierPair.value;
+      if (racingAnimal.raceVariables.headbandStumblePreventionCount < headbandMaxStumblePrevention) {
+        racingAnimal.raceVariables.headbandStumblePreventionCount += 1;
+        //TODO: Add display message
+        //console.log("Headband prevents stumble");
+        return false;
+      }
+    }
+
     var stumbleBreakpoint = currentPath.length / currentPath.stumbleOpportunities;
 
     //made it through without stumbling
-    if (currentPath.currentStumbleOpportunity === currentPath.stumbleOpportunities && currentPath.routeDesign !== RaceDesignEnum.Regular)
-    {
+    if (currentPath.currentStumbleOpportunity === currentPath.stumbleOpportunities && currentPath.routeDesign !== RaceDesignEnum.Regular) {
       if (racingAnimal.type === AnimalTypeEnum.Goat && racingAnimal.ability.name === "Sure-footed") {
-        obj.permanentAdaptabilityIncreaseMultiplier += this.lookupService.GetAbilityEffectiveAmount(racingAnimal, terrain.powerModifier);        
+        obj.permanentAdaptabilityIncreaseMultiplier += (this.lookupService.GetAbilityEffectiveAmount(racingAnimal, terrain.powerModifier) / 100);
         currentPath.currentStumbleOpportunity += 1; //use this so that you don't trigger multiple times -- can come up with better method
-      }  
+      }
     }
 
     if (currentPath.currentStumbleOpportunity * stumbleBreakpoint < currentDistanceInPath) {
@@ -659,15 +835,14 @@ export class RaceComponent implements OnInit {
       if (racingAnimal.type === AnimalTypeEnum.Dolphin && racingAnimal.ability.name === "Echolocation" && racingAnimal.ability.abilityInUse) {
         modifiedAdaptabilityMs *= 1.5;
       }
-      if (racingAnimal.type === AnimalTypeEnum.Goat && racingAnimal.ability.name === "Sure-footed") {        
+      if (racingAnimal.type === AnimalTypeEnum.Goat && racingAnimal.ability.name === "Sure-footed") {
         modifiedAdaptabilityMs *= obj.permanentAdaptabilityIncreaseMultiplier;
-      }  
+      }
 
       var adjustedStumbleFrequency = 500 + (modifiedAdaptabilityMs * terrain.adaptabilityModifier);
       var percentChanceOfStumbling = (currentPath.frequencyOfStumble / adjustedStumbleFrequency) * 100;
 
-      if (rng <= percentChanceOfStumbling)
-      {
+      if (rng <= percentChanceOfStumbling) {
         currentPath.didAnimalStumble = true;
         return true;
       }
@@ -679,6 +854,10 @@ export class RaceComponent implements OnInit {
   didAnimalLoseFocus(racingAnimal: Animal, timeToComplete: number, raceLength: number, currentDistanceInRace: number, terrain: Terrain): boolean {
     if (racingAnimal.raceVariables.lostFocus)
       return false; //already lost focus
+
+    if (racingAnimal.type === AnimalTypeEnum.Monkey && racingAnimal.ability.name === "Frenzy" && racingAnimal.raceVariables.isBursting) {
+      return false;
+    }
 
     var focusBreakpoint = raceLength / timeToComplete;
 
@@ -745,6 +924,13 @@ export class RaceComponent implements OnInit {
       else if (racingAnimal.ability.name === "Inspiration") {
         //racingAnimal.ability.abilityInUse = true;
         //racingAnimal.ability.remainingLength = racingAnimal.ability.efficiency * (1 + racingAnimal.currentStats.powerMs);
+      }
+    }
+
+    if (racingAnimal.type === AnimalTypeEnum.Cheetah) {
+      if (racingAnimal.ability.name === "Sprint") {
+        racingAnimal.ability.abilityInUse = true;
+        racingAnimal.ability.remainingLength = this.lookupService.GetAbilityEffectiveAmount(racingAnimal, currentLeg.terrain.powerModifier);
       }
     }
 

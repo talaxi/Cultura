@@ -5,7 +5,6 @@ import { AnimalStats } from '../models/animals/animal-stats.model';
 import { Animal, Cheetah, Dolphin, Gecko, Goat, Hare, Horse, Monkey, Shark } from '../models/animals/animal.model';
 import { RaceCourseTypeEnum } from '../models/race-course-type-enum.model';
 import { TrainingOptionsEnum } from '../models/training-options-enum.model';
-import { TrainingOption } from '../models/training/training-option.model';
 import { Race } from '../models/races/race.model';
 import { RaceLeg } from '../models/races/race-leg.model';
 import { ResourceValue } from '../models/resources/resource-value.model';
@@ -23,8 +22,7 @@ import { AnimalDeck } from '../models/animals/animal-deck.model';
 import { Terrain } from '../models/races/terrain.model';
 import { TerrainTypeEnum } from '../models/terrain-type-enum.model';
 import { LocalRaceTypeEnum } from '../models/local-race-type-enum.model';
-import { BarnSpecializationEnum } from '../models/barn-specialization-enum.model';
-import { isTemplateExpression } from 'typescript';
+import { EquipmentEnum } from '../models/equipment-enum.model';
 
 @Injectable({
   providedIn: 'root'
@@ -35,8 +33,6 @@ export class GlobalService {
   constructor(private utilityService: UtilityService, private initializeService: InitializeService) { }
 
   initializeGlobalVariables(): void {
-    //pull global from localStorage
-    //below is for testing purposes on the model
     this.globalVar.animals = [];
     this.globalVar.trainingOptions = [];
     this.globalVar.circuitRaces = [];
@@ -49,6 +45,7 @@ export class GlobalService {
     this.globalVar.unlockables = new Map<string, boolean>();
     this.globalVar.tutorialCompleted = false;
     this.globalVar.currentTutorialId = 1;
+    this.globalVar.nationalRaceCountdown = 0;
 
     //Initialize modifiers
     this.InitializeModifiers();
@@ -79,7 +76,7 @@ export class GlobalService {
     //Initialize settings
     this.InitializeSettings();
 
-    //Initialize settings
+    //Initialize unlockables
     this.InitializeUnlockables();
 
     console.log(this.globalVar);
@@ -96,6 +93,12 @@ export class GlobalService {
 
     this.globalVar.modifiers.push(new StringNumberPair(5, "facilityLevelModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(.02, "animalHandlerModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(.01, "stopwatchModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(.1, "racerMapsModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(10, "nationalRacesToMedalModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(5, "internationalRacesToMedalModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(.75, "moneyMarkPaceModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(1.25, "moneyMarkRewardModifier"));
 
     this.globalVar.modifiers.push(new StringNumberPair(.05, "breedingGroundsSpecializationModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(60, "attractionTimeToCollectModifier"));
@@ -104,6 +107,17 @@ export class GlobalService {
     this.globalVar.modifiers.push(new StringNumberPair(.45, "researchCenterTrainingAnimalModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(.25, "researchCenterStudyingAnimalModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(.75, "researchCenterMaxStatGainModifier"));
+
+    this.globalVar.modifiers.push(new StringNumberPair(3, "headbandEquipmentModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(1, "quickSnackEquipmentModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(.5, "blindersEquipmentModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(.9, "pendantEquipmentModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(1.1, "redBatonEquipmentModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(1.1, "blueBatonEquipmentModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(1.1, "orangeBatonEquipmentModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(1.1, "greenBatonEquipmentModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(1.1, "yellowBatonEquipmentModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(1.1, "violetBatonEquipmentModifier"));
 
     var baseMaxSpeedModifier = .3;
     var baseAccelerationModifier = .1;
@@ -395,11 +409,11 @@ export class GlobalService {
     specialtyShopItems.push(animalHandler);
 
     var raceMaps = new ShopItem();
-    raceMaps.name = "Race Maps";
-    raceMaps.shortDescription = "Increase your chance to burst during special routes by 25%";
+    raceMaps.name = "Course Maps";
+    raceMaps.shortDescription = "Increase your chance to burst during special routes by 10%";
     raceMaps.purchasePrice.push(this.getMedalResourceValue(2));
     raceMaps.quantityMultiplier = 2;
-    raceMaps.totalShopQuantity = 4;
+    raceMaps.totalShopQuantity = 5;
     raceMaps.canHaveMultiples = true;
     raceMaps.type = ShopItemTypeEnum.Specialty;
     specialtyShopItems.push(raceMaps);
@@ -412,10 +426,165 @@ export class GlobalService {
     stockbreeder.type = ShopItemTypeEnum.Specialty;
     specialtyShopItems.push(stockbreeder);
 
+    /*var jockey = new ShopItem();
+    jockey.name = "Jockey";
+    jockey.shortDescription = "Add option for a deck to automatically run local races";
+    jockey.purchasePrice.push(this.getCoinsResourceValue(1000));
+    jockey.canHaveMultiples = false;
+    jockey.type = ShopItemTypeEnum.Specialty;
+    specialtyShopItems.push(jockey);*/
+
+    var scouts = new ShopItem();
+    scouts.name = "Scouts";
+    scouts.shortDescription = "You can choose the order of race legs for each animal deck";
+    scouts.purchasePrice.push(this.getCoinsResourceValue(1000));
+    scouts.canHaveMultiples = false;
+    scouts.type = ShopItemTypeEnum.Specialty;
+    specialtyShopItems.push(scouts);
+
+    var moneyMark = new ShopItem();
+    moneyMark.name = "Money Mark";
+    moneyMark.shortDescription = "Add new indicator to race, beat its time to gain increased coins";
+    moneyMark.purchasePrice.push(this.getCoinsResourceValue(1000));
+    moneyMark.canHaveMultiples = false;
+    moneyMark.type = ShopItemTypeEnum.Specialty;
+    specialtyShopItems.push(moneyMark);
+
+    var nationalRace = new ShopItem();
+    nationalRace.name = "National Races";
+    nationalRace.shortDescription = "Gain 1 medal for every 10 free races you complete";
+    nationalRace.purchasePrice.push(this.getCoinsResourceValue(1000));
+    nationalRace.canHaveMultiples = false;
+    nationalRace.type = ShopItemTypeEnum.Specialty;
+    specialtyShopItems.push(nationalRace);
+
+    var internationalRace = new ShopItem();
+    internationalRace.name = "International Races";
+    internationalRace.shortDescription = "Gain 1 medal for every 5 free races you complete";
+    internationalRace.purchasePrice.push(this.getCoinsResourceValue(1000));
+    internationalRace.canHaveMultiples = false;
+    internationalRace.isAvailable = false;
+    internationalRace.type = ShopItemTypeEnum.Specialty;
+    specialtyShopItems.push(internationalRace);
+
     specialtyShopSection.name = "Specialty";
     specialtyShopSection.itemList = specialtyShopItems;
     this.globalVar.shop.push(specialtyShopSection);
 
+    var equipmentShopSection = new ShopSection();
+    var equipmentShopItems: ShopItem[] = [];
+
+    var headband = new ShopItem();
+    headband.name = this.getEquipmentName(EquipmentEnum.headband);
+    headband.shortDescription = "The first three stumbles you would have are ignored";
+    headband.purchasePrice.push(this.getCoinsResourceValue(1000));
+    headband.canHaveMultiples = false;
+    headband.type = ShopItemTypeEnum.Equipment;
+    equipmentShopItems.push(headband);
+
+    var pendant = new ShopItem();
+    pendant.name = this.getEquipmentName(EquipmentEnum.pendant);
+    pendant.shortDescription = "Reduce your ability cooldown by 10%";
+    pendant.purchasePrice.push(this.getCoinsResourceValue(1000));
+    pendant.canHaveMultiples = false;
+    pendant.type = ShopItemTypeEnum.Equipment;
+    equipmentShopItems.push(pendant);
+
+    var blinders = new ShopItem();
+    blinders.name = this.getEquipmentName(EquipmentEnum.blinders);
+    blinders.shortDescription = "Negative terrain effects are cut in half";
+    blinders.purchasePrice.push(this.getCoinsResourceValue(1000));
+    blinders.canHaveMultiples = false;
+    blinders.type = ShopItemTypeEnum.Equipment;
+    equipmentShopItems.push(blinders);
+
+    var quickSnack = new ShopItem();
+    quickSnack.name = this.getEquipmentName(EquipmentEnum.quickSnack);
+    quickSnack.shortDescription = "Gain 100% of Stamina back after running out";
+    quickSnack.purchasePrice.push(this.getCoinsResourceValue(1000));
+    quickSnack.canHaveMultiples = false;
+    quickSnack.type = ShopItemTypeEnum.Equipment;
+    equipmentShopItems.push(quickSnack);
+
+    var redBaton = new ShopItem();
+    redBaton.name = this.getEquipmentName(EquipmentEnum.redBaton);
+    redBaton.shortDescription = "Increase next racer's Max Speed by 10% on Relay";
+    redBaton.purchasePrice.push(this.getCoinsResourceValue(1000));
+    redBaton.canHaveMultiples = false;
+    redBaton.type = ShopItemTypeEnum.Equipment;
+    equipmentShopItems.push(redBaton);
+
+    var blueBaton = new ShopItem();
+    blueBaton.name = this.getEquipmentName(EquipmentEnum.blueBaton);
+    blueBaton.shortDescription = "Increase next racer's Focus by 10% on Relay";
+    blueBaton.purchasePrice.push(this.getCoinsResourceValue(1000));
+    blueBaton.canHaveMultiples = false;
+    blueBaton.type = ShopItemTypeEnum.Equipment;
+    equipmentShopItems.push(blueBaton);
+
+    var violetBaton = new ShopItem();
+    violetBaton.name = this.getEquipmentName(EquipmentEnum.violetBaton);
+    violetBaton.shortDescription = "Increase next racer's Power by 10% on Relay";
+    violetBaton.purchasePrice.push(this.getCoinsResourceValue(1000));
+    violetBaton.canHaveMultiples = false;
+    violetBaton.type = ShopItemTypeEnum.Equipment;
+    equipmentShopItems.push(violetBaton);
+
+    var orangeBaton = new ShopItem();
+    orangeBaton.name = this.getEquipmentName(EquipmentEnum.orangeBaton);
+    orangeBaton.shortDescription = "Increase next racer's Acceleration by 10% on Relay";
+    orangeBaton.purchasePrice.push(this.getCoinsResourceValue(1000));
+    orangeBaton.canHaveMultiples = false;
+    orangeBaton.type = ShopItemTypeEnum.Equipment;
+    equipmentShopItems.push(orangeBaton);
+
+    var greenBaton = new ShopItem();
+    greenBaton.name = this.getEquipmentName(EquipmentEnum.greenBaton);
+    greenBaton.shortDescription = "Increase next racer's Adaptability by 10% on Relay";
+    greenBaton.purchasePrice.push(this.getCoinsResourceValue(1000));
+    greenBaton.canHaveMultiples = false;
+    greenBaton.type = ShopItemTypeEnum.Equipment;
+    equipmentShopItems.push(greenBaton);
+
+    var yellowBaton = new ShopItem();
+    yellowBaton.name = this.getEquipmentName(EquipmentEnum.yellowBaton);
+    yellowBaton.shortDescription = "Increase next racer's Endurance by 10% on Relay";
+    yellowBaton.purchasePrice.push(this.getCoinsResourceValue(1000));
+    yellowBaton.canHaveMultiples = false;
+    yellowBaton.type = ShopItemTypeEnum.Equipment;
+    equipmentShopItems.push(yellowBaton);
+
+    equipmentShopSection.name = "Equipment";
+    equipmentShopSection.itemList = equipmentShopItems;
+    this.globalVar.shop.push(equipmentShopSection);
+
+  }
+
+  getEquipmentName(equip: EquipmentEnum) {
+    if (equip === EquipmentEnum.headband)
+      return "Headband";
+    if (equip === EquipmentEnum.pendant)
+      return "Pendant";
+    if (equip === EquipmentEnum.blinders)
+      return "Blinders";
+    if (equip === EquipmentEnum.quickSnack)
+      return "Quick Snack";
+    if (equip === EquipmentEnum.carrotOnAStick)
+      return "Carrot on a Stick";
+    if (equip === EquipmentEnum.redBaton)
+      return "Red Baton";
+    if (equip === EquipmentEnum.blueBaton)
+      return "Blue Baton";
+    if (equip === EquipmentEnum.violetBaton)
+      return "Violet Baton";
+    if (equip === EquipmentEnum.yellowBaton)
+      return "Yellow Baton";
+    if (equip === EquipmentEnum.greenBaton)
+      return "Green Baton";
+    if (equip === EquipmentEnum.orangeBaton)
+      return "Orange Baton";
+
+    return "";
   }
 
   InitializeBarns(): void {
@@ -875,6 +1044,10 @@ export class GlobalService {
     }
   }
 
+  reorganizeLegsByDeckOrder(raceLegs: RaceLeg[], selectedDeck: AnimalDeck) {
+    return raceLegs.sort((a, b) => selectedDeck.courseTypeOrder.indexOf(a.courseType) - selectedDeck.courseTypeOrder.indexOf(b.courseType));
+  }
+
   getCourseTypeInRandomOrder(courseList: RaceCourseTypeEnum[]) {
     var randomizedList: RaceCourseTypeEnum[] = [];
     var length = courseList.length;
@@ -984,6 +1157,32 @@ export class GlobalService {
 
     rewards.push(new ResourceValue("Coins", Math.round(baseCoins * (CoinsFactor ** numericRank))));
     rewards.push(new ResourceValue("Renown", parseFloat(((baseRenown * (renownFactor ** numericRank)) / 100).toFixed(3))));
+
+    var internationalRaceItem = this.globalVar.resources.find(item => item.name === "International Races");
+    var nationalRaceItem = this.globalVar.resources.find(item => item.name === "National Races");
+    if (internationalRaceItem !== undefined && internationalRaceItem !== null && internationalRaceItem.amount > 0) {
+      var internationalRaceCountNeeded = 5;
+      var internationalRaceCountNeededModifier = this.globalVar.modifiers.find(item => item.text === "internationalRacesToMedalModifier");
+      if (internationalRaceCountNeededModifier !== undefined && internationalRaceCountNeededModifier !== null)
+        internationalRaceCountNeeded = internationalRaceCountNeededModifier.value;
+
+      if (this.globalVar.nationalRaceCountdown >= internationalRaceCountNeeded) {
+        rewards.push(new ResourceValue("Medals", 1));
+        this.globalVar.nationalRaceCountdown = 0;
+      }
+    }
+    else if (nationalRaceItem !== undefined && nationalRaceItem !== null && nationalRaceItem.amount > 0) {
+      var nationalRaceCountNeeded = 10;
+      var nationalRaceCountNeededModifier = this.globalVar.modifiers.find(item => item.text === "nationalRacesToMedalModifier");
+      if (nationalRaceCountNeededModifier !== undefined && nationalRaceCountNeededModifier !== null)
+        nationalRaceCountNeeded = nationalRaceCountNeededModifier.value;
+
+      if (this.globalVar.nationalRaceCountdown >= nationalRaceCountNeeded) {
+        rewards.push(new ResourceValue("Medals", 1));
+        this.globalVar.nationalRaceCountdown = 0;
+      }
+    }
+
     return rewards;
   }
 
@@ -1389,6 +1588,8 @@ export class GlobalService {
       goat.currentStats.topSpeed = 300;
       goat.currentStats.acceleration = 2000;
       goat.currentStats.adaptability = 100;
+      goat.currentStats.endurance = 100;
+      goat.currentStats.power = 100;
       this.calculateAnimalRacingStats(goat);
     }
 

@@ -3,5 +3,5 @@ export enum RaceCourseTypeEnum {
     Mountain,
     Water,
     Tundra,
-    Crater
+    Volcanic
   }

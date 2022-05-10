@@ -22,6 +22,8 @@ export class DecksViewComponent implements OnInit {
   selectedAnimalName: string;
   selectedCourseType: string;
   colorConditional: any;
+  displayRaceOrder = false;
+  dragSourceElement: any;
 
   editDeckForm = new FormGroup({
     deckName: new FormControl(''),
@@ -33,7 +35,10 @@ export class DecksViewComponent implements OnInit {
     this.newAnimalList = [];
     this.animalDecks = this.globalService.globalVar.animalDecks;
     this.raceCourseTypeList = this.lookupService.getAllRaceCourseTypes();
-
+    var scouts = this.lookupService.getResourceByName("Scouts");
+    if (scouts !== undefined && scouts !== null && scouts > 0) {      
+      this.displayRaceOrder = true;
+    }
   }
 
   editDeck(content: any, deck: AnimalDeck) {
@@ -64,6 +69,34 @@ export class DecksViewComponent implements OnInit {
         deckToEdit?.selectedAnimals.push(item);
       });
       deckToEdit?.selectedAnimals.sort(this.compare);
+
+      if (this.displayRaceOrder) {
+        var stringOrder = [];
+        var first = document.getElementById("raceOrder1")?.innerHTML;
+        var second = document.getElementById("raceOrder2")?.innerHTML;
+        var third = document.getElementById("raceOrder3")?.innerHTML;
+        var fourth = document.getElementById("raceOrder4")?.innerHTML;
+        var fifth = document.getElementById("raceOrder5")?.innerHTML;
+
+        stringOrder.push(first);
+        stringOrder.push(second);
+        stringOrder.push(third);
+        stringOrder.push(fourth);
+        stringOrder.push(fifth);
+
+        stringOrder.forEach(stringItem => {
+          if (stringItem === "Flatland")
+            deckToEdit?.courseTypeOrder.push(RaceCourseTypeEnum.Flatland);
+          if (stringItem === "Mountain")
+            deckToEdit?.courseTypeOrder.push(RaceCourseTypeEnum.Mountain);
+          if (stringItem === "Water")
+            deckToEdit?.courseTypeOrder.push(RaceCourseTypeEnum.Water);
+          if (stringItem === "Tundra")
+            deckToEdit?.courseTypeOrder.push(RaceCourseTypeEnum.Tundra);
+          if (stringItem === "Volcanic")
+            deckToEdit?.courseTypeOrder.push(RaceCourseTypeEnum.Volcanic);
+        });
+      }
     }
     this.modalService.dismissAll();
   }
@@ -135,5 +168,60 @@ export class DecksViewComponent implements OnInit {
       if (existingPrimaryDeck !== undefined && existingPrimaryDeck !== null)
         existingPrimaryDeck.isPrimaryDeck = false;
     }
+  }
+
+  dragStart(event: any) {
+    this.dragSourceElement = event;
+    event.dataTransfer.setData("text", event.target.id);
+  }
+
+  allowDrop(event: any) {
+    event.preventDefault();
+  }
+
+  dropCourseType(event: any) {
+    var data = event.dataTransfer.getData("text");
+    var dataElement = document.getElementById(data);
+    var targetEventHtml = event.target.innerHTML;
+
+    var targetClass = "";
+    var sourceClass = "";
+
+    if (dataElement === null)
+      return;
+
+    if (targetEventHtml === null)
+      return;
+
+    if (dataElement.innerHTML === "Flatland")
+      targetClass = "flatlandColor draggable";
+    if (dataElement.innerHTML === "Mountain")
+      targetClass = "mountainColor draggable";
+    if (dataElement.innerHTML === "Water")
+      targetClass = "waterColor draggable";
+    if (dataElement.innerHTML === "Tundra")
+      targetClass = "tundraColor draggable";
+    if (dataElement.innerHTML === "Volcanic")
+      targetClass = "volcanicColor draggable";
+
+    if (targetEventHtml === "Flatland")
+      sourceClass = "flatlandColor draggable";
+    if (targetEventHtml === "Mountain")
+      sourceClass = "mountainColor draggable";
+    if (targetEventHtml === "Water")
+      sourceClass = "waterColor draggable";
+    if (targetEventHtml === "Tundra")
+      sourceClass = "tundraColor draggable";
+    if (targetEventHtml === "Volcanic")
+      sourceClass = "volcanicColor draggable";
+
+
+    event.target.innerHTML = "";
+    event.target.className = targetClass;
+    event.target.append(dataElement.innerHTML);
+
+    dataElement.innerHTML = "";
+    dataElement.className = sourceClass;
+    dataElement.append(targetEventHtml);
   }
 }

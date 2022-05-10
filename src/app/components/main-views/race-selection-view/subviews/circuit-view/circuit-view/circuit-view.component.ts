@@ -19,6 +19,12 @@ export class CircuitViewComponent implements OnInit {
     this.circuitRank = this.globalService.globalVar.circuitRank;
     this.circuitRankUpDescription = this.globalService.globalVar.circuitRankUpRewardDescription;
     this.availableCircuitRaces = this.globalService.globalVar.circuitRaces.filter(item => item.requiredRank === this.circuitRank);
+    var primaryDeck = this.globalService.globalVar.animalDecks.find(item => item.isPrimaryDeck);
+
+    this.availableCircuitRaces.forEach(race => {      
+      if (primaryDeck !== undefined)
+        race.raceLegs = this.globalService.reorganizeLegsByDeckOrder(race.raceLegs, primaryDeck);
+    });
   }
 
   selectCircuitRace(race: Race): void {
