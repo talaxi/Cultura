@@ -30,6 +30,7 @@ export class SelectedAnimalComponent implements OnInit {
   editingName: boolean;
   newName: string;
   longDescription: string;  
+  traitStatGainDescription: string;
   autoBreedActive: boolean;
   canAutoBreed = false;
 
@@ -76,6 +77,9 @@ export class SelectedAnimalComponent implements OnInit {
 
     this.longDescription = this.lookupService.getAnimalAbilityDescription(false, this.selectedAnimal.ability.name, this.selectedAnimal);
 
+    if (this.selectedAnimal.trait !== undefined && this.selectedAnimal.trait !== null)
+      this.traitStatGainDescription = this.lookupService.getTraitStatGainDescription(this.selectedAnimal.trait);
+
     this.colorConditional = {
       'flatlandColor': this.selectedAnimal.getRaceCourseType() === 'Flatland',
       'mountainColor': this.selectedAnimal.getRaceCourseType() === 'Mountain',
@@ -109,6 +113,15 @@ export class SelectedAnimalComponent implements OnInit {
 
   breed(): void {
     this.globalService.BreedAnimal(this.selectedAnimal);
+
+    this.maxSpeedModifierAmount = this.lookupService.getMaxSpeedModifierByAnimalType(this.selectedAnimal.type);
+    this.accelerationModifierAmount = this.lookupService.getAccelerationModifierByAnimalType(this.selectedAnimal.type);
+    this.staminaModifierAmount = this.lookupService.getStaminaModifierByAnimalType(this.selectedAnimal.type);
+    this.powerModifierAmount = this.lookupService.getPowerModifierByAnimalType(this.selectedAnimal.type);
+    this.focusModifierAmount = this.lookupService.getFocusModifierByAnimalType(this.selectedAnimal.type);
+    this.adaptabilityModifierAmount = this.lookupService.getAdaptabilityModifierByAnimalType(this.selectedAnimal.type);
+    this.diminishingReturnsAmount = this.globalService.GetAnimalDiminishingReturns(this.selectedAnimal);
+
   }
 
   editName(): void {

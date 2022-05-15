@@ -1,28 +1,53 @@
 <div class="settingsView">
     <div class="toggles">
-        <app-toggle [callbackFunction]="skipDrawRaceToggle" [label]="'Auto Skip Race Info'" 
-        [model]="skipDrawRace" [popoverText]="skipDrawRacePopoverText" [id]="'skipRace'"></app-toggle>
-        <app-toggle [callbackFunction]="finishTrainingBeforeSwitchingToggle" [label]="'Finish Training Before Switching'" 
-        [model]="finishTrainingBeforeSwitching" [popoverText]="finishTrainingBeforeSwitchingPopoverText" [id]="'finishTraining'"></app-toggle>                
+        <!--<app-toggle [callbackFunction]="skipDrawRaceToggle" [label]="'Auto Skip Race Info'" [model]="skipDrawRace"
+            [popoverText]="skipDrawRacePopoverText" [id]="'skipRace'"></app-toggle>
+        <app-toggle [callbackFunction]="finishTrainingBeforeSwitchingToggle"
+            [label]="'Finish Training Before Switching'" [model]="finishTrainingBeforeSwitching"
+            [popoverText]="finishTrainingBeforeSwitchingPopoverText" [id]="'finishTraining'"></app-toggle>-->
+
+            <span [ngbPopover]="skipDrawRacePopoverText" triggers="mouseenter:mouseleave">                
+                <label class="custom-control-label" for="skipRace">Auto Skip Race Info </label>
+                <input type="checkbox" class="spaced" id="skipRace" [(ngModel)]="skipDrawRace" (input)="skipDrawRaceToggle()">
+            </span>
+            <br />
+            <span [ngbPopover]="finishTrainingBeforeSwitchingPopoverText" triggers="mouseenter:mouseleave">                
+                <label class="custom-control-label" for="finishTraining">Finish Training Before Switching </label>
+                <input type="checkbox" class="spaced" id="finishTraining" [(ngModel)]="finishTrainingBeforeSwitching" (input)="finishTrainingBeforeSwitchingToggle()">
+            </span>
+            <br />
+        <div class="btn-group" role="group" ngbRadioGroup aria-label="Race Display Info" [(ngModel)]="raceDisplayInfo" (change)="saveRaceDisplayInfo()">
+            <span [ngbPopover]="raceDisplayInfoPopoverText" triggers="mouseenter:mouseleave" class="rightSpaced">Race Info Display Mode: </span>
+            <label ngbButtonLabel class="btn-primary">
+                <input ngbButton type="radio" class="btn-check" [value]="raceDisplayInfoEnum.draw"> Draw
+              </label>
+              <label ngbButtonLabel class="btn-primary">
+                <input ngbButton type="radio" class="btn-check" [value]="raceDisplayInfoEnum.text"> Text
+              </label>
+              <label ngbButtonLabel class="btn-primary">
+                <input ngbButton type="radio" class="btn-check" [value]="raceDisplayInfoEnum.both"> Both
+              </label>            
+        </div>
+
     </div>
     <div ngbDropdown class="d-inline-block">
-      <button type="button" class="btn dropdown" id="themeDropdown" ngbDropdownToggle>Theme</button>
-      <div ngbDropdownMenu aria-labelledby="themeDropdown">
-        <button (click)="changeTheme('White')" ngbDropdownItem>White</button>
-        <button (click)="changeTheme('Light')" ngbDropdownItem>Light</button>
-        <button (click)="changeTheme('Twilight')" ngbDropdownItem>Twilight</button>
-        <button (click)="changeTheme('Night')" ngbDropdownItem>Night</button>        
-      </div>
-    <textarea id="importExport" name="importExport" rows="10" [(ngModel)]="importExportValue">
+        <button type="button" class="btn dropdown" id="themeDropdown" ngbDropdownToggle>Theme</button>
+        <div ngbDropdownMenu aria-labelledby="themeDropdown">
+            <button (click)="changeTheme('White')" ngbDropdownItem>White</button>
+            <button (click)="changeTheme('Light')" ngbDropdownItem>Light</button>
+            <button (click)="changeTheme('Twilight')" ngbDropdownItem>Twilight</button>
+            <button (click)="changeTheme('Night')" ngbDropdownItem>Night</button>
+        </div>
+        <textarea id="importExport" name="importExport" rows="10" [(ngModel)]="importExportValue">
     </textarea>
-    <button (click)="LoadGame()">
-        Import
-    </button>
-    <button (click)="SaveGame()">
-        Export
-    </button>
-    <!--<button (click)="ExportToEmail()">
+        <button (click)="LoadGame()">
+            Import
+        </button>
+        <button (click)="SaveGame()">
+            Export
+        </button>
+        <!--<button (click)="ExportToEmail()">
         Export To Email
     </button>
     <span><input id="exportEmail" name="exportEmail" placeholder="Email Address" [(ngModel)]="exportEmail"></span>-->
-</div>
+    </div>

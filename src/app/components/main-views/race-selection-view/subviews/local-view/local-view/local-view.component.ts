@@ -35,8 +35,7 @@ export class LocalViewComponent implements OnInit {
     if (nextMonoRace !== undefined)
       this.availableMonoRace = nextMonoRace;
 
-    var nextDuoRace = this.getNextAvailableSpecialRace(LocalRaceTypeEnum.Duo);
-    console.log(nextDuoRace);
+    var nextDuoRace = this.getNextAvailableSpecialRace(LocalRaceTypeEnum.Duo);    
     if (nextDuoRace !== undefined)
       this.availableDuoRace = nextDuoRace;
 
@@ -52,21 +51,14 @@ export class LocalViewComponent implements OnInit {
   }
 
   getNextAvailableSpecialRace(raceType: LocalRaceTypeEnum) {
-    var uncompletedRaces = this.globalService.globalVar.localRaces.filter(item => item.localRaceType === raceType && !item.isCompleted).sort();
-    
-    if (uncompletedRaces !== undefined && uncompletedRaces !== null && uncompletedRaces.length > 0) {    
-      if (this.utilityService.getNumericValueOfCircuitRank(uncompletedRaces[0].requiredRank) <=
-        this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.circuitRank))
-        {
-          var primaryDeck = this.globalService.globalVar.animalDecks.find(item => item.isPrimaryDeck);
-          if (primaryDeck !== undefined)
-            uncompletedRaces[0].raceLegs = this.globalService.reorganizeLegsByDeckOrder(uncompletedRaces[0].raceLegs, primaryDeck);
-    
-          return uncompletedRaces[0];
-        }
-    }
+    if (raceType === LocalRaceTypeEnum.Mono)
+      this.globalService.GenerateMonoRaces(this.globalService.globalVar.monoRank);      
+    if (raceType === LocalRaceTypeEnum.Duo)
+     this.globalService.GenerateMonoRaces(this.globalService.globalVar.duoRank);
+    if (raceType === LocalRaceTypeEnum.Rainbow)
+    this.globalService.GenerateMonoRaces(this.globalService.globalVar.rainbowRank);
 
-    return undefined;
+    return this.globalService.globalVar.localRaces.find(item => item.localRaceType === raceType);    
   }
 
   sortByRankRequired(a: Race, b: Race): number {
@@ -167,7 +159,7 @@ export class LocalViewComponent implements OnInit {
         legLengthCutoff = timeToComplete / 6;
 
         var availableCourses: RaceCourseTypeEnum[] = [];
-        if (numericalRank < 26) {
+        if (numericalRank < 35) {
           availableCourses.push(RaceCourseTypeEnum.Flatland);
           availableCourses.push(RaceCourseTypeEnum.Mountain);
           availableCourses.push(RaceCourseTypeEnum.Water);
@@ -176,7 +168,10 @@ export class LocalViewComponent implements OnInit {
           availableCourses.push(RaceCourseTypeEnum.Flatland);
           availableCourses.push(RaceCourseTypeEnum.Mountain);
           availableCourses.push(RaceCourseTypeEnum.Water);
+          availableCourses.push(RaceCourseTypeEnum.Tundra);
+          availableCourses.push(RaceCourseTypeEnum.Volcanic);
         }
+
         var randomizedCourseList = this.globalService.getCourseTypeInRandomOrder(availableCourses);
 
         var leg1Distance = this.utilityService.getRandomNumber(legMinimumDistance, legMaximumDistance);

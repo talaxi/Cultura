@@ -40,6 +40,10 @@ import { DecksViewComponent } from './components/main-views/decks-view/decks-vie
 import { RaceDescriptionComponent } from './components/main-views/race-selection-view/subviews/race-description/race-description.component';
 import { ToggleComponent } from './components/main-components/ui-elements/toggle/toggle.component';
 import { IncubatorViewComponent } from './components/main-views/incubator-view/incubator-view.component';
+import { ThemeService } from './theme/theme.service';
+import { IncubatorTraitsComponent } from './components/main-views/incubator-view/subviews/incubator-traits/incubator-traits.component';
+import { TraitListComponent } from './components/main-components/trait-list/trait-list.component';
+import { TraitOptionComponent } from './components/main-components/trait-option/trait-option.component';
 
 @NgModule({
   declarations: [
@@ -51,7 +55,7 @@ import { IncubatorViewComponent } from './components/main-views/incubator-view/i
     BarnComponent,
     BarnViewComponent,
     RaceSelectionViewComponent,    
-    SelectedBarnComponent, ProgressBarComponent, CircuitViewComponent, LocalViewComponent, RaceComponent, AnimalsViewComponent, ShopViewComponent, ResourcesViewComponent, SettingsViewComponent, AnimalComponent, AnimalListComponent, SelectedAnimalComponent, DrawRaceComponent, TrainingListComponent, TrainingOptionComponent, ShoppingListComponent, ShoppingItemComponent, AnimalDeckComponent, DecksViewComponent, RaceDescriptionComponent, ToggleComponent, IncubatorViewComponent
+    SelectedBarnComponent, ProgressBarComponent, CircuitViewComponent, LocalViewComponent, RaceComponent, AnimalsViewComponent, ShopViewComponent, ResourcesViewComponent, SettingsViewComponent, AnimalComponent, AnimalListComponent, SelectedAnimalComponent, DrawRaceComponent, TrainingListComponent, TrainingOptionComponent, ShoppingListComponent, ShoppingItemComponent, AnimalDeckComponent, DecksViewComponent, RaceDescriptionComponent, ToggleComponent, IncubatorViewComponent, IncubatorTraitsComponent, TraitListComponent, TraitOptionComponent
   ],
   imports: [
     BrowserModule,
@@ -61,7 +65,7 @@ import { IncubatorViewComponent } from './components/main-views/incubator-view/i
     FormsModule,
     ReactiveFormsModule
   ],
-  providers: [GlobalService],
+  providers: [GlobalService, ThemeService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

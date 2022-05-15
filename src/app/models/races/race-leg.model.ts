@@ -28,6 +28,21 @@ export class RaceLeg {
         return RaceCourseTypeEnum[this.courseType];
     }
 
+    getCourseTypeClass() {
+        if (this.courseType === RaceCourseTypeEnum.Flatland)
+            return "flatlandColor";
+        if (this.courseType === RaceCourseTypeEnum.Mountain)
+            return "mountainColor";
+        if (this.courseType === RaceCourseTypeEnum.Water)
+            return "waterColor";
+        if (this.courseType === RaceCourseTypeEnum.Tundra)
+            return "tundraColor";
+        if (this.courseType === RaceCourseTypeEnum.Volcanic)
+            return "volcanicColor";
+
+        return "";
+    }
+
     getTerrainName() {
         if (this.terrain === undefined || this.terrain === null)
             return "";

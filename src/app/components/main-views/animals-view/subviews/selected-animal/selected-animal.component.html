@@ -23,10 +23,22 @@
                         <span><button (click)="editName()">Save</button></span>
                         <span><button (click)="editingName = !editingName">Cancel</button></span>
                     </div>
-                    <span>{{ selectedAnimal.getAnimalType() }}</span>
+                    <span>
+                        <span class="keyword defaultTextColor" ngbPopover="{{ traitStatGainDescription }}"
+                        triggers="mouseenter:mouseleave" popoverClass="popoverClass" *ngIf="selectedAnimal.trait !== undefined && selectedAnimal.trait !== null">
+                        {{ selectedAnimal.trait.traitName }}
+                        </span> 
+                    {{ selectedAnimal.getAnimalType() }}
+                    </span>
                 </div>
                 <div *ngIf="selectedAnimal.name === selectedAnimal.getAnimalType()">
-                    <span>{{ selectedAnimal.getAnimalType() }}</span>
+                    <span>
+                        <span class="keyword defaultTextColor" ngbPopover="{{ traitStatGainDescription }}"
+                        triggers="mouseenter:mouseleave" popoverClass="popoverClass" *ngIf="selectedAnimal.trait !== undefined && selectedAnimal.trait !== null">
+                        {{ selectedAnimal.trait.traitName }}
+                        </span> 
+                        {{ selectedAnimal.getAnimalType() }}
+                    </span>
                 </div>
                 <span>{{ selectedAnimal.getRaceCourseType() }}</span>
                 <br />

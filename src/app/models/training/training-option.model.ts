@@ -16,6 +16,7 @@ export class TrainingOption {
     isAvailable: boolean;
     timeTrained: number; //current amount / timetocomplete
     purchasePrice: number;
+    isSelected: boolean; //purely for UI purposes
 
     constructor() {
         this.timeTrained = 0;

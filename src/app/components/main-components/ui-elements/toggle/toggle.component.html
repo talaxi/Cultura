@@ -1,5 +1,5 @@
 <div class="custom-control custom-switch">
-    <span [ngbPopover]="popoverText" triggers="mouseenter:mouseleave" popoverClass="popoverClass">
+    <span [ngbPopover]="popoverText" triggers="mouseenter:mouseleave">
         <input type="checkbox" class="custom-control-input" [id]="this.getId()" [(ngModel)]="model" (input)="toggle()">
         <label class="custom-control-label" [for]="this.getId()">{{label}}</label>
     </span>

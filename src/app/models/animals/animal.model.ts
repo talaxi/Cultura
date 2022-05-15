@@ -5,6 +5,7 @@ import { ResourceValue } from "../resources/resource-value.model";
 import { TrainingOption } from "../training/training-option.model";
 import { Ability } from "./ability.model";
 import { AnimalStats } from "./animal-stats.model";
+import { AnimalTraits } from "./animal-traits.model";
 import { Equipment } from "./equipment.model";
 import { RaceVariables } from "./race-variables.model";
 
@@ -32,12 +33,14 @@ export class Animal {
     breedGaugeMax: number;
     autoBreedActive: boolean;
     availableAbilities: Ability[];
-
+    trait: AnimalTraits;
+    canTrain: boolean;
 
     constructor() {
         this.breedLevel = 1;
         this.breedGaugeXp = 0;
         this.breedGaugeMax = 50;
+        this.canTrain = true;
 
         this.availableAbilities = [];        
     }
@@ -46,8 +49,8 @@ export class Animal {
         return this.ability.name;
     }
 
-    getAbilityUseUpdateText(): string {
-        return this.name + " uses " + this.ability.name + ".";
+    getAbilityUseUpdateText(animalDisplayName: string): string {
+        return animalDisplayName + " uses " + this.ability.name + ".";
     }
 
     useAbility(): void {
@@ -60,6 +63,13 @@ export class Animal {
 
     getRaceCourseType(): string {
         return RaceCourseTypeEnum[this.raceCourseType];
+    }
+
+    getTraitName(): string {
+        if (this.trait === undefined || this.trait === null || this.trait.traitName === "")
+            return "None";
+
+        return this.trait.traitName;
     }
 
     getEquippedItemName() {
@@ -365,5 +375,195 @@ export class Shark extends Animal {
         this.ability.cooldown = 10;
         this.ability.efficiency = 10;
         this.ability.name = "";
+    }
+}
+
+export class Octopus extends Animal {
+
+    constructor() {
+        super();
+        this.baseStats = new AnimalStats(5, 5, 5, 5, 5, 5);
+        this.currentStats = new AnimalStats(5, 5, 5, 5, 5, 5);
+
+        this.type = AnimalTypeEnum.Octopus;
+        this.raceCourseType = RaceCourseTypeEnum.Water;
+
+        this.ability = new Ability();
+        this.ability.cooldown = 4;
+        this.ability.efficiency = 2;
+        this.ability.totalFrames = 15;
+        this.ability.oneTimeEffect = false;
+        this.ability.name = "Breach";        
+        this.ability.isAbilityPurchased = true;
+        this.availableAbilities.push(this.ability);
+
+        var ability2 = new Ability();
+        ability2.cooldown = 12;
+        ability2.efficiency = 15;
+        ability2.oneTimeEffect = false;
+        ability2.name = "Echolocation";
+        ability2.isAbilityPurchased = false;
+        ability2.purchasePrice = 500;
+        this.availableAbilities.push(ability2);
+
+        var ability3 = new Ability();
+        ability3.efficiency = 5;
+        ability3.oneTimeEffect = true;
+        ability3.name = "Flowing Current";
+        ability3.isAbilityPurchased = false;
+        ability3.purchasePrice = 500;
+        this.availableAbilities.push(ability3);
+    }
+}
+
+export class Penguin extends Animal {
+
+    constructor() {
+        super();
+        this.baseStats = new AnimalStats(5, 5, 5, 5, 5, 5);
+        this.currentStats = new AnimalStats(5, 5, 5, 5, 5, 5);
+
+        this.type = AnimalTypeEnum.Penguin;
+        this.raceCourseType = RaceCourseTypeEnum.Tundra;
+
+        this.ability = new Ability();
+        this.ability.cooldown = 4;
+        this.ability.efficiency = 2;
+        this.ability.totalFrames = 15;
+        this.ability.oneTimeEffect = false;
+        this.ability.name = "Breach";        
+        this.ability.isAbilityPurchased = true;
+        this.availableAbilities.push(this.ability);
+
+        var ability2 = new Ability();
+        ability2.cooldown = 12;
+        ability2.efficiency = 15;
+        ability2.oneTimeEffect = false;
+        ability2.name = "Echolocation";
+        ability2.isAbilityPurchased = false;
+        ability2.purchasePrice = 500;
+        this.availableAbilities.push(ability2);
+
+        var ability3 = new Ability();
+        ability3.efficiency = 5;
+        ability3.oneTimeEffect = true;
+        ability3.name = "Flowing Current";
+        ability3.isAbilityPurchased = false;
+        ability3.purchasePrice = 500;
+        this.availableAbilities.push(ability3);
+    }
+}
+
+export class Caribou extends Animal {
+
+    constructor() {
+        super();
+        this.baseStats = new AnimalStats(5, 5, 5, 5, 5, 5);
+        this.currentStats = new AnimalStats(5, 5, 5, 5, 5, 5);
+
+        this.type = AnimalTypeEnum.Caribou;
+        this.raceCourseType = RaceCourseTypeEnum.Tundra;
+
+        this.ability = new Ability();
+        this.ability.cooldown = 4;
+        this.ability.efficiency = 2;
+        this.ability.totalFrames = 15;
+        this.ability.oneTimeEffect = false;
+        this.ability.name = "Breach";        
+        this.ability.isAbilityPurchased = true;
+        this.availableAbilities.push(this.ability);
+
+        var ability2 = new Ability();
+        ability2.cooldown = 12;
+        ability2.efficiency = 15;
+        ability2.oneTimeEffect = false;
+        ability2.name = "Echolocation";
+        ability2.isAbilityPurchased = false;
+        ability2.purchasePrice = 500;
+        this.availableAbilities.push(ability2);
+
+        var ability3 = new Ability();
+        ability3.efficiency = 5;
+        ability3.oneTimeEffect = true;
+        ability3.name = "Flowing Current";
+        ability3.isAbilityPurchased = false;
+        ability3.purchasePrice = 500;
+        this.availableAbilities.push(ability3);
+    }
+}
+
+export class Salamander extends Animal {
+
+    constructor() {
+        super();
+        this.baseStats = new AnimalStats(5, 5, 5, 5, 5, 5);
+        this.currentStats = new AnimalStats(5, 5, 5, 5, 5, 5);
+
+        this.type = AnimalTypeEnum.Salamander;
+        this.raceCourseType = RaceCourseTypeEnum.Volcanic;
+
+        this.ability = new Ability();
+        this.ability.cooldown = 4;
+        this.ability.efficiency = 2;
+        this.ability.totalFrames = 15;
+        this.ability.oneTimeEffect = false;
+        this.ability.name = "Breach";        
+        this.ability.isAbilityPurchased = true;
+        this.availableAbilities.push(this.ability);
+
+        var ability2 = new Ability();
+        ability2.cooldown = 12;
+        ability2.efficiency = 15;
+        ability2.oneTimeEffect = false;
+        ability2.name = "Echolocation";
+        ability2.isAbilityPurchased = false;
+        ability2.purchasePrice = 500;
+        this.availableAbilities.push(ability2);
+
+        var ability3 = new Ability();
+        ability3.efficiency = 5;
+        ability3.oneTimeEffect = true;
+        ability3.name = "Flowing Current";
+        ability3.isAbilityPurchased = false;
+        ability3.purchasePrice = 500;
+        this.availableAbilities.push(ability3);
+    }
+}
+
+export class Fox extends Animal {
+
+    constructor() {
+        super();
+        this.baseStats = new AnimalStats(5, 5, 5, 5, 5, 5);
+        this.currentStats = new AnimalStats(5, 5, 5, 5, 5, 5);
+
+        this.type = AnimalTypeEnum.Fox;
+        this.raceCourseType = RaceCourseTypeEnum.Volcanic;
+
+        this.ability = new Ability();
+        this.ability.cooldown = 4;
+        this.ability.efficiency = 2;
+        this.ability.totalFrames = 15;
+        this.ability.oneTimeEffect = false;
+        this.ability.name = "Breach";        
+        this.ability.isAbilityPurchased = true;
+        this.availableAbilities.push(this.ability);
+
+        var ability2 = new Ability();
+        ability2.cooldown = 12;
+        ability2.efficiency = 15;
+        ability2.oneTimeEffect = false;
+        ability2.name = "Echolocation";
+        ability2.isAbilityPurchased = false;
+        ability2.purchasePrice = 500;
+        this.availableAbilities.push(ability2);
+
+        var ability3 = new Ability();
+        ability3.efficiency = 5;
+        ability3.oneTimeEffect = true;
+        ability3.name = "Flowing Current";
+        ability3.isAbilityPurchased = false;
+        ability3.purchasePrice = 500;
+        this.availableAbilities.push(ability3);
     }
 }

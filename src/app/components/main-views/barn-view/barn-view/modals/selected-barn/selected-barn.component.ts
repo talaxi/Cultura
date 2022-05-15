@@ -53,8 +53,8 @@ export class SelectedBarnComponent implements OnInit {
   filterMedium = false;
   filterLarge = false;
 
-  constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private modalService: NgbModal
-    , private lookupService: LookupService, private componentCommunicationService: ComponentCommunicationService,
+  constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private modalService: NgbModal,
+   private lookupService: LookupService, private componentCommunicationService: ComponentCommunicationService,
     private specializationService: SpecializationService) {
   }
 
@@ -84,6 +84,13 @@ export class SelectedBarnComponent implements OnInit {
           this.existingTraining = associatedAnimal.currentTraining;
 
           this.availableTrainings = this.GetAvailableTrainingOptions(associatedAnimal);
+
+          if (this.existingTraining !== undefined && this.existingTraining !== null)
+          {
+            var selectedTraining = this.availableTrainings.find(item => this.existingTraining?.trainingName === item.trainingName);
+            if (selectedTraining !== null && selectedTraining !== undefined)
+              selectedTraining.isSelected = true;
+          }            
         }
         else {
           this.animalAssigned = false;

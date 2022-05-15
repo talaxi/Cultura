@@ -11,12 +11,14 @@ export class RacePath {
     legStartingDistance: number;
     isSpecialPath: boolean;
     didAnimalStumble = false;
+    driftAmount: number[]; //used for icy paths
 
     constructor(routeDesign?: RaceDesignEnum) {
         if (routeDesign !== undefined && routeDesign !== null) {
             this.setStumbleFields();
         }
 
+        this.driftAmount = [];
         this.isSpecialPath = false;
     }
 
@@ -63,6 +65,11 @@ export class RacePath {
             this.stumbleSeverity = StumbleSeverityEnum.High;
             this.frequencyOfStumble = 200;
             this.stumbleOpportunities = 1;
+        }
+        if (this.routeDesign === RaceDesignEnum.IcyPatchBegin || this.routeDesign === RaceDesignEnum.IcyPatchEnd) {
+            this.isSpecialPath = true;
+            this.frequencyOfStumble = 200;
+            this.stumbleOpportunities = 250;
         }
     }
 }

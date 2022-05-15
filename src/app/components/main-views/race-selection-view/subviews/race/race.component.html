@@ -1,20 +1,46 @@
 <div id="raceInfo">
-    <div class="headerInfo">
-        <div><button (click)="skipRaceAnimation()">Skip</button></div>
-        <div>Velocity: {{ velocityAtCurrentFrame }} / {{ maxSpeedAtCurrentFrame }}m/s Stamina: {{ staminaAtCurrentFrame
-            }}%</div>
-        <div><button (click)="pauseRaceAnimation()">Pause</button></div>
+    <div class="bothDisplayValues" *ngIf="displayVisualRace && displayTextUpdates">
+        <div class="headerInfo">
+            <div><button (click)="skipRaceAnimation()">Skip</button></div>
+            <div>Velocity: {{ velocityAtCurrentFrame }} / {{ maxSpeedAtCurrentFrame }}m/s </div>
+            <div>Stamina: {{ staminaAtCurrentFrame }}%</div>
+            <div><button (click)="pauseRaceAnimation()">Pause</button></div>
+        </div>
+        <div class="updates">
+            <div class="drawRaces">
+                <app-draw-race [race]="selectedRace" [skip]="skipRace.asObservable()"
+                    [pause]="pauseRace.asObservable()">
+                </app-draw-race>
+            </div>
+            <div class="raceUpdates" [innerHTML]="incrementalRaceUpdates.trim()">
+            </div>
+        </div>
     </div>
-    <div class="updates">
-        <div class="drawRace">
+    <div *ngIf="!displayVisualRace && displayTextUpdates">
+        <!--Text Only-->
+        <div class="individualItemHeaderInfo">
+            <div><button (click)="skipRaceAnimation()">Skip</button></div>
+            <div><button (click)="pauseRaceAnimation()">Pause</button></div>
+        </div>
+        <div class="raceUpdates onlyText" [innerHTML]="incrementalRaceUpdates.trim()">
+        </div>
+    </div>
+    <div class="oneDisplayValue" *ngIf="displayVisualRace && !displayTextUpdates">
+        <!--Draw Only-->
+        <div class="individualItemHeaderInfo">
+            <div><button (click)="skipRaceAnimation()">Skip</button></div>
+            <div>Velocity: {{ velocityAtCurrentFrame }} / {{ maxSpeedAtCurrentFrame }}m/s </div>
+            <div>Stamina: {{ staminaAtCurrentFrame }}%</div>
+            <div><button (click)="pauseRaceAnimation()">Pause</button></div>
+        </div>
+        <div class="drawRace onlyDraw">
             <app-draw-race [race]="selectedRace" [skip]="skipRace.asObservable()" [pause]="pauseRace.asObservable()">
             </app-draw-race>
-        </div>
-        <div class="raceUpdates">{{incrementalRaceUpdates.trim()}}
         </div>
     </div>
     <br />
     <div class="results" *ngIf="displayResults">
+        <br />
         <span class="s4Heading">Rewards</span>
         <div class="rewards">
             <table>
@@ -37,8 +63,14 @@
             <button type="button" aria-label="Close" (click)="modal.dismiss()">X</button>
         </div>
         <div class="modal-body">
-            After ranking up, you receive:
-            Test
+            <div class="centered">
+                After ranking up, you receive:
+                <br />
+                <div class="s4Heading">{{ circuitIncreaseReward[0] }}</div>
+            </div>
+            <br />
+            <br />
+            <div>{{ circuitIncreaseReward[1] }}</div>
         </div>
         <div>
             <button type="button" (click)="modal.dismiss()">Continue</button>

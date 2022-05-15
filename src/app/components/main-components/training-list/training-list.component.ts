@@ -48,6 +48,11 @@ export class TrainingListComponent implements OnInit {
   }
 
   selectTrainingOption(trainingOption: TrainingOption): void {
+    this.availableTrainingOptions.forEach(item => {
+      item.isSelected = false;
+    });
+    trainingOption.isSelected = true;
+
     this.selectedTrainingOption.emit(trainingOption);
   }
 

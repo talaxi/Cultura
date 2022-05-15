@@ -3,7 +3,7 @@
         <table>
             <tr *ngFor="let cells of trainingsRows;">
                 <td *ngFor="let c of cells;" class="cell">
-                    <div (click)="selectTrainingOption(c)">
+                    <div [ngClass]="{'activeTrainingOption': c.isSelected}" (click)="selectTrainingOption(c)">
                         <app-training-option [trainingOption]="c"> </app-training-option>
                     </div>
                 </td>

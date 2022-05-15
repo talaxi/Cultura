@@ -3,6 +3,7 @@ import { GlobalVariables } from 'src/app/models/global/global-variables.model';
 import { GlobalService } from 'src/app/services/global-service.service';
 import { plainToInstance } from 'class-transformer';
 import { ThemeService } from 'src/app/theme/theme.service';
+import { RaceDisplayInfoEnum } from 'src/app/models/race-display-info-enum.model';
 declare var LZString: any;
 
 @Component({
@@ -14,8 +15,11 @@ export class SettingsViewComponent implements OnInit {
   importExportValue: string;
   skipDrawRace: boolean;
   finishTrainingBeforeSwitching: boolean;
+  raceDisplayInfo: RaceDisplayInfoEnum;
   finishTrainingBeforeSwitchingPopoverText: string;
   skipDrawRacePopoverText: string;
+  raceDisplayInfoPopoverText: string;
+  public raceDisplayInfoEnum = RaceDisplayInfoEnum;
 
   constructor(private globalService: GlobalService, private themeService: ThemeService) { }
 
@@ -33,6 +37,13 @@ export class SettingsViewComponent implements OnInit {
     else
       this.finishTrainingBeforeSwitching = finishTrainingBeforeSwitching;
     this.finishTrainingBeforeSwitchingPopoverText = "Turn on to wait until finishing your current training before switching to the next training you select.";
+
+    var raceDisplayInfoOptions = this.globalService.globalVar.settings.get("raceDisplayInfo");
+    if (raceDisplayInfoOptions === undefined)
+      this.raceDisplayInfo = RaceDisplayInfoEnum.both;
+    else
+      this.raceDisplayInfo = raceDisplayInfoOptions;
+    this.raceDisplayInfoPopoverText = "Choose how to view races. Draw only shows the visual aspect, text only shows the textual updates, and both shows both. Both is default.";
   }
 
   public SaveGame() {
@@ -55,6 +66,11 @@ export class SettingsViewComponent implements OnInit {
   finishTrainingBeforeSwitchingToggle = () => {
     this.finishTrainingBeforeSwitching = !this.finishTrainingBeforeSwitching;
     this.globalService.globalVar.settings.set("finishTrainingBeforeSwitching", this.finishTrainingBeforeSwitching);
+  }
+
+  saveRaceDisplayInfo() {
+    console.log(this.raceDisplayInfo);
+    this.globalService.globalVar.settings.set("raceDisplayInfo", this.raceDisplayInfo);
   }
 
   changeTheme(newTheme: any) {

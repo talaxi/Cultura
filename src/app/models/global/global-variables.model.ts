@@ -2,6 +2,7 @@ import { Type } from "class-transformer";
 import { AnimalDeck } from "../animals/animal-deck.model";
 import { Animal } from "../animals/animal.model";
 import { Barn } from "../barns/barn.model";
+import { Incubator } from "../incubator.model";
 import { Race } from "../races/race.model";
 import { ResourceValue } from "../resources/resource-value.model";
 import { ShopSection } from "../shop/shop-section.model";
@@ -21,6 +22,9 @@ export class GlobalVariables {
     circuitRank: string;
     @Type(() => Race)
     localRaces: Race[];
+    monoRank: string;
+    duoRank: string;
+    rainbowRank: string;    
     @Type(() => ResourceValue)
     resources: ResourceValue[];
     @Type(() => StringNumberPair)
@@ -31,9 +35,11 @@ export class GlobalVariables {
     @Type(() => AnimalDeck)
     animalDecks: AnimalDeck[];
     @Type(() => Map)
-    settings: Map<string, boolean>;
+    settings: Map<string, any>;
     @Type(() => Map)
     unlockables: Map<string, boolean>;
+    @Type(() => Incubator)
+    incubator: Incubator;
     circuitRankUpRewardDescription: string;
     tutorialCompleted: boolean;
     currentTutorialId: number;
@@ -52,6 +58,7 @@ export class GlobalVariables {
             this.modifiers = existingVariables.modifiers;
             this.shop = existingVariables.shop;
             this.animalDecks = existingVariables.animalDecks;
+            this.incubator = existingVariables.incubator;
             this.nationalRaceCountdown = 0;
         }
     }

@@ -36,6 +36,7 @@ export class DrawRaceComponent implements OnInit {
   currentLeg: RaceLeg;
   frameModifier = 60;
   mountainEndingY = 0;
+  icyPatchBackgroundLines: (string | number[])[][] = [];
 
   lastPathEndingX = 0;
   lastPathEndingY = 0;
@@ -57,7 +58,7 @@ export class DrawRaceComponent implements OnInit {
   mountainClimbPercent = .5; //what percentage of mountain is going up vs going down
 
 
-  constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private utilityService: UtilityService, 
+  constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private utilityService: UtilityService,
     private lookupService: LookupService) { }
 
   ngOnInit(): void {
@@ -123,6 +124,8 @@ export class DrawRaceComponent implements OnInit {
     if (this.race === undefined || this.race.raceLegs == undefined)
       return;
 
+    this.icyPatchBackgroundLines = [];
+
     context.globalCompositeOperation = "source-over";
 
     this.lengthCompleted = 0;
@@ -165,6 +168,18 @@ export class DrawRaceComponent implements OnInit {
               this.drawDiveWaterOverview(context, path, 1, 1, waterGoingUp);
 
             waterGoingUp = !waterGoingUp;
+          }
+          if (leg.courseType === RaceCourseTypeEnum.Tundra) {
+            if (path.routeDesign === RaceDesignEnum.Regular)
+              this.drawRegularTundraOverview(context, path, 1, 1);
+            if (path.routeDesign === RaceDesignEnum.IcyPatchBegin)
+              this.drawIcyPatchBeginTundraOverview(context, path, 1, 1);
+            if (path.routeDesign === RaceDesignEnum.IcyPatchEnd)
+              this.drawIcyPatchEndTundraOverview(context, path, 1, 1);
+          }
+          if (leg.courseType === RaceCourseTypeEnum.Volcanic) {
+            if (path.routeDesign === RaceDesignEnum.Regular)
+              this.drawRegularFlatlandOverview(context, path, 1, 1);
           }
 
           this.lengthCompleted += path.length;
@@ -209,11 +224,23 @@ export class DrawRaceComponent implements OnInit {
         }
       });
     }
+
+    console.log(this.icyPatchBackgroundLines);
+    if (this.icyPatchBackgroundLines.length > 0) {
+      this.icyPatchBackgroundLines.forEach(item => {
+        if (item[0] === "IcyPatchBegin")
+          this.drawIcyPatchBeginBackgroundTundraOverview(context, item);
+        else if (item[0] === "IcyPatchEnd")
+          this.drawIcyPatchEndBackgroundTundraOverview(context, item);
+      });
+    }
   }
 
   displayRace(context: any, currentTime: number): void {
     if (this.race === undefined || this.race.raceLegs == undefined)
       return;
+
+    this.icyPatchBackgroundLines = [];
 
     //track color
     context.strokeStyle = "gray";
@@ -365,6 +392,19 @@ export class DrawRaceComponent implements OnInit {
 
             waterGoingUp = !waterGoingUp;
           }
+          if (leg.courseType === RaceCourseTypeEnum.Tundra) {
+            context.lineCap = "round";
+            if (path.routeDesign === RaceDesignEnum.Regular)
+              this.drawRegularTundraOverview(context, path, xRaceModeModifier, yRaceModeModifier, xDistanceOffset, yDistanceOffset);
+            if (path.routeDesign === RaceDesignEnum.IcyPatchBegin)
+              this.drawIcyPatchBeginTundraOverview(context, path, xRaceModeModifier, yRaceModeModifier, xDistanceOffset, yDistanceOffset);
+            if (path.routeDesign === RaceDesignEnum.IcyPatchEnd)
+              this.drawIcyPatchEndTundraOverview(context, path, xRaceModeModifier, yRaceModeModifier, xDistanceOffset, yDistanceOffset);
+          }
+          if (leg.courseType === RaceCourseTypeEnum.Volcanic) {
+            context.lineCap = "round";
+
+          }
 
           this.lengthCompleted += path.length;
         });
@@ -405,6 +445,8 @@ export class DrawRaceComponent implements OnInit {
       racerColor = this.utilityService.shadeColor(racerColor, -90);
     }
     context.fillStyle = racerColor;
+
+    //if (this.currentLeg.courseType === RaceCourseTypeEnum.Tundra)
     context.fillRect(this.canvasWidth / 2 - 5, 0, 5, this.canvasHeight);
 
     //average speed
@@ -426,6 +468,15 @@ export class DrawRaceComponent implements OnInit {
       this.drawRacer(context, moneyMarkDistanceScaled, "gold");
     }
     this.drawBreakpoints(context, xRaceModeModifier);
+
+    if (this.icyPatchBackgroundLines.length > 0) {
+      this.icyPatchBackgroundLines.forEach(item => {
+        if (item[0] === "IcyPatchBegin")
+          this.drawIcyPatchBeginBackgroundTundraOverview(context, item);
+        else if (item[0] === "IcyPatchEnd")
+          this.drawIcyPatchEndBackgroundTundraOverview(context, item);
+      });
+    }
   }
 
   getAnimalDistanceColor(currentDistanceTraveled: number) {
@@ -440,6 +491,10 @@ export class DrawRaceComponent implements OnInit {
           color = "#4d6b48";
         if (leg.courseType === RaceCourseTypeEnum.Water)
           color = "#16148f";
+        if (leg.courseType === RaceCourseTypeEnum.Tundra)
+          color = "#28809c";
+        if (leg.courseType === RaceCourseTypeEnum.Volcanic)
+          color = "8f1a1a";
       }
 
       totalDistance += leg.distance;
@@ -452,11 +507,15 @@ export class DrawRaceComponent implements OnInit {
     var color = "";
 
     if (courseType === RaceCourseTypeEnum.Flatland)
-      color = "#7d3f00";//"#8f1c14";
+      color = "#7d3f00";
     if (courseType === RaceCourseTypeEnum.Mountain)
       color = "#4d6b48";
     if (courseType === RaceCourseTypeEnum.Water)
       color = "#16148f";
+    if (courseType === RaceCourseTypeEnum.Tundra)
+      color = "#28809c";
+    if (courseType === RaceCourseTypeEnum.Volcanic)
+      color = "#8f1a1a";
 
     return color;
   }
@@ -473,6 +532,10 @@ export class DrawRaceComponent implements OnInit {
           color = "#a1db97";
         if (leg.courseType === RaceCourseTypeEnum.Water)
           color = "#0000ff";
+        if (leg.courseType === RaceCourseTypeEnum.Tundra)
+          color = "#1ca1c9";
+        if (leg.courseType === RaceCourseTypeEnum.Volcanic)
+          color = "#d92525";
       }
 
       totalDistance += leg.distance;
@@ -564,7 +627,6 @@ export class DrawRaceComponent implements OnInit {
     context.beginPath();
     context.moveTo(this.lastPathEndingX - xDistanceOffset, this.lastPathEndingY + yDistanceOffset);
     context.lineTo(this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY + yDistanceOffset);
-    //context.fillText('End', this.lastPathEndingX + horizontalLength, this.canvasHeight / 2);    
     context.stroke();
 
     this.lastPathEndingX = this.lastPathEndingX + horizontalLength;
@@ -977,6 +1039,164 @@ export class DrawRaceComponent implements OnInit {
     context.stroke();
 
     this.lastPathEndingX = this.lastPathEndingX + horizontalLength;
+  }
+
+  drawRegularTundraOverview(context: any, path: RacePath, xRaceModeModifier: number, yRaceModeModifier: number, xDistanceOffset?: number, yDistanceOffset?: number): void {
+    var horizontalLength = (path.length / this.race.length) * this.canvasWidth * xRaceModeModifier;
+
+    if (xDistanceOffset === undefined || xDistanceOffset === null)
+      xDistanceOffset = 0;
+
+    if (yDistanceOffset === undefined || yDistanceOffset === null)
+      yDistanceOffset = 0;
+
+    context.beginPath();
+    context.moveTo(this.lastPathEndingX - xDistanceOffset, this.lastPathEndingY + yDistanceOffset);
+    context.lineTo(this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY + yDistanceOffset);
+    //context.fillText('End', this.lastPathEndingX + horizontalLength, this.canvasHeight / 2);    
+    context.stroke();
+
+    this.lastPathEndingX = this.lastPathEndingX + horizontalLength;
+  }
+
+  drawIcyPatchBeginTundraOverview(context: any, path: RacePath, xRaceModeModifier: number, yRaceModeModifier: number, xDistanceOffset?: number, yDistanceOffset?: number): void {
+    var horizontalLength = (path.length / this.race.length) * this.canvasWidth * xRaceModeModifier;
+
+    if (xDistanceOffset === undefined || xDistanceOffset === null)
+      xDistanceOffset = 0;
+
+    if (yDistanceOffset === undefined || yDistanceOffset === null)
+      yDistanceOffset = 0;
+
+    var xRegularOffset = .05 * horizontalLength;
+    var verticalDistance = horizontalLength / 3;    
+
+    if (path.driftAmount.length > 0) {
+      var driftXLength = horizontalLength / path.driftAmount.length;
+      //add Y starting point 
+      path.driftAmount.unshift(0);
+
+      for (var i=0; i<path.driftAmount.length - 1; i++) {            
+        var yStartingSwerveAmount = verticalDistance * path.driftAmount[i];
+        var yNextSwerveAmount = verticalDistance * path.driftAmount[i+1];
+
+        context.beginPath();
+        context.moveTo(this.lastPathEndingX + (driftXLength * i) - xDistanceOffset!, this.lastPathEndingY + yStartingSwerveAmount + yDistanceOffset!);
+        context.lineTo(this.lastPathEndingX + (driftXLength * (i+1)) - xDistanceOffset!, this.lastPathEndingY + yNextSwerveAmount + yDistanceOffset!);
+        context.stroke();
+      }
+    }
+
+    var existingContentDestinationType = context.globalCompositeOperation;
+    context.globalCompositeOperation = "destination-over";
+
+    var lineSet = [];
+    lineSet.push("IcyPatchBegin");
+    lineSet.push([this.lastPathEndingX - xDistanceOffset, this.lastPathEndingY + yDistanceOffset]);
+    lineSet.push([this.lastPathEndingX + xRegularOffset - xDistanceOffset, this.lastPathEndingY + verticalDistance + yDistanceOffset]);
+    lineSet.push([this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY + verticalDistance + yDistanceOffset]);
+    lineSet.push([this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY - verticalDistance + yDistanceOffset]);
+    lineSet.push([this.lastPathEndingX + xRegularOffset - xDistanceOffset, this.lastPathEndingY - verticalDistance + yDistanceOffset]);
+    this.icyPatchBackgroundLines.push(lineSet);
+
+    /*context.beginPath();
+    context.moveTo(this.lastPathEndingX - xDistanceOffset, this.lastPathEndingY + yDistanceOffset);
+    context.lineTo(this.lastPathEndingX + xRegularOffset - xDistanceOffset, this.lastPathEndingY + verticalDistance + yDistanceOffset);
+    context.lineTo(this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY + verticalDistance + yDistanceOffset);
+    context.lineTo(this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY - verticalDistance + yDistanceOffset);
+    context.lineTo(this.lastPathEndingX + xRegularOffset - xDistanceOffset, this.lastPathEndingY - verticalDistance + yDistanceOffset);
+    */
+    context.fillStyle = "gray";
+    context.fill();
+
+    context.globalCompositeOperation = existingContentDestinationType;
+    this.lastPathEndingX = this.lastPathEndingX + horizontalLength;
+  }
+
+  drawIcyPatchEndTundraOverview(context: any, path: RacePath, xRaceModeModifier: number, yRaceModeModifier: number, xDistanceOffset?: number, yDistanceOffset?: number): void {
+    var horizontalLength = (path.length / this.race.length) * this.canvasWidth * xRaceModeModifier;
+
+    if (xDistanceOffset === undefined || xDistanceOffset === null)
+      xDistanceOffset = 0;
+
+    if (yDistanceOffset === undefined || yDistanceOffset === null)
+      yDistanceOffset = 0;
+
+    var xRegularOffset = .05 * horizontalLength;
+    var verticalDistance = horizontalLength / 3;
+
+    if (path.driftAmount.length > 0) {
+      var driftXLength = horizontalLength / path.driftAmount.length;
+      //add Y starting point 
+      path.driftAmount.push(0);
+
+      for (var i=0; i<path.driftAmount.length - 1; i++) {            
+        var yStartingSwerveAmount = verticalDistance * path.driftAmount[i];
+        var yNextSwerveAmount = verticalDistance * path.driftAmount[i+1];
+
+        context.beginPath();
+        context.moveTo(this.lastPathEndingX + (driftXLength * i) - xDistanceOffset!, this.lastPathEndingY + yStartingSwerveAmount + yDistanceOffset!);
+        context.lineTo(this.lastPathEndingX + (driftXLength * (i+1)) - xDistanceOffset!, this.lastPathEndingY + yNextSwerveAmount + yDistanceOffset!);
+        context.stroke();
+      }
+    }
+    var existingContentDestinationType = context.globalCompositeOperation;
+    context.globalCompositeOperation = "destination-over";
+
+    var lineSet = [];
+    lineSet.push("IcyPatchEnd");
+    lineSet.push([this.lastPathEndingX - xDistanceOffset, this.lastPathEndingY + verticalDistance + yDistanceOffset]);
+    lineSet.push([this.lastPathEndingX + (horizontalLength - xRegularOffset) - xDistanceOffset, this.lastPathEndingY + verticalDistance + yDistanceOffset]);
+    lineSet.push([this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY + yDistanceOffset]);
+    lineSet.push([this.lastPathEndingX + (horizontalLength - xRegularOffset) - xDistanceOffset, this.lastPathEndingY - verticalDistance + yDistanceOffset]),
+      lineSet.push([this.lastPathEndingX - xDistanceOffset, this.lastPathEndingY - verticalDistance + yDistanceOffset]);
+    this.icyPatchBackgroundLines.push(lineSet);
+
+    /*context.beginPath();
+    context.moveTo(this.lastPathEndingX - xDistanceOffset, this.lastPathEndingY + verticalDistance + yDistanceOffset);
+    context.lineTo(this.lastPathEndingX + (horizontalLength - xRegularOffset) - xDistanceOffset, this.lastPathEndingY + verticalDistance + yDistanceOffset);
+    context.lineTo(this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY + yDistanceOffset);
+    context.lineTo(this.lastPathEndingX + (horizontalLength - xRegularOffset) - xDistanceOffset, this.lastPathEndingY - verticalDistance + yDistanceOffset);    
+    context.lineTo(this.lastPathEndingX - xDistanceOffset, this.lastPathEndingY - verticalDistance + yDistanceOffset);
+    context.fillStyle = "gray";
+    context.fill();*/
+
+    context.globalCompositeOperation = existingContentDestinationType;
+    this.lastPathEndingX = this.lastPathEndingX + horizontalLength;
+  }
+
+  drawIcyPatchBeginBackgroundTundraOverview(context: any, coordinates: any): void {
+    var existingContentDestinationType = context.globalCompositeOperation;
+    context.globalCompositeOperation = "destination-over";
+
+    context.beginPath();
+    context.moveTo(coordinates[1][0], coordinates[1][1]);
+    context.lineTo(coordinates[2][0], coordinates[2][1]);
+    context.lineTo(coordinates[3][0], coordinates[3][1]);
+    context.lineTo(coordinates[4][0], coordinates[4][1]);
+    context.lineTo(coordinates[5][0], coordinates[5][1]);
+
+    context.fillStyle = "gray";
+    context.fill();
+
+    context.globalCompositeOperation = existingContentDestinationType;
+  }
+
+  drawIcyPatchEndBackgroundTundraOverview(context: any, coordinates: any): void {
+    var existingContentDestinationType = context.globalCompositeOperation;
+    context.globalCompositeOperation = "destination-over";
+
+    context.beginPath();
+    context.moveTo(coordinates[1][0], coordinates[1][1]);
+    context.lineTo(coordinates[2][0], coordinates[2][1]);
+    context.lineTo(coordinates[3][0], coordinates[3][1]);
+    context.lineTo(coordinates[4][0], coordinates[4][1]);
+    context.lineTo(coordinates[5][0], coordinates[5][1]);
+
+    context.fillStyle = "gray";
+    context.fill();
+
+    context.globalCompositeOperation = existingContentDestinationType;
   }
 
   ngOnDestroy() {

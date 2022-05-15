@@ -6,5 +6,10 @@ export enum AnimalTypeEnum {
     Goat,
     Gecko,
     Dolphin,
-    Shark
+    Shark,
+    Octopus,
+    Penguin,
+    Caribou,
+    Salamander,
+    Fox
   }

@@ -79,8 +79,11 @@
             </div>
         </div>
         <br />
-        <app-training-list [availableTrainingOptions]="availableTrainings"
+        <app-training-list *ngIf="associatedAnimal.canTrain" [availableTrainingOptions]="availableTrainings"
             (selectedTrainingOption)="selectNewTraining($event)"></app-training-list>
+        <div *ngIf="!associatedAnimal.canTrain">
+            This animal is currently in incubation and cannot train. Check back after incubation finishes.
+        </div>
     </div>
 </div>
 

@@ -24,6 +24,11 @@ export class RaceVariables {
     remainingRelayMeters: number;
     relayAffectedStatRatios: AnimalStats; 
 
+    slipCountBeforeNewDirection: number;
+    icyCurrentAngle: number;
+    icyCurrentDirectionUp: boolean;
+    icyCurrentYAmount: number; //when it reaches 100 or -100, hits wall
+
     //equipment effects
     headbandStumblePreventionCount: number;
 
@@ -31,7 +36,7 @@ export class RaceVariables {
         this.metersSinceLostFocus = 0;
         
         this.recoveringStamina = false;
-        this.defaultRecoveringStaminaLength = 3;
+        this.defaultRecoveringStaminaLength = 150;
         this.currentRecoveringStaminaLength = this.defaultRecoveringStaminaLength;
 
         this.lostFocus = false;
@@ -41,6 +46,11 @@ export class RaceVariables {
         this.stumbled = false;
         this.defaultStumbledLength = 10;
         this.currentStumbledLength = this.defaultStumbledLength;
+
+        this.icyCurrentAngle = 90;
+        this.icyCurrentYAmount = 1;
+        this.slipCountBeforeNewDirection = 0;
+        this.icyCurrentDirectionUp = true;
 
         this.headbandStumblePreventionCount = 0;
     }

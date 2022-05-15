@@ -104,6 +104,18 @@
   --s5-size: 1.15rem;
   --s5-weight: 100;
   --s5-spacing: 0.1px;
+
+  --flatlandColor: #d16900;
+  --mountainColor: #279113;
+  --waterColor: #0000ff;
+  --tundraColor: #1ca1c9;
+  --volcanicColor: #d92525;
+
+  --flatlandSubcolor: #7d3f00;
+  --mountainSubcolor: #1b630d;
+  --waterSubcolor: #16148f;
+  --tundraSubcolor: #28809c;
+  --volanicSubcolor: #8f1a1a;
 }
 
 body {
@@ -119,106 +131,97 @@ body {
   cursor: default;
 }
 
-h1
-{
-    font-size: var(--h1-size);
+h1 {
+  font-size: var(--h1-size);
 }
 
-.subHeading
-{
+.subHeading {
   font-size: var(--c1-size);
-  font-weight: var(--c1-weight);  
+  font-weight: var(--c1-weight);
 }
 
-.s1Heading
-{
+.s1Heading {
   font-size: var(--s1-size);
-  font-weight: var(--s1-weight);  
+  font-weight: var(--s1-weight);
 }
 
-.s2Heading
-{
+.s2Heading {
   font-size: var(--s2-size);
-  font-weight: var(--s2-weight);  
+  font-weight: var(--s2-weight);
 }
 
-.s3Heading
-{
+.s3Heading {
   font-size: var(--s3-size);
-  font-weight: var(--s3-weight);  
+  font-weight: var(--s3-weight);
 }
 
-.s4Heading
-{
+.s4Heading {
   font-size: var(--s4-size);
-  font-weight: var(--s4-weight);  
+  font-weight: var(--s4-weight);
 }
 
-.s5Heading
-{
+.s5Heading {
   font-size: var(--s5-size);
-  font-weight: var(--s5-weight);  
+  font-weight: var(--s5-weight);
 }
 
 .keyword {
   font-weight: 550;
 }
 
-.coloredText
-{
+.coloredText {
   font-weight: 550;
+}
+
+.defaultTextColor {
+  color: var(--foreground-default);
+}
+
+.selectedTextColor {
+  color: var(--foreground-secondary);
 }
 
 .progressBarColor {
   color: #28a745;
 }
 
-.flatlandColor
-{  
-  color: #d16900;/*#eb3023;   */
+.flatlandColor {
+  color: var(--flatlandColor);
+  /*#eb3023;   */
 }
 
-.mountainColor
-{
-  color: #a1db97;
+.mountainColor {
+  color: var(--mountainColor);
 }
 
-.waterColor
-{
-  color: #0000ff;
+.waterColor {
+  color: var(--waterColor);
 }
 
-.tundraColor
-{
-  color: #1ca1c9;
+.tundraColor {
+  color: var(--tundraColor);
 }
 
-.volcanicColor
-{
-  color: #d92525;
+.volcanicColor {
+  color: var(--volcanicColor);
 }
 
-.flatlandSubcolor
-{  
-  color: #7d3f00;/*#8f1c14;   */
+.flatlandSubcolor {
+  color: var(--flatlandSubcolor);  
 }
 
-.mountainSubcolor
-{
-  color: #4d6b48;
+.mountainSubcolor {
+  color: var(--mountainSubcolor);
 }
 
-.waterSubcolor
-{
-  color: #16148f;
+.waterSubcolor {
+  color: var(--waterSubcolor);
 }
 
-.tundraSubcolor
-{
-  color: #28809c;
+.tundraSubcolor {
+  color: var(--tundraSubcolor);
 }
 
-.volanicSubcolor
-{
-  color: #8f1a1a;
+.volanicSubcolor {
+  color: var(--volcanicSubcolor);
 }

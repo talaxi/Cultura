@@ -15,9 +15,22 @@
   justify-content: space-between;
 }
 
+.individualItemHeaderInfo {
+  display: flex;
+  justify-content: space-between;
+}
+
+.bothDisplayValues {
+  height: 76.5%;
+}
+
+.oneDisplayValue {
+  height: 76.5%;
+}
+
 .updates {
   white-space: pre;
-  height: 75%;
+  height: 95%;
   width: 100%;
   display: grid;
   grid-template-columns: 70% 29%;
@@ -35,6 +48,15 @@
 
 .drawRaces {
   grid-area: drawRace;
+}
+
+.onlyText {
+  text-align: center;
+}
+
+.onlyDraw {
+  text-align: center;
+  height: 100%;
 }
 
 .rightAlign {
@@ -61,4 +83,8 @@ td {
   background-color: var(--background-secondary);
   border-color: var(--background-tertiary);
   color: var(--foreground-default);
+}
+
+.centered {
+  text-align: center;
 }

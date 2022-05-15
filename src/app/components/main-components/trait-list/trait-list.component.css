@@ -1,4 +1,4 @@
-.trainingsView
+.traitsView
 {
     height: 100%;
 
@@ -9,7 +9,7 @@
     overflow: auto;
 }
 
-.activeTrainingOption {
+.activeTrait {
     font-weight: bold;
     color: var(--foreground-secondary);  
 }

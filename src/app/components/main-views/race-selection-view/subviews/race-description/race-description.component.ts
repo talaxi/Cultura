@@ -30,9 +30,10 @@ export class RaceDescriptionComponent implements OnInit {
         this.missingRacers.push(leg.courseType);
       }
       else {
-        if (!selectedDeck?.selectedAnimals.some(item => item.raceCourseType === leg.courseType))
+        if (!selectedDeck?.selectedAnimals.some(item => item.raceCourseType === leg.courseType)) {
           this.cannotRace = true;
-        this.missingRacers.push(leg.courseType);
+          this.missingRacers.push(leg.courseType);
+        }
       }
     });
 
@@ -97,9 +98,9 @@ export class RaceDescriptionComponent implements OnInit {
       if (legCount < this.race.raceLegs.length)
         popoverText += "\n";
 
-      legCount+=1;
+      legCount += 1;
     });
-    
+
 
     return popoverText;
   }

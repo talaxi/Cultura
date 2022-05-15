@@ -44,7 +44,7 @@ export class AppComponent {
 
     if (devMode) {
       this.globalService.globalVar.tutorialCompleted = true;
-      this.globalService.devModeInitialize(8);
+      this.globalService.devModeInitialize(52);
     }
 
     this.gameLoopService.Update();
@@ -59,8 +59,8 @@ export class AppComponent {
         frequency = this.racingSaveFrequency;
 
       if (this.saveTime >= frequency) {
-        this.saveTime = 0;        
-        this.saveGame();        
+        this.saveTime = 0;
+        this.saveGame();
       }
     });
   }
@@ -88,26 +88,41 @@ export class AppComponent {
               breedingGroundsSpecializationLevel = associatedBarn.barnUpgrades.specializationLevel;
 
             //split stat gain for Research Center
-            if (associatedBarn !== undefined && associatedBarn !== null && associatedBarn.barnUpgrades.specialization === BarnSpecializationEnum.ResearchCenter)
-            {
+            if (associatedBarn !== undefined && associatedBarn !== null && associatedBarn.barnUpgrades.specialization === BarnSpecializationEnum.ResearchCenter) {
               this.specializationService.handleResearchCenterStatIncrease(animal, associatedBarn);
             }
             else
               animal.increaseStatsFromCurrentTraining();
             this.globalService.calculateAnimalRacingStats(animal);
             var breedGaugeIncrease = this.lookupService.getTrainingBreedGaugeIncrease(breedingGroundsSpecializationLevel);
-            this.globalService.IncreaseAnimalBreedGauge(animal, breedGaugeIncrease);            
+            this.globalService.IncreaseAnimalBreedGauge(animal, breedGaugeIncrease);
 
             animal.currentTraining.timeTrained -= animal.currentTraining.timeToComplete;
 
-            if (animal.queuedTraining !== undefined && animal.queuedTraining !== null)
-            {
+            if (animal.queuedTraining !== undefined && animal.queuedTraining !== null) {
               animal.currentTraining = animal.queuedTraining;
               animal.queuedTraining = null;
             }
           }
-        }
+        }        
       });
+    }
+
+    var incubator = this.globalService.globalVar.incubator;
+    if (incubator !== undefined && incubator !== null &&
+      incubator.assignedAnimal !== undefined && incubator.assignedAnimal !== null &&
+      incubator.assignedTrait !== undefined && incubator.assignedTrait !== null) {
+      incubator.timeTrained += deltaTime;
+
+      if (incubator.timeTrained >= incubator.timeToComplete) {
+        incubator.assignedAnimal.trait = incubator.assignedTrait;
+        this.globalService.calculateAnimalRacingStats(incubator.assignedAnimal);
+        incubator.assignedAnimal.canTrain = true;
+
+        incubator.timeTrained = 0;
+        incubator.assignedAnimal = null;
+        incubator.assignedTrait = null;        
+      }
     }
   }
 
@@ -126,7 +141,7 @@ export class AppComponent {
       const data = this.globalService.globalVar;
       var globalData = JSON.stringify(data);
       var compressedData = LZString.compressToBase64(globalData);
-      localStorage.setItem("gameData", compressedData);      
+      localStorage.setItem("gameData", compressedData);
     }
   }
 }

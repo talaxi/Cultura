@@ -11,3 +11,11 @@
 {
     width: 100%;
 }
+
+.spaced {
+    margin-left: .5em;
+  }
+
+  .rightSpaced {
+    margin-right: .5em;
+  }
