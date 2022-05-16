@@ -68,7 +68,7 @@ export class RacePath {
         }
         if (this.routeDesign === RaceDesignEnum.IcyPatchBegin || this.routeDesign === RaceDesignEnum.IcyPatchEnd) {
             this.isSpecialPath = true;
-            this.frequencyOfStumble = 200;
+            this.frequencyOfStumble = 50;
             this.stumbleOpportunities = 250;
         }
     }

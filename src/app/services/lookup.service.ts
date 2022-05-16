@@ -267,18 +267,14 @@ export class LookupService {
         breedModifier = breedLevelStatModifier.value;
 
         breedModifier = 1 + (breedModifier * (animal.breedLevel - 1));
-      console.log("Breed Mod: " + breedModifier);
 
       var modifierPair = this.globalService.globalVar.modifiers.find(item => item.text === AnimalTypeEnum[type].toLowerCase() + "DefaultAdaptabilityModifier");
       if (modifierPair !== null && modifierPair !== undefined)
         defaultModifier = modifierPair.value;
 
       var traitAdaptabilityModifier = this.globalService.getTraitModifier(animal, AnimalStatEnum.adaptability);
-
-      console.log("Default Mod: " + defaultModifier);
-      console.log("Trait Mod: " + traitAdaptabilityModifier);      
+   
       totalModifier = defaultModifier * breedModifier * traitAdaptabilityModifier;
-      console.log("Total Mod: " + totalModifier);
     }
 
     return totalModifier;

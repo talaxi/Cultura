@@ -225,7 +225,6 @@ export class DrawRaceComponent implements OnInit {
       });
     }
 
-    console.log(this.icyPatchBackgroundLines);
     if (this.icyPatchBackgroundLines.length > 0) {
       this.icyPatchBackgroundLines.forEach(item => {
         if (item[0] === "IcyPatchBegin")
@@ -1068,17 +1067,26 @@ export class DrawRaceComponent implements OnInit {
     if (yDistanceOffset === undefined || yDistanceOffset === null)
       yDistanceOffset = 0;
 
-    var xRegularOffset = .05 * horizontalLength;
-    var verticalDistance = horizontalLength / 3;    
+    var xRegularOffset = .1 * horizontalLength;
+    var verticalDistance = horizontalLength / 4; 
+    var verticalSlideDistance = verticalDistance * .95;   
 
+    //console.log("Horizontal Length: " + horizontalLength);
+    //console.log ("Drift Amount Length: " + path.driftAmount.length);
     if (path.driftAmount.length > 0) {
-      var driftXLength = horizontalLength / path.driftAmount.length;
-      //add Y starting point 
-      path.driftAmount.unshift(0);
+      var driftXLength = horizontalLength / path.driftAmount.length;      
+      //Gotta figure this stuff out a bit.. needs to hit the wall and then reangle and keep going. Or in this case ride the wall
+      //Seems like doing it all as one line is working but trying to do 250 lines is not. Try breaking it into say 5 pieces and see what happens
+      
+      for (var i=0; i<path.driftAmount.length - 1; i++) {   
+        //console.log("Drift Amount: " + path.driftAmount[i]);         
+        var yStartingSwerveAmount = verticalSlideDistance * (path.driftAmount[i] / 100);
+        var yNextSwerveAmount = verticalSlideDistance * (path.driftAmount[i+1] / 100);
+        //console.log("i: " + i);
+        //console.log("Starting Swerve Amount: " + yStartingSwerveAmount);
+        //console.log("Next Swerve Amount: " + yNextSwerveAmount);
 
-      for (var i=0; i<path.driftAmount.length - 1; i++) {            
-        var yStartingSwerveAmount = verticalDistance * path.driftAmount[i];
-        var yNextSwerveAmount = verticalDistance * path.driftAmount[i+1];
+        //console.log("Y Point" + (this.lastPathEndingY + yNextSwerveAmount + yDistanceOffset!));
 
         context.beginPath();
         context.moveTo(this.lastPathEndingX + (driftXLength * i) - xDistanceOffset!, this.lastPathEndingY + yStartingSwerveAmount + yDistanceOffset!);
@@ -1122,17 +1130,17 @@ export class DrawRaceComponent implements OnInit {
     if (yDistanceOffset === undefined || yDistanceOffset === null)
       yDistanceOffset = 0;
 
-    var xRegularOffset = .05 * horizontalLength;
-    var verticalDistance = horizontalLength / 3;
+    var xRegularOffset = .1 * horizontalLength;
+    var verticalDistance = horizontalLength / 4;
+    var verticalSlideDistance = verticalDistance * .95;   
 
     if (path.driftAmount.length > 0) {
       var driftXLength = horizontalLength / path.driftAmount.length;
       //add Y starting point 
-      path.driftAmount.push(0);
 
       for (var i=0; i<path.driftAmount.length - 1; i++) {            
-        var yStartingSwerveAmount = verticalDistance * path.driftAmount[i];
-        var yNextSwerveAmount = verticalDistance * path.driftAmount[i+1];
+        var yStartingSwerveAmount = verticalSlideDistance * (path.driftAmount[i] / 100);
+        var yNextSwerveAmount = verticalSlideDistance * (path.driftAmount[i+1] / 100);
 
         context.beginPath();
         context.moveTo(this.lastPathEndingX + (driftXLength * i) - xDistanceOffset!, this.lastPathEndingY + yStartingSwerveAmount + yDistanceOffset!);

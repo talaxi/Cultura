@@ -49,7 +49,7 @@ export class RaceVariables {
 
         this.icyCurrentAngle = 90;
         this.icyCurrentYAmount = 1;
-        this.slipCountBeforeNewDirection = 0;
+        this.slipCountBeforeNewDirection = 0;        
         this.icyCurrentDirectionUp = true;
 
         this.headbandStumblePreventionCount = 0;

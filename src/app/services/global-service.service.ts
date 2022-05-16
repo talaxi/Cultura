@@ -1928,5 +1928,13 @@ export class GlobalService {
       dolphin.breedLevel = 300;
       this.calculateAnimalRacingStats(dolphin);
     }
+
+    var penguin = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Penguin);
+    if (penguin !== undefined) {
+      penguin.currentStats.topSpeed = 30;      
+      penguin.currentStats.focus = 10;
+      this.calculateAnimalRacingStats(penguin);
+    }
+
   }
 }

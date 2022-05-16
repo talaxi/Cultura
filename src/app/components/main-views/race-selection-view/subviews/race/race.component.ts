@@ -54,6 +54,7 @@ export class RaceComponent implements OnInit {
   displayVisualRace = true;
   displayTextUpdates = true;
   circuitIncreaseReward: any;
+  icyCatchUpYAmount = 0;
 
   constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private utilityService: UtilityService,
     private lookupService: LookupService, private initializeService: InitializeService, private modalService: NgbModal,
@@ -111,7 +112,7 @@ export class RaceComponent implements OnInit {
     race.raceUI.distanceCoveredByFrame = [];
     race.raceUI.velocityByFrame = [];
     race.raceUI.timeToCompleteByFrame = [];
-    race.raceUI.maxSpeedByFrame = [];    
+    race.raceUI.maxSpeedByFrame = [];
     race.raceUI.staminaPercentByFrame = [];
     race.raceUI.yAdjustmentByFrame = [];
 
@@ -140,6 +141,7 @@ export class RaceComponent implements OnInit {
       var velocity = 0;
       var distanceToGo = item.distance;
       var currentPath = new RacePath();
+      var lastPath = new RacePath();
       var currentPathCount = 0;
       var permanentMaxSpeedIncreaseMultiplier = 1; //Cheetah Ability - On The Hunt
       var permanentAdaptabilityIncreaseMultiplierObj = { permanentAdaptabilityIncreaseMultiplier: 1 }; //Goat Ability - Sure-footed, created as an object so it can be passed as reference
@@ -169,6 +171,9 @@ export class RaceComponent implements OnInit {
           path.legStartingDistance = totalDistanceInLeg;
           totalDistanceInLeg += path.length;
           currentPathCount += 1;
+
+          if (!pathFound)
+            lastPath = path;
         });
 
         var modifiedAdaptabilityMs = this.getModifiedAdaptability(racingAnimal, permanentAdaptabilityIncreaseMultiplierObj);
@@ -382,14 +387,12 @@ export class RaceComponent implements OnInit {
             racingAnimal.ability.abilityInUse = false;
           }
         }
-        
-        this.handleTundraDrift(racingAnimal, currentPath, modifiedAdaptabilityMs, item.terrain, currentDistanceInPath, distanceCoveredPerFrame);
-        //race.raceUI.yAdjustmentByFrame.push(racingAnimal.raceVariables.icyCurrentYAmount);
 
-        if (racingAnimal.raceVariables.icyCurrentAngle !== 90)
-        {
-          var anglePercentOfVelocity = Math.abs(90 - racingAnimal.raceVariables.icyCurrentAngle) / 90;
-          distanceCoveredPerFrame *= anglePercentOfVelocity;
+        this.handleTundraDrift(racingAnimal, currentPath, lastPath, modifiedAdaptabilityMs, item.terrain, currentDistanceInPath, distanceCoveredPerFrame);
+
+        if (racingAnimal.raceVariables.icyCurrentAngle !== 90) {
+          var angledPercentOfVelocity = Math.abs(90 - racingAnimal.raceVariables.icyCurrentAngle) / 90;
+          distanceCoveredPerFrame *= 1 - angledPercentOfVelocity;
         }
 
         distanceCovered += distanceCoveredPerFrame > distanceToGo ? distanceToGo : distanceCoveredPerFrame;
@@ -399,7 +402,7 @@ export class RaceComponent implements OnInit {
         race.raceUI.timeToCompleteByFrame.push(this.timeToComplete);
         race.raceUI.maxSpeedByFrame.push(modifiedMaxSpeed);
         race.raceUI.staminaPercentByFrame.push(racingAnimal.currentStats.stamina / animalMaxStamina);
-        race.raceUI.racerEffectByFrame.push(currentRacerEffect);        
+        race.raceUI.racerEffectByFrame.push(currentRacerEffect);
 
         if (!racingAnimal.raceVariables.recoveringStamina)
           this.handleStamina(racingAnimal, raceResult, distanceCoveredPerFrame, framesPassed, item.terrain);
@@ -867,6 +870,9 @@ export class RaceComponent implements OnInit {
       return false;
     }
 
+    if (currentPath.routeDesign === RaceDesignEnum.IcyPatchBegin || currentPath.routeDesign === RaceDesignEnum.IcyPatchEnd)
+      return false;
+
     if (racingAnimal.getEquippedItemName() === this.globalService.getEquipmentName(EquipmentEnum.headband)) {
       var headbandMaxStumblePrevention = 3;
       var headbandModifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "headbandEquipmentModifier");
@@ -1023,17 +1029,65 @@ export class RaceComponent implements OnInit {
     return modifiedAdaptabilityMs;
   }
 
-  handleTundraDrift(racingAnimal: Animal, currentPath: RacePath, modifiedAdaptabilityMs: number, terrain: Terrain, currentDistanceInPath: number, xDistanceCovered: number) {
+  handleTundraDrift(racingAnimal: Animal, currentPath: RacePath, lastPath: RacePath, modifiedAdaptabilityMs: number, terrain: Terrain, currentDistanceInPath: number, xDistanceCovered: number) {
     var wallHit = false;
 
-    if (racingAnimal.raceCourseType !== RaceCourseTypeEnum.Tundra)
+    if (lastPath.routeDesign === RaceDesignEnum.IcyPatchEnd) {
+      currentPath.driftAmount.unshift(0);
+      currentPath.driftAmount.push(0);
+      racingAnimal.raceVariables.icyCurrentAngle = 90;
+      racingAnimal.raceVariables.icyCurrentYAmount = 0;
+      this.icyCatchUpYAmount === 0
+      //console.log("Finished -- reset variables");      
+    }
+
+    if (currentPath.routeDesign !== RaceDesignEnum.IcyPatchBegin && currentPath.routeDesign !== RaceDesignEnum.IcyPatchEnd)
       return;
 
     var stumbleBreakpoint = currentPath.length / currentPath.stumbleOpportunities;
-    if (currentPath.currentStumbleOpportunity * stumbleBreakpoint >= currentDistanceInPath) 
-      return;          
+
+    if (currentPath.currentStumbleOpportunity * stumbleBreakpoint >= currentDistanceInPath)
+      return;
 
     currentPath.currentStumbleOpportunity += 1;
+
+    if (currentPath.routeDesign === RaceDesignEnum.IcyPatchEnd && currentPath.currentStumbleOpportunity > currentPath.stumbleOpportunities * .9) {
+      var remainingStumbleOpportunities = currentPath.stumbleOpportunities - currentPath.currentStumbleOpportunity;
+      
+      var x2 = currentPath.length - currentPath.currentStumbleOpportunity * stumbleBreakpoint;
+      var y2 = 0 - racingAnimal.raceVariables.icyCurrentYAmount;
+      //console.log("X2: " + x2);
+      //console.log("Y2: " + y2);
+      var angleRequired = Math.atan2(x2, y2) * 180 / Math.PI;
+      racingAnimal.raceVariables.icyCurrentAngle = angleRequired;
+      //console.log("Final Angle: " + angleRequired);
+      if (racingAnimal.raceVariables.icyCurrentAngle >= 150)
+        racingAnimal.raceVariables.icyCurrentAngle = 150;
+      if (racingAnimal.raceVariables.icyCurrentAngle <= 30)
+        racingAnimal.raceVariables.icyCurrentAngle = 30;
+
+      var catchUpAmount = Math.abs(racingAnimal.raceVariables.icyCurrentYAmount / remainingStumbleOpportunities);
+      if (this.icyCatchUpYAmount === 0)// || (this.icyCatchUpYAmount > 0 && catchUpAmount > this.icyCatchUpYAmount) ||
+      //this.icyCatchUpYAmount < 0 && catchUpAmount < this.icyCatchUpYAmount)
+        this.icyCatchUpYAmount = catchUpAmount;
+
+      if (racingAnimal.raceVariables.icyCurrentYAmount > 0)
+      {
+        if (this.icyCatchUpYAmount >= racingAnimal.raceVariables.icyCurrentYAmount)
+          this.icyCatchUpYAmount = racingAnimal.raceVariables.icyCurrentYAmount;
+        racingAnimal.raceVariables.icyCurrentYAmount -= this.icyCatchUpYAmount;
+      }
+      else
+      {
+        if (this.icyCatchUpYAmount <= racingAnimal.raceVariables.icyCurrentYAmount)
+          this.icyCatchUpYAmount = racingAnimal.raceVariables.icyCurrentYAmount;
+        racingAnimal.raceVariables.icyCurrentYAmount += this.icyCatchUpYAmount;
+      }
+
+      console.log("Y Amount: " + racingAnimal.raceVariables.icyCurrentYAmount);
+      currentPath.driftAmount.push(racingAnimal.raceVariables.icyCurrentYAmount);
+      return;
+    }
 
     //get drift angle change
     var rng = this.utilityService.getRandomNumber(1, 100);
@@ -1041,53 +1095,63 @@ export class RaceComponent implements OnInit {
     var adjustedSlipFrequency = 200 + (modifiedAdaptabilityMs * terrain.adaptabilityModifier);
     var percentChanceOfSlipping = (currentPath.frequencyOfStumble / adjustedSlipFrequency) * 100;
 
-    console.log("RNG: " + rng + " Chance To Slip: " + percentChanceOfSlipping);
     if (rng <= percentChanceOfSlipping) {
       currentPath.didAnimalStumble = true;
-      console.log("Slipped");
 
-      if (racingAnimal.raceVariables.slipCountBeforeNewDirection <= 0)      
+      if (racingAnimal.raceVariables.slipCountBeforeNewDirection <= 0) {
+        //racingAnimal.raceVariables.icyCurrentAngle = 90;
         racingAnimal.raceVariables.slipCountBeforeNewDirection = this.utilityService.getRandomInteger(1, 50);
-      
+        var goingUp = this.utilityService.getRandomInteger(1, 2);
+        if (goingUp === 1)
+          racingAnimal.raceVariables.icyCurrentDirectionUp = true;
+        else
+          racingAnimal.raceVariables.icyCurrentDirectionUp = false;
+        //console.log("New direction: " + racingAnimal.raceVariables.icyCurrentDirectionUp + " for " + racingAnimal.raceVariables.slipCountBeforeNewDirection);
+      }
+
       racingAnimal.raceVariables.slipCountBeforeNewDirection -= 1;
 
       var angleDifferential = (percentChanceOfSlipping - rng) / 100;
 
       if (racingAnimal.raceVariables.icyCurrentDirectionUp)
-        racingAnimal.raceVariables.icyCurrentAngle -= angleDifferential;
-      else
         racingAnimal.raceVariables.icyCurrentAngle += angleDifferential;
+      else
+        racingAnimal.raceVariables.icyCurrentAngle -= angleDifferential;
 
       if (racingAnimal.raceVariables.icyCurrentAngle >= 150)
         racingAnimal.raceVariables.icyCurrentAngle = 150;
-        if (racingAnimal.raceVariables.icyCurrentAngle <= 30)
+      if (racingAnimal.raceVariables.icyCurrentAngle <= 30)
         racingAnimal.raceVariables.icyCurrentAngle = 30;
 
-      console.log("New Angle: " + racingAnimal.raceVariables.icyCurrentAngle);
+      console.log("New Angle: " + racingAnimal.raceVariables.icyCurrentAngle);    
+
+      //get drift Y amount
+      //this needs to play by its own rules using percents, can't rely on max speed or anything or you will hit it immediately
+      var yAnglePercentOfVelocity = 90 - racingAnimal.raceVariables.icyCurrentAngle / 90;
+
+      if (racingAnimal.raceVariables.icyCurrentDirectionUp)
+        racingAnimal.raceVariables.icyCurrentYAmount -= yAnglePercentOfVelocity / 100;
+      else
+        racingAnimal.raceVariables.icyCurrentYAmount += yAnglePercentOfVelocity / 100;
+
+      if (racingAnimal.raceVariables.icyCurrentYAmount >= 100)
+        racingAnimal.raceVariables.icyCurrentYAmount = 100;
+
+      if (racingAnimal.raceVariables.icyCurrentYAmount <= -100)
+        racingAnimal.raceVariables.icyCurrentYAmount = -100;
     }
 
-    //get drift Y amount
-    //this needs to play by its own rules using percents, can't rely on max speed or anything or you will hit it immediately
-    var yAnglePercentOfVelocity = 90 - racingAnimal.raceVariables.icyCurrentAngle / 90;
-    racingAnimal.raceVariables.icyCurrentYAmount += yAnglePercentOfVelocity / 100;
-
-    if (racingAnimal.raceVariables.icyCurrentYAmount >= 100)
-      racingAnimal.raceVariables.icyCurrentYAmount = 100;
-
-    if (racingAnimal.raceVariables.icyCurrentYAmount <= -100)
-      racingAnimal.raceVariables.icyCurrentYAmount = -100;
-
-    console.log("Icy Current Y Amount: " + racingAnimal.raceVariables.icyCurrentYAmount);
+    //console.log("Current Y: ");
+    //console.log(racingAnimal.raceVariables.icyCurrentYAmount);
     currentPath.driftAmount.push(racingAnimal.raceVariables.icyCurrentYAmount);
 
-    if (racingAnimal.raceVariables.icyCurrentYAmount >= 100 || 
-      racingAnimal.raceVariables.icyCurrentYAmount <= -100)
-      {
-        //hit wall
-        wallHit = true;
-      }
+    if (racingAnimal.raceVariables.icyCurrentYAmount >= 100 ||
+      racingAnimal.raceVariables.icyCurrentYAmount <= -100) {
+      //hit wall
+      wallHit = true;
+    }
 
-      return wallHit;
+    return wallHit;
   }
 
   goToRaceSelection(): void {
