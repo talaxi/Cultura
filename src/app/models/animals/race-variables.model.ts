@@ -23,9 +23,7 @@ export class RaceVariables {
     hasRelayEffect: boolean;
     remainingRelayMeters: number;
     relayAffectedStatRatios: AnimalStats; 
-
-    slipCountBeforeNewDirection: number;
-    icyCurrentAngle: number;
+  
     icyCurrentDirectionUp: boolean;
     icyCurrentYAmount: number; //when it reaches 100 or -100, hits wall
 
@@ -47,9 +45,7 @@ export class RaceVariables {
         this.defaultStumbledLength = 10;
         this.currentStumbledLength = this.defaultStumbledLength;
 
-        this.icyCurrentAngle = 90;
-        this.icyCurrentYAmount = 1;
-        this.slipCountBeforeNewDirection = 0;        
+        this.icyCurrentYAmount = 0;        
         this.icyCurrentDirectionUp = true;
 
         this.headbandStumblePreventionCount = 0;

@@ -129,6 +129,11 @@ export class GlobalService {
     this.globalVar.modifiers.push(new StringNumberPair(1.1, "yellowBatonEquipmentModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(1.1, "violetBatonEquipmentModifier"));
 
+    //below in seconds
+    this.globalVar.modifiers.push(new StringNumberPair((60), "smallBarnTrainingTimeModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair((4*60*60), "mediumBarnTrainingTimeModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair((8*60*60), "largeBarnTrainingTimeModifier"));
+
     var baseMaxSpeedModifier = .3;
     var baseAccelerationModifier = .1;
     var baseStaminaModifier = 10;
@@ -1645,8 +1650,8 @@ export class GlobalService {
       if (totalLegLengthRemaining < 0)
         totalLegLengthRemaining = 0;
 
-      if (!lastRouteSpecial || lastPathRoute === RaceDesignEnum.IcyPatchBegin) {
-        var consecutivePathsAvailable = (i + 2 < totalRoutes) || lastPathRoute === RaceDesignEnum.IcyPatchBegin;
+      if (!lastRouteSpecial) {
+        var consecutivePathsAvailable = (i + 2 < totalRoutes);
 
         path.routeDesign = this.GetSpecialRoute(leg.courseType, consecutivePathsAvailable, lastPathRoute);
         leg.specialPathCount += 1;
@@ -1675,16 +1680,6 @@ export class GlobalService {
 
     var routeType = this.utilityService.getRandomInteger(1, totalLandDesigns);
     
-      if (courseType === RaceCourseTypeEnum.Tundra && !consecutivePathsAvailable && routeType > 1)
-        routeType = 1;
-      else if (courseType === RaceCourseTypeEnum.Tundra && consecutivePathsAvailable && 
-        (routeType > 1 || lastPathRoute === RaceDesignEnum.IcyPatchBegin)) {
-        if (lastPathRoute === RaceDesignEnum.IcyPatchBegin)
-          routeType = 3;
-        else
-          routeType = 2;
-    }
-
     if (routeType === 1) {
       return specialRoute;
     }
@@ -1696,7 +1691,7 @@ export class GlobalService {
       else if (courseType === RaceCourseTypeEnum.Water)
         specialRoute = RaceDesignEnum.Waves;
       else if (courseType === RaceCourseTypeEnum.Tundra)
-        specialRoute = RaceDesignEnum.IcyPatchBegin;
+        specialRoute = RaceDesignEnum.Cavern;
     }
     else if (routeType === 3) {
       if (courseType === RaceCourseTypeEnum.Flatland)
@@ -1706,7 +1701,7 @@ export class GlobalService {
       else if (courseType === RaceCourseTypeEnum.Water)
         specialRoute = RaceDesignEnum.Dive;
       else if (courseType === RaceCourseTypeEnum.Tundra)
-        specialRoute = RaceDesignEnum.IcyPatchEnd;
+        specialRoute = RaceDesignEnum.Hills;
     }
 
     return specialRoute;
@@ -1931,8 +1926,9 @@ export class GlobalService {
 
     var penguin = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Penguin);
     if (penguin !== undefined) {
-      penguin.currentStats.topSpeed = 30;      
-      penguin.currentStats.focus = 10;
+      penguin.currentStats.topSpeed = 30;   
+      penguin.currentStats.acceleration = 8;   
+      penguin.currentStats.focus = 100;
       this.calculateAnimalRacingStats(penguin);
     }
 

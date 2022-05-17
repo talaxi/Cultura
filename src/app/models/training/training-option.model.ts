@@ -9,6 +9,7 @@ export class TrainingOption {
     trainingType: TrainingOptionsEnum;
     trainingCourseType: RaceCourseTypeEnum;
     facilitySize: FacilitySizeEnum;
+    trainingTimeRemaining: number;
     timeToComplete: number;
     @Type(() => AnimalStats)
     affectedStatRatios: AnimalStats; //multiply the value here for each stat by statgain to get the value gained
@@ -19,14 +20,14 @@ export class TrainingOption {
     isSelected: boolean; //purely for UI purposes
 
     constructor() {
+        this.trainingTimeRemaining = 2 * 60 * 60;
         this.timeTrained = 0;
         this.isAvailable = false;
         this.purchasePrice = 50;
     }
 
     //make copy, make time adjustments to the copy
-    makeCopy(originalTrainingOption: TrainingOption)
-    {
+    makeCopy(originalTrainingOption: TrainingOption) {
         var copy = new TrainingOption();
         copy.affectedStatRatios = JSON.parse(JSON.stringify(originalTrainingOption.affectedStatRatios));
         copy.facilitySize = JSON.parse(JSON.stringify(originalTrainingOption.facilitySize));
@@ -44,7 +45,7 @@ export class TrainingOption {
     getFacilitySize(): string {
         return FacilitySizeEnum[this.facilitySize];
     }
-    
+
     getStatGainDescription(): string {
         var statGainDescription = "";
 
@@ -55,14 +56,14 @@ export class TrainingOption {
         if (this.affectedStatRatios.endurance > 0)
             statGainDescription += "+" + this.statGain * this.affectedStatRatios.endurance + " Endurance\n";
         if (this.affectedStatRatios.focus > 0)
-            statGainDescription += "+" +  this.statGain * this.affectedStatRatios.focus + " Focus\n";
+            statGainDescription += "+" + this.statGain * this.affectedStatRatios.focus + " Focus\n";
         if (this.affectedStatRatios.power > 0)
-            statGainDescription += "+" +  this.statGain * this.affectedStatRatios.power + " Power\n";
-            if (this.affectedStatRatios.adaptability > 0)
-            statGainDescription += "+" +  this.statGain * this.affectedStatRatios.adaptability + " Adaptability\n";
+            statGainDescription += "+" + this.statGain * this.affectedStatRatios.power + " Power\n";
+        if (this.affectedStatRatios.adaptability > 0)
+            statGainDescription += "+" + this.statGain * this.affectedStatRatios.adaptability + " Adaptability\n";
 
         return statGainDescription;
-    }    
+    }
 }
 
 

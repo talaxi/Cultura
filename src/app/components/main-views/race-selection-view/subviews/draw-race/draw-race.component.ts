@@ -171,11 +171,11 @@ export class DrawRaceComponent implements OnInit {
           }
           if (leg.courseType === RaceCourseTypeEnum.Tundra) {
             if (path.routeDesign === RaceDesignEnum.Regular)
-              this.drawRegularTundraOverview(context, path, 1, 1);
-            if (path.routeDesign === RaceDesignEnum.IcyPatchBegin)
-              this.drawIcyPatchBeginTundraOverview(context, path, 1, 1);
-            if (path.routeDesign === RaceDesignEnum.IcyPatchEnd)
-              this.drawIcyPatchEndTundraOverview(context, path, 1, 1);
+            this.drawRegularTundraOverview(context, path, 1, 1);
+            if (path.routeDesign === RaceDesignEnum.Cavern)
+              this.drawCavernTundraOverview(context, path, 1, 1);
+            if (path.routeDesign === RaceDesignEnum.Hills)
+              this.drawHillsTundraOverview(context, path, 1, 1);
           }
           if (leg.courseType === RaceCourseTypeEnum.Volcanic) {
             if (path.routeDesign === RaceDesignEnum.Regular)
@@ -227,10 +227,7 @@ export class DrawRaceComponent implements OnInit {
 
     if (this.icyPatchBackgroundLines.length > 0) {
       this.icyPatchBackgroundLines.forEach(item => {
-        if (item[0] === "IcyPatchBegin")
-          this.drawIcyPatchBeginBackgroundTundraOverview(context, item);
-        else if (item[0] === "IcyPatchEnd")
-          this.drawIcyPatchEndBackgroundTundraOverview(context, item);
+        this.drawIcyPatchBackgroundTundraOverview(context, item);
       });
     }
   }
@@ -394,11 +391,11 @@ export class DrawRaceComponent implements OnInit {
           if (leg.courseType === RaceCourseTypeEnum.Tundra) {
             context.lineCap = "round";
             if (path.routeDesign === RaceDesignEnum.Regular)
-              this.drawRegularTundraOverview(context, path, xRaceModeModifier, yRaceModeModifier, xDistanceOffset, yDistanceOffset);
-            if (path.routeDesign === RaceDesignEnum.IcyPatchBegin)
-              this.drawIcyPatchBeginTundraOverview(context, path, xRaceModeModifier, yRaceModeModifier, xDistanceOffset, yDistanceOffset);
-            if (path.routeDesign === RaceDesignEnum.IcyPatchEnd)
-              this.drawIcyPatchEndTundraOverview(context, path, xRaceModeModifier, yRaceModeModifier, xDistanceOffset, yDistanceOffset);
+            this.drawRegularTundraOverview(context, path, xRaceModeModifier, yRaceModeModifier, xDistanceOffset, yDistanceOffset);
+            if (path.routeDesign === RaceDesignEnum.Cavern)
+              this.drawCavernTundraOverview(context, path, xRaceModeModifier, yRaceModeModifier, xDistanceOffset, yDistanceOffset);
+            if (path.routeDesign === RaceDesignEnum.Hills)
+              this.drawHillsTundraOverview(context, path, xRaceModeModifier, yRaceModeModifier, xDistanceOffset, yDistanceOffset);
           }
           if (leg.courseType === RaceCourseTypeEnum.Volcanic) {
             context.lineCap = "round";
@@ -448,6 +445,16 @@ export class DrawRaceComponent implements OnInit {
     //if (this.currentLeg.courseType === RaceCourseTypeEnum.Tundra)
     context.fillRect(this.canvasWidth / 2 - 5, 0, 5, this.canvasHeight);
 
+    //Draw background effects -- still covered by other racers
+    if (this.icyPatchBackgroundLines.length > 0) {
+      this.icyPatchBackgroundLines.forEach(item => {
+        this.drawIcyPatchBackgroundTundraOverview(context, item);
+      });
+    }
+
+    context.globalCompositeOperation = "source-atop";
+
+    //draw additional racers
     //average speed
     var averageDistance = (this.averageDistancePerSecond / this.frameModifier) * currentFrame;
 
@@ -468,14 +475,7 @@ export class DrawRaceComponent implements OnInit {
     }
     this.drawBreakpoints(context, xRaceModeModifier);
 
-    if (this.icyPatchBackgroundLines.length > 0) {
-      this.icyPatchBackgroundLines.forEach(item => {
-        if (item[0] === "IcyPatchBegin")
-          this.drawIcyPatchBeginBackgroundTundraOverview(context, item);
-        else if (item[0] === "IcyPatchEnd")
-          this.drawIcyPatchEndBackgroundTundraOverview(context, item);
-      });
-    }
+    
   }
 
   getAnimalDistanceColor(currentDistanceTraveled: number) {
@@ -1049,79 +1049,30 @@ export class DrawRaceComponent implements OnInit {
     if (yDistanceOffset === undefined || yDistanceOffset === null)
       yDistanceOffset = 0;
 
+    var verticalDistance = horizontalLength / 4;
+    var raceableVerticalDistance = verticalDistance * .97;
+
+    var yRatio = (path.driftAmount / 80) * raceableVerticalDistance;
+    var totalAmount = ((path.totalTundraYAmount - path.driftAmount) / 80) * raceableVerticalDistance;
+
     context.beginPath();
-    context.moveTo(this.lastPathEndingX - xDistanceOffset, this.lastPathEndingY + yDistanceOffset);
-    context.lineTo(this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY + yDistanceOffset);
-    //context.fillText('End', this.lastPathEndingX + horizontalLength, this.canvasHeight / 2);    
+    context.moveTo(this.lastPathEndingX - xDistanceOffset, this.lastPathEndingY + totalAmount + yDistanceOffset);
+    context.lineTo(this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY + totalAmount + yRatio + yDistanceOffset);
     context.stroke();
 
-    this.lastPathEndingX = this.lastPathEndingX + horizontalLength;
-  }
-
-  drawIcyPatchBeginTundraOverview(context: any, path: RacePath, xRaceModeModifier: number, yRaceModeModifier: number, xDistanceOffset?: number, yDistanceOffset?: number): void {
-    var horizontalLength = (path.length / this.race.length) * this.canvasWidth * xRaceModeModifier;
-
-    if (xDistanceOffset === undefined || xDistanceOffset === null)
-      xDistanceOffset = 0;
-
-    if (yDistanceOffset === undefined || yDistanceOffset === null)
-      yDistanceOffset = 0;
-
-    var xRegularOffset = .1 * horizontalLength;
-    var verticalDistance = horizontalLength / 4; 
-    var verticalSlideDistance = verticalDistance * .95;   
-
-    //console.log("Horizontal Length: " + horizontalLength);
-    //console.log ("Drift Amount Length: " + path.driftAmount.length);
-    if (path.driftAmount.length > 0) {
-      var driftXLength = horizontalLength / path.driftAmount.length;      
-      //Gotta figure this stuff out a bit.. needs to hit the wall and then reangle and keep going. Or in this case ride the wall
-      //Seems like doing it all as one line is working but trying to do 250 lines is not. Try breaking it into say 5 pieces and see what happens
-      
-      for (var i=0; i<path.driftAmount.length - 1; i++) {   
-        //console.log("Drift Amount: " + path.driftAmount[i]);         
-        var yStartingSwerveAmount = verticalSlideDistance * (path.driftAmount[i] / 100);
-        var yNextSwerveAmount = verticalSlideDistance * (path.driftAmount[i+1] / 100);
-        //console.log("i: " + i);
-        //console.log("Starting Swerve Amount: " + yStartingSwerveAmount);
-        //console.log("Next Swerve Amount: " + yNextSwerveAmount);
-
-        //console.log("Y Point" + (this.lastPathEndingY + yNextSwerveAmount + yDistanceOffset!));
-
-        context.beginPath();
-        context.moveTo(this.lastPathEndingX + (driftXLength * i) - xDistanceOffset!, this.lastPathEndingY + yStartingSwerveAmount + yDistanceOffset!);
-        context.lineTo(this.lastPathEndingX + (driftXLength * (i+1)) - xDistanceOffset!, this.lastPathEndingY + yNextSwerveAmount + yDistanceOffset!);
-        context.stroke();
-      }
-    }
-
-    var existingContentDestinationType = context.globalCompositeOperation;
-    context.globalCompositeOperation = "destination-over";
-
     var lineSet = [];
-    lineSet.push("IcyPatchBegin");
+    lineSet.push("Regular");
     lineSet.push([this.lastPathEndingX - xDistanceOffset, this.lastPathEndingY + yDistanceOffset]);
-    lineSet.push([this.lastPathEndingX + xRegularOffset - xDistanceOffset, this.lastPathEndingY + verticalDistance + yDistanceOffset]);
+    lineSet.push([this.lastPathEndingX - xDistanceOffset, this.lastPathEndingY + verticalDistance + yDistanceOffset]);
     lineSet.push([this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY + verticalDistance + yDistanceOffset]);
     lineSet.push([this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY - verticalDistance + yDistanceOffset]);
-    lineSet.push([this.lastPathEndingX + xRegularOffset - xDistanceOffset, this.lastPathEndingY - verticalDistance + yDistanceOffset]);
+    lineSet.push([this.lastPathEndingX - xDistanceOffset, this.lastPathEndingY - verticalDistance + yDistanceOffset]);
     this.icyPatchBackgroundLines.push(lineSet);
 
-    /*context.beginPath();
-    context.moveTo(this.lastPathEndingX - xDistanceOffset, this.lastPathEndingY + yDistanceOffset);
-    context.lineTo(this.lastPathEndingX + xRegularOffset - xDistanceOffset, this.lastPathEndingY + verticalDistance + yDistanceOffset);
-    context.lineTo(this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY + verticalDistance + yDistanceOffset);
-    context.lineTo(this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY - verticalDistance + yDistanceOffset);
-    context.lineTo(this.lastPathEndingX + xRegularOffset - xDistanceOffset, this.lastPathEndingY - verticalDistance + yDistanceOffset);
-    */
-    context.fillStyle = "gray";
-    context.fill();
-
-    context.globalCompositeOperation = existingContentDestinationType;
     this.lastPathEndingX = this.lastPathEndingX + horizontalLength;
   }
 
-  drawIcyPatchEndTundraOverview(context: any, path: RacePath, xRaceModeModifier: number, yRaceModeModifier: number, xDistanceOffset?: number, yDistanceOffset?: number): void {
+  drawCavernTundraOverview(context: any, path: RacePath, xRaceModeModifier: number, yRaceModeModifier: number, xDistanceOffset?: number, yDistanceOffset?: number): void {
     var horizontalLength = (path.length / this.race.length) * this.canvasWidth * xRaceModeModifier;
 
     if (xDistanceOffset === undefined || xDistanceOffset === null)
@@ -1130,67 +1081,69 @@ export class DrawRaceComponent implements OnInit {
     if (yDistanceOffset === undefined || yDistanceOffset === null)
       yDistanceOffset = 0;
 
-    var xRegularOffset = .1 * horizontalLength;
-    var verticalDistance = horizontalLength / 4;
-    var verticalSlideDistance = verticalDistance * .95;   
+    var regularMaxYAmount = 80;
+    var cavernMaxYAmount = 60;
 
-    if (path.driftAmount.length > 0) {
-      var driftXLength = horizontalLength / path.driftAmount.length;
-      //add Y starting point 
+    var verticalDistance = (horizontalLength / 4);
+    var raceableVerticalDistance = verticalDistance * .97;
 
-      for (var i=0; i<path.driftAmount.length - 1; i++) {            
-        var yStartingSwerveAmount = verticalSlideDistance * (path.driftAmount[i] / 100);
-        var yNextSwerveAmount = verticalSlideDistance * (path.driftAmount[i+1] / 100);
+    var yRatio = (path.driftAmount / 80) * raceableVerticalDistance;
+    var totalAmount = ((path.totalTundraYAmount - path.driftAmount) / 80) * raceableVerticalDistance;
 
-        context.beginPath();
-        context.moveTo(this.lastPathEndingX + (driftXLength * i) - xDistanceOffset!, this.lastPathEndingY + yStartingSwerveAmount + yDistanceOffset!);
-        context.lineTo(this.lastPathEndingX + (driftXLength * (i+1)) - xDistanceOffset!, this.lastPathEndingY + yNextSwerveAmount + yDistanceOffset!);
-        context.stroke();
-      }
-    }
-    var existingContentDestinationType = context.globalCompositeOperation;
-    context.globalCompositeOperation = "destination-over";
+    context.beginPath();
+    context.moveTo(this.lastPathEndingX - xDistanceOffset, this.lastPathEndingY + totalAmount + yDistanceOffset);
+    context.lineTo(this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY + totalAmount + yRatio + yDistanceOffset);
+    context.stroke();
+
+    
+    var cavernModifier = 1 - ((regularMaxYAmount - cavernMaxYAmount) / regularMaxYAmount);    
+    var cavernDistance = (horizontalLength / 4) * cavernModifier;
 
     var lineSet = [];
-    lineSet.push("IcyPatchEnd");
-    lineSet.push([this.lastPathEndingX - xDistanceOffset, this.lastPathEndingY + verticalDistance + yDistanceOffset]);
-    lineSet.push([this.lastPathEndingX + (horizontalLength - xRegularOffset) - xDistanceOffset, this.lastPathEndingY + verticalDistance + yDistanceOffset]);
-    lineSet.push([this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY + yDistanceOffset]);
-    lineSet.push([this.lastPathEndingX + (horizontalLength - xRegularOffset) - xDistanceOffset, this.lastPathEndingY - verticalDistance + yDistanceOffset]),
-      lineSet.push([this.lastPathEndingX - xDistanceOffset, this.lastPathEndingY - verticalDistance + yDistanceOffset]);
+    lineSet.push("Cavern");
+    lineSet.push([this.lastPathEndingX - xDistanceOffset, this.lastPathEndingY + yDistanceOffset]);
+    lineSet.push([this.lastPathEndingX - xDistanceOffset, this.lastPathEndingY + cavernDistance + yDistanceOffset]);
+    lineSet.push([this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY + cavernDistance + yDistanceOffset]);
+    lineSet.push([this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY - cavernDistance + yDistanceOffset]);
+    lineSet.push([this.lastPathEndingX - xDistanceOffset, this.lastPathEndingY - cavernDistance + yDistanceOffset]);
     this.icyPatchBackgroundLines.push(lineSet);
 
-    /*context.beginPath();
-    context.moveTo(this.lastPathEndingX - xDistanceOffset, this.lastPathEndingY + verticalDistance + yDistanceOffset);
-    context.lineTo(this.lastPathEndingX + (horizontalLength - xRegularOffset) - xDistanceOffset, this.lastPathEndingY + verticalDistance + yDistanceOffset);
-    context.lineTo(this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY + yDistanceOffset);
-    context.lineTo(this.lastPathEndingX + (horizontalLength - xRegularOffset) - xDistanceOffset, this.lastPathEndingY - verticalDistance + yDistanceOffset);    
-    context.lineTo(this.lastPathEndingX - xDistanceOffset, this.lastPathEndingY - verticalDistance + yDistanceOffset);
-    context.fillStyle = "gray";
-    context.fill();*/
-
-    context.globalCompositeOperation = existingContentDestinationType;
     this.lastPathEndingX = this.lastPathEndingX + horizontalLength;
   }
 
-  drawIcyPatchBeginBackgroundTundraOverview(context: any, coordinates: any): void {
-    var existingContentDestinationType = context.globalCompositeOperation;
-    context.globalCompositeOperation = "destination-over";
+  drawHillsTundraOverview(context: any, path: RacePath, xRaceModeModifier: number, yRaceModeModifier: number, xDistanceOffset?: number, yDistanceOffset?: number): void {
+    var horizontalLength = (path.length / this.race.length) * this.canvasWidth * xRaceModeModifier;
+
+    if (xDistanceOffset === undefined || xDistanceOffset === null)
+      xDistanceOffset = 0;
+
+    if (yDistanceOffset === undefined || yDistanceOffset === null)
+      yDistanceOffset = 0;
+
+    var verticalDistance = horizontalLength / 4;
+    var raceableVerticalDistance = verticalDistance * .97;
+
+    var yRatio = (path.driftAmount / 80) * raceableVerticalDistance;
+    var totalAmount = ((path.totalTundraYAmount - path.driftAmount) / 80) * raceableVerticalDistance;
 
     context.beginPath();
-    context.moveTo(coordinates[1][0], coordinates[1][1]);
-    context.lineTo(coordinates[2][0], coordinates[2][1]);
-    context.lineTo(coordinates[3][0], coordinates[3][1]);
-    context.lineTo(coordinates[4][0], coordinates[4][1]);
-    context.lineTo(coordinates[5][0], coordinates[5][1]);
+    context.moveTo(this.lastPathEndingX - xDistanceOffset, this.lastPathEndingY + totalAmount + yDistanceOffset);
+    context.lineTo(this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY + totalAmount + yRatio + yDistanceOffset);
+    context.stroke();
 
-    context.fillStyle = "gray";
-    context.fill();
+    var lineSet = [];
+    lineSet.push("Hills");
+    lineSet.push([this.lastPathEndingX - xDistanceOffset, this.lastPathEndingY + yDistanceOffset]);
+    lineSet.push([this.lastPathEndingX - xDistanceOffset, this.lastPathEndingY + verticalDistance + yDistanceOffset]);
+    lineSet.push([this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY + verticalDistance + yDistanceOffset]);
+    lineSet.push([this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY - verticalDistance + yDistanceOffset]);
+    lineSet.push([this.lastPathEndingX - xDistanceOffset, this.lastPathEndingY - verticalDistance + yDistanceOffset]);
+    this.icyPatchBackgroundLines.push(lineSet);
 
-    context.globalCompositeOperation = existingContentDestinationType;
+    this.lastPathEndingX = this.lastPathEndingX + horizontalLength;
   }
 
-  drawIcyPatchEndBackgroundTundraOverview(context: any, coordinates: any): void {
+  drawIcyPatchBackgroundTundraOverview(context: any, coordinates: any): void {
     var existingContentDestinationType = context.globalCompositeOperation;
     context.globalCompositeOperation = "destination-over";
 

@@ -6,6 +6,6 @@ export enum RaceDesignEnum {
     Gaps,
     Waves,
     Dive,
-    IcyPatchBegin,
-    IcyPatchEnd
+    Cavern,
+    Hills
   }

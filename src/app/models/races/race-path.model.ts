@@ -11,14 +11,17 @@ export class RacePath {
     legStartingDistance: number;
     isSpecialPath: boolean;
     didAnimalStumble = false;
-    driftAmount: number[]; //used for icy paths
+    frequencyOfDrift: number; //used for tundra
+    driftAmount: number; //used for tundra
+    totalTundraYAmount: number; //used for tundra
+    checkedForDrift: boolean; //used for tundra
 
     constructor(routeDesign?: RaceDesignEnum) {
         if (routeDesign !== undefined && routeDesign !== null) {
             this.setStumbleFields();
         }
 
-        this.driftAmount = [];
+        this.driftAmount = 0;
         this.isSpecialPath = false;
     }
 
@@ -29,6 +32,7 @@ export class RacePath {
             this.stumbleSeverity = StumbleSeverityEnum.None;
             this.frequencyOfStumble = 0;
             this.stumbleOpportunities = 0;
+            this.frequencyOfDrift = 500;
         }
         if (this.routeDesign === RaceDesignEnum.S) {
             this.isSpecialPath = true;
@@ -66,10 +70,17 @@ export class RacePath {
             this.frequencyOfStumble = 200;
             this.stumbleOpportunities = 1;
         }
-        if (this.routeDesign === RaceDesignEnum.IcyPatchBegin || this.routeDesign === RaceDesignEnum.IcyPatchEnd) {
+        if (this.routeDesign === RaceDesignEnum.Cavern) {
             this.isSpecialPath = true;
-            this.frequencyOfStumble = 50;
-            this.stumbleOpportunities = 250;
+            this.frequencyOfStumble = 0;
+            this.stumbleOpportunities = 0;
+            this.frequencyOfDrift = 500;
+        }
+        if (this.routeDesign === RaceDesignEnum.Hills) {
+            this.isSpecialPath = true;
+            this.frequencyOfStumble = 100;
+            this.stumbleOpportunities = 3;
+            this.frequencyOfDrift = 250;
         }
     }
 }

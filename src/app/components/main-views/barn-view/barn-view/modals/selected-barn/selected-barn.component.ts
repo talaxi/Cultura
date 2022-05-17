@@ -54,7 +54,7 @@ export class SelectedBarnComponent implements OnInit {
   filterLarge = false;
 
   constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private modalService: NgbModal,
-   private lookupService: LookupService, private componentCommunicationService: ComponentCommunicationService,
+    private lookupService: LookupService, private componentCommunicationService: ComponentCommunicationService,
     private specializationService: SpecializationService) {
   }
 
@@ -85,12 +85,11 @@ export class SelectedBarnComponent implements OnInit {
 
           this.availableTrainings = this.GetAvailableTrainingOptions(associatedAnimal);
 
-          if (this.existingTraining !== undefined && this.existingTraining !== null)
-          {
+          if (this.existingTraining !== undefined && this.existingTraining !== null) {
             var selectedTraining = this.availableTrainings.find(item => this.existingTraining?.trainingName === item.trainingName);
             if (selectedTraining !== null && selectedTraining !== undefined)
               selectedTraining.isSelected = true;
-          }            
+          }
         }
         else {
           this.animalAssigned = false;
@@ -105,9 +104,16 @@ export class SelectedBarnComponent implements OnInit {
             }
             else {
               //UI updates          
-              if (associatedAnimal.currentTraining === undefined || associatedAnimal.currentTraining === null)
-                return;
+              if (associatedAnimal.currentTraining === undefined || associatedAnimal.currentTraining === null) {
+                if (this.existingTraining !== null) {
+                  var selectedTraining = this.availableTrainings.find(item => this.existingTraining?.trainingName === item.trainingName);
+                  if (selectedTraining !== null && selectedTraining !== undefined)
+                    selectedTraining.isSelected = false;
 
+                  this.existingTraining = null;
+                }
+                return;
+              }
               if (associatedAnimal.currentTraining !== this.existingTraining)
                 this.existingTraining = associatedAnimal.currentTraining;
 
@@ -134,12 +140,24 @@ export class SelectedBarnComponent implements OnInit {
       return;
 
     var newTraining = Object.assign({}, training);
-    
-    if (animal.currentTraining !== null && animal.currentTraining !== undefined)
-    {
+
+    var modifierName = "smallBarnTrainingTimeModifier";
+    if (this.barn.size === FacilitySizeEnum.Medium)
+      modifierName = "mediumBarnTrainingTimeModifier";
+    else if (this.barn.size === FacilitySizeEnum.Large)
+      modifierName = "largeBarnTrainingTimeModifier";
+
+    //console.log("Mod Name: " + modifierName);
+    var trainingTimeModifierPair = this.globalService.globalVar.modifiers.find(item => item.text === modifierName);
+    //console.log("Pair: ");
+    //console.log(trainingTimeModifierPair);
+    if (trainingTimeModifierPair !== null && trainingTimeModifierPair !== undefined) {
+      newTraining.trainingTimeRemaining = trainingTimeModifierPair.value;
+    }
+
+    if (animal.currentTraining !== null && animal.currentTraining !== undefined) {
       if (this.globalService.globalVar.settings.get("finishTrainingBeforeSwitching")) {
         animal.queuedTraining = newTraining;
-        console.log("Name: "+ animal.queuedTraining.trainingName);
         return;
       }
 
