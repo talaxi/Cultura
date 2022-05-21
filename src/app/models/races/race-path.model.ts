@@ -28,7 +28,7 @@ export class RacePath {
     setStumbleFields() {
         this.currentStumbleOpportunity = 0;
 
-        if (this.routeDesign === RaceDesignEnum.Regular) {
+        if (this.routeDesign === RaceDesignEnum.Regular || this.routeDesign === RaceDesignEnum.FirstRegular || this.routeDesign === RaceDesignEnum.LastRegular) {
             this.stumbleSeverity = StumbleSeverityEnum.None;
             this.frequencyOfStumble = 0;
             this.stumbleOpportunities = 0;

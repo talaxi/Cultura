@@ -317,9 +317,30 @@ export class Gecko extends Animal {
         this.raceCourseType = RaceCourseTypeEnum.Mountain;
 
         this.ability = new Ability();
-        this.ability.cooldown = 10;
-        this.ability.efficiency = 10;
-        this.ability.name = "";        
+        this.ability.cooldown = 4;
+        this.ability.efficiency = 2;
+        this.ability.totalFrames = 15;
+        this.ability.oneTimeEffect = false;
+        this.ability.name = "Breach";        
+        this.ability.isAbilityPurchased = true;
+        this.availableAbilities.push(this.ability);
+
+        var ability2 = new Ability();
+        ability2.cooldown = 12;
+        ability2.efficiency = 15;
+        ability2.oneTimeEffect = false;
+        ability2.name = "Echolocation";
+        ability2.isAbilityPurchased = false;
+        ability2.purchasePrice = 500;
+        this.availableAbilities.push(ability2);
+
+        var ability3 = new Ability();
+        ability3.efficiency = 5;
+        ability3.oneTimeEffect = true;
+        ability3.name = "Flowing Current";
+        ability3.isAbilityPurchased = false;
+        ability3.purchasePrice = 500;
+        this.availableAbilities.push(ability3);
     }
 }
 
@@ -372,9 +393,27 @@ export class Shark extends Animal {
         this.raceCourseType = RaceCourseTypeEnum.Water;
 
         this.ability = new Ability();
-        this.ability.cooldown = 10;
-        this.ability.efficiency = 10;
-        this.ability.name = "";
+        this.ability.efficiency = 3;
+        this.ability.oneTimeEffect = true;
+        this.ability.name = "Apex Predator";        
+        this.ability.isAbilityPurchased = true;
+        this.availableAbilities.push(this.ability);
+
+        var ability2 = new Ability();
+        ability2.efficiency = 4;
+        ability2.oneTimeEffect = true;
+        ability2.name = "Feeding Frenzy";
+        ability2.isAbilityPurchased = false;
+        ability2.purchasePrice = 500;
+        this.availableAbilities.push(ability2);
+
+        var ability3 = new Ability();
+        ability3.efficiency = 2;
+        ability3.oneTimeEffect = true;
+        ability3.name = "Blood In The Water";
+        ability3.isAbilityPurchased = false;
+        ability3.purchasePrice = 500;
+        this.availableAbilities.push(ability3);
     }
 }
 

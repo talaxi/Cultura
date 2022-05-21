@@ -23,7 +23,7 @@ export class RaceVariables {
     hasRelayEffect: boolean;
     remainingRelayMeters: number;
     relayAffectedStatRatios: AnimalStats; 
-  
+    
     icyCurrentDirectionUp: boolean;
     icyCurrentYAmount: number; //when it reaches 100 or -100, hits wall
 

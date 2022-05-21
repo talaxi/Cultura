@@ -145,7 +145,7 @@ export class LookupService {
       if (breedLevelStatModifier !== undefined && breedLevelStatModifier !== null)
         breedModifier = breedLevelStatModifier.value;
 
-        breedModifier = 1 + (breedModifier * (animal.breedLevel - 1));
+      breedModifier = 1 + (breedModifier * (animal.breedLevel - 1));
 
       var modifierPair = this.globalService.globalVar.modifiers.find(item => item.text === AnimalTypeEnum[type].toLowerCase() + "DefaultMaxSpeedModifier");
       if (modifierPair !== null && modifierPair !== undefined)
@@ -169,7 +169,7 @@ export class LookupService {
       if (breedLevelStatModifier !== undefined && breedLevelStatModifier !== null)
         breedModifier = breedLevelStatModifier.value;
 
-        breedModifier = 1 + (breedModifier * (animal.breedLevel - 1));
+      breedModifier = 1 + (breedModifier * (animal.breedLevel - 1));
 
       var modifierPair = this.globalService.globalVar.modifiers.find(item => item.text === AnimalTypeEnum[type].toLowerCase() + "DefaultAccelerationModifier");
       if (modifierPair !== null && modifierPair !== undefined)
@@ -193,7 +193,7 @@ export class LookupService {
       if (breedLevelStatModifier !== undefined && breedLevelStatModifier !== null)
         breedModifier = breedLevelStatModifier.value;
 
-        breedModifier = 1 + (breedModifier * (animal.breedLevel - 1));
+      breedModifier = 1 + (breedModifier * (animal.breedLevel - 1));
 
       var modifierPair = this.globalService.globalVar.modifiers.find(item => item.text === AnimalTypeEnum[type].toLowerCase() + "DefaultStaminaModifier");
       if (modifierPair !== null && modifierPair !== undefined)
@@ -217,7 +217,7 @@ export class LookupService {
       if (breedLevelStatModifier !== undefined && breedLevelStatModifier !== null)
         breedModifier = breedLevelStatModifier.value;
 
-        breedModifier = 1 + (breedModifier * (animal.breedLevel - 1));
+      breedModifier = 1 + (breedModifier * (animal.breedLevel - 1));
 
 
       var modifierPair = this.globalService.globalVar.modifiers.find(item => item.text === AnimalTypeEnum[type].toLowerCase() + "DefaultPowerModifier");
@@ -249,11 +249,11 @@ export class LookupService {
         defaultModifier = modifierPair.value;
 
       var traitFocusModifier = this.globalService.getTraitModifier(animal, AnimalStatEnum.focus);
-      
+
       totalModifier = defaultModifier * breedModifier * traitFocusModifier;
     }
 
-      return totalModifier;    
+    return totalModifier;
   }
 
   getAdaptabilityModifierByAnimalType(type: AnimalTypeEnum): number {
@@ -266,14 +266,14 @@ export class LookupService {
       if (breedLevelStatModifier !== undefined && breedLevelStatModifier !== null)
         breedModifier = breedLevelStatModifier.value;
 
-        breedModifier = 1 + (breedModifier * (animal.breedLevel - 1));
+      breedModifier = 1 + (breedModifier * (animal.breedLevel - 1));
 
       var modifierPair = this.globalService.globalVar.modifiers.find(item => item.text === AnimalTypeEnum[type].toLowerCase() + "DefaultAdaptabilityModifier");
       if (modifierPair !== null && modifierPair !== undefined)
         defaultModifier = modifierPair.value;
 
       var traitAdaptabilityModifier = this.globalService.getTraitModifier(animal, AnimalStatEnum.adaptability);
-   
+
       totalModifier = defaultModifier * breedModifier * traitAdaptabilityModifier;
     }
 
@@ -384,7 +384,7 @@ export class LookupService {
     return itemList;
   }
 
-  GetAbilityEffectiveAmount(animal: Animal, terrainModifier?: number) {
+  GetAbilityEffectiveAmount(animal: Animal, terrainModifier?: number, statLossFromExhaustion?: number) {
     if (animal.ability === undefined || animal.ability === null ||
       animal.ability.name === undefined || animal.ability.name === null)
       return -1;
@@ -392,7 +392,10 @@ export class LookupService {
     if (terrainModifier === null || terrainModifier === undefined)
       terrainModifier = 1;
 
-    var modifiedPower = animal.currentStats.powerMs * terrainModifier;
+    if (statLossFromExhaustion === null || statLossFromExhaustion === undefined)
+      statLossFromExhaustion = 1;
+
+    var modifiedPower = animal.currentStats.powerMs * terrainModifier * statLossFromExhaustion;
 
     if (animal.ability.name === "Thoroughbred") {
       return animal.ability.efficiency * (1 + modifiedPower);
@@ -528,7 +531,7 @@ export class LookupService {
           return "Increase acceleration by 25% for " + effectiveAmountDisplay + " meters. " + cooldownDisplay + " second cooldown.";
         }
         if (abilityName === "Sprint") {
-          return " Gain 25% Max Speed and 10% Acceleration for " + effectiveAmountDisplay + " meters, but lose twice as much stamina as normal." + cooldownDisplay + " second cooldown.";
+          return " Gain 25% Max Speed and 10% Acceleration for " + effectiveAmountDisplay + " meters, but lose twice as much stamina as normal. " + cooldownDisplay + " second cooldown.";
         }
         if (abilityName === "Giving Chase") {
           return "Acceleration increases by " + effectiveAmountDisplay + "% for every second behind the average pace per second. Passive.";
@@ -811,31 +814,31 @@ export class LookupService {
     var negativeStat = "";
 
     if (trait.positiveStatGain === AnimalStatEnum.acceleration)
-        positiveStat = "Acceleration";
+      positiveStat = "Acceleration";
     if (trait.positiveStatGain === AnimalStatEnum.adaptability)
-        positiveStat = "Adaptability";
+      positiveStat = "Adaptability";
     if (trait.positiveStatGain === AnimalStatEnum.endurance)
-        positiveStat = "Endurance";
+      positiveStat = "Endurance";
     if (trait.positiveStatGain === AnimalStatEnum.focus)
-        positiveStat = "Focus";
+      positiveStat = "Focus";
     if (trait.positiveStatGain === AnimalStatEnum.power)
-        positiveStat = "Power";
+      positiveStat = "Power";
     if (trait.positiveStatGain === AnimalStatEnum.topSpeed)
-        positiveStat = "Top Speed";
+      positiveStat = "Top Speed";
 
     if (trait.negativeStatGain === AnimalStatEnum.acceleration)
-        negativeStat = "Acceleration";
+      negativeStat = "Acceleration";
     if (trait.negativeStatGain === AnimalStatEnum.adaptability)
-        negativeStat = "Adaptability";
+      negativeStat = "Adaptability";
     if (trait.negativeStatGain === AnimalStatEnum.endurance)
-        negativeStat = "Endurance";
+      negativeStat = "Endurance";
     if (trait.negativeStatGain === AnimalStatEnum.focus)
-        negativeStat = "Focus";
+      negativeStat = "Focus";
     if (trait.negativeStatGain === AnimalStatEnum.power)
-        negativeStat = "Power";
+      negativeStat = "Power";
     if (trait.negativeStatGain === AnimalStatEnum.topSpeed)
-        negativeStat = "Top Speed";
+      negativeStat = "Top Speed";
 
     return "+" + trait.researchLevel + "% " + positiveStat + ", -" + trait.researchLevel + "% " + negativeStat;
-}
+  }
 }

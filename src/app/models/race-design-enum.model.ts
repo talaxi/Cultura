@@ -7,5 +7,7 @@ export enum RaceDesignEnum {
     Waves,
     Dive,
     Cavern,
-    Hills
+    Hills,
+    FirstRegular,
+    LastRegular
   }

@@ -66,6 +66,10 @@ export class UtilityService {
     return circuitValue;
   }
 
+  convertDegreesToRadians(degrees: number) {
+    return degrees * (Math.PI / 180);
+  }
+
   //brighten(positive percent) or darken(negative percent) colors -- see https://stackoverflow.com/questions/5560248/programmatically-lighten-or-darken-a-hex-color-or-rgb-and-blend-colors
   shadeColor(color: string, percent: number) {
 

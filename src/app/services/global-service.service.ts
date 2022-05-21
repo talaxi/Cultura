@@ -94,6 +94,7 @@ export class GlobalService {
 
   InitializeModifiers(): void {
     this.globalVar.modifiers.push(new StringNumberPair(.2, "staminaModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(.9, "exhaustionStatLossModifier"));
 
     this.globalVar.modifiers.push(new StringNumberPair(5, "trainingBreedGaugeIncrease"));
     this.globalVar.modifiers.push(new StringNumberPair(10, "circuitBreedGaugeIncrease"));
@@ -130,9 +131,13 @@ export class GlobalService {
     this.globalVar.modifiers.push(new StringNumberPair(1.1, "violetBatonEquipmentModifier"));
 
     //below in seconds
-    this.globalVar.modifiers.push(new StringNumberPair((60), "smallBarnTrainingTimeModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair((2*60*60), "smallBarnTrainingTimeModifier"));
     this.globalVar.modifiers.push(new StringNumberPair((4*60*60), "mediumBarnTrainingTimeModifier"));
     this.globalVar.modifiers.push(new StringNumberPair((8*60*60), "largeBarnTrainingTimeModifier"));
+
+    //ability modifiers
+    this.globalVar.modifiers.push(new StringNumberPair(1.5, "feedingFrenzyPositiveModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(.9, "feedingFrenzyNegativeModifier"));
 
     var baseMaxSpeedModifier = .3;
     var baseAccelerationModifier = .1;
@@ -313,6 +318,14 @@ export class GlobalService {
     cheetah.type = ShopItemTypeEnum.Animal;
     animalShopItems.push(cheetah);
 
+    var hare = new ShopItem();
+    hare.name = "Hare";
+    hare.shortDescription = "Hare TODO";
+    hare.purchasePrice.push(new ResourceValue("Coins", baseAnimalPrice));
+    hare.canHaveMultiples = false;
+    hare.type = ShopItemTypeEnum.Animal;
+    animalShopItems.push(hare);
+
     var goat = new ShopItem();
     goat.name = "Goat";
     goat.shortDescription = "The goat is a mountain climbing animal that can nimbly travel terrain.";
@@ -320,6 +333,22 @@ export class GlobalService {
     goat.canHaveMultiples = false;
     goat.type = ShopItemTypeEnum.Animal;
     animalShopItems.push(goat);
+
+    var gecko = new ShopItem();
+    gecko.name = "Gecko";
+    gecko.shortDescription = "Gecko TODO";
+    gecko.purchasePrice.push(new ResourceValue("Coins", baseAnimalPrice));
+    gecko.canHaveMultiples = false;
+    gecko.type = ShopItemTypeEnum.Animal;
+    animalShopItems.push(gecko);
+
+    var shark = new ShopItem();
+    shark.name = "Shark";
+    shark.shortDescription = "Shark TODO";
+    shark.purchasePrice.push(new ResourceValue("Coins", baseAnimalPrice));
+    shark.canHaveMultiples = false;
+    shark.type = ShopItemTypeEnum.Animal;
+    animalShopItems.push(shark);
 
     animalShopSection.name = "Animals";
     animalShopSection.itemList = animalShopItems;
@@ -1526,7 +1555,7 @@ export class GlobalService {
 
     var leg = new RaceLeg();
     if (i === 1)
-      leg.courseType = RaceCourseTypeEnum.Tundra;
+      leg.courseType = RaceCourseTypeEnum.Volcanic; //TODO: this is for testing, make this flatland
     else {
       var availableCourses: RaceCourseTypeEnum[] = [];
       if (i < 9) {
@@ -1570,9 +1599,9 @@ export class GlobalService {
     var raceLegs: RaceLeg[] = [];
 
     var availableCourses: RaceCourseTypeEnum[] = [];
-    if (i == 0) {
-      availableCourses.push(RaceCourseTypeEnum.Flatland);
+    if (i == 1) {
       availableCourses.push(RaceCourseTypeEnum.Mountain);
+      availableCourses.push(RaceCourseTypeEnum.Volcanic); //TODO: this is for testing, make this mountain
     }
     else {
       availableCourses.push(RaceCourseTypeEnum.Flatland);
@@ -1623,7 +1652,10 @@ export class GlobalService {
       
       if (i === 0) {
         path.length = pathLength;
-        path.routeDesign = RaceDesignEnum.Regular;
+        if (leg.courseType === RaceCourseTypeEnum.Volcanic)
+          path.routeDesign = RaceDesignEnum.FirstRegular;
+        else
+          path.routeDesign = RaceDesignEnum.Regular;
         path.setStumbleFields();
         paths.push(path);
         totalLegLengthRemaining -= path.length;
@@ -1633,7 +1665,10 @@ export class GlobalService {
 
       if (i === totalRoutes - 1) {
         path.length = totalLegLengthRemaining;
-        path.routeDesign = RaceDesignEnum.Regular;
+        if (leg.courseType === RaceCourseTypeEnum.Volcanic)
+          path.routeDesign = RaceDesignEnum.LastRegular;
+        else
+          path.routeDesign = RaceDesignEnum.Regular;
         path.setStumbleFields();
         paths.push(path);
         lastPathRoute = path.routeDesign;
@@ -1887,6 +1922,13 @@ export class GlobalService {
       horse.breedGaugeXp = 5;
     }
 
+    var cheetah = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Cheetah);
+    if (cheetah !== undefined) {
+      cheetah.currentStats.topSpeed = 30;   
+      cheetah.currentStats.acceleration = 8;   
+      this.calculateAnimalRacingStats(cheetah);
+    }
+
     var monkey = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Monkey);
     if (monkey !== undefined) {
       monkey.currentStats.topSpeed = 300;
@@ -1924,6 +1966,15 @@ export class GlobalService {
       this.calculateAnimalRacingStats(dolphin);
     }
 
+    var shark = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Shark);
+    if (shark !== undefined) {
+      shark.currentStats.topSpeed = 300;   
+      shark.currentStats.acceleration = 30;
+      shark.currentStats.focus = 30;  
+      shark.currentStats.power = 300; 
+      this.calculateAnimalRacingStats(shark);
+    }
+
     var penguin = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Penguin);
     if (penguin !== undefined) {
       penguin.currentStats.topSpeed = 30;   
@@ -1932,5 +1983,12 @@ export class GlobalService {
       this.calculateAnimalRacingStats(penguin);
     }
 
+    var salamander = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Salamander);
+    if (salamander !== undefined) {
+      salamander.currentStats.topSpeed = 30;   
+      salamander.currentStats.acceleration = 8;   
+      salamander.currentStats.focus = 100;
+      this.calculateAnimalRacingStats(salamander);
+    }
   }
 }

@@ -1,7 +1,6 @@
 import { RacerEffectEnum } from "../racer-effect-enum.model";
 
-export class RaceUI {
-    //TODO: bysecond should be byframe
+export class RaceUI {    
     distanceCoveredByFrame: number[];
     velocityByFrame: number[];
     timeToCompleteByFrame: number[];

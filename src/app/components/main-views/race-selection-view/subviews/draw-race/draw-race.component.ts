@@ -37,6 +37,9 @@ export class DrawRaceComponent implements OnInit {
   frameModifier = 60;
   mountainEndingY = 0;
   icyPatchBackgroundLines: (string | number[])[][] = [];
+  volcanoStartingAngle: number;
+  volcanoYOffset = 0;
+  volcanoRadiusXModifier = 6;
 
   lastPathEndingX = 0;
   lastPathEndingY = 0;
@@ -134,8 +137,14 @@ export class DrawRaceComponent implements OnInit {
 
     var mountainLegDistance = 0;
     var waterGoingUp = true;
+    var legDistanceCompleted = 0;
+    var legCounter = 0;
+    var pathCounter = 0;
+
     this.race.raceLegs.forEach(leg => {
       if (leg.pathData !== undefined && leg.pathData.length !== 0) {
+        pathCounter = 0;
+
         leg.pathData.forEach(path => {
           if (leg.courseType === RaceCourseTypeEnum.Flatland) {
             if (path.routeDesign === RaceDesignEnum.Regular)
@@ -171,24 +180,28 @@ export class DrawRaceComponent implements OnInit {
           }
           if (leg.courseType === RaceCourseTypeEnum.Tundra) {
             if (path.routeDesign === RaceDesignEnum.Regular)
-            this.drawRegularTundraOverview(context, path, 1, 1);
+              this.drawRegularTundraOverview(context, path, 1, 1);
             if (path.routeDesign === RaceDesignEnum.Cavern)
               this.drawCavernTundraOverview(context, path, 1, 1);
             if (path.routeDesign === RaceDesignEnum.Hills)
               this.drawHillsTundraOverview(context, path, 1, 1);
           }
           if (leg.courseType === RaceCourseTypeEnum.Volcanic) {
-            if (path.routeDesign === RaceDesignEnum.Regular)
-              this.drawRegularFlatlandOverview(context, path, 1, 1);
+            if (path.routeDesign === RaceDesignEnum.Regular || path.routeDesign === RaceDesignEnum.FirstRegular || path.routeDesign === RaceDesignEnum.LastRegular)
+              this.drawRegularVolcanoOverview(context, 0, pathCounter, path, leg.pathData.length, 1, 1);
           }
 
           this.lengthCompleted += path.length;
+          pathCounter += 1;
 
           if (this.lastPathEndingY < 0) {
             this.yOffscreen = this.lastPathEndingY;
           }
         });
       }
+
+      legCounter += 1;
+      legDistanceCompleted += leg.distance;
     });
 
     if (this.yOffscreen < 0) {
@@ -227,7 +240,10 @@ export class DrawRaceComponent implements OnInit {
 
     if (this.icyPatchBackgroundLines.length > 0) {
       this.icyPatchBackgroundLines.forEach(item => {
-        this.drawIcyPatchBackgroundTundraOverview(context, item);
+        if (item[0] === "Hills")
+          this.drawHillsBackgroundTundraOverview(context, item);
+        else
+          this.drawIcyPatchBackgroundTundraOverview(context, item);
       });
     }
   }
@@ -257,6 +273,7 @@ export class DrawRaceComponent implements OnInit {
     var legPinpointDistance = 0;
     var previousLegDistance = 0;
     var foundLeg = false;
+    var legCounter = 0;
     this.race.raceLegs.forEach(leg => {
       if (!foundLeg) {
         if (currentDistanceTraveled >= legPinpointDistance && currentDistanceTraveled < legPinpointDistance + leg.distance) {
@@ -328,6 +345,63 @@ export class DrawRaceComponent implements OnInit {
     //if the above code is skipped, set Y equal to what mountain ended on
     currentYDistanceTraveled = this.mountainEndingY;
 
+    if (this.currentLeg.courseType === RaceCourseTypeEnum.Volcanic && !this.pauseRace) {
+      //add to currentYDistanceTraveled here as necessary
+      //needs to be percentage based on radius of ellipse and distance covered
+      //it is X because the ellipse has been flipped
+      var xOffsetDistance = this.currentLeg.pathData[0].length / xRaceModeModifier;
+      if (currentDistanceInLeg > xOffsetDistance) {
+        var radiusOfOvalX = this.currentLeg.distance / this.volcanoRadiusXModifier;
+        var offsetPercent = xOffsetDistance / this.currentLeg.distance;
+        var percentOfLegComplete = currentDistanceInLeg / this.currentLeg.distance;
+        var halfwayPointPercentage = ((this.currentLeg.distance - (2*xOffsetDistance)) / this.currentLeg.distance) / 2;
+        
+        if (percentOfLegComplete > offsetPercent && percentOfLegComplete < (1 - offsetPercent)) {
+          var percentScale = 100 / (100 - 2*offsetPercent);
+          var truePercent = 0;
+          if (percentOfLegComplete > .5)
+          {
+            truePercent = 2 * (halfwayPointPercentage - (((percentOfLegComplete - offsetPercent) * percentScale) - halfwayPointPercentage));
+          }
+          else
+          {
+            truePercent = 2 * ((percentOfLegComplete - offsetPercent) * percentScale);
+          }
+
+          var a = radiusOfOvalX;
+          var b = 1.05;
+          var c = -(radiusOfOvalX);
+          var factor = (a * (Math.pow(b, -(truePercent*100))) + c);
+                    
+          //make the percent exponential and gg
+          this.volcanoYOffset = factor;// * this.canvasXDistanceScale * yRaceModeModifier;
+          //console.log("Radius: " + radiusOfOvalX + " Offset: " + (radiusOfOvalX * truePercent));
+        }
+
+        /*console.log("Offset %: " + offsetPercent + " halfway %: " + halfwayPointPercentage);        
+        var a = 3.4;
+        var b = .6;
+        var c = 1.8;
+        var factor = percentOfLegComplete * radiusOfOvalX;
+
+        if (percentOfLegComplete > offsetPercent && percentOfLegComplete < (1 - offsetPercent)) {
+          if (percentOfLegComplete < halfwayPointPercentage) {
+            //console.log(a + " * Math.pow(" + b + ", " + (percentOfLegComplete * radiusOfOvalX) + ") + " + c + " = " + (a * (Math.pow(b, (percentOfLegComplete * radiusOfOvalX))) + c));
+            this.volcanoYOffset -= (a * (Math.pow(b, factor)) + c);
+            //console.log("Sub: " + (a * (Math.pow(b, factor)) + c));
+            //console.log((a * (Math.pow(b, (percentOfLegComplete * radiusOfOvalX))) + c) + " * " + yRaceModeModifier + " = " + this.volcanoYOffset);
+          }
+          else {
+            var invertedFactor = radiusOfOvalX - factor;
+            this.volcanoYOffset += (a * (Math.pow(b, invertedFactor)) + c);
+            //console.log("Add: " + (a * (Math.pow(b, invertedFactor)) + c));
+            //console.log((a * (Math.pow(b, (percentOfLegComplete * radiusOfOvalX))) + c) + " * " + yRaceModeModifier + " = " + this.volcanoYOffset);
+          }
+        }*/
+      }
+    }
+
+    currentYDistanceTraveled += this.volcanoYOffset;
     //current distance traveled, scaled with the canvas and modifier, minus getting the coloring in the middle of the screen
     var xDistanceOffset = (currentDistanceTraveled * this.canvasXDistanceScale * xRaceModeModifier) - (this.canvasWidth / 2);
     var yDistanceOffset = currentYDistanceTraveled * this.canvasXDistanceScale * yRaceModeModifier;
@@ -349,10 +423,14 @@ export class DrawRaceComponent implements OnInit {
 
     var mountainLegDistance = 0; //used to determine climbing distance
     var waterGoingUp = true;
+    var legDistanceCompleted = 0;
+    var pathCounter = 0;
+
     this.race.raceLegs.forEach(leg => {
       if (leg.pathData !== undefined && leg.pathData.length !== 0) {
-        leg.pathData.forEach(path => {
+        pathCounter = 0;
 
+        leg.pathData.forEach(path => {
           if (leg.courseType === RaceCourseTypeEnum.Flatland) {
             context.lineCap = "round";
             if (path.routeDesign === RaceDesignEnum.Regular)
@@ -391,7 +469,7 @@ export class DrawRaceComponent implements OnInit {
           if (leg.courseType === RaceCourseTypeEnum.Tundra) {
             context.lineCap = "round";
             if (path.routeDesign === RaceDesignEnum.Regular)
-            this.drawRegularTundraOverview(context, path, xRaceModeModifier, yRaceModeModifier, xDistanceOffset, yDistanceOffset);
+              this.drawRegularTundraOverview(context, path, xRaceModeModifier, yRaceModeModifier, xDistanceOffset, yDistanceOffset);
             if (path.routeDesign === RaceDesignEnum.Cavern)
               this.drawCavernTundraOverview(context, path, xRaceModeModifier, yRaceModeModifier, xDistanceOffset, yDistanceOffset);
             if (path.routeDesign === RaceDesignEnum.Hills)
@@ -399,12 +477,17 @@ export class DrawRaceComponent implements OnInit {
           }
           if (leg.courseType === RaceCourseTypeEnum.Volcanic) {
             context.lineCap = "round";
+            //if (path.routeDesign === RaceDesignEnum.Regular || path.routeDesign === RaceDesignEnum.FirstRegular || path.routeDesign === RaceDesignEnum.LastRegular)
+            this.drawRegularVolcanoOverview(context, 0, pathCounter, path, leg.pathData.length, xRaceModeModifier, yRaceModeModifier, xDistanceOffset, yDistanceOffset);
+          }//this.volcanoYOffset for the 0
 
-          }
-
+          pathCounter += 1;
           this.lengthCompleted += path.length;
         });
       }
+
+      legDistanceCompleted += leg.distance;
+      legCounter += 1;
     });
 
     context.globalCompositeOperation = "source-atop";
@@ -442,13 +525,15 @@ export class DrawRaceComponent implements OnInit {
     }
     context.fillStyle = racerColor;
 
-    //if (this.currentLeg.courseType === RaceCourseTypeEnum.Tundra)
     context.fillRect(this.canvasWidth / 2 - 5, 0, 5, this.canvasHeight);
 
     //Draw background effects -- still covered by other racers
     if (this.icyPatchBackgroundLines.length > 0) {
       this.icyPatchBackgroundLines.forEach(item => {
-        this.drawIcyPatchBackgroundTundraOverview(context, item);
+        if (item[0] === "Hills")
+          this.drawHillsBackgroundTundraOverview(context, item);
+        else
+          this.drawIcyPatchBackgroundTundraOverview(context, item);
       });
     }
 
@@ -475,7 +560,7 @@ export class DrawRaceComponent implements OnInit {
     }
     this.drawBreakpoints(context, xRaceModeModifier);
 
-    
+
   }
 
   getAnimalDistanceColor(currentDistanceTraveled: number) {
@@ -493,7 +578,7 @@ export class DrawRaceComponent implements OnInit {
         if (leg.courseType === RaceCourseTypeEnum.Tundra)
           color = "#28809c";
         if (leg.courseType === RaceCourseTypeEnum.Volcanic)
-          color = "8f1a1a";
+          color = "#8f1a1a";
       }
 
       totalDistance += leg.distance;
@@ -515,7 +600,7 @@ export class DrawRaceComponent implements OnInit {
       color = "#28809c";
     if (courseType === RaceCourseTypeEnum.Volcanic)
       color = "#8f1a1a";
-
+    
     return color;
   }
 
@@ -1095,8 +1180,8 @@ export class DrawRaceComponent implements OnInit {
     context.lineTo(this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY + totalAmount + yRatio + yDistanceOffset);
     context.stroke();
 
-    
-    var cavernModifier = 1 - ((regularMaxYAmount - cavernMaxYAmount) / regularMaxYAmount);    
+
+    var cavernModifier = 1 - ((regularMaxYAmount - cavernMaxYAmount) / regularMaxYAmount);
     var cavernDistance = (horizontalLength / 4) * cavernModifier;
 
     var lineSet = [];
@@ -1138,6 +1223,66 @@ export class DrawRaceComponent implements OnInit {
     lineSet.push([this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY + verticalDistance + yDistanceOffset]);
     lineSet.push([this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY - verticalDistance + yDistanceOffset]);
     lineSet.push([this.lastPathEndingX - xDistanceOffset, this.lastPathEndingY - verticalDistance + yDistanceOffset]);
+
+    var hillHorizontalLength = horizontalLength / 12;
+    var hillSpacing = horizontalLength / 4; //1, 2, 3 * hillspacing - hillhorizontallength / 2 is the hills
+    var sideHillVerticalPlacement = verticalDistance / 2; //40 / 80
+    var middleHillVerticalPlacement = verticalDistance * (3 / 4); //60 / 80
+    var hillHeight = verticalDistance / 4; //needs to take up most of the entire lane
+    var hillColumns = 3;
+
+    //hill column 1
+    lineSet.push([this.lastPathEndingX + (hillSpacing) - (hillHorizontalLength / 2) - xDistanceOffset, this.lastPathEndingY - sideHillVerticalPlacement + (hillHeight / 2) + yDistanceOffset]);
+    lineSet.push([this.lastPathEndingX + (hillSpacing) - (hillHorizontalLength / 2) - xDistanceOffset, //x1
+    this.lastPathEndingY - sideHillVerticalPlacement - hillHeight + yDistanceOffset,  //y1
+    this.lastPathEndingX + (hillSpacing) + (hillHorizontalLength / 2) - xDistanceOffset,  //x2
+    this.lastPathEndingY - sideHillVerticalPlacement - hillHeight + yDistanceOffset,  //y2
+    this.lastPathEndingX + (hillSpacing) + (hillHorizontalLength / 2) - xDistanceOffset,  //x3
+    this.lastPathEndingY - sideHillVerticalPlacement + (hillHeight / 2) + yDistanceOffset]);  //y3
+
+    lineSet.push([this.lastPathEndingX + (hillSpacing) - (hillHorizontalLength / 2) - xDistanceOffset, this.lastPathEndingY + sideHillVerticalPlacement + (hillHeight / 2) + yDistanceOffset]);
+    lineSet.push([this.lastPathEndingX + (hillSpacing) - (hillHorizontalLength / 2) - xDistanceOffset, //x1
+    this.lastPathEndingY + sideHillVerticalPlacement - hillHeight + yDistanceOffset,  //y1
+    this.lastPathEndingX + (hillSpacing) + (hillHorizontalLength / 2) - xDistanceOffset,  //x2
+    this.lastPathEndingY + sideHillVerticalPlacement - hillHeight + yDistanceOffset,  //y2
+    this.lastPathEndingX + (hillSpacing) + (hillHorizontalLength / 2) - xDistanceOffset,  //x3
+    this.lastPathEndingY + sideHillVerticalPlacement + (hillHeight / 2) + yDistanceOffset]);  //y3
+
+    //hill column 2
+    lineSet.push([this.lastPathEndingX + (2 * hillSpacing) - (hillHorizontalLength / 2) - xDistanceOffset, this.lastPathEndingY - middleHillVerticalPlacement + (hillHeight / 2) + yDistanceOffset]);
+    lineSet.push([this.lastPathEndingX + (2 * hillSpacing) - (hillHorizontalLength / 2) - xDistanceOffset, //x1
+    this.lastPathEndingY - middleHillVerticalPlacement - hillHeight + yDistanceOffset,  //y1
+    this.lastPathEndingX + (2 * hillSpacing) + (hillHorizontalLength / 2) - xDistanceOffset,  //x2
+    this.lastPathEndingY - middleHillVerticalPlacement - hillHeight + yDistanceOffset,  //y2
+    this.lastPathEndingX + (2 * hillSpacing) + (hillHorizontalLength / 2) - xDistanceOffset,  //x3
+    this.lastPathEndingY - middleHillVerticalPlacement + (hillHeight / 2) + yDistanceOffset]);  //y3
+
+    lineSet.push([this.lastPathEndingX + (2 * hillSpacing) - (hillHorizontalLength / 2) - xDistanceOffset, this.lastPathEndingY + middleHillVerticalPlacement + (hillHeight / 2) + yDistanceOffset]);
+    lineSet.push([this.lastPathEndingX + (2 * hillSpacing) - (hillHorizontalLength / 2) - xDistanceOffset, //x1
+    this.lastPathEndingY + middleHillVerticalPlacement - hillHeight + yDistanceOffset,  //y1
+    this.lastPathEndingX + (2 * hillSpacing) + (hillHorizontalLength / 2) - xDistanceOffset,  //x2
+    this.lastPathEndingY + middleHillVerticalPlacement - hillHeight + yDistanceOffset,  //y2
+    this.lastPathEndingX + (2 * hillSpacing) + (hillHorizontalLength / 2) - xDistanceOffset,  //x3
+    this.lastPathEndingY + middleHillVerticalPlacement + (hillHeight / 2) + yDistanceOffset]);  //y3
+
+    //hill column 3
+    lineSet.push([this.lastPathEndingX + (3 * hillSpacing) - (hillHorizontalLength / 2) - xDistanceOffset, this.lastPathEndingY - sideHillVerticalPlacement + (hillHeight / 2) + yDistanceOffset]);
+    lineSet.push([this.lastPathEndingX + (3 * hillSpacing) - (hillHorizontalLength / 2) - xDistanceOffset, //x1
+    this.lastPathEndingY - sideHillVerticalPlacement - hillHeight + yDistanceOffset,  //y1
+    this.lastPathEndingX + (3 * hillSpacing) + (hillHorizontalLength / 2) - xDistanceOffset,  //x2
+    this.lastPathEndingY - sideHillVerticalPlacement - hillHeight + yDistanceOffset,  //y2
+    this.lastPathEndingX + (3 * hillSpacing) + (hillHorizontalLength / 2) - xDistanceOffset,  //x3
+    this.lastPathEndingY - sideHillVerticalPlacement + (hillHeight / 2) + yDistanceOffset]);  //y3
+
+    lineSet.push([this.lastPathEndingX + (3 * hillSpacing) - (hillHorizontalLength / 2) - xDistanceOffset, this.lastPathEndingY + sideHillVerticalPlacement + (hillHeight / 2) + yDistanceOffset]);
+    lineSet.push([this.lastPathEndingX + (3 * hillSpacing) - (hillHorizontalLength / 2) - xDistanceOffset, //x1
+    this.lastPathEndingY + sideHillVerticalPlacement - hillHeight + yDistanceOffset,  //y1
+    this.lastPathEndingX + 3 * (hillSpacing) + (hillHorizontalLength / 2) - xDistanceOffset,  //x2
+    this.lastPathEndingY + sideHillVerticalPlacement - hillHeight + yDistanceOffset,  //y2
+    this.lastPathEndingX + (3 * hillSpacing) + (hillHorizontalLength / 2) - xDistanceOffset,  //x3
+    this.lastPathEndingY + sideHillVerticalPlacement + (hillHeight / 2) + yDistanceOffset]);  //y3
+
+
     this.icyPatchBackgroundLines.push(lineSet);
 
     this.lastPathEndingX = this.lastPathEndingX + horizontalLength;
@@ -1158,6 +1303,117 @@ export class DrawRaceComponent implements OnInit {
     context.fill();
 
     context.globalCompositeOperation = existingContentDestinationType;
+  }
+
+  drawHillsBackgroundTundraOverview(context: any, coordinates: any): void {
+    var existingContentDestinationType = context.globalCompositeOperation;
+    context.globalCompositeOperation = "destination-over";
+
+    context.strokeStyle = "dimgray";
+
+    if (coordinates.length >= 17) {
+      context.beginPath();
+      context.moveTo(coordinates[6][0], coordinates[6][1]);
+      context.bezierCurveTo(coordinates[7][0], coordinates[7][1], coordinates[7][2], coordinates[7][3], coordinates[7][4], coordinates[7][5]);
+      context.stroke();
+
+      context.beginPath();
+      context.moveTo(coordinates[8][0], coordinates[8][1]);
+      context.bezierCurveTo(coordinates[9][0], coordinates[9][1], coordinates[9][2], coordinates[9][3], coordinates[9][4], coordinates[9][5]);
+      context.stroke();
+
+      context.beginPath();
+      context.moveTo(coordinates[10][0], coordinates[10][1]);
+      context.bezierCurveTo(coordinates[11][0], coordinates[11][1], coordinates[11][2], coordinates[11][3], coordinates[11][4], coordinates[11][5]);
+      context.stroke();
+
+      context.beginPath();
+      context.moveTo(coordinates[12][0], coordinates[12][1]);
+      context.bezierCurveTo(coordinates[13][0], coordinates[13][1], coordinates[13][2], coordinates[13][3], coordinates[13][4], coordinates[13][5]);
+      context.stroke();
+
+      context.beginPath();
+      context.moveTo(coordinates[14][0], coordinates[14][1]);
+      context.bezierCurveTo(coordinates[15][0], coordinates[15][1], coordinates[15][2], coordinates[15][3], coordinates[15][4], coordinates[15][5]);
+      context.stroke();
+
+      context.beginPath();
+      context.moveTo(coordinates[16][0], coordinates[16][1]);
+      context.bezierCurveTo(coordinates[17][0], coordinates[17][1], coordinates[17][2], coordinates[17][3], coordinates[17][4], coordinates[17][5]);
+      context.stroke();
+    }
+
+    context.beginPath();
+    context.moveTo(coordinates[1][0], coordinates[1][1]);
+    context.lineTo(coordinates[2][0], coordinates[2][1]);
+    context.lineTo(coordinates[3][0], coordinates[3][1]);
+    context.lineTo(coordinates[4][0], coordinates[4][1]);
+    context.lineTo(coordinates[5][0], coordinates[5][1]);
+
+    context.fillStyle = "gray";
+    context.fill();
+
+    context.globalCompositeOperation = existingContentDestinationType;
+    context.strokeStyle = "gray";
+  }
+
+  //ellipse is rotated so X handles Y and Y handles X
+  drawRegularVolcanoOverview(context: any, volcanicYOffset: number, pathCounter: number, path: RacePath, numberOfPaths: number, xRaceModeModifier: number, yRaceModeModifier: number, xDistanceOffset?: number, yDistanceOffset?: number) {
+    var horizontalLength = (path.length / this.race.length) * this.canvasWidth * xRaceModeModifier;
+    var verticalLength = (path.length / this.race.length) * this.canvasWidth * yRaceModeModifier;
+
+    if (xDistanceOffset === undefined || xDistanceOffset === null)
+      xDistanceOffset = 0;
+
+    if (yDistanceOffset === undefined || yDistanceOffset === null)
+      yDistanceOffset = 0;
+
+    var xCenterOfOvalOffset = horizontalLength * (pathCounter);
+    var xRegularOffset = horizontalLength / xRaceModeModifier;    
+    //console.log(horizontalLength + " " + pathCounter + " = " + xCenterOfOvalOffset);
+
+    var startingX = this.lastPathEndingX - xDistanceOffset;
+    var startingY = this.lastPathEndingY + volcanicYOffset + yDistanceOffset;    
+    var xCenterOfOval = startingX - (xCenterOfOvalOffset) + ((horizontalLength * numberOfPaths) / 2);    
+    var yCenterOfOval = startingY;
+    var radiusOfOvalX = (horizontalLength * numberOfPaths) / this.volcanoRadiusXModifier;
+    var radiusOfOvalY = ((horizontalLength * numberOfPaths) / 2) - xRegularOffset;
+    var rotationOfOval = Math.PI / 2;
+    var baselineStartingAngle = 90; //go from 90 to 270
+    var baselineEndingAngle = 270;
+    var anglePerPath = (baselineEndingAngle - baselineStartingAngle) / numberOfPaths;
+    var endingAngle = 0;
+
+    if (path.routeDesign === RaceDesignEnum.FirstRegular) {
+      endingAngle = baselineStartingAngle;
+      this.volcanoStartingAngle = endingAngle;
+      context.beginPath();
+      context.moveTo(this.lastPathEndingX - xDistanceOffset, this.lastPathEndingY + volcanicYOffset + yDistanceOffset);
+      context.lineTo(this.lastPathEndingX + (horizontalLength / xRaceModeModifier) - xDistanceOffset, this.lastPathEndingY + volcanicYOffset + yDistanceOffset);
+      context.stroke();
+    }
+    else if (path.routeDesign === RaceDesignEnum.LastRegular) {
+      context.beginPath();
+      context.moveTo(this.lastPathEndingX + (horizontalLength - (horizontalLength / xRaceModeModifier)) - xDistanceOffset, this.lastPathEndingY + volcanicYOffset + yDistanceOffset);
+      context.lineTo(this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY + volcanicYOffset + yDistanceOffset);
+      context.stroke();
+    }
+
+    var endingAngle = this.volcanoStartingAngle - anglePerPath;
+    if (endingAngle < 0)
+      endingAngle = 360 - Math.abs(endingAngle);
+    //console.log(pathCounter + ": " + endingAngle);
+
+    //if (this.volcanoStartingAngle === baselineStartingAngle)
+    //console.log("XCenter: " + xCenterOfOval + " YCenter: " + yCenterOfOval + " XRadius: " + radiusOfOvalX + " YRadius: " + radiusOfOvalY);
+
+    context.beginPath();
+    context.ellipse(xCenterOfOval, yCenterOfOval, radiusOfOvalX, radiusOfOvalY, rotationOfOval, this.volcanoStartingAngle * (Math.PI / 180), endingAngle * (Math.PI / 180), true);
+    context.stroke();
+    //}
+
+    this.lastPathEndingX = this.lastPathEndingX + horizontalLength;
+    this.volcanoStartingAngle = endingAngle;
   }
 
   ngOnDestroy() {
