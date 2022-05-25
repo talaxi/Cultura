@@ -8,6 +8,7 @@ export class RaceUI {
     staminaPercentByFrame: number[];
     racerEffectByFrame: RacerEffectEnum[];
     yAdjustmentByFrame: number[]; //specifically used for icy patch in tundra biome
+    lavaFallPercentByFrame: number[][];
 
     constructor() {
         this.distanceCoveredByFrame = [];
@@ -17,5 +18,6 @@ export class RaceUI {
         this.staminaPercentByFrame = [];
         this.racerEffectByFrame = [];
         this.yAdjustmentByFrame = [];
+        this.lavaFallPercentByFrame = [];
     }
 }

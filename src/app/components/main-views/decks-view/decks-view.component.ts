@@ -89,8 +89,8 @@ export class DecksViewComponent implements OnInit {
             deckToEdit?.courseTypeOrder.push(RaceCourseTypeEnum.Flatland);
           if (stringItem === "Mountain")
             deckToEdit?.courseTypeOrder.push(RaceCourseTypeEnum.Mountain);
-          if (stringItem === "Water")
-            deckToEdit?.courseTypeOrder.push(RaceCourseTypeEnum.Water);
+          if (stringItem === "Ocean")
+            deckToEdit?.courseTypeOrder.push(RaceCourseTypeEnum.Ocean);
           if (stringItem === "Tundra")
             deckToEdit?.courseTypeOrder.push(RaceCourseTypeEnum.Tundra);
           if (stringItem === "Volcanic")
@@ -197,7 +197,7 @@ export class DecksViewComponent implements OnInit {
       targetClass = "flatlandColor draggable";
     if (dataElement.innerHTML === "Mountain")
       targetClass = "mountainColor draggable";
-    if (dataElement.innerHTML === "Water")
+    if (dataElement.innerHTML === "Ocean")
       targetClass = "waterColor draggable";
     if (dataElement.innerHTML === "Tundra")
       targetClass = "tundraColor draggable";
@@ -208,7 +208,7 @@ export class DecksViewComponent implements OnInit {
       sourceClass = "flatlandColor draggable";
     if (targetEventHtml === "Mountain")
       sourceClass = "mountainColor draggable";
-    if (targetEventHtml === "Water")
+    if (targetEventHtml === "Ocean")
       sourceClass = "waterColor draggable";
     if (targetEventHtml === "Tundra")
       sourceClass = "tundraColor draggable";

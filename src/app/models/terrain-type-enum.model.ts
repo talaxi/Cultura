@@ -2,7 +2,7 @@ export enum TerrainTypeEnum {
     Sunny,
     Rainy,
     Stormy,
-    Snow,
+    Snowfall,
     Maelstrom,
     Hailstorm,
     Ashfall,

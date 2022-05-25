@@ -5,6 +5,7 @@ export class RaceVariables {
     recoveringStamina: boolean;
     defaultRecoveringStaminaLength: number;
     currentRecoveringStaminaLength: number;
+    ranOutOfStamina: boolean;
 
     lostFocus: boolean;
     defaultLostFocusLength: number;
@@ -19,11 +20,12 @@ export class RaceVariables {
 
     isBursting: boolean;
     remainingBurstMeters: number;
+    burstCount: number;
 
     hasRelayEffect: boolean;
     remainingRelayMeters: number;
     relayAffectedStatRatios: AnimalStats; 
-    
+
     icyCurrentDirectionUp: boolean;
     icyCurrentYAmount: number; //when it reaches 100 or -100, hits wall
 
@@ -36,6 +38,7 @@ export class RaceVariables {
         this.recoveringStamina = false;
         this.defaultRecoveringStaminaLength = 150;
         this.currentRecoveringStaminaLength = this.defaultRecoveringStaminaLength;
+        this.ranOutOfStamina = false;
 
         this.lostFocus = false;
         this.defaultLostFocusLength = 60;
@@ -44,6 +47,8 @@ export class RaceVariables {
         this.stumbled = false;
         this.defaultStumbledLength = 10;
         this.currentStumbledLength = this.defaultStumbledLength;
+
+        this.burstCount = 0;
 
         this.icyCurrentYAmount = 0;        
         this.icyCurrentDirectionUp = true;

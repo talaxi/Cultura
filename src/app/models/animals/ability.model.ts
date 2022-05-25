@@ -6,6 +6,7 @@ export class Ability {
     efficiency: number;
     oneTimeEffect: boolean;
     abilityUsed: boolean;
+    totalUseCount: number;
     remainingLength: number; //in meters    
     abilityInUse: boolean;
     isAbilityPurchased: boolean;

@@ -71,7 +71,7 @@ export class Terrain {
                 this.powerModifier = minorDetriment;
             }
 
-            if (terrainType === TerrainTypeEnum.Snow)
+            if (terrainType === TerrainTypeEnum.Snowfall)
             {
                 this.staminaModifier = staminaIncrease;
                 this.maxSpeedModifier = minorDetriment;

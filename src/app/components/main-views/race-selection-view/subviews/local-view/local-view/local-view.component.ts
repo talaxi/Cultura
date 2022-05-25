@@ -162,12 +162,12 @@ export class LocalViewComponent implements OnInit {
         if (numericalRank < 35) {
           availableCourses.push(RaceCourseTypeEnum.Flatland);
           availableCourses.push(RaceCourseTypeEnum.Mountain);
-          availableCourses.push(RaceCourseTypeEnum.Water);
+          availableCourses.push(RaceCourseTypeEnum.Ocean);
         }
         else {
           availableCourses.push(RaceCourseTypeEnum.Flatland);
           availableCourses.push(RaceCourseTypeEnum.Mountain);
-          availableCourses.push(RaceCourseTypeEnum.Water);
+          availableCourses.push(RaceCourseTypeEnum.Ocean);
           availableCourses.push(RaceCourseTypeEnum.Tundra);
           availableCourses.push(RaceCourseTypeEnum.Volcanic);
         }

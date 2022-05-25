@@ -8,7 +8,7 @@ import { GlobalService } from 'src/app/services/global-service.service';
   styleUrls: ['./animal.component.css']
 })
 
-//TODO: switch this to input all available animals and create the entire table here so you can use it in various spots
+
 export class AnimalComponent implements OnInit {
   @Input() selectedAnimal: Animal;
 

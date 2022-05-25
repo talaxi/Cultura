@@ -40,6 +40,8 @@ export class DrawRaceComponent implements OnInit {
   volcanoStartingAngle: number;
   volcanoYOffset = 0;
   volcanoRadiusXModifier = 6;
+  backgroundVolcanoYStart = 0;
+  volcanoYEndPosition = 0;
 
   lastPathEndingX = 0;
   lastPathEndingY = 0;
@@ -168,7 +170,7 @@ export class DrawRaceComponent implements OnInit {
 
             mountainLegDistance += path.length;
           }
-          else if (leg.courseType === RaceCourseTypeEnum.Water) {
+          else if (leg.courseType === RaceCourseTypeEnum.Ocean) {
             if (path.routeDesign === RaceDesignEnum.Regular)
               this.drawRegularWaterOverview(context, path, 1, 1, waterGoingUp);
             if (path.routeDesign === RaceDesignEnum.Waves)
@@ -187,6 +189,7 @@ export class DrawRaceComponent implements OnInit {
               this.drawHillsTundraOverview(context, path, 1, 1);
           }
           if (leg.courseType === RaceCourseTypeEnum.Volcanic) {
+            this.backgroundVolcanoYStart = this.lastPathEndingY;
             if (path.routeDesign === RaceDesignEnum.Regular || path.routeDesign === RaceDesignEnum.FirstRegular || path.routeDesign === RaceDesignEnum.LastRegular)
               this.drawRegularVolcanoOverview(context, 0, pathCounter, path, leg.pathData.length, 1, 1);
           }
@@ -221,6 +224,7 @@ export class DrawRaceComponent implements OnInit {
       var totalDistance = 0;
       var previousPercent = 0;
       var reachedCompletedDistance = false;
+
       this.race.raceLegs.forEach(leg => {
         if (!reachedCompletedDistance) {
           totalDistance += leg.distance;
@@ -245,6 +249,33 @@ export class DrawRaceComponent implements OnInit {
         else
           this.drawIcyPatchBackgroundTundraOverview(context, item);
       });
+    }
+
+    if (this.race.raceLegs.some(item => item.courseType === RaceCourseTypeEnum.Volcanic)) {
+      var volcanicStartDistance = 0;
+      var volcanicFound = false;
+      this.race.raceLegs.forEach(leg => {
+        //get volcano start point
+        if (this.race.raceLegs.some(item => item.courseType === RaceCourseTypeEnum.Volcanic)) {
+          if (leg.courseType !== RaceCourseTypeEnum.Volcanic && !volcanicFound)
+            volcanicStartDistance += leg.distance;
+
+          if (leg.courseType === RaceCourseTypeEnum.Volcanic)
+            volcanicFound = true;
+        }
+      });
+
+      var volcanoDistance = 0;
+      volcanoDistance = this.race.raceLegs.find(item => item.courseType === RaceCourseTypeEnum.Volcanic)!.distance;
+
+      var existingContentDestinationType = context.globalCompositeOperation;
+      context.globalCompositeOperation = "destination-over";
+
+      context.strokeStyle = "dimgray";
+
+      this.drawBackgroundVolcano(context, 0, volcanicStartDistance, volcanicStartDistance + volcanoDistance, 1, 1);
+
+      context.globalCompositeOperation = existingContentDestinationType;
     }
   }
 
@@ -354,50 +385,25 @@ export class DrawRaceComponent implements OnInit {
         var radiusOfOvalX = this.currentLeg.distance / this.volcanoRadiusXModifier;
         var offsetPercent = xOffsetDistance / this.currentLeg.distance;
         var percentOfLegComplete = currentDistanceInLeg / this.currentLeg.distance;
-        var halfwayPointPercentage = ((this.currentLeg.distance - (2*xOffsetDistance)) / this.currentLeg.distance) / 2;
-        
+        var halfwayPointPercentage = ((this.currentLeg.distance - (2 * xOffsetDistance)) / this.currentLeg.distance) / 2;
+
         if (percentOfLegComplete > offsetPercent && percentOfLegComplete < (1 - offsetPercent)) {
-          var percentScale = 100 / (100 - 2*offsetPercent);
+          var percentScale = 100 / (100 - 2 * offsetPercent);
           var truePercent = 0;
-          if (percentOfLegComplete > .5)
-          {
+          if (percentOfLegComplete > .5) {
             truePercent = 2 * (halfwayPointPercentage - (((percentOfLegComplete - offsetPercent) * percentScale) - halfwayPointPercentage));
           }
-          else
-          {
+          else {
             truePercent = 2 * ((percentOfLegComplete - offsetPercent) * percentScale);
           }
 
           var a = radiusOfOvalX;
           var b = 1.05;
           var c = -(radiusOfOvalX);
-          var factor = (a * (Math.pow(b, -(truePercent*100))) + c);
-                    
-          //make the percent exponential and gg
-          this.volcanoYOffset = factor;// * this.canvasXDistanceScale * yRaceModeModifier;
-          //console.log("Radius: " + radiusOfOvalX + " Offset: " + (radiusOfOvalX * truePercent));
+          var factor = (a * (Math.pow(b, -(truePercent * 100))) + c);
+
+          this.volcanoYOffset = factor;
         }
-
-        /*console.log("Offset %: " + offsetPercent + " halfway %: " + halfwayPointPercentage);        
-        var a = 3.4;
-        var b = .6;
-        var c = 1.8;
-        var factor = percentOfLegComplete * radiusOfOvalX;
-
-        if (percentOfLegComplete > offsetPercent && percentOfLegComplete < (1 - offsetPercent)) {
-          if (percentOfLegComplete < halfwayPointPercentage) {
-            //console.log(a + " * Math.pow(" + b + ", " + (percentOfLegComplete * radiusOfOvalX) + ") + " + c + " = " + (a * (Math.pow(b, (percentOfLegComplete * radiusOfOvalX))) + c));
-            this.volcanoYOffset -= (a * (Math.pow(b, factor)) + c);
-            //console.log("Sub: " + (a * (Math.pow(b, factor)) + c));
-            //console.log((a * (Math.pow(b, (percentOfLegComplete * radiusOfOvalX))) + c) + " * " + yRaceModeModifier + " = " + this.volcanoYOffset);
-          }
-          else {
-            var invertedFactor = radiusOfOvalX - factor;
-            this.volcanoYOffset += (a * (Math.pow(b, invertedFactor)) + c);
-            //console.log("Add: " + (a * (Math.pow(b, invertedFactor)) + c));
-            //console.log((a * (Math.pow(b, (percentOfLegComplete * radiusOfOvalX))) + c) + " * " + yRaceModeModifier + " = " + this.volcanoYOffset);
-          }
-        }*/
       }
     }
 
@@ -411,10 +417,6 @@ export class DrawRaceComponent implements OnInit {
     this.visibleDistanceXRight = xDistanceOffset + (this.canvasWidth);
 
     context.globalCompositeOperation = "source-over";
-    //move canvas based on distance travelled as a relation to the scale size
-    //will go in different directions based on racer type    
-    //when setting last x,y distances, you have to ignore xdistanceoffset. 
-    //that way you can have the full picture and apply the offset to that    
 
     if (currentDistanceTraveled >= this.race.length || currentFrame > this.race.raceUI.distanceCoveredByFrame.length) {
       this.isRaceFinished = true;
@@ -455,7 +457,7 @@ export class DrawRaceComponent implements OnInit {
 
             mountainLegDistance += path.length;
           }
-          else if (leg.courseType === RaceCourseTypeEnum.Water) {
+          else if (leg.courseType === RaceCourseTypeEnum.Ocean) {
             context.lineCap = "round";
             if (path.routeDesign === RaceDesignEnum.Regular)
               this.drawRegularWaterOverview(context, path, xRaceModeModifier, yRaceModeModifier, waterGoingUp, xDistanceOffset, yDistanceOffset);
@@ -477,6 +479,7 @@ export class DrawRaceComponent implements OnInit {
           }
           if (leg.courseType === RaceCourseTypeEnum.Volcanic) {
             context.lineCap = "round";
+            this.backgroundVolcanoYStart = this.lastPathEndingY;
             //if (path.routeDesign === RaceDesignEnum.Regular || path.routeDesign === RaceDesignEnum.FirstRegular || path.routeDesign === RaceDesignEnum.LastRegular)
             this.drawRegularVolcanoOverview(context, 0, pathCounter, path, leg.pathData.length, xRaceModeModifier, yRaceModeModifier, xDistanceOffset, yDistanceOffset);
           }//this.volcanoYOffset for the 0
@@ -523,6 +526,9 @@ export class DrawRaceComponent implements OnInit {
       this.race.raceUI.racerEffectByFrame[currentFrame] === RacerEffectEnum.Stumble) {
       racerColor = this.utilityService.shadeColor(racerColor, -90);
     }
+    if (this.race.raceUI.racerEffectByFrame[currentFrame] === RacerEffectEnum.Burst) {
+      racerColor = this.utilityService.shadeColor(racerColor, 90);
+    }
     context.fillStyle = racerColor;
 
     context.fillRect(this.canvasWidth / 2 - 5, 0, 5, this.canvasHeight);
@@ -560,7 +566,33 @@ export class DrawRaceComponent implements OnInit {
     }
     this.drawBreakpoints(context, xRaceModeModifier);
 
+    if (this.race.raceLegs.some(item => item.courseType === RaceCourseTypeEnum.Volcanic)) {
+      var volcanicStartDistance = 0;
+      var volcanicFound = false;
+      this.race.raceLegs.forEach(leg => {
+        //get volcano start point
+        if (this.race.raceLegs.some(item => item.courseType === RaceCourseTypeEnum.Volcanic)) {
+          if (leg.courseType !== RaceCourseTypeEnum.Volcanic && !volcanicFound)
+            volcanicStartDistance += leg.distance;
 
+          if (leg.courseType === RaceCourseTypeEnum.Volcanic)
+            volcanicFound = true;
+        }
+      });
+
+      var volcanoDistance = 0;
+      volcanoDistance = this.race.raceLegs.find(item => item.courseType === RaceCourseTypeEnum.Volcanic)!.distance;
+
+      var existingContentDestinationType = context.globalCompositeOperation;
+      context.globalCompositeOperation = "destination-over";
+
+      context.strokeStyle = "dimgray";
+
+      //Draw background effects -- not covered by other racers
+      this.drawBackgroundVolcano(context, currentFrame, volcanicStartDistance, volcanicStartDistance + volcanoDistance, xRaceModeModifier, yRaceModeModifier, xDistanceOffset, yDistanceOffset);
+
+      context.globalCompositeOperation = existingContentDestinationType;
+    }
   }
 
   getAnimalDistanceColor(currentDistanceTraveled: number) {
@@ -573,7 +605,7 @@ export class DrawRaceComponent implements OnInit {
           color = "#7d3f00";//"#8f1c14";
         if (leg.courseType === RaceCourseTypeEnum.Mountain)
           color = "#4d6b48";
-        if (leg.courseType === RaceCourseTypeEnum.Water)
+        if (leg.courseType === RaceCourseTypeEnum.Ocean)
           color = "#16148f";
         if (leg.courseType === RaceCourseTypeEnum.Tundra)
           color = "#28809c";
@@ -594,13 +626,13 @@ export class DrawRaceComponent implements OnInit {
       color = "#7d3f00";
     if (courseType === RaceCourseTypeEnum.Mountain)
       color = "#4d6b48";
-    if (courseType === RaceCourseTypeEnum.Water)
+    if (courseType === RaceCourseTypeEnum.Ocean)
       color = "#16148f";
     if (courseType === RaceCourseTypeEnum.Tundra)
       color = "#28809c";
     if (courseType === RaceCourseTypeEnum.Volcanic)
       color = "#8f1a1a";
-    
+
     return color;
   }
 
@@ -611,15 +643,15 @@ export class DrawRaceComponent implements OnInit {
       if (currentDistanceTraveled >= totalDistance && currentDistanceTraveled < totalDistance + leg.distance) {
         //we are in this leg
         if (leg.courseType === RaceCourseTypeEnum.Flatland)
-          color = "#d16900";//"#eb3023";
+          color = "#D16900";//"#eb3023";
         if (leg.courseType === RaceCourseTypeEnum.Mountain)
-          color = "#a1db97";
-        if (leg.courseType === RaceCourseTypeEnum.Water)
-          color = "#0000ff";
+          color = "#A1DB97";
+        if (leg.courseType === RaceCourseTypeEnum.Ocean)
+          color = "#0000FF";
         if (leg.courseType === RaceCourseTypeEnum.Tundra)
-          color = "#1ca1c9";
+          color = "#1CA1C9";
         if (leg.courseType === RaceCourseTypeEnum.Volcanic)
-          color = "#d92525";
+          color = "#D92525";
       }
 
       totalDistance += leg.distance;
@@ -1369,14 +1401,16 @@ export class DrawRaceComponent implements OnInit {
       yDistanceOffset = 0;
 
     var xCenterOfOvalOffset = horizontalLength * (pathCounter);
-    var xRegularOffset = horizontalLength / xRaceModeModifier;    
+    var xRegularOffset = horizontalLength / xRaceModeModifier;
     //console.log(horizontalLength + " " + pathCounter + " = " + xCenterOfOvalOffset);
+    volcanicYOffset = 0;
 
     var startingX = this.lastPathEndingX - xDistanceOffset;
-    var startingY = this.lastPathEndingY + volcanicYOffset + yDistanceOffset;    
-    var xCenterOfOval = startingX - (xCenterOfOvalOffset) + ((horizontalLength * numberOfPaths) / 2);    
+    var startingY = this.lastPathEndingY + volcanicYOffset + yDistanceOffset;
+    var xCenterOfOval = startingX - (xCenterOfOvalOffset) + ((horizontalLength * numberOfPaths) / 2);
     var yCenterOfOval = startingY;
     var radiusOfOvalX = (horizontalLength * numberOfPaths) / this.volcanoRadiusXModifier;
+    //console.log("Race Radius: " + radiusOfOvalX);
     var radiusOfOvalY = ((horizontalLength * numberOfPaths) / 2) - xRegularOffset;
     var rotationOfOval = Math.PI / 2;
     var baselineStartingAngle = 90; //go from 90 to 270
@@ -1397,6 +1431,8 @@ export class DrawRaceComponent implements OnInit {
       context.moveTo(this.lastPathEndingX + (horizontalLength - (horizontalLength / xRaceModeModifier)) - xDistanceOffset, this.lastPathEndingY + volcanicYOffset + yDistanceOffset);
       context.lineTo(this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY + volcanicYOffset + yDistanceOffset);
       context.stroke();
+
+      this.volcanoYEndPosition = startingY;
     }
 
     var endingAngle = this.volcanoStartingAngle - anglePerPath;
@@ -1414,6 +1450,188 @@ export class DrawRaceComponent implements OnInit {
 
     this.lastPathEndingX = this.lastPathEndingX + horizontalLength;
     this.volcanoStartingAngle = endingAngle;
+  }
+
+  drawBackgroundVolcano(context: any, currentFrame: number, legStartX: number, legEndX: number, xRaceModeModifier: number, yRaceModeModifier: number, xDistanceOffset?: number, yDistanceOffset?: number) {
+    //var horizontalLength = (path.length / this.race.length) * this.canvasWidth * xRaceModeModifier;
+    //var verticalLength = (path.length / this.race.length) * this.canvasWidth * yRaceModeModifier;
+
+    if (xDistanceOffset === undefined || xDistanceOffset === null)
+      xDistanceOffset = 0;
+
+    if (yDistanceOffset === undefined || yDistanceOffset === null)
+      yDistanceOffset = 0;
+
+    var volcanoXOffset = .10 * (legEndX - legStartX);
+    var volcanoStartX = (legStartX + volcanoXOffset) * this.canvasXDistanceScale * xRaceModeModifier - xDistanceOffset;
+    var volcanoEndX = (legEndX - volcanoXOffset) * this.canvasXDistanceScale * xRaceModeModifier - xDistanceOffset;
+    var volcanoXLength = volcanoEndX - volcanoStartX;
+
+    //already verified that this radius matches the one in race view
+    var volcanoYRadius = ((legEndX - legStartX) * this.canvasXDistanceScale * xRaceModeModifier) / this.volcanoRadiusXModifier;
+    //var volcanoStartY = this.backgroundVolcanoYStart + (volcanoYRadius * .75) + yDistanceOffset; //original design
+    var volcanoStartY = this.canvasHeight * xRaceModeModifier;
+    var volcanoEndY = this.backgroundVolcanoYStart - (volcanoYRadius * .75) + yDistanceOffset;
+
+    //left side of volcano
+    var volcanoBezier1X1 = volcanoStartX + (volcanoXLength * .15);
+    var volcanoBezier1Y1 = volcanoStartY - (10 * yRaceModeModifier);
+    var volcanoBezier1X2 = volcanoStartX + (volcanoXLength * .35);
+    var volcanoBezier1Y2 = volcanoEndY + (20 * yRaceModeModifier);
+    var volcanoBezier1X3 = volcanoStartX + (volcanoXLength * .4);
+    var volcanoBezier1Y3 = volcanoEndY;
+
+    context.beginPath();
+    context.moveTo(volcanoStartX, volcanoStartY);
+    context.bezierCurveTo(volcanoBezier1X1, volcanoBezier1Y1, volcanoBezier1X2, volcanoBezier1Y2, volcanoBezier1X3, volcanoBezier1Y3);
+    context.stroke();
+
+    //right side of volcano
+    var volcanoBezier2X1 = volcanoEndX - (volcanoXLength * .15);
+    var volcanoBezier2Y1 = volcanoStartY - (10 * yRaceModeModifier);
+    var volcanoBezier2X2 = volcanoEndX - (volcanoXLength * .35);
+    var volcanoBezier2Y2 = volcanoEndY + (20 * yRaceModeModifier);
+    var volcanoBezier2X3 = volcanoEndX - (volcanoXLength * .4);
+    var volcanoBezier2Y3 = volcanoEndY;
+
+    context.beginPath();
+    context.moveTo(volcanoEndX, volcanoStartY);
+    context.bezierCurveTo(volcanoBezier2X1, volcanoBezier2Y1, volcanoBezier2X2, volcanoBezier2Y2, volcanoBezier2X3, volcanoBezier2Y3);
+    context.stroke();
+
+    //top of volcano
+    var volcanoBezier3X1 = volcanoBezier1X3 + ((volcanoBezier2X3 - volcanoBezier1X3) / 3);
+    var volcanoBezier3Y1 = volcanoEndY + (20 * yRaceModeModifier);
+    var volcanoBezier3X2 = volcanoBezier1X3 + (2 * (volcanoBezier2X3 - volcanoBezier1X3) / 3);
+    var volcanoBezier3Y2 = volcanoEndY + (20 * yRaceModeModifier);
+
+    context.beginPath();
+    context.moveTo(volcanoBezier1X3, volcanoBezier1Y3);
+    context.bezierCurveTo(volcanoBezier3X1, volcanoBezier3Y1, volcanoBezier3X2, volcanoBezier3Y2, volcanoBezier2X3, volcanoBezier2Y3);
+    context.stroke();
+
+    var originalLineWidth = context.lineWidth;
+    context.lineWidth = 2;
+
+    //quarter 1 of volcano
+    var xQuarterOffset = (70 / 4) / 100;
+    var volcanoBezier4X1 = volcanoStartX + (volcanoXLength * (xQuarterOffset + .025));
+    var volcanoBezier4Y1 = volcanoStartY * .95 - (5 * yRaceModeModifier);
+    var volcanoBezier4X2 = volcanoStartX + (volcanoXLength * (xQuarterOffset + .2));
+    var volcanoBezier4Y2 = volcanoEndY * 1.1 + (20 * yRaceModeModifier);
+    var volcanoBezier4X3 = volcanoStartX + (volcanoXLength * (xQuarterOffset + .25));
+    var volcanoBezier4Y3 = volcanoEndY * 1.1;
+
+    context.beginPath();
+    context.moveTo(volcanoStartX + (volcanoXLength * xQuarterOffset), volcanoStartY * .95);
+    context.bezierCurveTo(volcanoBezier4X1, volcanoBezier4Y1, volcanoBezier4X2, volcanoBezier4Y2, volcanoBezier4X3, volcanoBezier4Y3);
+    context.stroke();
+
+    //quarter 2 of volcano
+    xQuarterOffset = (70 / 2) / 100;
+    var volcanoBezier5X1 = volcanoStartX + (volcanoXLength * (xQuarterOffset + .025));
+    var volcanoBezier5Y1 = volcanoStartY * .95 - (5 * yRaceModeModifier);
+    var volcanoBezier5X2 = volcanoStartX + (volcanoXLength * (xQuarterOffset + .075));
+    var volcanoBezier5Y2 = volcanoEndY * 1.2 + (20 * yRaceModeModifier);
+    var volcanoBezier5X3 = volcanoStartX + (volcanoXLength * (xQuarterOffset + .1));
+    var volcanoBezier5Y3 = volcanoEndY * 1.2;
+
+    context.beginPath();
+    context.moveTo(volcanoStartX + (volcanoXLength * xQuarterOffset), volcanoStartY * .95);
+    context.bezierCurveTo(volcanoBezier5X1, volcanoBezier5Y1, volcanoBezier5X2, volcanoBezier5Y2, volcanoBezier5X3, volcanoBezier5Y3);
+    context.stroke();
+
+
+    //quarter 3 of volcano
+    xQuarterOffset = (70 / 2) / 100;
+    var volcanoBezier6X1 = volcanoEndX - (volcanoXLength * (xQuarterOffset + .025));
+    var volcanoBezier6Y1 = volcanoStartY * .95 - (5 * yRaceModeModifier);
+    var volcanoBezier6X2 = volcanoEndX - (volcanoXLength * (xQuarterOffset + .075));
+    var volcanoBezier6Y2 = volcanoEndY * 1.2 + (20 * yRaceModeModifier);
+    var volcanoBezier6X3 = volcanoEndX - (volcanoXLength * (xQuarterOffset + .1));
+    var volcanoBezier6Y3 = volcanoEndY * 1.2;
+
+    context.beginPath();
+    context.moveTo(volcanoEndX - (volcanoXLength * xQuarterOffset), volcanoStartY * .95);
+    context.bezierCurveTo(volcanoBezier6X1, volcanoBezier6Y1, volcanoBezier6X2, volcanoBezier6Y2, volcanoBezier6X3, volcanoBezier6Y3);
+    context.stroke();
+
+    //quarter 4 of volcano
+    xQuarterOffset = (70 / 4) / 100;
+    var volcanoBezier7X1 = volcanoEndX - (volcanoXLength * (xQuarterOffset + .025));
+    var volcanoBezier7Y1 = volcanoStartY * .95 - (5 * yRaceModeModifier);
+    var volcanoBezier7X2 = volcanoEndX - (volcanoXLength * (xQuarterOffset + .2));
+    var volcanoBezier7Y2 = volcanoEndY * 1.1 + (20 * yRaceModeModifier);
+    var volcanoBezier7X3 = volcanoEndX - (volcanoXLength * (xQuarterOffset + .25));
+    var volcanoBezier7Y3 = volcanoEndY * 1.1;
+
+    context.beginPath();
+    context.moveTo(volcanoEndX - (volcanoXLength * xQuarterOffset), volcanoStartY * .95);
+    context.bezierCurveTo(volcanoBezier7X1, volcanoBezier7Y1, volcanoBezier7X2, volcanoBezier7Y2, volcanoBezier7X3, volcanoBezier7Y3);
+    context.stroke();
+
+    var lavaFallPercent = [.4, .45, .475, .525, .55, .6];
+    var originalFillColor = context.fillStyle;
+    context.fillStyle = "orange";
+
+    //lava top fill
+    var volcanoTopBezierX1 = volcanoBezier1X3 * .95;
+    var volcanoTopBezierY1 = volcanoBezier1Y3 + (volcanoYRadius / 2);
+    var volcanoTopBezierX2 = volcanoBezier2X3 * 1.05;
+    var volcanoTopBezierY2 = volcanoBezier1Y3 + (volcanoYRadius / 2);
+    
+    context.beginPath();
+    context.moveTo(volcanoBezier1X3, volcanoBezier1Y3);
+    context.bezierCurveTo(volcanoTopBezierX1, volcanoTopBezierY1, volcanoTopBezierX2, volcanoTopBezierY2, volcanoBezier2X3, volcanoBezier2Y3);
+    context.moveTo(volcanoBezier2X3, volcanoBezier2Y3);
+    context.lineTo(volcanoBezier1X3, volcanoBezier1Y3);
+    context.fill();
+
+    var lavaFallPercentByFrame = this.race.raceUI.lavaFallPercentByFrame[currentFrame];
+    var lava1FallDistance = legStartX + ((legEndX - legStartX) * .4);
+
+    /*//lava drop 1
+    var drop1XBeginningStart = volcanoStartX + (volcanoXLength * .4);
+    var drop1XBeginningEnd = volcanoStartX + (volcanoXLength * (xQuarterOffset + .25));
+    var drop1YBeginningStart = volcanoEndY;
+    console.log(volcanoStartX + " " + volcanoXLength);
+
+    //var volcanoXOffset = .10 * (legEndX - legStartX);
+    //var volcanoStartX = (legStartX + volcanoXOffset) * this.canvasXDistanceScale * xRaceModeModifier - xDistanceOffset;
+    //need to account for racer timing, should be able to just multiply by a factor 
+    var drop1XFinishStart = volcanoStartX;
+    var drop1XFinishEnd = volcanoStartX + (volcanoXLength * xQuarterOffset);
+    var drop1YPath = (this.volcanoYEndPosition + volcanoYRadius) * 1.25;
+    var drop1YEnd = this.canvasHeight * 1.3 * xRaceModeModifier;
+
+    context.beginPath();
+    context.moveTo(drop1XBeginningStart, drop1YBeginningStart);
+    context.bezierCurveTo(drop1XFinishStart, drop1YPath, drop1XFinishEnd, drop1YPath, drop1XBeginningEnd, drop1YBeginningStart);
+    context.moveTo(drop1XBeginningEnd, drop1YBeginningStart);
+    context.lineTo(drop1XBeginningStart, drop1YBeginningStart);
+    context.fill();
+
+    //lava drop 2
+    var drop2XBeginningStart = volcanoStartX + (volcanoXLength * (xQuarterOffset + .25));
+    var drop2XBeginningEnd = volcanoStartX + (volcanoXLength * (xQuarterOffset + .325)); //.425
+    var drop2YBeginningStart = volcanoEndY;
+
+    //need to account for racer timing, should be able to just multiply by a factor 
+    var drop2XFinishStart = volcanoStartX + (volcanoXLength * xQuarterOffset - .225);
+    var drop2XFinishEnd = volcanoStartX + (volcanoXLength * (xQuarterOffset));
+    var drop2YPath = (this.volcanoYEndPosition + volcanoYRadius) * 1.3;
+    var drop2YEnd = this.canvasHeight * 1.3 * xRaceModeModifier;    
+
+    context.beginPath();
+    context.moveTo(drop2XBeginningStart, drop2YBeginningStart);
+    context.bezierCurveTo(volcanoStartX + (volcanoXLength * ((70 / 4) / 100)), drop2YPath, volcanoStartX + (volcanoXLength * ((70 / 2) / 100)), drop2YPath, drop2XBeginningEnd, drop2YBeginningStart);
+    context.moveTo(drop2XBeginningEnd, drop2YBeginningStart);
+    context.lineTo(drop2XBeginningStart, drop2YBeginningStart);
+    context.fill();*/
+
+
+    context.lineWidth = originalLineWidth;
+    context.fillStyle = originalFillColor;
   }
 
   ngOnDestroy() {

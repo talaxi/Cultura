@@ -8,5 +8,5 @@ triggers="mouseenter:mouseleave" popoverClass="popoverClass">
     <br />
     {{ purchaseResourcesRequired }}
     <br/>
-    <button (click)="BuyItem()">Buy</button>
+    <button (click)="BuyItem()" [disabled]="!canAffordItem">Buy</button>
 </div>

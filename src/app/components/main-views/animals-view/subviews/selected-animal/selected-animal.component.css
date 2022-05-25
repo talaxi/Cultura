@@ -25,6 +25,7 @@
 
 .filterActive {
   font-weight: bold;
+  color: var(--foreground-secondary);
 }
 
 .info {    
@@ -62,6 +63,14 @@
     background-color: var(--background-secondary);
     border-color: var(--background-tertiary);
     color: var(--foreground-default);
+}
+
+.editName {
+  width: 4rem;
+}
+
+.name {
+  margin-left: 4rem;
 }
 
 .selectedItemSpan

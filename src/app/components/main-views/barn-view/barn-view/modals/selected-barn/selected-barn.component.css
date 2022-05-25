@@ -14,8 +14,7 @@
 }
 
 .customLabel
-{
-    color: #000;
+{    
     font-weight: 700;
     text-align: center;
     width: 100%; /* needs to match the size of the main grid */
@@ -85,6 +84,7 @@
 
 .filterActive {
   font-weight: bold;
+  color: var(--foreground-secondary);
 }
 
 

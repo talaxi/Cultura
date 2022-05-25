@@ -30,7 +30,7 @@
                             (drop)="dropCourseType($event)">Mountain</span>
                         / <span id="raceOrder3" draggable="true" class="waterColor draggable"
                             (dragstart)="dragStart($event)" (dragover)="allowDrop($event)"
-                            (drop)="dropCourseType($event)">Water</span>
+                            (drop)="dropCourseType($event)">Ocean</span>
                         / <span id="raceOrder4" draggable="true" class="tundraColor draggable"
                             (dragstart)="dragStart($event)" (dragover)="allowDrop($event)"
                             (drop)="dropCourseType($event)">Tundra</span>
@@ -42,7 +42,7 @@
                 <br />
                 <div class="typeContainer">
                     <span *ngFor="let type of raceCourseTypeList" class="raceType subHeading" [ngClass]="{'selectedCourseType': selectedCourseType === type, 'flatlandColor': type === 'Flatland',
-                'mountainColor': type === 'Mountain', 'waterColor': type === 'Water', 'tundraColor': type === 'Tundra', 'volcanicColor': type === 'Volcanic'}" (click)="filterType(type)">
+                'mountainColor': type === 'Mountain', 'waterColor': type === 'Ocean', 'tundraColor': type === 'Tundra', 'volcanicColor': type === 'Volcanic'}" (click)="filterType(type)">
                         {{type.trim()}}
                     </span>
 

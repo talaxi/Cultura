@@ -32,7 +32,7 @@ export class AnimalDeckComponent implements OnInit {
       var colorConditional = {
         'flatlandColor': animal.getRaceCourseType() === 'Flatland',
         'mountainColor': animal.getRaceCourseType() === 'Mountain',
-        'waterColor': animal.getRaceCourseType() === 'Water',
+        'waterColor': animal.getRaceCourseType() === 'Ocean',
         'tundraColor': animal.getRaceCourseType() === 'Tundra',
         'volcanicColor': animal.getRaceCourseType() === 'Volcanic'
       };

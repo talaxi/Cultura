@@ -100,7 +100,8 @@ export class GlobalService {
     this.globalVar.modifiers.push(new StringNumberPair(10, "circuitBreedGaugeIncrease"));
     this.globalVar.modifiers.push(new StringNumberPair(1, "localBreedGaugeIncrease"));
 
-    this.globalVar.modifiers.push(new StringNumberPair(.01, "breedLevelStatModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(.02, "breedLevelStatModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(5, "breedGaugeMaxIncreaseModifier"));
 
     this.globalVar.modifiers.push(new StringNumberPair(5, "facilityLevelModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(.02, "animalHandlerModifier"));
@@ -445,6 +446,7 @@ export class GlobalService {
           purchasableAbility.canHaveMultiples = false;
           purchasableAbility.type = ShopItemTypeEnum.Ability;
           purchasableAbility.additionalIdentifier = ability.name;
+          purchasableAbility.isAvailable = animal.isAvailable;
           abilityShopItems.push(purchasableAbility);
         }
       });
@@ -1118,12 +1120,12 @@ export class GlobalService {
         if (i <= 53) {
           availableCourses.push(RaceCourseTypeEnum.Flatland);
           availableCourses.push(RaceCourseTypeEnum.Mountain);
-          availableCourses.push(RaceCourseTypeEnum.Water);
+          availableCourses.push(RaceCourseTypeEnum.Ocean);
         }
         else {
           availableCourses.push(RaceCourseTypeEnum.Flatland);
           availableCourses.push(RaceCourseTypeEnum.Mountain);
-          availableCourses.push(RaceCourseTypeEnum.Water);
+          availableCourses.push(RaceCourseTypeEnum.Ocean);
           availableCourses.push(RaceCourseTypeEnum.Tundra);
           availableCourses.push(RaceCourseTypeEnum.Volcanic);
         }
@@ -1284,12 +1286,12 @@ export class GlobalService {
           if (i < 26) {
             availableCourses.push(RaceCourseTypeEnum.Flatland);
             availableCourses.push(RaceCourseTypeEnum.Mountain);
-            availableCourses.push(RaceCourseTypeEnum.Water);
+            availableCourses.push(RaceCourseTypeEnum.Ocean);
           }
           else {
             availableCourses.push(RaceCourseTypeEnum.Flatland);
             availableCourses.push(RaceCourseTypeEnum.Mountain);
-            availableCourses.push(RaceCourseTypeEnum.Water);
+            availableCourses.push(RaceCourseTypeEnum.Ocean);
           }
           var randomizedCourseList = this.getCourseTypeInRandomOrderSeeded(availableCourses, seedValue + "courses1");
 
@@ -1408,20 +1410,32 @@ export class GlobalService {
       availableTerrainsList.push(TerrainTypeEnum.Rainy);
       availableTerrainsList.push(TerrainTypeEnum.Stormy);
       availableTerrainsList.push(TerrainTypeEnum.Torrid);
-      availableTerrainsList.push(TerrainTypeEnum.Snow);
+      availableTerrainsList.push(TerrainTypeEnum.Snowfall);
     }
     else if (raceCourseType === RaceCourseTypeEnum.Mountain) {
       availableTerrainsList.push(TerrainTypeEnum.Sunny);
       availableTerrainsList.push(TerrainTypeEnum.Rainy);
       availableTerrainsList.push(TerrainTypeEnum.Stormy);
       availableTerrainsList.push(TerrainTypeEnum.Torrid);
-      availableTerrainsList.push(TerrainTypeEnum.Snow);
+      availableTerrainsList.push(TerrainTypeEnum.Snowfall);
     }
-    else if (raceCourseType === RaceCourseTypeEnum.Water) {
+    else if (raceCourseType === RaceCourseTypeEnum.Ocean) {
       availableTerrainsList.push(TerrainTypeEnum.Sunny);
       availableTerrainsList.push(TerrainTypeEnum.Maelstrom);
       availableTerrainsList.push(TerrainTypeEnum.Stormy);
-      availableTerrainsList.push(TerrainTypeEnum.Snow);
+      availableTerrainsList.push(TerrainTypeEnum.Snowfall);
+    }
+    else if (raceCourseType === RaceCourseTypeEnum.Tundra) {
+      availableTerrainsList.push(TerrainTypeEnum.Sunny);
+      availableTerrainsList.push(TerrainTypeEnum.Hailstorm);
+      availableTerrainsList.push(TerrainTypeEnum.Stormy);
+      availableTerrainsList.push(TerrainTypeEnum.Snowfall);
+    }
+    else if (raceCourseType === RaceCourseTypeEnum.Volcanic) {
+      availableTerrainsList.push(TerrainTypeEnum.Sunny);
+      availableTerrainsList.push(TerrainTypeEnum.Ashfall);
+      availableTerrainsList.push(TerrainTypeEnum.Stormy);
+      availableTerrainsList.push(TerrainTypeEnum.Torrid);
     }
 
     var rng = this.utilityService.getRandomInteger(1, availableTerrainsList.length);
@@ -1555,7 +1569,7 @@ export class GlobalService {
 
     var leg = new RaceLeg();
     if (i === 1)
-      leg.courseType = RaceCourseTypeEnum.Volcanic; //TODO: this is for testing, make this flatland
+      leg.courseType = RaceCourseTypeEnum.Flatland;
     else {
       var availableCourses: RaceCourseTypeEnum[] = [];
       if (i < 9) {
@@ -1565,7 +1579,7 @@ export class GlobalService {
       else {
         availableCourses.push(RaceCourseTypeEnum.Flatland);
         availableCourses.push(RaceCourseTypeEnum.Mountain);
-        availableCourses.push(RaceCourseTypeEnum.Water);
+        availableCourses.push(RaceCourseTypeEnum.Ocean);
       }
       var randomizedCourseList = this.getCourseTypeInRandomOrder(availableCourses);
       leg.courseType = randomizedCourseList[0];
@@ -1601,12 +1615,12 @@ export class GlobalService {
     var availableCourses: RaceCourseTypeEnum[] = [];
     if (i == 1) {
       availableCourses.push(RaceCourseTypeEnum.Mountain);
-      availableCourses.push(RaceCourseTypeEnum.Volcanic); //TODO: this is for testing, make this mountain
+      availableCourses.push(RaceCourseTypeEnum.Flatland); //TODO: this is for testing, make this mountain
     }
     else {
       availableCourses.push(RaceCourseTypeEnum.Flatland);
       availableCourses.push(RaceCourseTypeEnum.Mountain);
-      availableCourses.push(RaceCourseTypeEnum.Water);
+      availableCourses.push(RaceCourseTypeEnum.Ocean);
       availableCourses.push(RaceCourseTypeEnum.Tundra);
     }
     var randomizedCourseList = this.getCourseTypeInRandomOrder(availableCourses);
@@ -1723,7 +1737,7 @@ export class GlobalService {
         specialRoute = RaceDesignEnum.S;
       else if (courseType === RaceCourseTypeEnum.Mountain)
         specialRoute = RaceDesignEnum.Crevasse;
-      else if (courseType === RaceCourseTypeEnum.Water)
+      else if (courseType === RaceCourseTypeEnum.Ocean)
         specialRoute = RaceDesignEnum.Waves;
       else if (courseType === RaceCourseTypeEnum.Tundra)
         specialRoute = RaceDesignEnum.Cavern;
@@ -1733,7 +1747,7 @@ export class GlobalService {
         specialRoute = RaceDesignEnum.Bumps;
       else if (courseType === RaceCourseTypeEnum.Mountain)
         specialRoute = RaceDesignEnum.Gaps;
-      else if (courseType === RaceCourseTypeEnum.Water)
+      else if (courseType === RaceCourseTypeEnum.Ocean)
         specialRoute = RaceDesignEnum.Dive;
       else if (courseType === RaceCourseTypeEnum.Tundra)
         specialRoute = RaceDesignEnum.Hills;
@@ -1837,8 +1851,14 @@ export class GlobalService {
     if (animal.breedGaugeXp < animal.breedGaugeMax)
       return;
 
+    var breedMaxIncrease = 5;
+    var breedMaxIncreaseModifier = this.globalVar.modifiers.find(item => item.text === "breedGaugeMaxIncreaseModifier");
+    if (breedMaxIncreaseModifier !== null && breedMaxIncreaseModifier !== undefined)
+      breedMaxIncrease = breedMaxIncreaseModifier.value;
+
     animal.breedLevel += 1;
     animal.breedGaugeXp = 0;
+    animal.breedGaugeMax += breedMaxIncrease;
     //increase max total
 
     var handlers = this.globalVar.resources.find(item => item.name === "Animal Handler");
@@ -1986,8 +2006,7 @@ export class GlobalService {
     var salamander = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Salamander);
     if (salamander !== undefined) {
       salamander.currentStats.topSpeed = 30;   
-      salamander.currentStats.acceleration = 8;   
-      salamander.currentStats.focus = 100;
+      salamander.currentStats.acceleration = 8;         
       this.calculateAnimalRacingStats(salamander);
     }
   }

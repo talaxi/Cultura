@@ -83,7 +83,7 @@ export class SelectedAnimalComponent implements OnInit {
     this.colorConditional = {
       'flatlandColor': this.selectedAnimal.getRaceCourseType() === 'Flatland',
       'mountainColor': this.selectedAnimal.getRaceCourseType() === 'Mountain',
-      'waterColor': this.selectedAnimal.getRaceCourseType() === 'Water',
+      'waterColor': this.selectedAnimal.getRaceCourseType() === 'Ocean',
       'tundraColor': this.selectedAnimal.getRaceCourseType() === 'Tundra',
       'volcanicColor': this.selectedAnimal.getRaceCourseType() === 'Volcanic'
     };

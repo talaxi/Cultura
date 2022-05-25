@@ -39,8 +39,9 @@ export class Animal {
     constructor() {
         this.breedLevel = 1;
         this.breedGaugeXp = 0;
-        this.breedGaugeMax = 50;
+        this.breedGaugeMax = 100;
         this.canTrain = true;
+        this.isAvailable = false;
 
         this.availableAbilities = [];        
     }
@@ -317,27 +318,25 @@ export class Gecko extends Animal {
         this.raceCourseType = RaceCourseTypeEnum.Mountain;
 
         this.ability = new Ability();
-        this.ability.cooldown = 4;
-        this.ability.efficiency = 2;
-        this.ability.totalFrames = 15;
+        this.ability.cooldown = 5;
+        this.ability.efficiency = 4;        
         this.ability.oneTimeEffect = false;
-        this.ability.name = "Breach";        
+        this.ability.name = "Sticky";        
         this.ability.isAbilityPurchased = true;
         this.availableAbilities.push(this.ability);
 
         var ability2 = new Ability();
-        ability2.cooldown = 12;
-        ability2.efficiency = 15;
+        ability2.efficiency = 1;
         ability2.oneTimeEffect = false;
-        ability2.name = "Echolocation";
+        ability2.name = "Night Vision";
         ability2.isAbilityPurchased = false;
         ability2.purchasePrice = 500;
         this.availableAbilities.push(ability2);
 
         var ability3 = new Ability();
-        ability3.efficiency = 5;
+        ability3.efficiency = 3;
         ability3.oneTimeEffect = true;
-        ability3.name = "Flowing Current";
+        ability3.name = "Camouflage";
         ability3.isAbilityPurchased = false;
         ability3.purchasePrice = 500;
         this.availableAbilities.push(ability3);
@@ -352,7 +351,7 @@ export class Dolphin extends Animal {
         this.currentStats = new AnimalStats(5, 5, 5, 5, 5, 5);
 
         this.type = AnimalTypeEnum.Dolphin;
-        this.raceCourseType = RaceCourseTypeEnum.Water;
+        this.raceCourseType = RaceCourseTypeEnum.Ocean;
 
         this.ability = new Ability();
         this.ability.cooldown = 4;
@@ -390,7 +389,7 @@ export class Shark extends Animal {
         this.currentStats = new AnimalStats(5, 5, 5, 5, 5, 5);
 
         this.type = AnimalTypeEnum.Shark;
-        this.raceCourseType = RaceCourseTypeEnum.Water;
+        this.raceCourseType = RaceCourseTypeEnum.Ocean;
 
         this.ability = new Ability();
         this.ability.efficiency = 3;
@@ -425,30 +424,27 @@ export class Octopus extends Animal {
         this.currentStats = new AnimalStats(5, 5, 5, 5, 5, 5);
 
         this.type = AnimalTypeEnum.Octopus;
-        this.raceCourseType = RaceCourseTypeEnum.Water;
+        this.raceCourseType = RaceCourseTypeEnum.Ocean;
 
         this.ability = new Ability();
-        this.ability.cooldown = 4;
         this.ability.efficiency = 2;
-        this.ability.totalFrames = 15;
         this.ability.oneTimeEffect = false;
-        this.ability.name = "Breach";        
+        this.ability.name = "Propulsion";        
         this.ability.isAbilityPurchased = true;
         this.availableAbilities.push(this.ability);
 
         var ability2 = new Ability();
-        ability2.cooldown = 12;
-        ability2.efficiency = 15;
+        ability2.efficiency = 3;
         ability2.oneTimeEffect = false;
-        ability2.name = "Echolocation";
+        ability2.name = "Buried Treasure";
         ability2.isAbilityPurchased = false;
         ability2.purchasePrice = 500;
         this.availableAbilities.push(ability2);
 
         var ability3 = new Ability();
-        ability3.efficiency = 5;
+        ability3.efficiency = 1;
         ability3.oneTimeEffect = true;
-        ability3.name = "Flowing Current";
+        ability3.name = "Big Brain";
         ability3.isAbilityPurchased = false;
         ability3.purchasePrice = 500;
         this.availableAbilities.push(ability3);
@@ -466,27 +462,24 @@ export class Penguin extends Animal {
         this.raceCourseType = RaceCourseTypeEnum.Tundra;
 
         this.ability = new Ability();
-        this.ability.cooldown = 4;
-        this.ability.efficiency = 2;
-        this.ability.totalFrames = 15;
+        this.ability.efficiency = 3;
         this.ability.oneTimeEffect = false;
-        this.ability.name = "Breach";        
+        this.ability.name = "Careful Toboggan";        
         this.ability.isAbilityPurchased = true;
         this.availableAbilities.push(this.ability);
 
         var ability2 = new Ability();
-        ability2.cooldown = 12;
-        ability2.efficiency = 15;
+        ability2.efficiency = 4;
         ability2.oneTimeEffect = false;
-        ability2.name = "Echolocation";
+        ability2.name = "Wild Toboggan";
         ability2.isAbilityPurchased = false;
         ability2.purchasePrice = 500;
         this.availableAbilities.push(ability2);
 
         var ability3 = new Ability();
-        ability3.efficiency = 5;
-        ability3.oneTimeEffect = true;
-        ability3.name = "Flowing Current";
+        ability3.efficiency = 1;
+        ability3.oneTimeEffect = false;
+        ability3.name = "Quick Toboggan";
         ability3.isAbilityPurchased = false;
         ability3.purchasePrice = 500;
         this.availableAbilities.push(ability3);
@@ -504,27 +497,24 @@ export class Caribou extends Animal {
         this.raceCourseType = RaceCourseTypeEnum.Tundra;
 
         this.ability = new Ability();
-        this.ability.cooldown = 4;
-        this.ability.efficiency = 2;
-        this.ability.totalFrames = 15;
-        this.ability.oneTimeEffect = false;
-        this.ability.name = "Breach";        
+        this.ability.efficiency = 4;
+        this.ability.oneTimeEffect = true;
+        this.ability.name = "Herd Mentality";        
         this.ability.isAbilityPurchased = true;
         this.availableAbilities.push(this.ability);
 
         var ability2 = new Ability();
-        ability2.cooldown = 12;
-        ability2.efficiency = 15;
+        ability2.efficiency = 4;
         ability2.oneTimeEffect = false;
-        ability2.name = "Echolocation";
+        ability2.name = "Great Migration";
         ability2.isAbilityPurchased = false;
         ability2.purchasePrice = 500;
         this.availableAbilities.push(ability2);
 
         var ability3 = new Ability();
-        ability3.efficiency = 5;
+        ability3.efficiency = 2;
         ability3.oneTimeEffect = true;
-        ability3.name = "Flowing Current";
+        ability3.name = "Special Delivery";
         ability3.isAbilityPurchased = false;
         ability3.purchasePrice = 500;
         this.availableAbilities.push(ability3);
@@ -542,27 +532,26 @@ export class Salamander extends Animal {
         this.raceCourseType = RaceCourseTypeEnum.Volcanic;
 
         this.ability = new Ability();
-        this.ability.cooldown = 4;
-        this.ability.efficiency = 2;
-        this.ability.totalFrames = 15;
+        this.ability.cooldown = 7;
+        this.ability.efficiency = 5;
         this.ability.oneTimeEffect = false;
-        this.ability.name = "Breach";        
+        this.ability.name = "Cold Blooded";        
         this.ability.isAbilityPurchased = true;
         this.availableAbilities.push(this.ability);
 
         var ability2 = new Ability();
-        ability2.cooldown = 12;
-        ability2.efficiency = 15;
+        ability2.cooldown = 4;
+        ability2.efficiency = 2;
         ability2.oneTimeEffect = false;
-        ability2.name = "Echolocation";
+        ability2.name = "Burrow";
         ability2.isAbilityPurchased = false;
         ability2.purchasePrice = 500;
         this.availableAbilities.push(ability2);
 
         var ability3 = new Ability();
-        ability3.efficiency = 5;
-        ability3.oneTimeEffect = true;
-        ability3.name = "Flowing Current";
+        ability3.efficiency = 3;
+        ability3.oneTimeEffect = false;
+        ability3.name = "Heat Up";
         ability3.isAbilityPurchased = false;
         ability3.purchasePrice = 500;
         this.availableAbilities.push(ability3);
@@ -580,27 +569,25 @@ export class Fox extends Animal {
         this.raceCourseType = RaceCourseTypeEnum.Volcanic;
 
         this.ability = new Ability();
-        this.ability.cooldown = 4;
-        this.ability.efficiency = 2;
-        this.ability.totalFrames = 15;
+        this.ability.cooldown = 5;
+        this.ability.efficiency = 4;
         this.ability.oneTimeEffect = false;
-        this.ability.name = "Breach";        
+        this.ability.name = "Trickster";        
         this.ability.isAbilityPurchased = true;
         this.availableAbilities.push(this.ability);
 
         var ability2 = new Ability();
-        ability2.cooldown = 12;
-        ability2.efficiency = 15;
+        ability2.efficiency = 2;
         ability2.oneTimeEffect = false;
-        ability2.name = "Echolocation";
+        ability2.name = "Fleeting Speed";
         ability2.isAbilityPurchased = false;
         ability2.purchasePrice = 500;
         this.availableAbilities.push(ability2);
 
         var ability3 = new Ability();
-        ability3.efficiency = 5;
+        ability3.efficiency = 3;
         ability3.oneTimeEffect = true;
-        ability3.name = "Flowing Current";
+        ability3.name = "Nine Tails";
         ability3.isAbilityPurchased = false;
         ability3.purchasePrice = 500;
         this.availableAbilities.push(ability3);

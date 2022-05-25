@@ -33,7 +33,7 @@ export class RaceLeg {
             return "flatlandColor";
         if (this.courseType === RaceCourseTypeEnum.Mountain)
             return "mountainColor";
-        if (this.courseType === RaceCourseTypeEnum.Water)
+        if (this.courseType === RaceCourseTypeEnum.Ocean)
             return "waterColor";
         if (this.courseType === RaceCourseTypeEnum.Tundra)
             return "tundraColor";

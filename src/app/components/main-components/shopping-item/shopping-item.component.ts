@@ -17,13 +17,20 @@ export class ShoppingItemComponent implements OnInit {
   shortDescription: string;
   longDescription: string;
   purchaseResourcesRequired: string;
+  canAffordItem = true;
 
   constructor(private globalService: GlobalService, private lookupService: LookupService) { }
 
-  ngOnInit(): void {
+  ngOnInit(): void {    
     if (this.selectedItem.type === ShopItemTypeEnum.Ability) {
       this.shortDescription = this.lookupService.getAnimalAbilityDescription(true, this.selectedItem.additionalIdentifier);
       this.longDescription = this.lookupService.getAnimalAbilityDescription(false, this.selectedItem.additionalIdentifier);
+    }
+    else if (this.selectedItem.type === ShopItemTypeEnum.Specialty) {
+      this.shortDescription = this.lookupService.getSpecialtyItemDescription(this.selectedItem.name); 
+      
+      if (this.shortDescription === "")
+        this.shortDescription = this.selectedItem.shortDescription;
     }
     else {
       this.shortDescription = this.selectedItem.shortDescription;
@@ -32,8 +39,11 @@ export class ShoppingItemComponent implements OnInit {
 
     this.selectedItem.purchasePrice.forEach(resource => {
       this.purchaseResourcesRequired = resource.amount + " " + resource.name + ", ";
-    });
 
+      var currentAmount = this.lookupService.getResourceByName(resource.name);
+      if (currentAmount < resource.amount)
+        this.canAffordItem = false;
+    });
     
     if (this.purchaseResourcesRequired.length > 0)
     {            
@@ -90,6 +100,18 @@ export class ShoppingItemComponent implements OnInit {
     if (animal !== null && animal !== undefined) {
       animal.isAvailable = true;
       this.selectedItem.amountPurchased = 1;
+
+      var associatedAbilitySection = this.globalService.globalVar.shop.find(item => item.name === "Abilities");
+      if (associatedAbilitySection !== undefined && associatedAbilitySection !== null)
+      {
+        var associatedAbilities = associatedAbilitySection.itemList.filter(item => item.name.split(' ')[0] === animal?.getAnimalType());
+        if (associatedAbilities !== undefined && associatedAbilities !== null && associatedAbilities.length > 0)
+        {
+          associatedAbilities.forEach(ability => {
+            ability.isAvailable = true;
+          })
+        }
+      }
 
       var primaryAnimalDeck = this.globalService.globalVar.animalDecks.find(item => item.isPrimaryDeck);
       if (primaryAnimalDeck !== null && primaryAnimalDeck !== undefined) {

@@ -29,7 +29,7 @@ export class ShoppingListComponent implements OnInit {
     if (this.screenHeight <= 650)
       maxColumns = 2;
 
-    var refinedItemList: ShopItem[] = [];
+    var refinedItemList: ShopItem[] = [];    
     this.section.itemList.forEach(item => {
       if (item.isAvailable && ((item.canHaveMultiples && (item.infiniteAmount || item.amountPurchased < item.totalShopQuantity)) 
       || item.amountPurchased === 0))
@@ -56,7 +56,7 @@ export class ShoppingListComponent implements OnInit {
     this.screenWidth = window.innerWidth;    
   }
 
-  itemPurchased($event: ShopItem) {    
+  itemPurchased($event: ShopItem) {     
     this.setupDisplayItems();
   }
 }

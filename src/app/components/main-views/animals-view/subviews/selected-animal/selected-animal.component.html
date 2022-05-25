@@ -15,8 +15,8 @@
             <div [ngClass]="colorConditional">
                 <div *ngIf="selectedAnimal.name !== selectedAnimal.getAnimalType()">
                     <div *ngIf="!editingName">
-                        <span>{{ selectedAnimal.name }}</span>
-                        <span><button (click)="editingName = !editingName">Edit Name</button></span>
+                        <span class="name">{{ selectedAnimal.name }} </span>
+                        <span><button class="editName" (click)="editingName = !editingName">Edit</button></span>
                     </div>
                     <div *ngIf="editingName">
                         <span><input id="newName" name="newName" [(ngModel)]="newName"></span>

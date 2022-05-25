@@ -328,7 +328,8 @@ export class LookupService {
       return "Rare currency gained from improving your circuit rank and winning certain special races.";
     else if (name === "Renown")
       return "Increases Coins gained from races by X%";
-
+    else if (name === "Stopwatch")
+      return this.getSpecialtyItemDescription(name);
     return "";
   }
 
@@ -376,7 +377,7 @@ export class LookupService {
       itemList.push(AnimalTypeEnum[AnimalTypeEnum.Goat]);
       itemList.push(AnimalTypeEnum[AnimalTypeEnum.Gecko]);
     }
-    else if (type === "Water") {
+    else if (type === "Ocean") {
       itemList.push(AnimalTypeEnum[AnimalTypeEnum.Dolphin]);
       itemList.push(AnimalTypeEnum[AnimalTypeEnum.Shark]);
     }
@@ -840,5 +841,14 @@ export class LookupService {
       negativeStat = "Top Speed";
 
     return "+" + trait.researchLevel + "% " + positiveStat + ", -" + trait.researchLevel + "% " + negativeStat;
+  }
+
+  getSpecialtyItemDescription(itemName: string) {
+    var description = ""
+
+    if (itemName === "Stopwatch")
+      description = "Lookup - Reduce training time by 5%";
+
+    return description;
   }
 }

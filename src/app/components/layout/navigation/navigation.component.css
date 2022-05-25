@@ -8,4 +8,5 @@
 .active
 {
     font-weight: bold;
+    color: var(--foreground-secondary);
 }

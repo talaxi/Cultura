@@ -226,6 +226,10 @@ export class SelectedBarnComponent implements OnInit {
           (this.filterLarge && item.facilitySize === FacilitySizeEnum.Large)));
     }
 
+    var selectedTraining = modifiedTrainingOptions.find(item => this.existingTraining?.trainingName === item.trainingName);
+    if (selectedTraining !== null && selectedTraining !== undefined)
+      selectedTraining.isSelected = true;
+
     return modifiedTrainingOptions;
   }
 
