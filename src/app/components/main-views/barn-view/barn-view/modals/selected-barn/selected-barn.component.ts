@@ -227,7 +227,7 @@ export class SelectedBarnComponent implements OnInit {
     }
 
     var selectedTraining = modifiedTrainingOptions.find(item => this.existingTraining?.trainingName === item.trainingName);
-    if (selectedTraining !== null && selectedTraining !== undefined)
+    if (selectedTraining !== null && selectedTraining !== undefined && this.animalAssigned)
       selectedTraining.isSelected = true;
 
     return modifiedTrainingOptions;

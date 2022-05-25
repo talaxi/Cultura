@@ -140,6 +140,7 @@ export class AppComponent {
       worker.onmessage = ({ data }) => {
         console.log('Data Saved');
         localStorage.setItem("gameData", data);
+        worker.terminate();
       };
       worker.postMessage(this.globalService.globalVar);
     } else {
