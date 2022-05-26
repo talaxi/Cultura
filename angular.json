@@ -35,7 +35,10 @@
               "jquery/dist/jquery.min.js",
               "bootstrap/dist/js/bootstrap.min.js"
             ],
-            "webWorkerTsConfig": "tsconfig.worker.json"
+            "webWorkerTsConfig": "tsconfig.worker.json",
+            "allowedCommonJsDependencies": [
+              "class-transformer"
+            ]
           },
           "configurations": {
             "production": {

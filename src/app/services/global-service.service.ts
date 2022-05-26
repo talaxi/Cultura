@@ -26,6 +26,8 @@ import { EquipmentEnum } from '../models/equipment-enum.model';
 import { ThemeService } from '../theme/theme.service';
 import { Incubator } from '../models/incubator.model';
 import { AnimalStatEnum } from '../models/animal-stat-enum.model';
+import { Settings } from '../models/utility/settings.model';
+import { Unlockables } from '../models/utility/unlockables.model';
 
 @Injectable({
   providedIn: 'root'
@@ -36,7 +38,7 @@ export class GlobalService {
   constructor(private utilityService: UtilityService, private initializeService: InitializeService, private themeService: ThemeService) { }
 
   initializeGlobalVariables(): void {
-    this.themeService.setNightTheme();
+    //this.themeService.setNightTheme();
 
     this.globalVar.animals = [];
     this.globalVar.trainingOptions = [];
@@ -46,8 +48,8 @@ export class GlobalService {
     this.globalVar.modifiers = [];
     this.globalVar.animalDecks = [];
     this.globalVar.barns = [];
-    this.globalVar.settings = new Map<string, boolean>();
-    this.globalVar.unlockables = new Map<string, boolean>();
+    this.globalVar.settings = new Settings();
+    this.globalVar.unlockables = new Unlockables();
     this.globalVar.incubator = new Incubator();
     this.globalVar.tutorialCompleted = false;
     this.globalVar.currentTutorialId = 1;
@@ -1581,7 +1583,8 @@ export class GlobalService {
         availableCourses.push(RaceCourseTypeEnum.Mountain);
         availableCourses.push(RaceCourseTypeEnum.Ocean);
       }
-      var randomizedCourseList = this.getCourseTypeInRandomOrder(availableCourses);
+      
+      var randomizedCourseList = this.getCourseTypeInRandomOrderSeeded(availableCourses, 'monoseed');
       leg.courseType = randomizedCourseList[0];
     }
     leg.terrain = this.getRandomTerrain(leg.courseType);
@@ -1595,7 +1598,7 @@ export class GlobalService {
     });
 
     this.globalVar.localRaces.push(new Race(raceLegs, circuitRank, false, raceIndex, totalDistance, timeToComplete, this.GenerateMonoRaceRewards(), LocalRaceTypeEnum.Mono));
-
+    console.log(this.globalVar.localRaces.filter(item => item.localRaceType === LocalRaceTypeEnum.Mono));
     raceIndex += 1;
   }
 
@@ -1623,7 +1626,7 @@ export class GlobalService {
       availableCourses.push(RaceCourseTypeEnum.Ocean);
       availableCourses.push(RaceCourseTypeEnum.Tundra);
     }
-    var randomizedCourseList = this.getCourseTypeInRandomOrder(availableCourses);
+    var randomizedCourseList = this.getCourseTypeInRandomOrderSeeded(availableCourses, 'duoseed');
 
     var randomFactor = this.utilityService.getRandomSeededNumber(minRandomFactor, maxRandomFactor);
     var leg1 = new RaceLeg();
@@ -1889,6 +1892,7 @@ export class GlobalService {
   }
 
   InitializeSettings() {
+    this.globalVar.settings.set("theme", this.themeService.getActiveTheme());
     this.globalVar.settings.set("skipDrawRace", false);
     this.globalVar.settings.set("finishTrainingBeforeSwitching", false);
   }

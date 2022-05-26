@@ -7,7 +7,9 @@ import { Race } from "../races/race.model";
 import { ResourceValue } from "../resources/resource-value.model";
 import { ShopSection } from "../shop/shop-section.model";
 import { TrainingOption } from "../training/training-option.model";
+import { Settings } from "../utility/settings.model";
 import { StringNumberPair } from "../utility/string-number-pair.model";
+import { Unlockables } from "../utility/unlockables.model";
 
 //list all of them, need to give everything a 'display' variable or something of the sort
 export class GlobalVariables {
@@ -34,10 +36,10 @@ export class GlobalVariables {
     renownLevel: number;
     @Type(() => AnimalDeck)
     animalDecks: AnimalDeck[];
-    @Type(() => Map)
-    settings: Map<string, any>;
-    @Type(() => Map)
-    unlockables: Map<string, boolean>;
+    @Type(() => Settings)
+    settings: Settings;
+    @Type(() => Unlockables)
+    unlockables: Unlockables;
     @Type(() => Incubator)
     incubator: Incubator;
     circuitRankUpRewardDescription: string;

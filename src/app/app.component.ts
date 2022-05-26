@@ -7,6 +7,7 @@ import { LookupService } from './services/lookup.service';
 import { AnimalStats } from './models/animals/animal-stats.model';
 import { BarnSpecializationEnum } from './models/barn-specialization-enum.model';
 import { SpecializationService } from './services/specialization.service';
+import { ThemeService } from './theme/theme.service';
 declare var LZString: any;
 
 @Component({
@@ -22,7 +23,7 @@ export class AppComponent {
   racingSaveFrequency = 120; // in seconds
 
   constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private lookupService: LookupService,
-    private specializationService: SpecializationService) {
+    private specializationService: SpecializationService, private themeService: ThemeService) {
 
   }
 
@@ -33,6 +34,7 @@ export class AppComponent {
       var gameData = LZString.decompressFromBase64(compressedGameData);
       var loadDataJson = <GlobalVariables>JSON.parse(gameData);
       this.globalService.globalVar = plainToInstance(GlobalVariables, loadDataJson);
+      this.loadStartup();
     }
 
     //PURELY for testing, should be false when deployed
@@ -151,5 +153,10 @@ export class AppComponent {
       var compressedData = LZString.compressToBase64(globalData);
       localStorage.setItem("gameData", compressedData);
     }
+  }
+
+  loadStartup() {
+    var selectedTheme = this.globalService.globalVar.settings.get("theme");
+    this.themeService.setActiveTheme(selectedTheme);
   }
 }

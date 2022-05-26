@@ -27,8 +27,6 @@ export class LocalViewComponent implements OnInit {
   constructor(private globalService: GlobalService, private utilityService: UtilityService, private lookupService: LookupService) { }
 
   ngOnInit(): void {
-    console.log(this.globalService.globalVar.animalDecks.find(item => item.isPrimaryDeck)?.courseTypeOrder);
-
     this.availableLocalRaces = [];
     
     var nextMonoRace = this.getNextAvailableSpecialRace(LocalRaceTypeEnum.Mono);
@@ -48,6 +46,8 @@ export class LocalViewComponent implements OnInit {
     this.areMonoRacesAvailable = this.lookupService.isItemUnlocked("monoRace");
     this.areDuoRacesAvailable = this.lookupService.isItemUnlocked("duoRace");
     this.areRainbowRacesAvailable = this.lookupService.isItemUnlocked("rainbowRace");
+
+    console.log("Mono available? " + this.areMonoRacesAvailable);
   }
 
   getNextAvailableSpecialRace(raceType: LocalRaceTypeEnum) {

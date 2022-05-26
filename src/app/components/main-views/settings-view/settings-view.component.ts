@@ -4,6 +4,7 @@ import { GlobalService } from 'src/app/services/global-service.service';
 import { plainToInstance } from 'class-transformer';
 import { ThemeService } from 'src/app/theme/theme.service';
 import { RaceDisplayInfoEnum } from 'src/app/models/race-display-info-enum.model';
+import { night, Theme } from 'src/app/theme/theme';
 declare var LZString: any;
 
 @Component({
@@ -74,13 +75,18 @@ export class SettingsViewComponent implements OnInit {
   }
 
   changeTheme(newTheme: any) {
+    var theme = night;
+    
     if (newTheme === "White")
-      this.themeService.setWhiteTheme();
+      theme = this.themeService.setWhiteTheme();
     if (newTheme === "Light")
-      this.themeService.setLightTheme();
+      theme = this.themeService.setLightTheme();
     if (newTheme === "Twilight")
-      this.themeService.setTwilightTheme();
+      theme = this.themeService.setTwilightTheme();
     if (newTheme === "Night")
-      this.themeService.setNightTheme();
+      theme = this.themeService.setNightTheme();
+
+      
+    this.globalService.globalVar.settings.set("theme", theme);
   }
 }

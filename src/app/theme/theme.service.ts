@@ -1,11 +1,12 @@
 import { Injectable } from "@angular/core";
+import { GlobalService } from "../services/global-service.service";
 import { Theme, light, white, twilight, night } from "./theme";
 
 @Injectable({
   providedIn: "root"
 })
 export class ThemeService {
-  private active: Theme = light;
+  private active: Theme = night;
   private availableThemes: Theme[] = [white, light, twilight, night];
 
   getAvailableThemes(): Theme[] {
@@ -15,23 +16,24 @@ export class ThemeService {
   getActiveTheme(): Theme {
     return this.active;
   }
-  setNightTheme(): void {
-    this.setActiveTheme(night);
+
+  setNightTheme() {
+    return this.setActiveTheme(night);
   }
 
-  setLightTheme(): void {
-    this.setActiveTheme(light);
+  setLightTheme() {
+    return this.setActiveTheme(light);
   }
 
-  setTwilightTheme(): void {
-    this.setActiveTheme(twilight);
+  setTwilightTheme() {
+    return this.setActiveTheme(twilight);
   }
 
-  setWhiteTheme(): void {
-    this.setActiveTheme(white);
+  setWhiteTheme() {
+    return this.setActiveTheme(white);
   }
 
-  setActiveTheme(theme: Theme): void {
+  setActiveTheme(theme: Theme) {
     this.active = theme;
 
     Object.keys(this.active.properties).forEach(property => {
@@ -40,5 +42,7 @@ export class ThemeService {
         this.active.properties[property]
       );
     });
+
+    return theme;
   }
 }
