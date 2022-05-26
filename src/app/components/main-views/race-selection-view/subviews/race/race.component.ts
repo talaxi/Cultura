@@ -1071,6 +1071,10 @@ export class RaceComponent implements OnInit {
         raceLeg.terrain.adaptabilityModifier = 1;
     }
 
+    raceLeg.pathData.forEach(path => {
+      path.currentStumbleOpportunity = 0;
+    });
+
     if (racingAnimal.getEquippedItemName() === this.globalService.getEquipmentName(EquipmentEnum.blinders)) {
       var blinderBonus = .5; //.9 = 1 - ((1 - .8) * .5); 
       //if you wanted to make it stronger, .95 = 1 - ((1 - .8) * .25);
@@ -1096,9 +1100,12 @@ export class RaceComponent implements OnInit {
     racingAnimal.raceVariables.relayAffectedStatRatios = statMultiplers;
   }
 
-  didAnimalStumble(racingAnimal: Animal, currentPath: RacePath, currentDistanceInPath: number, terrain: Terrain, obj: { permanentAdaptabilityIncreaseMultiplier: number }, modifiedAdaptabilityMs: number, statLossFromExhaustion: number): boolean {
+  didAnimalStumble(racingAnimal: Animal, currentPath: RacePath, currentDistanceInPath: number, terrain: Terrain, obj: { permanentAdaptabilityIncreaseMultiplier: number }, modifiedAdaptabilityMs: number, statLossFromExhaustion: number): boolean {    
     if (racingAnimal.raceVariables.stumbled)
       return false; //already stumbling
+
+    if (currentPath.frequencyOfStumble === 0)
+      return false;
 
     if (racingAnimal.type === AnimalTypeEnum.Gecko && racingAnimal.ability.name === "Sticky" && racingAnimal.ability.abilityInUse) {
       return false;
@@ -1107,6 +1114,7 @@ export class RaceComponent implements OnInit {
     if (racingAnimal.type === AnimalTypeEnum.Monkey && racingAnimal.ability.name === "Frenzy" && racingAnimal.raceVariables.isBursting) {
       return false;
     }
+    
 
     if (racingAnimal.getEquippedItemName() === this.globalService.getEquipmentName(EquipmentEnum.headband)) {
       var headbandMaxStumblePrevention = 3;
@@ -1122,7 +1130,7 @@ export class RaceComponent implements OnInit {
     }
 
     var stumbleBreakpoint = currentPath.length / currentPath.stumbleOpportunities;
-
+    
     //made it through without stumbling
     if (currentPath.currentStumbleOpportunity === currentPath.stumbleOpportunities && currentPath.routeDesign !== RaceDesignEnum.Regular) {
       if (racingAnimal.type === AnimalTypeEnum.Goat && racingAnimal.ability.name === "Sure-footed") {
@@ -1131,18 +1139,19 @@ export class RaceComponent implements OnInit {
       }
     }
 
-
+    //console.log(currentPath.currentStumbleOpportunity + " * " + stumbleBreakpoint + " < " + currentDistanceInPath);
     if (currentPath.currentStumbleOpportunity * stumbleBreakpoint < currentDistanceInPath) {
       currentPath.currentStumbleOpportunity += 1;
 
       var rng = this.utilityService.getRandomNumber(1, 100);
 
-      var frequencyPerNumberOfMeters = 1000; //frequency / 1000 meters
+      var frequencyPerNumberOfMeters = 250; //frequency / 250 meters
       var terrainAdjustedAdaptability = modifiedAdaptabilityMs * terrain.adaptabilityModifier;
       frequencyPerNumberOfMeters += terrainAdjustedAdaptability;
 
       var percentChanceOfStumbling = ((currentPath.frequencyOfStumble / frequencyPerNumberOfMeters) * currentPath.length);
 
+      console.log(rng + " vs " + percentChanceOfStumbling);
       if (rng <= percentChanceOfStumbling) {
         currentPath.didAnimalStumble = true;
         return true;

@@ -13,13 +13,14 @@ import { ResourceValue } from '../models/resources/resource-value.model';
 import { TerrainTypeEnum } from '../models/terrain-type-enum.model';
 import { TrainingOption } from '../models/training/training-option.model';
 import { GlobalService } from './global-service.service';
+import { UtilityService } from './utility/utility.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LookupService {
 
-  constructor(private globalService: GlobalService) { }
+  constructor(private globalService: GlobalService, private utilityService: UtilityService) { }
 
   recalculateAllAnimalStats() {
     this.globalService.globalVar.animals.forEach(animal => {
@@ -327,7 +328,12 @@ export class LookupService {
     else if (name === "Medals")
       return "Rare currency gained from improving your circuit rank and winning certain special races.";
     else if (name === "Renown")
-      return "Increases Coins gained from races by X%";
+    {
+      var currentRenown = this.getRenown();
+      var renownPercent = this.utilityService.getRenownCircuitRaceModifier(currentRenown);
+                
+      return "Increases Coins gained from races by " + renownPercent + "%";
+    }
     else if (name === "Stopwatch")
       return this.getSpecialtyItemDescription(name);
     return "";
