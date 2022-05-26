@@ -120,6 +120,8 @@ export class RaceComponent implements OnInit {
     race.raceUI.maxSpeedByFrame = [];
     race.raceUI.staminaPercentByFrame = [];
     race.raceUI.yAdjustmentByFrame = [];
+    race.raceUI.racerEffectByFrame = [];
+    race.raceUI.lavaFallPercentByFrame = [];
 
     //do any pre-race setup
     race.raceLegs.forEach(item => {

@@ -853,7 +853,7 @@ export class LookupService {
     var description = ""
 
     if (itemName === "Stopwatch")
-      description = "Lookup - Reduce training time by 5%";
+      description = "Reduce training time by 5%";
 
     return description;
   }
