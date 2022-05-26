@@ -157,6 +157,7 @@ export class AppComponent {
 
   loadStartup() {
     var selectedTheme = this.globalService.globalVar.settings.get("theme");
-    this.themeService.setActiveTheme(selectedTheme);
+    if (selectedTheme !== null && selectedTheme !== undefined)
+      this.themeService.setActiveTheme(selectedTheme);
   }
 }
