@@ -46,8 +46,6 @@ export class LocalViewComponent implements OnInit {
     this.areMonoRacesAvailable = this.lookupService.isItemUnlocked("monoRace");
     this.areDuoRacesAvailable = this.lookupService.isItemUnlocked("duoRace");
     this.areRainbowRacesAvailable = this.lookupService.isItemUnlocked("rainbowRace");
-
-    console.log("Mono available? " + this.areMonoRacesAvailable);
   }
 
   getNextAvailableSpecialRace(raceType: LocalRaceTypeEnum) {

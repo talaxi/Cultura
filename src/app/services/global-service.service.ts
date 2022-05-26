@@ -1554,8 +1554,13 @@ export class GlobalService {
     this.GenerateRainbowRaces(this.globalVar.rainbowRank);
   }
 
-  GenerateMonoRaces(circuitRank: string): void {
+  GenerateMonoRaces(monoRank: string): void {    
+    var i = this.utilityService.getNumericValueOfCircuitRank(monoRank);
     this.globalVar.localRaces = this.globalVar.localRaces.filter(item => item.localRaceType !== LocalRaceTypeEnum.Mono);
+
+    if (i >= this.utilityService.getNumericValueOfCircuitRank(this.globalVar.circuitRank))
+      return;
+    
     var raceIndex = 1;
     var timeToComplete = 90;
 
@@ -1563,9 +1568,7 @@ export class GlobalService {
     var factor = 1.175;
 
     var maxRandomFactor = 1.1;
-    var minRandomFactor = 0.9;
-
-    var i = this.utilityService.getNumericValueOfCircuitRank(circuitRank);
+    var minRandomFactor = 0.9;    
 
     var raceLegs: RaceLeg[] = [];
 
@@ -1597,13 +1600,18 @@ export class GlobalService {
       leg.pathData = this.GenerateRaceLegPaths(leg, totalDistance);
     });
 
-    this.globalVar.localRaces.push(new Race(raceLegs, circuitRank, false, raceIndex, totalDistance, timeToComplete, this.GenerateMonoRaceRewards(), LocalRaceTypeEnum.Mono));
+    this.globalVar.localRaces.push(new Race(raceLegs, monoRank, false, raceIndex, totalDistance, timeToComplete, this.GenerateMonoRaceRewards(), LocalRaceTypeEnum.Mono));
     console.log(this.globalVar.localRaces.filter(item => item.localRaceType === LocalRaceTypeEnum.Mono));
     raceIndex += 1;
   }
 
-  GenerateDuoRaces(circuitRank: string): void {
+  GenerateDuoRaces(duoRank: string): void {
+    var i = this.utilityService.getNumericValueOfCircuitRank(duoRank);
     this.globalVar.localRaces = this.globalVar.localRaces.filter(item => item.localRaceType !== LocalRaceTypeEnum.Duo);
+
+    if (i >= this.utilityService.getNumericValueOfCircuitRank(this.globalVar.circuitRank))
+      return;
+
     var raceIndex = 1;
     var timeToComplete = 80;
 
@@ -1612,7 +1620,6 @@ export class GlobalService {
 
     var maxRandomFactor = 1.1;
     var minRandomFactor = 0.9;
-    var i = this.utilityService.getNumericValueOfCircuitRank(circuitRank);
     var raceLegs: RaceLeg[] = [];
 
     var availableCourses: RaceCourseTypeEnum[] = [];
@@ -1647,7 +1654,7 @@ export class GlobalService {
       leg.pathData = this.GenerateRaceLegPaths(leg, totalDistance);
     });
 
-    this.globalVar.localRaces.push(new Race(raceLegs, circuitRank, false, raceIndex, totalDistance, timeToComplete, this.GenerateDuoRaceRewards(), LocalRaceTypeEnum.Duo));
+    this.globalVar.localRaces.push(new Race(raceLegs, duoRank, false, raceIndex, totalDistance, timeToComplete, this.GenerateDuoRaceRewards(), LocalRaceTypeEnum.Duo));
 
     raceIndex += 1;
   }
