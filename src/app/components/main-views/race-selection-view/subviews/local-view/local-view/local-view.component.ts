@@ -99,7 +99,7 @@ export class LocalViewComponent implements OnInit {
     var maxRandomFactor = 1.05;
     var minRandomFactor = 0.8;
 
-    var legMinimumDistance = 20; //as a percentage of 100
+    var legMinimumDistance = 30; //as a percentage of 100
     var legMaximumDistance = 80; //as a percentage of 100
 
 

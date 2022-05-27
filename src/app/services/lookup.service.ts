@@ -322,6 +322,15 @@ export class LookupService {
     return threshold;
   }
 
+  getBreedLevelPopover(breedLevel: number) {
+    var breedLevelModifier = 0.2;
+    var modifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "breedLevelStatModifier");
+    if (modifierPair !== null && modifierPair !== undefined)
+    breedLevelModifier = modifierPair.value;
+
+    return "Increase racing stat gain from base stats by " + ((breedLevelModifier * (breedLevel-1)) * 100) + "%";
+  }
+
   getResourcePopover(name: string) {
     if (name === "Coins")
       return "Good ol classic Coins. Gain from most actions and buy most things with this.";
@@ -759,31 +768,6 @@ export class LookupService {
 
     return "None";
   }
-
-  getEquipmentDescription(name: string) {
-    if (name === "Headband")
-      return "The first three stumbles you would have are ignored";
-
-    return "";
-  }
-
-  getItemDescription(name: string) {
-    if (name === "Apple")
-      return "+1 Acceleration to a single animal";
-    if (name === "Banana")
-      return "+1 Top Speed to a single animal";
-    if (name === "Strawberry")
-      return "+1 Endurance to a single animal";
-    if (name === "Carrot")
-      return "+1 Power to a single animal";
-    if (name === "Turnip")
-      return "+1 Focus to a single animal";
-    if (name === "Orange")
-      return "+1 Adaptability to a single animal";
-
-    return "";
-  }
-
 
   getTrainingTimeReductionFromTrainingFacility(barnUpgrades: BarnUpgrades) {
     if (barnUpgrades.specialization === BarnSpecializationEnum.TrainingFacility) {

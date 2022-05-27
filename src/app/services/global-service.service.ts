@@ -134,9 +134,9 @@ export class GlobalService {
     this.globalVar.modifiers.push(new StringNumberPair(1.1, "violetBatonEquipmentModifier"));
 
     //below in seconds
-    this.globalVar.modifiers.push(new StringNumberPair((2*60*60), "smallBarnTrainingTimeModifier"));
-    this.globalVar.modifiers.push(new StringNumberPair((4*60*60), "mediumBarnTrainingTimeModifier"));
-    this.globalVar.modifiers.push(new StringNumberPair((8*60*60), "largeBarnTrainingTimeModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair((2 * 60 * 60), "smallBarnTrainingTimeModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair((4 * 60 * 60), "mediumBarnTrainingTimeModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair((8 * 60 * 60), "largeBarnTrainingTimeModifier"));
 
     //ability modifiers
     this.globalVar.modifiers.push(new StringNumberPair(1.5, "feedingFrenzyPositiveModifier"));
@@ -145,7 +145,7 @@ export class GlobalService {
     var baseMaxSpeedModifier = .3;
     var baseAccelerationModifier = .1;
     var baseStaminaModifier = 10;
-    var basePowerModifier = .05;
+    var basePowerModifier = .1;
     var baseFocusModifier = 5;
     var baseAdaptabilityModifier = 5;
 
@@ -335,6 +335,7 @@ export class GlobalService {
     goat.purchasePrice.push(new ResourceValue("Coins", baseAnimalPrice));
     goat.canHaveMultiples = false;
     goat.type = ShopItemTypeEnum.Animal;
+    goat.isAvailable = false;
     animalShopItems.push(goat);
 
     var gecko = new ShopItem();
@@ -343,6 +344,7 @@ export class GlobalService {
     gecko.purchasePrice.push(new ResourceValue("Coins", baseAnimalPrice));
     gecko.canHaveMultiples = false;
     gecko.type = ShopItemTypeEnum.Animal;
+    gecko.isAvailable = false;
     animalShopItems.push(gecko);
 
     var shark = new ShopItem();
@@ -351,7 +353,35 @@ export class GlobalService {
     shark.purchasePrice.push(new ResourceValue("Coins", baseAnimalPrice));
     shark.canHaveMultiples = false;
     shark.type = ShopItemTypeEnum.Animal;
+    shark.isAvailable = false;
     animalShopItems.push(shark);
+
+    var octopus = new ShopItem();
+    octopus.name = "Octopus";
+    octopus.shortDescription = "Octopus TODO";
+    octopus.purchasePrice.push(new ResourceValue("Coins", baseAnimalPrice));
+    octopus.canHaveMultiples = false;
+    octopus.type = ShopItemTypeEnum.Animal;
+    octopus.isAvailable = false;
+    animalShopItems.push(octopus);
+
+    var caribou = new ShopItem();
+    caribou.name = "Caribou";
+    caribou.shortDescription = "Caribou TODO";
+    caribou.purchasePrice.push(new ResourceValue("Coins", baseAnimalPrice));
+    caribou.canHaveMultiples = false;
+    caribou.type = ShopItemTypeEnum.Animal;
+    caribou.isAvailable = false;
+    animalShopItems.push(caribou);
+
+    var fox = new ShopItem();
+    fox.name = "Fox";
+    fox.shortDescription = "Fox TODO";
+    fox.purchasePrice.push(new ResourceValue("Coins", baseAnimalPrice));
+    fox.canHaveMultiples = false;
+    fox.type = ShopItemTypeEnum.Animal;
+    fox.isAvailable = false;
+    animalShopItems.push(fox);
 
     animalShopSection.name = "Animals";
     animalShopSection.itemList = animalShopItems;
@@ -549,81 +579,91 @@ export class GlobalService {
 
     var headband = new ShopItem();
     headband.name = this.getEquipmentName(EquipmentEnum.headband);
-    headband.shortDescription = "The first three stumbles you would have are ignored";
+    headband.shortDescription = this.getEquipmentDescription(headband.name);
     headband.purchasePrice.push(this.getCoinsResourceValue(1000));
-    headband.canHaveMultiples = false;
+    headband.canHaveMultiples = true;
+    headband.infiniteAmount = true;
     headband.type = ShopItemTypeEnum.Equipment;
     equipmentShopItems.push(headband);
 
     var pendant = new ShopItem();
     pendant.name = this.getEquipmentName(EquipmentEnum.pendant);
-    pendant.shortDescription = "Reduce your ability cooldown by 10%";
+    pendant.shortDescription = this.getEquipmentDescription(pendant.name);
     pendant.purchasePrice.push(this.getCoinsResourceValue(1000));
-    pendant.canHaveMultiples = false;
+    pendant.canHaveMultiples = true;
+    pendant.infiniteAmount = true;
     pendant.type = ShopItemTypeEnum.Equipment;
     equipmentShopItems.push(pendant);
 
     var blinders = new ShopItem();
     blinders.name = this.getEquipmentName(EquipmentEnum.blinders);
-    blinders.shortDescription = "Negative terrain effects are cut in half";
+    blinders.shortDescription = this.getEquipmentDescription(blinders.name);
     blinders.purchasePrice.push(this.getCoinsResourceValue(1000));
-    blinders.canHaveMultiples = false;
+    blinders.canHaveMultiples = true;
+    blinders.infiniteAmount = true;
     blinders.type = ShopItemTypeEnum.Equipment;
     equipmentShopItems.push(blinders);
 
     var quickSnack = new ShopItem();
     quickSnack.name = this.getEquipmentName(EquipmentEnum.quickSnack);
-    quickSnack.shortDescription = "Gain 100% of Stamina back after running out";
+    quickSnack.shortDescription = this.getEquipmentDescription(quickSnack.name);
     quickSnack.purchasePrice.push(this.getCoinsResourceValue(1000));
-    quickSnack.canHaveMultiples = false;
+    quickSnack.canHaveMultiples = true;
+    quickSnack.infiniteAmount = true;
     quickSnack.type = ShopItemTypeEnum.Equipment;
     equipmentShopItems.push(quickSnack);
 
     var redBaton = new ShopItem();
     redBaton.name = this.getEquipmentName(EquipmentEnum.redBaton);
-    redBaton.shortDescription = "Increase next racer's Max Speed by 10% on Relay";
+    redBaton.shortDescription = this.getEquipmentDescription(redBaton.name);
     redBaton.purchasePrice.push(this.getCoinsResourceValue(1000));
-    redBaton.canHaveMultiples = false;
+    redBaton.canHaveMultiples = true;
+    redBaton.infiniteAmount = true;
     redBaton.type = ShopItemTypeEnum.Equipment;
     equipmentShopItems.push(redBaton);
 
     var blueBaton = new ShopItem();
     blueBaton.name = this.getEquipmentName(EquipmentEnum.blueBaton);
-    blueBaton.shortDescription = "Increase next racer's Focus by 10% on Relay";
+    blueBaton.shortDescription = this.getEquipmentDescription(blueBaton.name);
     blueBaton.purchasePrice.push(this.getCoinsResourceValue(1000));
-    blueBaton.canHaveMultiples = false;
+    blueBaton.canHaveMultiples = true;
+    blueBaton.infiniteAmount = true;
     blueBaton.type = ShopItemTypeEnum.Equipment;
     equipmentShopItems.push(blueBaton);
 
     var violetBaton = new ShopItem();
     violetBaton.name = this.getEquipmentName(EquipmentEnum.violetBaton);
-    violetBaton.shortDescription = "Increase next racer's Power by 10% on Relay";
+    violetBaton.shortDescription = this.getEquipmentDescription(violetBaton.name);
     violetBaton.purchasePrice.push(this.getCoinsResourceValue(1000));
-    violetBaton.canHaveMultiples = false;
+    violetBaton.canHaveMultiples = true;
+    violetBaton.infiniteAmount = true;
     violetBaton.type = ShopItemTypeEnum.Equipment;
     equipmentShopItems.push(violetBaton);
 
     var orangeBaton = new ShopItem();
     orangeBaton.name = this.getEquipmentName(EquipmentEnum.orangeBaton);
-    orangeBaton.shortDescription = "Increase next racer's Acceleration by 10% on Relay";
+    orangeBaton.shortDescription = this.getEquipmentDescription(orangeBaton.name);
     orangeBaton.purchasePrice.push(this.getCoinsResourceValue(1000));
-    orangeBaton.canHaveMultiples = false;
+    orangeBaton.canHaveMultiples = true;
+    orangeBaton.infiniteAmount = true;
     orangeBaton.type = ShopItemTypeEnum.Equipment;
     equipmentShopItems.push(orangeBaton);
 
     var greenBaton = new ShopItem();
     greenBaton.name = this.getEquipmentName(EquipmentEnum.greenBaton);
-    greenBaton.shortDescription = "Increase next racer's Adaptability by 10% on Relay";
+    greenBaton.shortDescription = this.getEquipmentDescription(greenBaton.name);
     greenBaton.purchasePrice.push(this.getCoinsResourceValue(1000));
-    greenBaton.canHaveMultiples = false;
+    greenBaton.canHaveMultiples = true;
+    greenBaton.infiniteAmount = true;
     greenBaton.type = ShopItemTypeEnum.Equipment;
     equipmentShopItems.push(greenBaton);
 
     var yellowBaton = new ShopItem();
     yellowBaton.name = this.getEquipmentName(EquipmentEnum.yellowBaton);
-    yellowBaton.shortDescription = "Increase next racer's Endurance by 10% on Relay";
+    yellowBaton.shortDescription = this.getEquipmentDescription(yellowBaton.name);
     yellowBaton.purchasePrice.push(this.getCoinsResourceValue(1000));
-    yellowBaton.canHaveMultiples = false;
+    yellowBaton.canHaveMultiples = true;
+    yellowBaton.infiniteAmount = true;
     yellowBaton.type = ShopItemTypeEnum.Equipment;
     equipmentShopItems.push(yellowBaton);
 
@@ -803,6 +843,7 @@ export class GlobalService {
       if (monkey !== undefined && monkey !== null) {
         monkey.isAvailable = true;
         this.unlockAnimalAbilities(monkey);
+        this.unlockOtherRaceCourseTypeAnimals(monkey.raceCourseType);
 
         var primaryAnimalDeck = this.globalVar.animalDecks.find(item => item.isPrimaryDeck);
         if (primaryAnimalDeck !== null && primaryAnimalDeck !== undefined) {
@@ -831,7 +872,7 @@ export class GlobalService {
         resource.amount += amount;
 
       returnVal = [amount + " Coins", ""];
-      
+
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(7) + "Barn Specializations";
     }
     else if (numericValue === 7) {
@@ -846,6 +887,7 @@ export class GlobalService {
       if (dolphin !== undefined && dolphin !== null) {
         dolphin.isAvailable = true;
         this.unlockAnimalAbilities(dolphin);
+        this.unlockOtherRaceCourseTypeAnimals(dolphin.raceCourseType);
 
         var primaryAnimalDeck = this.globalVar.animalDecks.find(item => item.isPrimaryDeck);
         if (primaryAnimalDeck !== null && primaryAnimalDeck !== undefined) {
@@ -944,6 +986,7 @@ export class GlobalService {
       if (penguin !== undefined && penguin !== null) {
         penguin.isAvailable = true;
         this.unlockAnimalAbilities(penguin);
+        this.unlockOtherRaceCourseTypeAnimals(penguin.raceCourseType);
 
         var primaryAnimalDeck = this.globalVar.animalDecks.find(item => item.isPrimaryDeck);
         if (primaryAnimalDeck !== null && primaryAnimalDeck !== undefined) {
@@ -991,6 +1034,7 @@ export class GlobalService {
       if (salamander !== undefined && salamander !== null) {
         salamander.isAvailable = true;
         this.unlockAnimalAbilities(salamander);
+        this.unlockOtherRaceCourseTypeAnimals(salamander.raceCourseType);
 
         var primaryAnimalDeck = this.globalVar.animalDecks.find(item => item.isPrimaryDeck);
         if (primaryAnimalDeck !== null && primaryAnimalDeck !== undefined) {
@@ -1202,7 +1246,7 @@ export class GlobalService {
       raceIndex += 1;
     }
   }
-  
+
   reorganizeLegsByDeckOrder(raceLegs: RaceLeg[], selectedDeck: AnimalDeck) {
     return raceLegs.sort((a, b) => selectedDeck.courseTypeOrder.indexOf(a.courseType) - selectedDeck.courseTypeOrder.indexOf(b.courseType));
   }
@@ -1419,13 +1463,13 @@ export class GlobalService {
     this.GenerateRainbowRaces(this.globalVar.rainbowRank);
   }
 
-  GenerateMonoRaces(monoRank: string): void {    
+  GenerateMonoRaces(monoRank: string): void {
     var i = this.utilityService.getNumericValueOfCircuitRank(monoRank);
     this.globalVar.localRaces = this.globalVar.localRaces.filter(item => item.localRaceType !== LocalRaceTypeEnum.Mono);
 
     if (i >= this.utilityService.getNumericValueOfCircuitRank(this.globalVar.circuitRank))
       return;
-    
+
     var raceIndex = 1;
     var timeToComplete = 90;
 
@@ -1434,7 +1478,7 @@ export class GlobalService {
     var additiveValue = 20 * i;
 
     var maxRandomFactor = 1.1;
-    var minRandomFactor = 0.9;    
+    var minRandomFactor = 0.9;
 
     var raceLegs: RaceLeg[] = [];
 
@@ -1452,7 +1496,7 @@ export class GlobalService {
         availableCourses.push(RaceCourseTypeEnum.Mountain);
         availableCourses.push(RaceCourseTypeEnum.Ocean);
       }
-      
+
       var randomizedCourseList = this.getCourseTypeInRandomOrderSeeded(availableCourses, 'monoseed' + monoRank + i);
       leg.courseType = randomizedCourseList[0];
     }
@@ -1482,7 +1526,7 @@ export class GlobalService {
     var timeToComplete = 80;
 
     var baseMeters = 1500;
-    var factor = 1.35;    
+    var factor = 1.35;
 
     var maxRandomFactor = 1.1;
     var minRandomFactor = 0.9;
@@ -1491,7 +1535,7 @@ export class GlobalService {
     var availableCourses: RaceCourseTypeEnum[] = [];
     if (i == 1) {
       availableCourses.push(RaceCourseTypeEnum.Mountain);
-      availableCourses.push(RaceCourseTypeEnum.Flatland); 
+      availableCourses.push(RaceCourseTypeEnum.Flatland);
     }
     else {
       availableCourses.push(RaceCourseTypeEnum.Flatland);
@@ -1539,7 +1583,7 @@ export class GlobalService {
 
     for (var i = 0; i < totalRoutes; i++) {
       var path = new RacePath();
-      
+
       if (i === 0) {
         path.length = pathLength;
         if (leg.courseType === RaceCourseTypeEnum.Volcanic)
@@ -1604,7 +1648,7 @@ export class GlobalService {
     var totalLandDesigns = 3;
 
     var routeType = this.utilityService.getRandomInteger(1, totalLandDesigns);
-    
+
     if (routeType === 1) {
       return specialRoute;
     }
@@ -1792,25 +1836,83 @@ export class GlobalService {
 
   unlockAnimalAbilities(animal: Animal) {
     var associatedAbilitySection = this.globalVar.shop.find(item => item.name === "Abilities");
-      if (associatedAbilitySection !== undefined && associatedAbilitySection !== null)
-      {
-        var associatedAbilities = associatedAbilitySection.itemList.filter(item => item.name.split(' ')[0] === animal?.getAnimalType());
-        if (associatedAbilities !== undefined && associatedAbilities !== null && associatedAbilities.length > 0)
-        {
-          associatedAbilities.forEach(ability => {
-            ability.isAvailable = true;
-          })
-        }
+    if (associatedAbilitySection !== undefined && associatedAbilitySection !== null) {
+      var associatedAbilities = associatedAbilitySection.itemList.filter(item => item.name.split(' ')[0] === animal?.getAnimalType());
+      if (associatedAbilities !== undefined && associatedAbilities !== null && associatedAbilities.length > 0) {
+        associatedAbilities.forEach(ability => {
+          ability.isAvailable = true;
+        })
       }
+    }
+  }
+
+  unlockOtherRaceCourseTypeAnimals(courseType: RaceCourseTypeEnum) {
+    var associatedAnimalSection = this.globalVar.shop.find(item => item.name === "Animals");
+    if (associatedAnimalSection !== undefined && associatedAnimalSection !== null) {
+      var associatedAnimals: ShopItem[] = [];
+      associatedAnimalSection.itemList.forEach(item => {//.filter(item => item.name === animal?.getAnimalType());
+        var globalAnimal = this.globalVar.animals.find(animal => animal.getAnimalType() === item.name);
+        if (globalAnimal !== undefined && globalAnimal !== null && globalAnimal.raceCourseType === courseType)
+          associatedAnimals.push(item);
+      });
+      if (associatedAnimals !== undefined && associatedAnimals !== null && associatedAnimals.length > 0) {
+        associatedAnimals.forEach(animal => {
+          animal.isAvailable = true;
+        })
+      }
+    }
+  }
+
+  getEquipmentDescription(name: string) {
+    var returnVal = "";
+    if (name === "Headband")
+      returnVal = "The first three stumbles you would have are ignored";
+    if (name === "Pendant")
+      returnVal = "Reduce your ability cooldown by 10%";
+    if (name === "Blinders")
+      returnVal = "Negative terrain effects are cut in half";
+    if (name === "Quick Snack")
+      returnVal = "Gain 100% of Stamina back after running out";
+    if (name === "Red Baton")
+      returnVal = "Increase next racer's Top Speed by 10% on Relay";
+    if (name === "Blue Baton")
+      returnVal = "Increase next racer's Focus by 10% on Relay";
+    if (name === "Violet Baton")
+      returnVal = "Increase next racer's Power by 10% on Relay";
+    if (name === "Green Baton")
+      returnVal = "Increase next racer's Adaptability by 10% on Relay";
+    if (name === "Orange Baton")
+      returnVal = "Increase next racer's Acceleration by 10% on Relay";
+    if (name === "Yellow Baton")
+      returnVal = "Increase next racer's Endurance by 10% on Relay";
+
+    return returnVal;
+  }
+
+  getItemDescription(name: string) {
+    if (name === "Apple")
+      return "+1 Acceleration to a single animal";
+    if (name === "Banana")
+      return "+1 Top Speed to a single animal";
+    if (name === "Strawberry")
+      return "+1 Endurance to a single animal";
+    if (name === "Carrot")
+      return "+1 Power to a single animal";
+    if (name === "Turnip")
+      return "+1 Focus to a single animal";
+    if (name === "Orange")
+      return "+1 Adaptability to a single animal";
+
+    return "";
   }
 
   devModeInitialize(circuitRankNumeric: number) {
     var Coins = this.globalVar.resources.find(item => item.name === "Coins");
     if (Coins !== undefined)
-      Coins.amount = 50000000;
-    this.globalVar.resources.push(this.initializeService.initializeResource("Medals", 150));
-    this.globalVar.resources.push(this.initializeService.initializeResource("Facility Level", 50));
-    this.globalVar.resources.push(this.initializeService.initializeResource("Research Level", 50));
+      Coins.amount = 20000;
+    this.globalVar.resources.push(this.initializeService.initializeResource("Medals", 15));
+    //this.globalVar.resources.push(this.initializeService.initializeResource("Facility Level", 50));
+    //this.globalVar.resources.push(this.initializeService.initializeResource("Research Level", 50));
 
     for (var i = 1; i <= circuitRankNumeric; i++) {
       var rank = this.utilityService.getCircuitRankFromNumericValue(i);
@@ -1827,17 +1929,17 @@ export class GlobalService {
       horse.currentStats.power = 2000;
       horse.currentStats.focus = 2000;
       horse.currentStats.adaptability = 2000;
-      horse.breedLevel = 300;
+      horse.breedLevel = 150;
       this.calculateAnimalRacingStats(horse);
 
-      horse.breedGaugeMax = 5;
-      horse.breedGaugeXp = 5;
+      //horse.breedGaugeMax = 5;
+      //horse.breedGaugeXp = 5;
     }
 
     var cheetah = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Cheetah);
     if (cheetah !== undefined) {
-      cheetah.currentStats.topSpeed = 30;   
-      cheetah.currentStats.acceleration = 8;   
+      cheetah.currentStats.topSpeed = 30;
+      cheetah.currentStats.acceleration = 8;
       this.calculateAnimalRacingStats(cheetah);
     }
 
@@ -1849,11 +1951,11 @@ export class GlobalService {
       monkey.currentStats.power = 2000;
       monkey.currentStats.focus = 2000;
       monkey.currentStats.adaptability = 2000;
-      monkey.breedLevel = 300;
+      monkey.breedLevel = 150;
       this.calculateAnimalRacingStats(monkey);
 
-      monkey.breedGaugeMax = 5;
-      monkey.breedGaugeXp = 5;
+      //monkey.breedGaugeMax = 5;
+      //monkey.breedGaugeXp = 5;
     }
 
     var goat = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Goat);
@@ -1874,31 +1976,31 @@ export class GlobalService {
       dolphin.currentStats.power = 2000;
       dolphin.currentStats.focus = 2000;
       dolphin.currentStats.adaptability = 2000;
-      dolphin.breedLevel = 300;
+      dolphin.breedLevel = 150;
       this.calculateAnimalRacingStats(dolphin);
     }
 
     var shark = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Shark);
     if (shark !== undefined) {
-      shark.currentStats.topSpeed = 300;   
+      shark.currentStats.topSpeed = 300;
       shark.currentStats.acceleration = 30;
-      shark.currentStats.focus = 30;  
-      shark.currentStats.power = 300; 
+      shark.currentStats.focus = 30;
+      shark.currentStats.power = 300;
       this.calculateAnimalRacingStats(shark);
     }
 
     var penguin = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Penguin);
     if (penguin !== undefined) {
-      penguin.currentStats.topSpeed = 30;   
-      penguin.currentStats.acceleration = 8;   
+      penguin.currentStats.topSpeed = 30;
+      penguin.currentStats.acceleration = 8;
       penguin.currentStats.focus = 100;
       this.calculateAnimalRacingStats(penguin);
     }
 
     var salamander = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Salamander);
     if (salamander !== undefined) {
-      salamander.currentStats.topSpeed = 30;   
-      salamander.currentStats.acceleration = 8;         
+      salamander.currentStats.topSpeed = 30;
+      salamander.currentStats.acceleration = 8;
       this.calculateAnimalRacingStats(salamander);
     }
   }

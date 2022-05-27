@@ -129,6 +129,7 @@ export class InitializeService {
       training.trainingName = "Medium Track Running";
       training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Medium;
+      training.purchasePrice *= 4;
       training.timeToComplete = 75;
       training.trainingType = TrainingOptionsEnum.MediumTrackRunning;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
@@ -140,6 +141,7 @@ export class InitializeService {
       training.trainingName = "Uphill Run";
       training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Medium;
+      training.purchasePrice *= 4;
       training.timeToComplete = 90;
       training.trainingType = TrainingOptionsEnum.UphillRun;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
@@ -151,6 +153,7 @@ export class InitializeService {
       training.trainingName = "Puzzles";
       training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Medium;
+      training.purchasePrice *= 4;
       training.timeToComplete = 75;
       training.trainingType = TrainingOptionsEnum.Puzzles;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
@@ -162,6 +165,7 @@ export class InitializeService {
       training.trainingName = "Move Rocks";
       training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Medium;
+      training.purchasePrice *= 4;
       training.timeToComplete = 75;
       training.trainingType = TrainingOptionsEnum.MoveRocks;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
@@ -173,6 +177,7 @@ export class InitializeService {
       training.trainingName = "Dodge Ball";
       training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Medium;
+      training.purchasePrice *= 4;
       training.timeToComplete = 90;
       training.trainingType = TrainingOptionsEnum.DodgeBall;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
@@ -184,6 +189,7 @@ export class InitializeService {
       training.trainingName = "Lateral Vertical Drill";
       training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Medium;
+      training.purchasePrice *= 4;
       training.timeToComplete = 75;
       training.trainingType = TrainingOptionsEnum.LateralVerticalDrill;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
@@ -195,6 +201,7 @@ export class InitializeService {
       training.trainingName = "Burst Practice";
       training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Medium;
+      training.purchasePrice *= 4;
       training.timeToComplete = 90;
       training.trainingType = TrainingOptionsEnum.BurstPractice;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
@@ -206,6 +213,7 @@ export class InitializeService {
       training.trainingName = "Acrobatics";
       training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Medium;
+      training.purchasePrice *= 4;
       training.timeToComplete = 90;
       training.trainingType = TrainingOptionsEnum.Acrobatics;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
@@ -217,6 +225,7 @@ export class InitializeService {
       training.trainingName = "Long Track Running";
       training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Large;
+      training.purchasePrice *= 10;
       training.timeToComplete = 120;
       training.trainingType = TrainingOptionsEnum.LongTrackRunning;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
@@ -228,6 +237,7 @@ export class InitializeService {
       training.trainingName = "Vehicle Tow";
       training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Large;
+      training.purchasePrice *= 10;
       training.timeToComplete = 120;
       training.trainingType = TrainingOptionsEnum.VehicleTow;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
@@ -239,6 +249,7 @@ export class InitializeService {
       training.trainingName = "Long Track Running";
       training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Large;
+      training.purchasePrice *= 10;
       training.timeToComplete = 120;
       training.trainingType = TrainingOptionsEnum.LogJump;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
@@ -250,6 +261,7 @@ export class InitializeService {
       training.trainingName = "Meditation";
       training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Large;
+      training.purchasePrice *= 10;
       training.timeToComplete = 120;
       training.trainingType = TrainingOptionsEnum.Meditation;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
@@ -261,6 +273,7 @@ export class InitializeService {
       training.trainingName = "Wind Sprints";
       training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Large;
+      training.purchasePrice *= 10;
       training.timeToComplete = 120;
       training.trainingType = TrainingOptionsEnum.WindSprints;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
@@ -272,6 +285,7 @@ export class InitializeService {
       training.trainingName = "Long Track Running";
       training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Large;
+      training.purchasePrice *= 10;
       training.timeToComplete = 120;
       training.trainingType = TrainingOptionsEnum.LongTrackRunning;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
@@ -283,6 +297,7 @@ export class InitializeService {
       training.trainingName = "Greenway Hike";
       training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Large;
+      training.purchasePrice *= 10;
       training.timeToComplete = 120;
       training.trainingType = TrainingOptionsEnum.GreenwayHike;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
@@ -294,6 +309,7 @@ export class InitializeService {
       training.trainingName = "Marathon";
       training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Large;
+      training.purchasePrice *= 10;
       training.timeToComplete = 150;
       training.trainingType = TrainingOptionsEnum.Marathon;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
@@ -305,6 +321,7 @@ export class InitializeService {
       training.trainingName = "Agility Course";
       training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Large;
+      training.purchasePrice *= 10;
       training.timeToComplete = 150;
       training.trainingType = TrainingOptionsEnum.AgilityCourse;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;

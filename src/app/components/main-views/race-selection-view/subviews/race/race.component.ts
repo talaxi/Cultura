@@ -749,7 +749,8 @@ export class RaceComponent implements OnInit {
   }
 
   doesRacerBurst(animal: Animal, currentPath: RacePath): boolean {
-    var modifiedBurstChance = animal.currentStats.burstChance;
+    var distanceModifier = 1000 / this.selectedRace.length; //TODO: should this be leg or total distance?
+    var modifiedBurstChance = animal.currentStats.burstChance * distanceModifier;
 
     if (animal.type === AnimalTypeEnum.Hare && animal.ability.name === "Prey Instinct" && !animal.ability.abilityUsed) {
       return true;
@@ -767,17 +768,13 @@ export class RaceComponent implements OnInit {
         if (racerMapModifierPair !== undefined && racerMapModifierPair !== null)
           racerMapModifier = 1 + (racerMaps * racerMapModifierPair.value);
 
-        console.log("Original Chance: " + animal.currentStats.burstChance);
-        console.log("Modifier: " + racerMapModifier);
         modifiedBurstChance *= racerMapModifier;
-
-        console.log("Modified Chance: " + modifiedBurstChance);
       }
     }
 
     var rng = this.utilityService.getRandomNumber(1, 100);
 
-    if (rng <= modifiedBurstChance)
+    if (rng <= (modifiedBurstChance + 1))
       return true;
 
     return false;

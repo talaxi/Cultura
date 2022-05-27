@@ -43,7 +43,8 @@
                 <span>{{ selectedAnimal.getRaceCourseType() }}</span>
                 <br />
             </div>
-            <span>Breed Level {{selectedAnimal.breedLevel}}</span>
+            <span ngbPopover="{{ breedLevelPopover }}"
+            triggers="mouseenter:mouseleave" popoverClass="popoverClass">Breed Level {{selectedAnimal.breedLevel}}</span>
             <br />
             <span>Breed XP: {{selectedAnimal.breedGaugeXp | number : '1.2-2'}}/{{selectedAnimal.breedGaugeMax}}
                 <button (click)="breed()">Breed</button>
@@ -64,6 +65,9 @@
     <br />
     <div class="gridContainer">
         <div class="trainableStats">
+            <span>Base Stats</span>
+            <br />
+            <br />
             <span ngbPopover="{{ selectedAnimal.currentStats.topSpeedPopover(maxSpeedModifierAmount) }}"
                 triggers="mouseenter:mouseleave" popoverClass="popoverClass">
                 Speed: {{ selectedAnimal.currentStats.topSpeed | number : '1.2-2' }}
@@ -100,6 +104,9 @@
             </span>
         </div>
         <div class="racingStats">
+            <span>Racing Stats</span>
+            <br />
+            <br />
             <span ngbPopover="{{ selectedAnimal.currentStats.maxSpeedMsPopover() }}" triggers="mouseenter:mouseleave"
                 popoverClass="popoverClass">
                 Max Speed: {{ selectedAnimal.currentStats.maxSpeedMs | number : '1.2-2' }} m/s
@@ -227,11 +234,13 @@
                     </div>
                 </div>
                 <div *ngIf="selectedEquipment !== undefined && selectedEquipment !== null" class="modal-footer">
-                    <div class="mb-3">
-                        <label>Selected Equipment: <span>{{selectedEquipment.name}}</span></label>
+                    <span class="selectedEquipmentSpan">
+                        <span>{{selectedEquipment.name}} - {{ this.getEquipmentShortDescription(selectedEquipment.name) }} </span>
 
-                    </div>
-                    <button type="button" (click)="equipItem()">Equip</button>
+                        <span class="rightAlign">
+                            <button type="button" class="spaced" (click)="equipItem()">Equip</button>
+                        </span>
+                    </span>
                 </div>
             </div>
             <div *ngIf="equipmentList.length == 0">

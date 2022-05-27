@@ -141,7 +141,7 @@ export class AnimalStats {
 
     calculateBurstChance(): number {
         var statTotal = this.adaptability + this.focus;
-        var offset = 100;
+        var offset = 1000;
         
         return (statTotal/(statTotal + offset) * 100); 
     }
@@ -202,7 +202,7 @@ export class AnimalStats {
     }
 
     burstChancePopover(): string {
-        return "This is your chance per second that you will enter burst mode. Increase by improving Focus and Adaptability.";
+        return "This is your chance per second over 1000 meters that you will enter burst mode. Increase by improving Focus and Adaptability.";
     }
 
     burstDistancePopover(): string {

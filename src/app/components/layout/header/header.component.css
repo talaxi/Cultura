@@ -1,0 +1,35 @@
+.gridContainer {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    grid-template-columns: 1fr 1fr 10%;
+    grid-template-rows: 50%;
+    justify-content: stretch;
+    grid-template-areas: 
+      "name . coins"
+      "name . medals";
+  }
+
+  .name {
+    grid-area: name;   
+    justify-self: stretch; 
+
+    /*background-color: var(--background-tertiary);
+    color: var(--foreground-quaternary);*/
+  }
+
+  .coins {
+    grid-area: coins;   
+    justify-self: stretch; 
+
+    /*background-color: var(--background-tertiary);
+    color: var(--foreground-quaternary);*/
+  }
+
+  .medals {
+    grid-area: medals;   
+    justify-self: stretch; 
+
+    /*background-color: var(--background-tertiary);
+    color: var(--foreground-quaternary);*/
+  }

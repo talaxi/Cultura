@@ -26,6 +26,7 @@ export class SelectedAnimalComponent implements OnInit {
   focusModifierAmount: number;
   adaptabilityModifierAmount: number;
   diminishingReturnsAmount: number;
+  breedLevelPopover: string;
   colorConditional: any;
   editingName: boolean;
   newName: string;
@@ -60,6 +61,7 @@ export class SelectedAnimalComponent implements OnInit {
     this.focusModifierAmount = this.lookupService.getFocusModifierByAnimalType(this.selectedAnimal.type);
     this.adaptabilityModifierAmount = this.lookupService.getAdaptabilityModifierByAnimalType(this.selectedAnimal.type);
     this.diminishingReturnsAmount = this.globalService.GetAnimalDiminishingReturns(this.selectedAnimal);
+    this.breedLevelPopover = this.lookupService.getBreedLevelPopover(this.selectedAnimal.breedLevel);
 
     var stockbreeder = this.lookupService.getStockbreeder();
     
@@ -122,6 +124,7 @@ export class SelectedAnimalComponent implements OnInit {
     this.adaptabilityModifierAmount = this.lookupService.getAdaptabilityModifierByAnimalType(this.selectedAnimal.type);
     this.diminishingReturnsAmount = this.globalService.GetAnimalDiminishingReturns(this.selectedAnimal);
 
+    this.breedLevelPopover = this.lookupService.getBreedLevelPopover(this.selectedAnimal.breedLevel);
   }
 
   editName(): void {
@@ -236,7 +239,7 @@ export class SelectedAnimalComponent implements OnInit {
   getEquipmentShortDescription(name: string) {
     var description = "";
 
-    description = this.lookupService.getEquipmentDescription(name);
+    description = this.globalService.getEquipmentDescription(name);
 
     return description;
   }
@@ -244,7 +247,7 @@ export class SelectedAnimalComponent implements OnInit {
   getItemShortDescription(name: string) {
     var description = "";
 
-    description = this.lookupService.getItemDescription(name);
+    description = this.globalService.getItemDescription(name);
 
     return description;
   }
