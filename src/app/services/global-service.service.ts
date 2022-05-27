@@ -1412,8 +1412,6 @@ export class GlobalService {
     var baseRenown = 1.1;
     var renownFactor = 1.03;
 
-    var rewards: ResourceValue[] = [];
-
     var currentRenownResource = this.globalVar.resources.find(item => item.name === "Renown");
     var currentRenown = 1;
 
@@ -1436,8 +1434,6 @@ export class GlobalService {
 
     var baseRenown = 1.1;
     var renownFactor = 1.03;
-
-    var rewards: ResourceValue[] = [];
 
     var currentRenownResource = this.globalVar.resources.find(item => item.name === "Renown");
     var currentRenown = 1;
@@ -1526,10 +1522,10 @@ export class GlobalService {
     var timeToComplete = 80;
 
     var baseMeters = 1500;
-    var factor = 1.35;
+    var factor = 1.25;
 
-    var maxRandomFactor = 1.1;
-    var minRandomFactor = 0.9;
+    var maxRandomFactor = 1.2;
+    var minRandomFactor = 0.8;
     var raceLegs: RaceLeg[] = [];
 
     var availableCourses: RaceCourseTypeEnum[] = [];
@@ -1537,12 +1533,25 @@ export class GlobalService {
       availableCourses.push(RaceCourseTypeEnum.Mountain);
       availableCourses.push(RaceCourseTypeEnum.Flatland);
     }
-    else {
+    else if (i < 15) {
       availableCourses.push(RaceCourseTypeEnum.Flatland);
       availableCourses.push(RaceCourseTypeEnum.Mountain);
-      availableCourses.push(RaceCourseTypeEnum.Ocean);
+      availableCourses.push(RaceCourseTypeEnum.Ocean);      
+    }
+    else if (i < 20) {
+      availableCourses.push(RaceCourseTypeEnum.Flatland);
+      availableCourses.push(RaceCourseTypeEnum.Mountain);
+      availableCourses.push(RaceCourseTypeEnum.Ocean); 
       availableCourses.push(RaceCourseTypeEnum.Tundra);
     }
+    else {      
+      availableCourses.push(RaceCourseTypeEnum.Flatland);
+      availableCourses.push(RaceCourseTypeEnum.Mountain);
+      availableCourses.push(RaceCourseTypeEnum.Ocean); 
+      availableCourses.push(RaceCourseTypeEnum.Tundra);
+      availableCourses.push(RaceCourseTypeEnum.Volcanic);
+    }
+
     var randomizedCourseList = this.getCourseTypeInRandomOrderSeeded(availableCourses, 'duoseed' + duoRank + i);
 
     var randomFactor = this.utilityService.getRandomSeededNumber(minRandomFactor, maxRandomFactor);
@@ -1909,7 +1918,7 @@ export class GlobalService {
   devModeInitialize(circuitRankNumeric: number) {
     var Coins = this.globalVar.resources.find(item => item.name === "Coins");
     if (Coins !== undefined)
-      Coins.amount = 20000;
+      Coins.amount = 30000;
     this.globalVar.resources.push(this.initializeService.initializeResource("Medals", 15));
     //this.globalVar.resources.push(this.initializeService.initializeResource("Facility Level", 50));
     //this.globalVar.resources.push(this.initializeService.initializeResource("Research Level", 50));
@@ -1929,7 +1938,7 @@ export class GlobalService {
       horse.currentStats.power = 2000;
       horse.currentStats.focus = 2000;
       horse.currentStats.adaptability = 2000;
-      horse.breedLevel = 150;
+      horse.breedLevel = 200;
       this.calculateAnimalRacingStats(horse);
 
       //horse.breedGaugeMax = 5;
@@ -1945,13 +1954,13 @@ export class GlobalService {
 
     var monkey = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Monkey);
     if (monkey !== undefined) {
-      monkey.currentStats.topSpeed = 300;
+      monkey.currentStats.topSpeed = 2000;
       monkey.currentStats.acceleration = 2000;
       monkey.currentStats.endurance = 2000;
       monkey.currentStats.power = 2000;
       monkey.currentStats.focus = 2000;
       monkey.currentStats.adaptability = 2000;
-      monkey.breedLevel = 150;
+      monkey.breedLevel = 200;
       this.calculateAnimalRacingStats(monkey);
 
       //monkey.breedGaugeMax = 5;
@@ -1976,7 +1985,7 @@ export class GlobalService {
       dolphin.currentStats.power = 2000;
       dolphin.currentStats.focus = 2000;
       dolphin.currentStats.adaptability = 2000;
-      dolphin.breedLevel = 150;
+      dolphin.breedLevel = 200;
       this.calculateAnimalRacingStats(dolphin);
     }
 

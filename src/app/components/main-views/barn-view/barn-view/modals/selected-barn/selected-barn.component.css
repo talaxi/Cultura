@@ -87,7 +87,6 @@
   color: var(--foreground-secondary);
 }
 
-
 .filterGridContainer
 {
     height: 100%;
@@ -131,4 +130,12 @@
 .selectedSpecialization {
   font-weight: bold;
   text-decoration: underline solid Currentcolor;
+}
+
+.sizeButtonSpacing {
+  width: 4rem;
+}
+
+.sizeSpacing {
+  margin-left: 4rem;
 }

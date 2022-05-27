@@ -10,8 +10,10 @@
                         popoverClass="popoverClass">Barn Level {{ barn.barnUpgrades.barnLevel }}</span>
                     <br />
 
-                    <button (click)="upgradeBarn()" [disabled]="canUpgrade" [ngbPopover]="upgradeBarnContent"
-                        triggers="mouseenter:mouseleave" popoverClass="popoverClass">{{ upgradeText }}</button>
+                    <span [ngbPopover]="upgradeBarnContent"
+                    triggers="mouseenter:mouseleave" popoverClass="popoverClass">
+                        <button (click)="upgradeBarn()" [disabled]="!canUpgrade">{{ upgradeText }}</button>
+                    </span>
                 </div>
             </div>
             <div class="info">
@@ -29,8 +31,9 @@
                     <span>{{ this.associatedAnimal.getAnimalType() }}</span>
                 </div>
                 <div>
-                    <span>{{ this.sizeValue }}</span> <span *ngIf="this.sizeValue !== 'Large'"><button
-                            (click)="upgradeBarnSize()" [disabled]="canUpgrade">Upgrade</button></span>
+                    <span [ngClass]="{'sizeSpacing': this.sizeValue !== 'Large' }">{{ this.sizeValue }} </span> <span *ngIf="this.sizeValue !== 'Large'" [ngbPopover]="costToBuildContent"
+                    triggers="mouseenter:mouseleave" popoverClass="popoverClass"><button
+                            (click)="upgradeBarnSize()" [disabled]="!canBuild"  class="sizeButtonSpacing">Build</button></span>
                 </div>
                 <hr />
                 <div *ngIf="this.existingTraining !== null && this.existingTraining !== undefined">
@@ -133,8 +136,10 @@
         <div class="purchaseBarn">
             <span>Purchase Barn</span>
             <br />
-            <span class="price">{{ barn.purchasePrice }}</span>
-            <button id="purchaseButton" (click)="purchaseBarn()">Buy</button>
+            <br />
+            <span class="price">{{ barn.purchasePrice }} Coins</span>
+            <br />
+            <button id="purchaseButton" [disabled]="!canPurchaseBarn()" (click)="purchaseBarn()">Buy</button>
         </div>
     </div>
 </div>
@@ -150,6 +155,13 @@
         {{ upgradeBarnPopover }}
     </div>
 </ng-template>
+
+<ng-template #costToBuildContent>
+    <div class="popoverClass" *ngIf="buildBiggerBarnPopover !== ''">
+        {{ buildBiggerBarnPopover }}
+    </div>
+</ng-template>
+
 
 <ng-template #specializationModal let-modal>
     <div class="modalClass">

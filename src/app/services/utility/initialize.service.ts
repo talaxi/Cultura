@@ -246,7 +246,7 @@ export class InitializeService {
     }
 
     if (trainingType === TrainingOptionsEnum.LogJump) {      
-      training.trainingName = "Long Track Running";
+      training.trainingName = "Log Jump";
       training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Large;
       training.purchasePrice *= 10;

@@ -52,9 +52,9 @@ export class LocalViewComponent implements OnInit {
     if (raceType === LocalRaceTypeEnum.Mono)
       this.globalService.GenerateMonoRaces(this.globalService.globalVar.monoRank);      
     if (raceType === LocalRaceTypeEnum.Duo)
-     this.globalService.GenerateMonoRaces(this.globalService.globalVar.duoRank);
+     this.globalService.GenerateDuoRaces(this.globalService.globalVar.duoRank);
     if (raceType === LocalRaceTypeEnum.Rainbow)
-    this.globalService.GenerateMonoRaces(this.globalService.globalVar.rainbowRank);
+    this.globalService.GenerateRainbowRaces(this.globalService.globalVar.rainbowRank);
 
     return this.globalService.globalVar.localRaces.find(item => item.localRaceType === raceType);    
   }

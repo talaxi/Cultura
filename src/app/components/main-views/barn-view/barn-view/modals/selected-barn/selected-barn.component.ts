@@ -33,9 +33,11 @@ export class SelectedBarnComponent implements OnInit {
   availableTrainings: TrainingOption[];
   availableAnimals: Animal[];
   canUpgrade = false;
+  canBuild = false;
   sizeValue: string;
   totalBarnStatsPopover: string;
   upgradeBarnPopover: string;
+  buildBiggerBarnPopover: string;
   upgradeText: string;
   specializationOptions: string[];
   selectedSpecialization: string;
@@ -71,6 +73,9 @@ export class SelectedBarnComponent implements OnInit {
         this.getSizeValue();
         this.totalBarnStatsPopover = this.getTotalBarnStatsPopover();
         this.upgradeBarnPopover = this.getUpgradeBarnPopover();
+        this.buildBiggerBarnPopover = this.getBuildLargerBarnPopover();
+        this.canUpgrade = this.canUpgradeBarn(this.lookupService.getResourcesForBarnUpgrade(this.barn.barnUpgrades.barnLevel));
+        this.canBuild = this.canBuildLargerBarn();
 
         if (this.barn.barnUpgrades.barnLevel === 9)
           this.upgradeText = "Specialize";
@@ -331,6 +336,13 @@ export class SelectedBarnComponent implements OnInit {
     }
   }
 
+  canPurchaseBarn() {
+    if (this.lookupService.getCoins() >= this.barn.purchasePrice)
+      return true;
+    else
+      return false;
+  }
+
   getSizeValue() {
     this.sizeValue = this.barn.getSize();
   }
@@ -399,13 +411,20 @@ export class SelectedBarnComponent implements OnInit {
   canUpgradeBarn(requiredResources: ResourceValue[]): boolean {
     var canUpgrade = true;
     requiredResources.forEach(resource => {
-      if (resource.name === "Coins" && resource.amount > this.lookupService.getCoins()) {
+      if (this.lookupService.getResourceByName(resource.name) < resource.amount)
         canUpgrade = false;
-      }
-      else if (resource.name === "Medals" && resource.amount > this.lookupService.getMedals()) {
-        canUpgrade = false;
-      }
     });
+
+    return canUpgrade;
+  }
+
+  canBuildLargerBarn(): boolean {
+    var canUpgrade = false;
+    var CoinsAmount = this.lookupService.getCoins();
+
+    if (CoinsAmount >= this.barn.facilityUpgradePrice) {
+      canUpgrade = true;
+    }
 
     return canUpgrade;
   }
@@ -456,13 +475,23 @@ export class SelectedBarnComponent implements OnInit {
   }
 
   getUpgradeBarnPopover() {
-    var popover = "Cost: \n";
+    var popover = "Cost to upgrade: \n";
 
     var requiredResources = this.lookupService.getResourcesForBarnUpgrade(this.barn.barnUpgrades.barnLevel);
 
     requiredResources.forEach(resource => {
       popover += resource.amount + " " + resource.name + "\n";
     });
+
+    return popover;
+  }
+
+  getBuildLargerBarnPopover() {
+    var popover = "Cost to build larger barn: \n";
+
+    popover += this.barn.facilityUpgradePrice + " Coins \n\n";
+
+    popover += "You will be able to do Medium trainings and increase idle training time to 4 hours.";
 
     return popover;
   }
