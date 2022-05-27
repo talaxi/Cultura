@@ -108,14 +108,14 @@ export class LocalViewComponent implements OnInit {
     for (var j = 0; j < localRaces; j++) {
       var raceLegs: RaceLeg[] = [];
 
-      if (numericalRank < 2) {
+      if (numericalRank <= 2) {
         var leg = new RaceLeg();
         leg.courseType = RaceCourseTypeEnum.Flatland;
         leg.terrain = this.globalService.getRandomTerrain(leg.courseType);
         leg.distance = Math.round(baseMeters * (factor ** numericalRank) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor));
         raceLegs.push(leg);
       }
-      else if (numericalRank < 9) {
+      else if (numericalRank <= 10) {
         var availableCourses: RaceCourseTypeEnum[] = [];
         availableCourses.push(RaceCourseTypeEnum.Flatland);
         availableCourses.push(RaceCourseTypeEnum.Mountain);

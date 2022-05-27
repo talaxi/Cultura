@@ -111,7 +111,7 @@ export class InitializeService {
       training.trainingType = TrainingOptionsEnum.SmallWagonTow;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
       training.statGain = 1;
-      training.affectedStatRatios = new AnimalStats(0, 0, 0, 1.5, .25, 0);
+      training.affectedStatRatios = new AnimalStats(.25, 0, 0, 1.5, 0, 0);
     }
 
     if (trainingType === TrainingOptionsEnum.Sidestep) {      
@@ -166,7 +166,7 @@ export class InitializeService {
       training.trainingType = TrainingOptionsEnum.MoveRocks;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
       training.statGain = 1;
-      training.affectedStatRatios = new AnimalStats(0, 0, 0, 2, 1, 0);
+      training.affectedStatRatios = new AnimalStats(0, 1, 0, 2, 0, 0);
     }
 
     if (trainingType === TrainingOptionsEnum.DodgeBall) {      
@@ -221,7 +221,7 @@ export class InitializeService {
       training.trainingType = TrainingOptionsEnum.LongTrackRunning;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
       training.statGain = 1;
-      training.affectedStatRatios = new AnimalStats(5, 0, 2, 0, 0, 0);
+      training.affectedStatRatios = new AnimalStats(5, 0, 0, 0, 2, 0);
     }
 
     if (trainingType === TrainingOptionsEnum.VehicleTow) {      
@@ -232,7 +232,7 @@ export class InitializeService {
       training.trainingType = TrainingOptionsEnum.VehicleTow;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
       training.statGain = 1;
-      training.affectedStatRatios = new AnimalStats(0, 0, 0, 5, 2, 0);
+      training.affectedStatRatios = new AnimalStats(0, 0, 2, 5, 0, 0);
     }
 
     if (trainingType === TrainingOptionsEnum.LogJump) {      

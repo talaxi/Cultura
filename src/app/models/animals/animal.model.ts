@@ -243,7 +243,7 @@ export class Monkey extends Animal {
         this.raceCourseType = RaceCourseTypeEnum.Mountain;
 
         this.ability = new Ability();
-        this.ability.cooldown = 15;
+        this.ability.cooldown = 7;
         this.ability.efficiency = 3;
         this.ability.oneTimeEffect = true;
         this.ability.name = "Landslide";

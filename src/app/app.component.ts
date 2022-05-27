@@ -77,13 +77,12 @@ export class AppComponent {
       item.currentTraining !== undefined && item.currentTraining !== null);
 
     if (allTrainingAnimals.length > 0) {
-      allTrainingAnimals.forEach(animal => {
+      allTrainingAnimals.forEach(animal => {        
         if (animal.currentTraining !== null && animal.currentTraining !== undefined) {
-          animal.currentTraining.timeTrained += deltaTime;
-          //animal.currentTraining.totalTrainingTime += deltaTime;
+          animal.currentTraining.timeTrained += deltaTime;          
           this.specializationService.handleAttractionRevenue(deltaTime);
 
-          while (animal.currentTraining !== null && animal.currentTraining.timeTrained >= animal.currentTraining.timeToComplete) {
+          while (animal.currentTraining !== null && animal.currentTraining.timeTrained >= animal.currentTraining.timeToComplete) {            
             var associatedBarn = this.globalService.globalVar.barns.find(item => item.barnNumber === animal.associatedBarnNumber);
             var breedingGroundsSpecializationLevel = 0;
 
@@ -99,16 +98,17 @@ export class AppComponent {
             this.globalService.calculateAnimalRacingStats(animal);
             var breedGaugeIncrease = this.lookupService.getTrainingBreedGaugeIncrease(breedingGroundsSpecializationLevel);
             this.globalService.IncreaseAnimalBreedGauge(animal, breedGaugeIncrease);
-
+            
             animal.currentTraining.timeTrained -= animal.currentTraining.timeToComplete;
             animal.currentTraining.trainingTimeRemaining -= animal.currentTraining.timeToComplete;
 
-            if (animal.currentTraining.trainingTimeRemaining <= 0)
-            {              
-              animal.currentTraining = null;
-            }
+            if (animal.currentTraining.trainingTimeRemaining <= 0)                                   
+              animal.currentTraining = null;            
 
-            if (animal.queuedTraining !== undefined && animal.queuedTraining !== null) {
+            if (animal.queuedTraining !== undefined && animal.queuedTraining !== null) {              
+              if (animal.currentTraining !== null && animal.currentTraining.trainingTimeRemaining > 0)
+                animal.queuedTraining.timeTrained += animal.currentTraining?.timeTrained;
+                
               animal.currentTraining = animal.queuedTraining;
               animal.queuedTraining = null;
             }
