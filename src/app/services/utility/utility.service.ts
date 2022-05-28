@@ -42,7 +42,7 @@ export class UtilityService {
   }*/
 
   getRenownCircuitRaceModifier(totalRenown: number) {
-    return totalRenown;
+    return totalRenown / 100;
   }
 
   getNumericValueOfCircuitRank(circuitRank: string) {

@@ -311,7 +311,7 @@ export class GlobalService {
 
     var animalShopSection = new ShopSection();
     var animalShopItems: ShopItem[] = [];
-    var baseAnimalPrice = 5000;
+    var baseAnimalPrice = 3000;
 
     var cheetah = new ShopItem();
     cheetah.name = "Cheetah";
@@ -495,7 +495,7 @@ export class GlobalService {
     stopwatch.name = "Stopwatch";
     stopwatch.shortDescription = "Reduce training time by 5%";
     stopwatch.purchasePrice.push(this.getMedalResourceValue(10));
-    stopwatch.quantityMultiplier = 10;
+    stopwatch.quantityMultiplier = 2.5;
     stopwatch.totalShopQuantity = 2;
     stopwatch.canHaveMultiples = true;
     stopwatch.type = ShopItemTypeEnum.Specialty;
@@ -540,7 +540,7 @@ export class GlobalService {
     var scouts = new ShopItem();
     scouts.name = "Scouts";
     scouts.shortDescription = "You can choose the order of race legs for each animal deck";
-    scouts.purchasePrice.push(this.getCoinsResourceValue(1000));
+    scouts.purchasePrice.push(this.getCoinsResourceValue(10000));
     scouts.canHaveMultiples = false;
     scouts.type = ShopItemTypeEnum.Specialty;
     specialtyShopItems.push(scouts);
@@ -556,7 +556,7 @@ export class GlobalService {
     var nationalRace = new ShopItem();
     nationalRace.name = "National Races";
     nationalRace.shortDescription = "Gain 1 medal for every 10 free races you complete";
-    nationalRace.purchasePrice.push(this.getCoinsResourceValue(1000));
+    nationalRace.purchasePrice.push(this.getCoinsResourceValue(10000));
     nationalRace.canHaveMultiples = false;
     nationalRace.type = ShopItemTypeEnum.Specialty;
     specialtyShopItems.push(nationalRace);
@@ -564,7 +564,7 @@ export class GlobalService {
     var internationalRace = new ShopItem();
     internationalRace.name = "International Races";
     internationalRace.shortDescription = "Gain 1 medal for every 5 free races you complete";
-    internationalRace.purchasePrice.push(this.getCoinsResourceValue(1000));
+    internationalRace.purchasePrice.push(this.getCoinsResourceValue(50000));
     internationalRace.canHaveMultiples = false;
     internationalRace.isAvailable = false;
     internationalRace.type = ShopItemTypeEnum.Specialty;
@@ -613,10 +613,11 @@ export class GlobalService {
     quickSnack.type = ShopItemTypeEnum.Equipment;
     equipmentShopItems.push(quickSnack);
 
+    //tier 2
     var redBaton = new ShopItem();
     redBaton.name = this.getEquipmentName(EquipmentEnum.redBaton);
     redBaton.shortDescription = this.getEquipmentDescription(redBaton.name);
-    redBaton.purchasePrice.push(this.getCoinsResourceValue(1000));
+    redBaton.purchasePrice.push(this.getCoinsResourceValue(2500));
     redBaton.canHaveMultiples = true;
     redBaton.infiniteAmount = true;
     redBaton.type = ShopItemTypeEnum.Equipment;
@@ -625,7 +626,7 @@ export class GlobalService {
     var blueBaton = new ShopItem();
     blueBaton.name = this.getEquipmentName(EquipmentEnum.blueBaton);
     blueBaton.shortDescription = this.getEquipmentDescription(blueBaton.name);
-    blueBaton.purchasePrice.push(this.getCoinsResourceValue(1000));
+    blueBaton.purchasePrice.push(this.getCoinsResourceValue(2500));
     blueBaton.canHaveMultiples = true;
     blueBaton.infiniteAmount = true;
     blueBaton.type = ShopItemTypeEnum.Equipment;
@@ -634,7 +635,7 @@ export class GlobalService {
     var violetBaton = new ShopItem();
     violetBaton.name = this.getEquipmentName(EquipmentEnum.violetBaton);
     violetBaton.shortDescription = this.getEquipmentDescription(violetBaton.name);
-    violetBaton.purchasePrice.push(this.getCoinsResourceValue(1000));
+    violetBaton.purchasePrice.push(this.getCoinsResourceValue(2500));
     violetBaton.canHaveMultiples = true;
     violetBaton.infiniteAmount = true;
     violetBaton.type = ShopItemTypeEnum.Equipment;
@@ -643,7 +644,7 @@ export class GlobalService {
     var orangeBaton = new ShopItem();
     orangeBaton.name = this.getEquipmentName(EquipmentEnum.orangeBaton);
     orangeBaton.shortDescription = this.getEquipmentDescription(orangeBaton.name);
-    orangeBaton.purchasePrice.push(this.getCoinsResourceValue(1000));
+    orangeBaton.purchasePrice.push(this.getCoinsResourceValue(2500));
     orangeBaton.canHaveMultiples = true;
     orangeBaton.infiniteAmount = true;
     orangeBaton.type = ShopItemTypeEnum.Equipment;
@@ -652,7 +653,7 @@ export class GlobalService {
     var greenBaton = new ShopItem();
     greenBaton.name = this.getEquipmentName(EquipmentEnum.greenBaton);
     greenBaton.shortDescription = this.getEquipmentDescription(greenBaton.name);
-    greenBaton.purchasePrice.push(this.getCoinsResourceValue(1000));
+    greenBaton.purchasePrice.push(this.getCoinsResourceValue(2500));
     greenBaton.canHaveMultiples = true;
     greenBaton.infiniteAmount = true;
     greenBaton.type = ShopItemTypeEnum.Equipment;
@@ -661,7 +662,7 @@ export class GlobalService {
     var yellowBaton = new ShopItem();
     yellowBaton.name = this.getEquipmentName(EquipmentEnum.yellowBaton);
     yellowBaton.shortDescription = this.getEquipmentDescription(yellowBaton.name);
-    yellowBaton.purchasePrice.push(this.getCoinsResourceValue(1000));
+    yellowBaton.purchasePrice.push(this.getCoinsResourceValue(2500));
     yellowBaton.canHaveMultiples = true;
     yellowBaton.infiniteAmount = true;
     yellowBaton.type = ShopItemTypeEnum.Equipment;
@@ -1248,6 +1249,9 @@ export class GlobalService {
   }
 
   reorganizeLegsByDeckOrder(raceLegs: RaceLeg[], selectedDeck: AnimalDeck) {
+    if (!selectedDeck.isCourseOrderActive)
+    return raceLegs;
+
     return raceLegs.sort((a, b) => selectedDeck.courseTypeOrder.indexOf(a.courseType) - selectedDeck.courseTypeOrder.indexOf(b.courseType));
   }
 
@@ -1522,7 +1526,7 @@ export class GlobalService {
     var timeToComplete = 80;
 
     var baseMeters = 1500;
-    var factor = 1.25;
+    var factor = 1.135;
 
     var maxRandomFactor = 1.2;
     var minRandomFactor = 0.8;

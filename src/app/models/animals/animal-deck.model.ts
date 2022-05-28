@@ -7,6 +7,7 @@ export class AnimalDeck {
     @Type(() => Animal)
     selectedAnimals: Animal[];
     courseTypeOrder: RaceCourseTypeEnum[];
+    isCourseOrderActive: boolean;
     isPrimaryDeck: boolean;
     deckNumber: number;
     isAvailable: boolean;
@@ -14,5 +15,6 @@ export class AnimalDeck {
     constructor() {
         this.selectedAnimals = [];
         this.courseTypeOrder = [];
+        this.isCourseOrderActive = false;
     }
 }

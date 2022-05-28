@@ -41,7 +41,7 @@ export class InitializeService {
       training.trainingName = "Sprints";
       training.isAvailable = true;
       training.facilitySize = FacilitySizeEnum.Small;
-      training.timeToComplete = 20;
+      training.timeToComplete = 15;
       training.trainingType = TrainingOptionsEnum.Sprints;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
       training.statGain = 1;
@@ -52,7 +52,7 @@ export class InitializeService {
       training.trainingName = "Trail Running";
       training.isAvailable = true;
       training.facilitySize = FacilitySizeEnum.Small;
-      training.timeToComplete = 60;
+      training.timeToComplete = 45;
       training.trainingType = TrainingOptionsEnum.TrailRunning;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
       training.statGain = 1;
@@ -85,7 +85,7 @@ export class InitializeService {
       training.trainingName = "Practice Commands";
       training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Small;
-      training.timeToComplete = 60;
+      training.timeToComplete = 40;
       training.trainingType = TrainingOptionsEnum.PracticeCommands;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
       training.statGain = 1;
@@ -118,7 +118,7 @@ export class InitializeService {
       training.trainingName = "Sidestep";
       training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Small;
-      training.timeToComplete = 35;
+      training.timeToComplete = 25;
       training.trainingType = TrainingOptionsEnum.Sidestep;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
       training.statGain = 1;
@@ -130,7 +130,7 @@ export class InitializeService {
       training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Medium;
       training.purchasePrice *= 4;
-      training.timeToComplete = 75;
+      training.timeToComplete = 60;
       training.trainingType = TrainingOptionsEnum.MediumTrackRunning;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
       training.statGain = 1;
@@ -142,11 +142,11 @@ export class InitializeService {
       training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Medium;
       training.purchasePrice *= 4;
-      training.timeToComplete = 90;
+      training.timeToComplete = 75;
       training.trainingType = TrainingOptionsEnum.UphillRun;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
       training.statGain = 1;
-      training.affectedStatRatios = new AnimalStats(1, 0, 2, 0, 0, 0);
+      training.affectedStatRatios = new AnimalStats(0, 1, 2, 0, 0, 0);
     }
 
     if (trainingType === TrainingOptionsEnum.Puzzles) {      
@@ -154,7 +154,7 @@ export class InitializeService {
       training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Medium;
       training.purchasePrice *= 4;
-      training.timeToComplete = 75;
+      training.timeToComplete = 60;
       training.trainingType = TrainingOptionsEnum.Puzzles;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
       training.statGain = 1;
@@ -166,7 +166,7 @@ export class InitializeService {
       training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Medium;
       training.purchasePrice *= 4;
-      training.timeToComplete = 75;
+      training.timeToComplete = 60;
       training.trainingType = TrainingOptionsEnum.MoveRocks;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
       training.statGain = 1;
@@ -178,7 +178,7 @@ export class InitializeService {
       training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Medium;
       training.purchasePrice *= 4;
-      training.timeToComplete = 90;
+      training.timeToComplete = 75;
       training.trainingType = TrainingOptionsEnum.DodgeBall;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
       training.statGain = 1;
@@ -190,7 +190,7 @@ export class InitializeService {
       training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Medium;
       training.purchasePrice *= 4;
-      training.timeToComplete = 75;
+      training.timeToComplete = 60;
       training.trainingType = TrainingOptionsEnum.LateralVerticalDrill;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
       training.statGain = 1;
@@ -202,7 +202,7 @@ export class InitializeService {
       training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Medium;
       training.purchasePrice *= 4;
-      training.timeToComplete = 90;
+      training.timeToComplete = 75;
       training.trainingType = TrainingOptionsEnum.BurstPractice;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
       training.statGain = 1;
@@ -214,7 +214,7 @@ export class InitializeService {
       training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Medium;
       training.purchasePrice *= 4;
-      training.timeToComplete = 90;
+      training.timeToComplete = 75;
       training.trainingType = TrainingOptionsEnum.Acrobatics;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
       training.statGain = 1;
@@ -226,7 +226,7 @@ export class InitializeService {
       training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Large;
       training.purchasePrice *= 10;
-      training.timeToComplete = 120;
+      training.timeToComplete = 90;
       training.trainingType = TrainingOptionsEnum.LongTrackRunning;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
       training.statGain = 1;
@@ -238,7 +238,7 @@ export class InitializeService {
       training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Large;
       training.purchasePrice *= 10;
-      training.timeToComplete = 120;
+      training.timeToComplete = 90;
       training.trainingType = TrainingOptionsEnum.VehicleTow;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
       training.statGain = 1;
@@ -250,7 +250,7 @@ export class InitializeService {
       training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Large;
       training.purchasePrice *= 10;
-      training.timeToComplete = 120;
+      training.timeToComplete = 90;
       training.trainingType = TrainingOptionsEnum.LogJump;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
       training.statGain = 1;
@@ -262,7 +262,7 @@ export class InitializeService {
       training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Large;
       training.purchasePrice *= 10;
-      training.timeToComplete = 120;
+      training.timeToComplete = 90;
       training.trainingType = TrainingOptionsEnum.Meditation;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
       training.statGain = 1;
@@ -274,23 +274,11 @@ export class InitializeService {
       training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Large;
       training.purchasePrice *= 10;
-      training.timeToComplete = 120;
+      training.timeToComplete = 90;
       training.trainingType = TrainingOptionsEnum.WindSprints;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
       training.statGain = 1;
       training.affectedStatRatios = new AnimalStats(2, 5, 0, 0, 0, 0);
-    }
-    
-    if (trainingType === TrainingOptionsEnum.LongTrackRunning) {      
-      training.trainingName = "Long Track Running";
-      training.isAvailable = false;
-      training.facilitySize = FacilitySizeEnum.Large;
-      training.purchasePrice *= 10;
-      training.timeToComplete = 120;
-      training.trainingType = TrainingOptionsEnum.LongTrackRunning;
-      training.trainingCourseType = RaceCourseTypeEnum.Flatland;
-      training.statGain = 1;
-      training.affectedStatRatios = new AnimalStats(5, 0, 2, 0, 0, 0);
     }
     
     if (trainingType === TrainingOptionsEnum.GreenwayHike) {      
@@ -298,7 +286,7 @@ export class InitializeService {
       training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Large;
       training.purchasePrice *= 10;
-      training.timeToComplete = 120;
+      training.timeToComplete = 90;
       training.trainingType = TrainingOptionsEnum.GreenwayHike;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
       training.statGain = 1;
@@ -310,7 +298,7 @@ export class InitializeService {
       training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Large;
       training.purchasePrice *= 10;
-      training.timeToComplete = 150;
+      training.timeToComplete = 120;
       training.trainingType = TrainingOptionsEnum.Marathon;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
       training.statGain = 1;
@@ -322,7 +310,7 @@ export class InitializeService {
       training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Large;
       training.purchasePrice *= 10;
-      training.timeToComplete = 150;
+      training.timeToComplete = 120;
       training.trainingType = TrainingOptionsEnum.AgilityCourse;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
       training.statGain = 1;

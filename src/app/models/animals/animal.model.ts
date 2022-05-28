@@ -137,7 +137,7 @@ export class Horse extends Animal {
         ability2.name = "Inspiration";
         ability2.description = "Inspiration";
         ability2.isAbilityPurchased = false;
-        ability2.purchasePrice = 500;
+        ability2.purchasePrice = 1000;
         this.availableAbilities.push(ability2);
 
         var ability3 = new Ability();
@@ -147,7 +147,7 @@ export class Horse extends Animal {
         ability3.name = "Pacemaker";
         ability3.description = "Pacemaker";
         ability3.isAbilityPurchased = false;
-        ability3.purchasePrice = 500;
+        ability3.purchasePrice = 1000;
         this.availableAbilities.push(ability3);        
     }
 }
@@ -177,7 +177,7 @@ export class Cheetah extends Animal {
         ability2.name = "Giving Chase";
         ability2.description = "Giving Chase";
         ability2.isAbilityPurchased = false;
-        ability2.purchasePrice = 500;
+        ability2.purchasePrice = 1000;
         this.availableAbilities.push(ability2);
 
         var ability3 = new Ability();        
@@ -186,7 +186,7 @@ export class Cheetah extends Animal {
         ability3.name = "On The Hunt";
         ability3.description = "On The Hunt";
         ability3.isAbilityPurchased = false;
-        ability3.purchasePrice = 500;
+        ability3.purchasePrice = 1000;
         this.availableAbilities.push(ability3);        
     }
 }
@@ -217,7 +217,7 @@ export class Hare extends Animal {
         ability2.name = "Awareness";
         ability2.description = "Awareness";
         ability2.isAbilityPurchased = false;
-        ability2.purchasePrice = 500;
+        ability2.purchasePrice = 1000;
         this.availableAbilities.push(ability2);
 
         var ability3 = new Ability();
@@ -227,7 +227,7 @@ export class Hare extends Animal {
         ability3.name = "Nap";
         ability3.description = "Nap";
         ability3.isAbilityPurchased = false;
-        ability3.purchasePrice = 500;
+        ability3.purchasePrice = 1000;
         this.availableAbilities.push(ability3);        
     }
 }
@@ -255,7 +255,7 @@ export class Monkey extends Animal {
         ability2.oneTimeEffect = true;
         ability2.name = "Frenzy";
         ability2.isAbilityPurchased = false;
-        ability2.purchasePrice = 500;
+        ability2.purchasePrice = 1000;
         this.availableAbilities.push(ability2);
 
         var ability3 = new Ability();
@@ -264,7 +264,7 @@ export class Monkey extends Animal {
         ability3.oneTimeEffect = true;
         ability3.name = "Leap";
         ability3.isAbilityPurchased = false;
-        ability3.purchasePrice = 500;
+        ability3.purchasePrice = 1000;
         ability3.totalFrames = 15;
         this.availableAbilities.push(ability3);        
     }
@@ -293,7 +293,7 @@ export class Goat extends Animal {
         ability2.oneTimeEffect = false;
         ability2.name = "Deep Breathing";
         ability2.isAbilityPurchased = false;
-        ability2.purchasePrice = 500;
+        ability2.purchasePrice = 1000;
         this.availableAbilities.push(ability2);
 
         var ability3 = new Ability();
@@ -301,7 +301,7 @@ export class Goat extends Animal {
         ability3.oneTimeEffect = false;
         ability3.name = "In The Rhythm";
         ability3.isAbilityPurchased = false;
-        ability3.purchasePrice = 500;
+        ability3.purchasePrice = 1000;
         ability3.totalFrames = 15;
         this.availableAbilities.push(ability3);        
     }
@@ -330,7 +330,7 @@ export class Gecko extends Animal {
         ability2.oneTimeEffect = false;
         ability2.name = "Night Vision";
         ability2.isAbilityPurchased = false;
-        ability2.purchasePrice = 500;
+        ability2.purchasePrice = 1000;
         this.availableAbilities.push(ability2);
 
         var ability3 = new Ability();
@@ -338,7 +338,7 @@ export class Gecko extends Animal {
         ability3.oneTimeEffect = true;
         ability3.name = "Camouflage";
         ability3.isAbilityPurchased = false;
-        ability3.purchasePrice = 500;
+        ability3.purchasePrice = 1000;
         this.availableAbilities.push(ability3);
     }
 }
@@ -368,7 +368,7 @@ export class Dolphin extends Animal {
         ability2.oneTimeEffect = false;
         ability2.name = "Echolocation";
         ability2.isAbilityPurchased = false;
-        ability2.purchasePrice = 500;
+        ability2.purchasePrice = 1000;
         this.availableAbilities.push(ability2);
 
         var ability3 = new Ability();
@@ -376,7 +376,7 @@ export class Dolphin extends Animal {
         ability3.oneTimeEffect = true;
         ability3.name = "Flowing Current";
         ability3.isAbilityPurchased = false;
-        ability3.purchasePrice = 500;
+        ability3.purchasePrice = 1000;
         this.availableAbilities.push(ability3);
     }
 }
@@ -403,7 +403,7 @@ export class Shark extends Animal {
         ability2.oneTimeEffect = true;
         ability2.name = "Feeding Frenzy";
         ability2.isAbilityPurchased = false;
-        ability2.purchasePrice = 500;
+        ability2.purchasePrice = 1000;
         this.availableAbilities.push(ability2);
 
         var ability3 = new Ability();
@@ -411,7 +411,7 @@ export class Shark extends Animal {
         ability3.oneTimeEffect = true;
         ability3.name = "Blood In The Water";
         ability3.isAbilityPurchased = false;
-        ability3.purchasePrice = 500;
+        ability3.purchasePrice = 1000;
         this.availableAbilities.push(ability3);
     }
 }
@@ -438,7 +438,7 @@ export class Octopus extends Animal {
         ability2.oneTimeEffect = false;
         ability2.name = "Buried Treasure";
         ability2.isAbilityPurchased = false;
-        ability2.purchasePrice = 500;
+        ability2.purchasePrice = 1000;
         this.availableAbilities.push(ability2);
 
         var ability3 = new Ability();
@@ -446,7 +446,7 @@ export class Octopus extends Animal {
         ability3.oneTimeEffect = true;
         ability3.name = "Big Brain";
         ability3.isAbilityPurchased = false;
-        ability3.purchasePrice = 500;
+        ability3.purchasePrice = 1000;
         this.availableAbilities.push(ability3);
     }
 }
@@ -473,7 +473,7 @@ export class Penguin extends Animal {
         ability2.oneTimeEffect = false;
         ability2.name = "Wild Toboggan";
         ability2.isAbilityPurchased = false;
-        ability2.purchasePrice = 500;
+        ability2.purchasePrice = 1000;
         this.availableAbilities.push(ability2);
 
         var ability3 = new Ability();
@@ -481,7 +481,7 @@ export class Penguin extends Animal {
         ability3.oneTimeEffect = false;
         ability3.name = "Quick Toboggan";
         ability3.isAbilityPurchased = false;
-        ability3.purchasePrice = 500;
+        ability3.purchasePrice = 1000;
         this.availableAbilities.push(ability3);
     }
 }
@@ -508,7 +508,7 @@ export class Caribou extends Animal {
         ability2.oneTimeEffect = false;
         ability2.name = "Great Migration";
         ability2.isAbilityPurchased = false;
-        ability2.purchasePrice = 500;
+        ability2.purchasePrice = 1000;
         this.availableAbilities.push(ability2);
 
         var ability3 = new Ability();
@@ -516,7 +516,7 @@ export class Caribou extends Animal {
         ability3.oneTimeEffect = true;
         ability3.name = "Special Delivery";
         ability3.isAbilityPurchased = false;
-        ability3.purchasePrice = 500;
+        ability3.purchasePrice = 1000;
         this.availableAbilities.push(ability3);
     }
 }
@@ -545,7 +545,7 @@ export class Salamander extends Animal {
         ability2.oneTimeEffect = false;
         ability2.name = "Burrow";
         ability2.isAbilityPurchased = false;
-        ability2.purchasePrice = 500;
+        ability2.purchasePrice = 1000;
         this.availableAbilities.push(ability2);
 
         var ability3 = new Ability();
@@ -553,7 +553,7 @@ export class Salamander extends Animal {
         ability3.oneTimeEffect = false;
         ability3.name = "Heat Up";
         ability3.isAbilityPurchased = false;
-        ability3.purchasePrice = 500;
+        ability3.purchasePrice = 1000;
         this.availableAbilities.push(ability3);
     }
 }
@@ -581,7 +581,7 @@ export class Fox extends Animal {
         ability2.oneTimeEffect = false;
         ability2.name = "Fleeting Speed";
         ability2.isAbilityPurchased = false;
-        ability2.purchasePrice = 500;
+        ability2.purchasePrice = 1000;
         this.availableAbilities.push(ability2);
 
         var ability3 = new Ability();
@@ -589,7 +589,7 @@ export class Fox extends Animal {
         ability3.oneTimeEffect = true;
         ability3.name = "Nine Tails";
         ability3.isAbilityPurchased = false;
-        ability3.purchasePrice = 500;
+        ability3.purchasePrice = 1000;
         this.availableAbilities.push(ability3);
     }
 }

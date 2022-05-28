@@ -38,7 +38,7 @@ export class AppComponent {
     }
 
     //PURELY for testing, should be false when deployed
-    var overrideNewGame = false;
+    var overrideNewGame = true;
     var devMode = false;
 
     if (this.newGame || overrideNewGame)

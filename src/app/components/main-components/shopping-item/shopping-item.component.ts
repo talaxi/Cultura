@@ -174,6 +174,13 @@ export class ShoppingItemComponent implements OnInit {
       else
         this.globalService.globalVar.resources.push(new ResourceValue(this.selectedItem.name, 1, ShopItemTypeEnum.Specialty));
     }
+
+    if (this.selectedItem.quantityMultiplier !== null && this.selectedItem.quantityMultiplier !== undefined && this.selectedItem.quantityMultiplier > 0)
+    {
+      this.selectedItem.purchasePrice.forEach(price => {
+        price.amount *= this.selectedItem.quantityMultiplier;
+      });
+    }
   }
 
   buyAbility() {

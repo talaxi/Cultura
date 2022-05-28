@@ -23,6 +23,8 @@ export class DecksViewComponent implements OnInit {
   selectedCourseType: string;
   colorConditional: any;
   displayRaceOrder = false;
+  isRaceOrderOn: boolean;
+  selectedDeckOrder: string[];
   dragSourceElement: any;
 
   editDeckForm = new FormGroup({
@@ -32,6 +34,7 @@ export class DecksViewComponent implements OnInit {
   constructor(private globalService: GlobalService, private modalService: NgbModal, private lookupService: LookupService) { }
 
   ngOnInit(): void {
+    this.isRaceOrderOn = false;
     this.newAnimalList = [];
     this.animalDecks = this.globalService.globalVar.animalDecks;
     this.raceCourseTypeList = this.lookupService.getAllRaceCourseTypes();
@@ -39,13 +42,38 @@ export class DecksViewComponent implements OnInit {
     if (scouts !== undefined && scouts !== null && scouts > 0) {      
       this.displayRaceOrder = true;
     }
+    this.selectedDeckOrder = [];
+    this.selectedDeckOrder.push("Flatland");
+    this.selectedDeckOrder.push("Mountain");
+    this.selectedDeckOrder.push("Ocean");
+    this.selectedDeckOrder.push("Tundra");
+    this.selectedDeckOrder.push("Volcanic");    
   }
 
   editDeck(content: any, deck: AnimalDeck) {
     this.selectedDeck = deck;
     this.newAnimalList = [];
     this.selectedAnimalName = "";
-    this.selectedCourseType = "Flatland";
+    this.selectedCourseType = "Flatland";  
+    
+    this.isRaceOrderOn = deck.isCourseOrderActive;
+    console.log(this.selectedDeckOrder);
+    if (deck.courseTypeOrder !== null && deck.courseTypeOrder !== undefined && deck.courseTypeOrder.length > 0)
+    {
+      this.selectedDeckOrder = [];
+      deck.courseTypeOrder.forEach(item => {
+        if (item === RaceCourseTypeEnum.Flatland)
+        this.selectedDeckOrder.push("Flatland");
+        if (item === RaceCourseTypeEnum.Mountain)
+        this.selectedDeckOrder.push("Mountain");
+        if (item === RaceCourseTypeEnum.Ocean)
+        this.selectedDeckOrder.push("Ocean");
+        if (item === RaceCourseTypeEnum.Tundra)
+        this.selectedDeckOrder.push("Tundra");
+        if (item === RaceCourseTypeEnum.Volcanic)
+        this.selectedDeckOrder.push("Volcanic");
+      });
+    }
 
     this.filterType(this.selectedCourseType);
 
@@ -70,7 +98,7 @@ export class DecksViewComponent implements OnInit {
       });
       deckToEdit?.selectedAnimals.sort(this.compare);
 
-      if (this.displayRaceOrder) {
+      if (this.displayRaceOrder && this.isRaceOrderOn) {
         var stringOrder = [];
         var first = document.getElementById("raceOrder1")?.innerHTML;
         var second = document.getElementById("raceOrder2")?.innerHTML;
@@ -193,28 +221,11 @@ export class DecksViewComponent implements OnInit {
     if (targetEventHtml === null)
       return;
 
-    if (dataElement.innerHTML === "Flatland")
-      targetClass = "flatlandColor draggable";
-    if (dataElement.innerHTML === "Mountain")
-      targetClass = "mountainColor draggable";
-    if (dataElement.innerHTML === "Ocean")
-      targetClass = "waterColor draggable";
-    if (dataElement.innerHTML === "Tundra")
-      targetClass = "tundraColor draggable";
-    if (dataElement.innerHTML === "Volcanic")
-      targetClass = "volcanicColor draggable";
-
-    if (targetEventHtml === "Flatland")
-      sourceClass = "flatlandColor draggable";
-    if (targetEventHtml === "Mountain")
-      sourceClass = "mountainColor draggable";
-    if (targetEventHtml === "Ocean")
-      sourceClass = "waterColor draggable";
-    if (targetEventHtml === "Tundra")
-      sourceClass = "tundraColor draggable";
-    if (targetEventHtml === "Volcanic")
-      sourceClass = "volcanicColor draggable";
-
+    var targetItem = this.selectedDeckOrder.indexOf(targetEventHtml);
+    var sourceItem = this.selectedDeckOrder.indexOf(dataElement?.innerHTML);
+    
+    this.selectedDeckOrder[targetItem] = dataElement.innerHTML;
+    this.selectedDeckOrder[sourceItem] = targetEventHtml;    
 
     event.target.innerHTML = "";
     event.target.className = targetClass;
@@ -223,5 +234,21 @@ export class DecksViewComponent implements OnInit {
     dataElement.innerHTML = "";
     dataElement.className = sourceClass;
     dataElement.append(targetEventHtml);
+  }
+
+  toggleRaceOrder = (): void => {
+    this.isRaceOrderOn = !this.isRaceOrderOn;
+    this.selectedDeck.isCourseOrderActive = this.isRaceOrderOn;
+  }
+
+  getColorClass(courseTypeName: string) {    
+      var colorConditional = {
+        'flatlandColor': courseTypeName === 'Flatland',
+        'mountainColor': courseTypeName === 'Mountain',
+        'waterColor': courseTypeName === 'Ocean',
+        'tundraColor': courseTypeName === 'Tundra',
+        'volcanicColor': courseTypeName === 'Volcanic'
+      };
+      return colorConditional;    
   }
 }

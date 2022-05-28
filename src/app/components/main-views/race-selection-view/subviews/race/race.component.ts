@@ -915,7 +915,7 @@ export class RaceComponent implements OnInit {
                 }
 
                 //adjust for renown
-                var currentRenown = this.lookupService.getRenown();
+                var currentRenown = this.lookupService.getRenown();                                
                 item.amount = Math.round(item.amount * this.utilityService.getRenownCircuitRaceModifier(currentRenown));
                 
                 //adjust for buried treasure

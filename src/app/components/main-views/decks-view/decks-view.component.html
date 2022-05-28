@@ -20,28 +20,30 @@
                 <div class="mb-3">
                     <label for="deck-name">Deck Name: </label>
                     <input id="deck-name" type="text" class="spaced" formControlName="deckName">
-                    <div *ngIf="displayRaceOrder" class="raceOrder">
-                        <label class="spaced">Race Order: </label>
-                        <span id="raceOrder1" draggable="true" class="flatlandColor draggable"
-                            (dragstart)="dragStart($event)" (dragover)="allowDrop($event)"
-                            (drop)="dropCourseType($event)">Flatland</span>
-                        / <span id="raceOrder2" draggable="true" class="mountainColor draggable"
-                            (dragstart)="dragStart($event)" (dragover)="allowDrop($event)"
-                            (drop)="dropCourseType($event)">Mountain</span>
-                        / <span id="raceOrder3" draggable="true" class="waterColor draggable"
-                            (dragstart)="dragStart($event)" (dragover)="allowDrop($event)"
-                            (drop)="dropCourseType($event)">Ocean</span>
-                        / <span id="raceOrder4" draggable="true" class="tundraColor draggable"
-                            (dragstart)="dragStart($event)" (dragover)="allowDrop($event)"
-                            (drop)="dropCourseType($event)">Tundra</span>
-                        / <span id="raceOrder5" draggable="true" class="volcanicColor draggable"
-                            (dragstart)="dragStart($event)" (dragover)="allowDrop($event)"
-                            (drop)="dropCourseType($event)">Volcanic</span>
-                    </div>
+                </div>
+                <div *ngIf="displayRaceOrder" class="raceOrder">                                        
+                    <input type="checkbox" class="spaced" id="finishTraining" [checked]="isRaceOrderOn" (input)="toggleRaceOrder()">
+                    <label class="spaced" (click)="toggleRaceOrder()">Race Order: </label>
+                    <span><span id="raceOrder1" draggable="true" [ngClass]="getColorClass(selectedDeckOrder[0])" class="draggable"
+                        (dragstart)="dragStart($event)" (dragover)="allowDrop($event)"
+                        (drop)="dropCourseType($event)">{{selectedDeckOrder[0]}}</span>
+                    / <span id="raceOrder2" draggable="true" [ngClass]="getColorClass(selectedDeckOrder[1])" class="draggable"
+                        (dragstart)="dragStart($event)" (dragover)="allowDrop($event)"
+                        (drop)="dropCourseType($event)">{{selectedDeckOrder[1]}}</span>
+                    / <span id="raceOrder3" draggable="true" [ngClass]="getColorClass(selectedDeckOrder[2])" class="draggable"
+                        (dragstart)="dragStart($event)" (dragover)="allowDrop($event)"
+                        (drop)="dropCourseType($event)">{{selectedDeckOrder[2]}}</span>
+                    / <span id="raceOrder4" draggable="true" [ngClass]="getColorClass(selectedDeckOrder[3])" class="draggable"
+                        (dragstart)="dragStart($event)" (dragover)="allowDrop($event)"
+                        (drop)="dropCourseType($event)">{{selectedDeckOrder[3]}}</span>
+                    / <span id="raceOrder5" draggable="true" [ngClass]="getColorClass(selectedDeckOrder[4])" class="draggable"
+                        (dragstart)="dragStart($event)" (dragover)="allowDrop($event)"
+                        (drop)="dropCourseType($event)">{{selectedDeckOrder[4]}}</span></span>
                 </div>
                 <br />
                 <div class="typeContainer">
-                    <span *ngFor="let type of raceCourseTypeList" class="raceType subHeading" [ngClass]="{'selectedCourseType': selectedCourseType === type, 'flatlandColor': type === 'Flatland',
+                    <span *ngFor="let type of raceCourseTypeList" class="raceType subHeading"
+                        [ngClass]="{'selectedCourseType': selectedCourseType === type, 'flatlandColor': type === 'Flatland',
                 'mountainColor': type === 'Mountain', 'waterColor': type === 'Ocean', 'tundraColor': type === 'Tundra', 'volcanicColor': type === 'Volcanic'}" (click)="filterType(type)">
                         {{type.trim()}}
                     </span>
