@@ -1113,7 +1113,7 @@ export class GlobalService {
       if (i <= 2) //make these breakpoints configurable, figure out your time horizon on new races
       {
         additiveValue = 0;
-        
+
         var leg = new RaceLeg();
         leg.courseType = RaceCourseTypeEnum.Flatland;
         if (i === 2) {
@@ -1129,6 +1129,7 @@ export class GlobalService {
         raceLegs.push(leg);
       }
       else if (i <= 9) {
+        var additiveValue = 25 * i;
         var availableCourses: RaceCourseTypeEnum[] = [];
         availableCourses.push(RaceCourseTypeEnum.Flatland);
         availableCourses.push(RaceCourseTypeEnum.Mountain);
