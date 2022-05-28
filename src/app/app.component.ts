@@ -38,7 +38,8 @@ export class AppComponent {
     }
 
     //PURELY for testing, should be false when deployed
-    var overrideNewGame = true;
+    //TODO: set this up so that it won't overwrite a user's save if you forget to turn this off
+    var overrideNewGame = false;
     var devMode = false;
 
     if (this.newGame || overrideNewGame)
