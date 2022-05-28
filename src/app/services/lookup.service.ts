@@ -338,10 +338,8 @@ export class LookupService {
       return "Rare currency gained from improving your circuit rank and winning certain special races.";
     else if (name === "Renown")
     {
-      var currentRenown = this.getRenown();
-      var renownPercent = this.utilityService.getRenownCircuitRaceModifier(currentRenown);
-                
-      return "Increases Coins gained from races by " + renownPercent + "%";
+      var currentRenown = this.getRenown();      
+      return "Increases Coins gained from races by " + currentRenown + "%";
     }
     else if (name === "Stopwatch")
       return this.getSpecialtyItemDescription(name);

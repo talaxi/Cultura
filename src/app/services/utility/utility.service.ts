@@ -41,9 +41,13 @@ export class UtilityService {
     return RaceCourseTypeEnum.Flatland;
   }*/
 
-  getRenownCircuitRaceModifier(totalRenown: number) {
-    return totalRenown / 100;
+  /*getRenownCircuitRaceModifier(totalRenown: number) {
+    return totalRenown;
   }
+
+  getRenownCircuitRaceModifierPopover(totalRenown: number) {
+    return totalRenown * 100;
+  }*/
 
   getNumericValueOfCircuitRank(circuitRank: string) {
     var circuitValue = 0;

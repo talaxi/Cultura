@@ -914,10 +914,12 @@ export class RaceComponent implements OnInit {
                   item.amount = Math.round(item.amount * defaultMoneyMarkModifier);
                 }
 
-                //adjust for renown
+                //adjust for renown                
                 var currentRenown = this.lookupService.getRenown();                                
-                item.amount = Math.round(item.amount * this.utilityService.getRenownCircuitRaceModifier(currentRenown));
-                
+                console.log("Amount: " + item.amount + " Renown: " + currentRenown);
+                item.amount += Math.round(item.amount * currentRenown);
+                console.log("Final Amount: " + item.amount);
+
                 //adjust for buried treasure
                 item.amount = Math.round(item.amount * buriedTreasureModifier);
 
@@ -1150,7 +1152,6 @@ export class RaceComponent implements OnInit {
 
       var percentChanceOfStumbling = ((currentPath.frequencyOfStumble / frequencyPerNumberOfMeters) * currentPath.length);
 
-      console.log(rng + " vs " + percentChanceOfStumbling);
       if (rng <= percentChanceOfStumbling) {
         currentPath.didAnimalStumble = true;
         return true;

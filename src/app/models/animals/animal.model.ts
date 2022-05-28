@@ -115,8 +115,8 @@ export class Horse extends Animal {
 
     constructor() {
         super();
-        this.baseStats = new AnimalStats(10, 10, 5, 5, 5, 5);
-        this.currentStats = new AnimalStats(10, 10, 5, 5, 5, 5);
+        this.baseStats = new AnimalStats(5, 5, 5, 5, 5, 5);
+        this.currentStats = new AnimalStats(5, 5, 5, 5, 5, 5);
 
         this.type = AnimalTypeEnum.Horse;
         this.raceCourseType = RaceCourseTypeEnum.Flatland;

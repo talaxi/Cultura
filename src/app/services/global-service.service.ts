@@ -1112,6 +1112,8 @@ export class GlobalService {
 
       if (i <= 2) //make these breakpoints configurable, figure out your time horizon on new races
       {
+        additiveValue = 0;
+        
         var leg = new RaceLeg();
         leg.courseType = RaceCourseTypeEnum.Flatland;
         if (i === 2) {
@@ -1819,7 +1821,6 @@ export class GlobalService {
 
   InitializeResources() {
     this.globalVar.resources.push(this.initializeService.initializeResource("Coins", 500));
-    this.globalVar.resources.push(this.initializeService.initializeResource("Renown", 1));
   }
 
   InitializeSettings() {
