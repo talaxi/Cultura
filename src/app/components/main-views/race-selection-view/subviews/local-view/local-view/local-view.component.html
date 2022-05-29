@@ -44,6 +44,9 @@
 
         <div id="localRaceSection">
             <span class="s4Heading">Free Races</span>
+            <br/>
+            <em> {{freeRacesRemaining}} of {{totalFreeRaces}} remaining -- resets in {{ freeRaceTimer }}</em>                        
+            <br />
             <br />
             <div class="localRaceGrid">
                 <div class="localRace{{i+1}}" (click)="selectLocalRace(race)"

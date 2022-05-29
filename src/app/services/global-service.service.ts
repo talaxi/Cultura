@@ -54,6 +54,8 @@ export class GlobalService {
     this.globalVar.tutorialCompleted = false;
     this.globalVar.currentTutorialId = 1;
     this.globalVar.nationalRaceCountdown = 0;
+    this.globalVar.freeRaceCounter = 0;
+    this.globalVar.freeRaceTimePeriodCounter = 0;
 
     //Initialize modifiers
     this.InitializeModifiers();
@@ -137,6 +139,9 @@ export class GlobalService {
     this.globalVar.modifiers.push(new StringNumberPair((2 * 60 * 60), "smallBarnTrainingTimeModifier"));
     this.globalVar.modifiers.push(new StringNumberPair((4 * 60 * 60), "mediumBarnTrainingTimeModifier"));
     this.globalVar.modifiers.push(new StringNumberPair((8 * 60 * 60), "largeBarnTrainingTimeModifier"));
+
+    this.globalVar.modifiers.push(new StringNumberPair(10, "freeRacesPerTimePeriodModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair((15 * 60), "freeRacesTimePeriodModifier"));
 
     //ability modifiers
     this.globalVar.modifiers.push(new StringNumberPair(1.5, "feedingFrenzyPositiveModifier"));
@@ -1344,8 +1349,8 @@ export class GlobalService {
 
   GenerateCircuitRaceRewards(circuitRank: string): ResourceValue[] {
     var numericRank = this.GetCircuitRankValue(circuitRank);
-    var CoinsFactor = 1.005;
-    var baseCoins = 40;
+    var CoinsFactor = 1.01;
+    var baseCoins = 50;
 
     var baseRenown = 1.03;
     var renownFactor = 1.03;
@@ -1365,8 +1370,8 @@ export class GlobalService {
 
   GenerateLocalRaceRewards(circuitRank: string): ResourceValue[] {
     var numericRank = this.GetCircuitRankValue(circuitRank);
-    var CoinsFactor = 1.003;
-    var baseCoins = 7;
+    var CoinsFactor = 1.005;
+    var baseCoins = 10;
 
     var baseRenown = 1.01;
     var renownFactor = 1.03;
@@ -1439,7 +1444,7 @@ export class GlobalService {
 
     var numericRank = this.GetCircuitRankValue(duoRank);
     var CoinsFactor = 1.01;
-    var baseCoins = 30;
+    var baseCoins = 100;
 
     var baseRenown = 1.1;
     var renownFactor = 1.03;

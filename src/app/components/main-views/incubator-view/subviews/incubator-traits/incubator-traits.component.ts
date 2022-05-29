@@ -84,33 +84,33 @@ export class IncubatorTraitsComponent implements OnInit {
     traits.push(new AnimalTraits("Adamant", 3, researchLevel, AnimalStatEnum.topSpeed, AnimalStatEnum.acceleration));
     traits.push(new AnimalTraits("Stoic", 5, researchLevel, AnimalStatEnum.endurance, AnimalStatEnum.adaptability));
 
-    traits.push(new AnimalTraits("Smart", 5, researchLevel, AnimalStatEnum.focus, AnimalStatEnum.endurance));
+    traits.push(new AnimalTraits("Smart", 5, researchLevel, AnimalStatEnum.focus, AnimalStatEnum.power));
     traits.push(new AnimalTraits("Careful", 7, researchLevel, AnimalStatEnum.adaptability, AnimalStatEnum.acceleration));    
-    traits.push(new AnimalTraits("Attentive", 7, researchLevel, AnimalStatEnum.focus, AnimalStatEnum.endurance));
-    traits.push(new AnimalTraits("Keen", 9, researchLevel, AnimalStatEnum.power, AnimalStatEnum.topSpeed));
+    traits.push(new AnimalTraits("Attentive", 7, researchLevel, AnimalStatEnum.power, AnimalStatEnum.endurance));
+    traits.push(new AnimalTraits("Keen", 9, researchLevel, AnimalStatEnum.acceleration, AnimalStatEnum.topSpeed));
     traits.push(new AnimalTraits("Quick", 9, researchLevel, AnimalStatEnum.topSpeed, AnimalStatEnum.adaptability));
-    traits.push(new AnimalTraits("Quick", 11, researchLevel, AnimalStatEnum.topSpeed, AnimalStatEnum.adaptability));
+    traits.push(new AnimalTraits("Tough", 11, researchLevel, AnimalStatEnum.endurance, AnimalStatEnum.focus));
 
-    traits.push(new AnimalTraits("Smart", 11, researchLevel, AnimalStatEnum.focus, AnimalStatEnum.endurance));
-    traits.push(new AnimalTraits("Careful", 13, researchLevel, AnimalStatEnum.adaptability, AnimalStatEnum.acceleration));    
-    traits.push(new AnimalTraits("Attentive", 13, researchLevel, AnimalStatEnum.focus, AnimalStatEnum.endurance));
-    traits.push(new AnimalTraits("Keen", 15, researchLevel, AnimalStatEnum.power, AnimalStatEnum.topSpeed));
-    traits.push(new AnimalTraits("Quick", 15, researchLevel, AnimalStatEnum.topSpeed, AnimalStatEnum.adaptability));
-    traits.push(new AnimalTraits("Quick", 17, researchLevel, AnimalStatEnum.topSpeed, AnimalStatEnum.adaptability));
+    traits.push(new AnimalTraits("Solitary", 11, researchLevel, AnimalStatEnum.focus, AnimalStatEnum.acceleration));
+    traits.push(new AnimalTraits("Cautious", 13, researchLevel, AnimalStatEnum.adaptability, AnimalStatEnum.topSpeed));    
+    traits.push(new AnimalTraits("Wild", 13, researchLevel, AnimalStatEnum.power, AnimalStatEnum.focus));
+    traits.push(new AnimalTraits("Clumsy", 15, researchLevel, AnimalStatEnum.acceleration, AnimalStatEnum.adaptability));
+    traits.push(new AnimalTraits("Natural", 15, researchLevel, AnimalStatEnum.topSpeed, AnimalStatEnum.endurance));
+    traits.push(new AnimalTraits("Resilient", 17, researchLevel, AnimalStatEnum.endurance, AnimalStatEnum.power));
 
-    traits.push(new AnimalTraits("Smart", 17, researchLevel, AnimalStatEnum.focus, AnimalStatEnum.endurance));
-    traits.push(new AnimalTraits("Careful", 19, researchLevel, AnimalStatEnum.adaptability, AnimalStatEnum.acceleration));    
-    traits.push(new AnimalTraits("Attentive", 19, researchLevel, AnimalStatEnum.focus, AnimalStatEnum.endurance));
-    traits.push(new AnimalTraits("Keen", 21, researchLevel, AnimalStatEnum.power, AnimalStatEnum.topSpeed));
-    traits.push(new AnimalTraits("Quick", 21, researchLevel, AnimalStatEnum.topSpeed, AnimalStatEnum.adaptability));
-    traits.push(new AnimalTraits("Quick", 23, researchLevel, AnimalStatEnum.topSpeed, AnimalStatEnum.adaptability));
+    traits.push(new AnimalTraits("Anxious", 17, researchLevel, AnimalStatEnum.focus, AnimalStatEnum.topSpeed));
+    traits.push(new AnimalTraits("Lucky", 19, researchLevel, AnimalStatEnum.adaptability, AnimalStatEnum.focus));    
+    traits.push(new AnimalTraits("Rugged", 19, researchLevel, AnimalStatEnum.power, AnimalStatEnum.adaptability));
+    traits.push(new AnimalTraits("Naive", 21, researchLevel, AnimalStatEnum.acceleration, AnimalStatEnum.endurance));
+    traits.push(new AnimalTraits("Sprightly", 21, researchLevel, AnimalStatEnum.topSpeed, AnimalStatEnum.power));
+    traits.push(new AnimalTraits("Stout", 23, researchLevel, AnimalStatEnum.endurance, AnimalStatEnum.acceleration));
 
-    traits.push(new AnimalTraits("Smart", 23, researchLevel, AnimalStatEnum.focus, AnimalStatEnum.endurance));
-    traits.push(new AnimalTraits("Careful", 25, researchLevel, AnimalStatEnum.adaptability, AnimalStatEnum.acceleration));    
-    traits.push(new AnimalTraits("Attentive", 25, researchLevel, AnimalStatEnum.focus, AnimalStatEnum.endurance));
-    traits.push(new AnimalTraits("Keen", 27, researchLevel, AnimalStatEnum.power, AnimalStatEnum.topSpeed));
-    traits.push(new AnimalTraits("Quick", 27, researchLevel, AnimalStatEnum.topSpeed, AnimalStatEnum.adaptability));
-    traits.push(new AnimalTraits("Quick", 29, researchLevel, AnimalStatEnum.topSpeed, AnimalStatEnum.adaptability));
+    traits.push(new AnimalTraits("Pensive", 23, researchLevel, AnimalStatEnum.focus, AnimalStatEnum.adaptability));
+    traits.push(new AnimalTraits("Languid", 25, researchLevel, AnimalStatEnum.adaptability, AnimalStatEnum.endurance));    
+    traits.push(new AnimalTraits("Mighty", 25, researchLevel, AnimalStatEnum.power, AnimalStatEnum.acceleration));
+    traits.push(new AnimalTraits("Nimble", 27, researchLevel, AnimalStatEnum.acceleration, AnimalStatEnum.power));
+    traits.push(new AnimalTraits("Small", 27, researchLevel, AnimalStatEnum.topSpeed, AnimalStatEnum.focus));
+    traits.push(new AnimalTraits("Resolute", 29, researchLevel, AnimalStatEnum.endurance, AnimalStatEnum.topSpeed));
 
     traits = traits.filter(item => researchLevel >= item.requiredLevel);
     

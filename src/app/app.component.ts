@@ -134,6 +134,23 @@ export class AppComponent {
         incubator.assignedTrait = null;        
       }
     }
+
+    this.handleFreeRaceTimer(deltaTime);
+  }
+
+  handleFreeRaceTimer(deltaTime: number) {
+    this.globalService.globalVar.freeRaceTimePeriodCounter += deltaTime;
+
+    var freeRaceTimePeriod = 15*60;
+    var freeRaceTimePeriodPair = this.globalService.globalVar.modifiers.find(item => item.text === "freeRacesTimePeriodModifier");
+    if (freeRaceTimePeriodPair !== undefined)
+      freeRaceTimePeriod = freeRaceTimePeriodPair.value;
+
+    if (this.globalService.globalVar.freeRaceTimePeriodCounter >= freeRaceTimePeriod)
+    {
+      this.globalService.globalVar.freeRaceTimePeriodCounter = 0;
+      this.globalService.globalVar.freeRaceCounter = 0;
+    }
   }
 
   public saveGame() {
@@ -157,8 +174,6 @@ export class AppComponent {
   }
 
   loadStartup() {
-    console.log(this.globalService.globalVar);
-
     var selectedTheme = this.globalService.globalVar.settings.get("theme");
     if (selectedTheme !== null && selectedTheme !== undefined)
       this.themeService.setActiveTheme(selectedTheme);

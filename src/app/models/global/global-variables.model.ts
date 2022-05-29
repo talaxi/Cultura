@@ -46,7 +46,9 @@ export class GlobalVariables {
     tutorialCompleted: boolean;
     currentTutorialId: number;
     nationalRaceCountdown: number;
-    userIsRacing = false;    
+    userIsRacing = false;        
+    freeRaceCounter: number;
+    freeRaceTimePeriodCounter: number;    
 
     constructor(existingVariables?: GlobalVariables) {
         if (existingVariables !== undefined && existingVariables !== null) {            
@@ -62,6 +64,8 @@ export class GlobalVariables {
             this.animalDecks = existingVariables.animalDecks;
             this.incubator = existingVariables.incubator;
             this.nationalRaceCountdown = 0;
+            this.freeRaceCounter = 0;
+            this.freeRaceTimePeriodCounter = 0;
         }
     }
 }

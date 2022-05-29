@@ -554,7 +554,7 @@ export class RaceComponent implements OnInit {
           var totalDistance = this.lookupService.GetAbilityEffectiveAmount(racingAnimal, item.terrain.powerModifier, statLossFromExhaustion);
           var extraDistanceCovered = totalDistance / racingAnimal.ability.totalFrames;
           distanceCoveredPerFrame += extraDistanceCovered;
-
+          console.log("Leap/Breach");
           racingAnimal.ability.remainingFrames -= 1;
 
           if (racingAnimal.ability.remainingFrames <= 0) {

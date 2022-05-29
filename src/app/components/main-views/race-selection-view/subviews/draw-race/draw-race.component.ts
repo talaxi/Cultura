@@ -1642,5 +1642,13 @@ export class DrawRaceComponent implements OnInit {
     this.skipSubscription.unsubscribe();
     this.pauseSubscription.unsubscribe();
     this.globalService.globalVar.userIsRacing = false;
+    this.race.raceUI.distanceCoveredByFrame = [];
+    this.race.raceUI.lavaFallPercentByFrame = [];
+    this.race.raceUI.maxSpeedByFrame = [];
+    this.race.raceUI.racerEffectByFrame = [];
+    this.race.raceUI.staminaPercentByFrame = [];
+    this.race.raceUI.timeToCompleteByFrame = [];
+    this.race.raceUI.yAdjustmentByFrame = [];
+    this.race.raceUI.velocityByFrame = [];
   }
 }
