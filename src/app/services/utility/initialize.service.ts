@@ -41,7 +41,7 @@ export class InitializeService {
       training.trainingName = "Sprints";
       training.isAvailable = true;
       training.facilitySize = FacilitySizeEnum.Small;
-      training.timeToComplete = 15;
+      training.timeToComplete = 20;
       training.trainingType = TrainingOptionsEnum.Sprints;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
       training.statGain = 1;
@@ -118,7 +118,7 @@ export class InitializeService {
       training.trainingName = "Sidestep";
       training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Small;
-      training.timeToComplete = 25;
+      training.timeToComplete = 35;
       training.trainingType = TrainingOptionsEnum.Sidestep;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
       training.statGain = 1;
@@ -190,7 +190,7 @@ export class InitializeService {
       training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Medium;
       training.purchasePrice *= 4;
-      training.timeToComplete = 60;
+      training.timeToComplete = 75;
       training.trainingType = TrainingOptionsEnum.LateralVerticalDrill;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
       training.statGain = 1;

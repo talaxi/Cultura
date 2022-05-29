@@ -18,10 +18,10 @@ export class AnimalStats {
     burstChance: number;
     burstDistance: number;
 
-    defaultStaminaModifier = 10;
+    defaultStaminaModifier = 7.5;
     defaultMaxSpeedModifier = .3;
     defaultAccelerationModifier = .1;
-    defaultPowerModifier = .05;
+    defaultPowerModifier = .1;
     defaultFocusModifier = 5;
     defaultAdaptabilityModifier = 5;
     defaultBurstDistanceModifier = 3;

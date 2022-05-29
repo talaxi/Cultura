@@ -27,6 +27,7 @@ export class SelectedAnimalComponent implements OnInit {
   adaptabilityModifierAmount: number;
   diminishingReturnsAmount: number;
   breedLevelPopover: string;
+  breedDescriptionPopover: string;
   colorConditional: any;
   editingName: boolean;
   newName: string;
@@ -99,14 +100,36 @@ export class SelectedAnimalComponent implements OnInit {
     });
 
     this.equipmentList = [];
-    //add food to list
+    //add equipment to list
     this.globalService.globalVar.resources.filter(item => item.itemType === ShopItemTypeEnum.Equipment).forEach(equipment => {
       if (equipment !== undefined) {
-        this.equipmentList.push(equipment);
+        var modifiedEquipment = equipment.makeCopy(equipment);
+        this.equipmentList.push(modifiedEquipment);
+      }
+    });
+
+    //remove any equipment already in use
+    this.globalService.globalVar.animals.filter(item => item.equippedItem !== null && item.equippedItem !== undefined).forEach(animal => {
+      var listItem = this.equipmentList.find(item => item.name === animal.equippedItem?.name);
+      if (listItem !== null && listItem !== undefined)
+      {
+        if (listItem.amount > 0)
+        {
+          console.log("Subtract 1 " + listItem.name + " from " + animal.name);
+          listItem.amount -= 1;
+        }
+
+        if (listItem.amount <= 0)
+        {
+          this.equipmentList = this.equipmentList.filter(item => item.name !== listItem?.name);
+          console.log("list with item removed: " + listItem?.name)
+          console.log(this.equipmentList);
+        }
       }
     });
 
     this.componentCommunicationService.setAnimalView(NavigationEnum.animals, new Animal());
+    this.breedDescriptionPopover = "When your Breed XP reaches the max, you can Breed your animal. This will reset your base stats, but it will also increase the amount that your base stats contribute to your racing stats.";
   }
 
   returnToAnimalView(): void {
@@ -225,6 +248,10 @@ export class SelectedAnimalComponent implements OnInit {
 
   selectEquipment(item: ResourceValue) {
     this.selectedEquipment = item;    
+  }
+
+  unequipItem() {
+    this.selectedAnimal.equippedItem = null;
   }
 
   toggleAutoBreed = (): void => {

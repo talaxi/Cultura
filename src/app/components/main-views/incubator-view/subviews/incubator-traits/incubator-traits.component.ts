@@ -84,60 +84,36 @@ export class IncubatorTraitsComponent implements OnInit {
     traits.push(new AnimalTraits("Adamant", 3, researchLevel, AnimalStatEnum.topSpeed, AnimalStatEnum.acceleration));
     traits.push(new AnimalTraits("Stoic", 5, researchLevel, AnimalStatEnum.endurance, AnimalStatEnum.adaptability));
 
-    traits.push(new AnimalTraits("Careful", 5, researchLevel, AnimalStatEnum.adaptability, AnimalStatEnum.acceleration));
-    traits.push(new AnimalTraits("Smart", 7, researchLevel, AnimalStatEnum.focus, AnimalStatEnum.endurance));
+    traits.push(new AnimalTraits("Smart", 5, researchLevel, AnimalStatEnum.focus, AnimalStatEnum.endurance));
+    traits.push(new AnimalTraits("Careful", 7, researchLevel, AnimalStatEnum.adaptability, AnimalStatEnum.acceleration));    
     traits.push(new AnimalTraits("Attentive", 7, researchLevel, AnimalStatEnum.focus, AnimalStatEnum.endurance));
     traits.push(new AnimalTraits("Keen", 9, researchLevel, AnimalStatEnum.power, AnimalStatEnum.topSpeed));
     traits.push(new AnimalTraits("Quick", 9, researchLevel, AnimalStatEnum.topSpeed, AnimalStatEnum.adaptability));
+    traits.push(new AnimalTraits("Quick", 11, researchLevel, AnimalStatEnum.topSpeed, AnimalStatEnum.adaptability));
+
+    traits.push(new AnimalTraits("Smart", 11, researchLevel, AnimalStatEnum.focus, AnimalStatEnum.endurance));
+    traits.push(new AnimalTraits("Careful", 13, researchLevel, AnimalStatEnum.adaptability, AnimalStatEnum.acceleration));    
+    traits.push(new AnimalTraits("Attentive", 13, researchLevel, AnimalStatEnum.focus, AnimalStatEnum.endurance));
+    traits.push(new AnimalTraits("Keen", 15, researchLevel, AnimalStatEnum.power, AnimalStatEnum.topSpeed));
+    traits.push(new AnimalTraits("Quick", 15, researchLevel, AnimalStatEnum.topSpeed, AnimalStatEnum.adaptability));
+    traits.push(new AnimalTraits("Quick", 17, researchLevel, AnimalStatEnum.topSpeed, AnimalStatEnum.adaptability));
+
+    traits.push(new AnimalTraits("Smart", 17, researchLevel, AnimalStatEnum.focus, AnimalStatEnum.endurance));
+    traits.push(new AnimalTraits("Careful", 19, researchLevel, AnimalStatEnum.adaptability, AnimalStatEnum.acceleration));    
+    traits.push(new AnimalTraits("Attentive", 19, researchLevel, AnimalStatEnum.focus, AnimalStatEnum.endurance));
+    traits.push(new AnimalTraits("Keen", 21, researchLevel, AnimalStatEnum.power, AnimalStatEnum.topSpeed));
+    traits.push(new AnimalTraits("Quick", 21, researchLevel, AnimalStatEnum.topSpeed, AnimalStatEnum.adaptability));
+    traits.push(new AnimalTraits("Quick", 23, researchLevel, AnimalStatEnum.topSpeed, AnimalStatEnum.adaptability));
+
+    traits.push(new AnimalTraits("Smart", 23, researchLevel, AnimalStatEnum.focus, AnimalStatEnum.endurance));
+    traits.push(new AnimalTraits("Careful", 25, researchLevel, AnimalStatEnum.adaptability, AnimalStatEnum.acceleration));    
+    traits.push(new AnimalTraits("Attentive", 25, researchLevel, AnimalStatEnum.focus, AnimalStatEnum.endurance));
+    traits.push(new AnimalTraits("Keen", 27, researchLevel, AnimalStatEnum.power, AnimalStatEnum.topSpeed));
+    traits.push(new AnimalTraits("Quick", 27, researchLevel, AnimalStatEnum.topSpeed, AnimalStatEnum.adaptability));
+    traits.push(new AnimalTraits("Quick", 29, researchLevel, AnimalStatEnum.topSpeed, AnimalStatEnum.adaptability));
 
     traits = traits.filter(item => researchLevel >= item.requiredLevel);
-    /*
-        var modifiedTrainingOptions: TrainingOption[] = [];
     
-        trainingOptions.forEach(option => {
-          var modifiedOption = option.makeCopy(option);
-    
-          var trainingTimeReduction = this.lookupService.getTrainingTimeReductionFromTrainingFacility(this.barn.barnUpgrades);
-          var stopwatch = this.lookupService.getResourceByName("Stopwatch");
-          if (stopwatch === undefined || stopwatch === null)
-            stopwatch = 0;
-    
-          modifiedOption.timeToComplete *= 1 - (stopwatch * .05 + trainingTimeReduction);
-          modifiedOption.timeToComplete = Math.round((modifiedOption.timeToComplete + Number.EPSILON) * 100) / 100;
-    
-          modifiedOption.affectedStatRatios.topSpeed *= this.barn.barnUpgrades.upgradedStatGain.topSpeed;
-          modifiedOption.affectedStatRatios.acceleration *= this.barn.barnUpgrades.upgradedStatGain.acceleration;
-          modifiedOption.affectedStatRatios.endurance *= this.barn.barnUpgrades.upgradedStatGain.endurance;
-          modifiedOption.affectedStatRatios.power *= this.barn.barnUpgrades.upgradedStatGain.power;
-          modifiedOption.affectedStatRatios.focus *= this.barn.barnUpgrades.upgradedStatGain.focus;
-          modifiedOption.affectedStatRatios.adaptability *= this.barn.barnUpgrades.upgradedStatGain.adaptability;
-    
-          modifiedOption.affectedStatRatios.topSpeed = Math.round((modifiedOption.affectedStatRatios.topSpeed + Number.EPSILON) * 100) / 100;
-          modifiedOption.affectedStatRatios.acceleration = Math.round((modifiedOption.affectedStatRatios.acceleration + Number.EPSILON) * 100) / 100;
-          modifiedOption.affectedStatRatios.endurance = Math.round((modifiedOption.affectedStatRatios.endurance + Number.EPSILON) * 100) / 100;
-          modifiedOption.affectedStatRatios.power = Math.round((modifiedOption.affectedStatRatios.power + Number.EPSILON) * 100) / 100;
-          modifiedOption.affectedStatRatios.focus = Math.round((modifiedOption.affectedStatRatios.focus + Number.EPSILON) * 100) / 100;
-          modifiedOption.affectedStatRatios.adaptability = Math.round((modifiedOption.affectedStatRatios.adaptability + Number.EPSILON) * 100) / 100;
-    
-          modifiedTrainingOptions.push(modifiedOption);
-        });
-    
-        if (this.filterAcceleration || this.filterAdaptability || this.filterEndurance || this.filterFocus || this.filterPower
-          || this.filterSpeed || this.filterSmall || this.filterMedium || this.filterLarge) {
-          modifiedTrainingOptions = modifiedTrainingOptions.filter(item => (((!this.filterAcceleration && !this.filterAdaptability && !this.filterFocus &&
-            !this.filterSpeed && !this.filterPower && !this.filterEndurance) ||
-            (this.filterAcceleration && item.affectedStatRatios.acceleration > 0) ||
-            (this.filterAdaptability && item.affectedStatRatios.adaptability > 0) ||
-            (this.filterEndurance && item.affectedStatRatios.endurance > 0) ||
-            (this.filterFocus && item.affectedStatRatios.focus > 0) || (this.filterPower && item.affectedStatRatios.power > 0) ||
-            (this.filterSpeed && item.affectedStatRatios.topSpeed > 0))) && ((!this.filterSmall && !this.filterMedium && !this.filterLarge) ||
-              (this.filterSmall && item.facilitySize === FacilitySizeEnum.Small) ||
-              (this.filterMedium && item.facilitySize === FacilitySizeEnum.Medium) ||
-              (this.filterLarge && item.facilitySize === FacilitySizeEnum.Large)));
-        }
-    
-        return modifiedTrainingOptions;*/
-
     return traits;
   }
 

@@ -6,6 +6,7 @@ import { GameLoopService } from 'src/app/services/game-loop/game-loop.service';
 import { GlobalService } from 'src/app/services/global-service.service';
 import { LookupService } from 'src/app/services/lookup.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { Animal } from 'src/app/models/animals/animal.model';
 
 @Component({
   selector: 'app-barn',
@@ -33,6 +34,7 @@ export class BarnComponent implements OnInit {
   barn: Barn;
   associatedAnimalName: string;
   associatedAnimalType: string;
+  associatedAnimal: Animal;
   isLocked: boolean;
   isOccupied: boolean;
   subscription: any;
@@ -59,6 +61,7 @@ export class BarnComponent implements OnInit {
           this.isOccupied = true;
           this.associatedAnimalName = associatedAnimal.name;
           this.associatedAnimalType = AnimalTypeEnum[associatedAnimal.type];
+          this.associatedAnimal = associatedAnimal;
         }
         else
           this.isOccupied = false;

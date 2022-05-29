@@ -566,7 +566,7 @@ export class LookupService {
           return "Drop rocks on competitors, delaying them " + effectiveAmountDisplay + " meters. " + cooldownDisplay + " second cooldown.";
         }
         if (abilityName === "Frenzy") {
-          return "Increase burst distance by " + effectiveAmountDisplay + " meters. You do not stumble or lose focus while bursting. " + cooldownDisplay + " second cooldown.";
+          return "Increase burst distance by " + effectiveAmountDisplay + " meters. You do not stumble or lose focus while bursting. Passive.";
         }
         if (abilityName === "Leap") {
           return "When you are " + effectiveAmountDisplay + " meters from the finish line, leap straight to the end over .25 seconds. Passive.";
@@ -836,6 +836,8 @@ export class LookupService {
 
     if (itemName === "Stopwatch")
       description = "Reduce training time by 5%";
+    else if (itemName === "Animal Handler")
+      description = "Retain 2% of trained stats after breeding";
 
     return description;
   }

@@ -9,6 +9,10 @@
     overflow: auto;
 }
 
+.trainings {
+  margin: .5rem;
+}
+
 .activeTrainingOption {
     font-weight: bold;
     color: var(--foreground-secondary);  

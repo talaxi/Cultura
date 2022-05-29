@@ -123,6 +123,8 @@ export class RaceComponent implements OnInit {
     race.raceUI.racerEffectByFrame = [];
     race.raceUI.lavaFallPercentByFrame = [];
 
+    raceResult.addRaceUpdate(framesPassed, race.timeToComplete + " seconds are on the race clock.");
+
     //do any pre-race setup
     race.raceLegs.forEach(item => {
       var racingAnimal = this.racingAnimals.find(animal => animal.raceCourseType === item.courseType);
@@ -915,10 +917,12 @@ export class RaceComponent implements OnInit {
                 }
 
                 //adjust for renown                
-                var currentRenown = this.lookupService.getRenown();                                
-                console.log("Amount: " + item.amount + " Renown: " + currentRenown);
-                item.amount += Math.round(item.amount * currentRenown);
-                console.log("Final Amount: " + item.amount);
+                var currentRenown = this.lookupService.getRenown();  
+                console.log("Renown: " + currentRenown);
+                console.log("Amount: " + item.amount);
+                console.log("Additive: Amount * " + (currentRenown/100));               
+                item.amount += Math.round(item.amount * (currentRenown/100));
+                console.log("New Amount: " + item.amount);
 
                 //adjust for buried treasure
                 item.amount = Math.round(item.amount * buriedTreasureModifier);
@@ -928,6 +932,10 @@ export class RaceComponent implements OnInit {
               else if (globalResource.name === "Facility Level") {
                 globalResource.amount += item.amount;
                 this.lookupService.recalculateAllAnimalStats();
+              }
+              else if (globalResource.name === "Renown")
+              {
+                globalResource.amount =  parseFloat((globalResource.amount + item.amount).toFixed(3));
               }
               else
                 globalResource.amount += item.amount;
@@ -1114,8 +1122,7 @@ export class RaceComponent implements OnInit {
 
     if (racingAnimal.type === AnimalTypeEnum.Monkey && racingAnimal.ability.name === "Frenzy" && racingAnimal.raceVariables.isBursting) {
       return false;
-    }
-    
+    }    
 
     if (racingAnimal.getEquippedItemName() === this.globalService.getEquipmentName(EquipmentEnum.headband)) {
       var headbandMaxStumblePrevention = 3;

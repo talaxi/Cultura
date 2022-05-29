@@ -144,7 +144,7 @@ export class GlobalService {
 
     var baseMaxSpeedModifier = .3;
     var baseAccelerationModifier = .1;
-    var baseStaminaModifier = 10;
+    var baseStaminaModifier = 7.5;
     var basePowerModifier = .1;
     var baseFocusModifier = 5;
     var baseAdaptabilityModifier = 5;
@@ -211,12 +211,14 @@ export class GlobalService {
     this.globalVar.modifiers.push(new StringNumberPair(basePowerModifier * minorImprovement, "sharkDefaultPowerModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(baseFocusModifier * mediumDetriment, "sharkDefaultFocusModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(baseAdaptabilityModifier * mediumDetriment, "sharkDefaultAdaptabilityModifier"));
+
+    //TODO: don't forget the other animals
   }
 
   InitializeAnimals(): void {
     //Initialize animals
     var horse = new Horse();
-    horse.name = "John";
+    horse.name = "Horse";
     horse.isAvailable = true;
     this.calculateAnimalRacingStats(horse);
 
@@ -1093,7 +1095,7 @@ export class GlobalService {
 
     var baseMeters = 100;
     var factor = 1.12;
-    var additiveValue = 45 * i;
+    var additiveValue = 75 * i;
 
     var maxRandomFactor = 1.1;
     var minRandomFactor = 0.9;
@@ -1129,7 +1131,7 @@ export class GlobalService {
         raceLegs.push(leg);
       }
       else if (i <= 9) {
-        var additiveValue = 25 * i;
+        var additiveValue = 40 * i;
         var availableCourses: RaceCourseTypeEnum[] = [];
         availableCourses.push(RaceCourseTypeEnum.Flatland);
         availableCourses.push(RaceCourseTypeEnum.Mountain);
@@ -1342,8 +1344,8 @@ export class GlobalService {
 
   GenerateCircuitRaceRewards(circuitRank: string): ResourceValue[] {
     var numericRank = this.GetCircuitRankValue(circuitRank);
-    var CoinsFactor = 1.01;
-    var baseCoins = 50;
+    var CoinsFactor = 1.005;
+    var baseCoins = 40;
 
     var baseRenown = 1.03;
     var renownFactor = 1.03;
@@ -1363,8 +1365,8 @@ export class GlobalService {
 
   GenerateLocalRaceRewards(circuitRank: string): ResourceValue[] {
     var numericRank = this.GetCircuitRankValue(circuitRank);
-    var CoinsFactor = 1.01;
-    var baseCoins = 10;
+    var CoinsFactor = 1.003;
+    var baseCoins = 7;
 
     var baseRenown = 1.01;
     var renownFactor = 1.03;
@@ -1478,7 +1480,7 @@ export class GlobalService {
 
     var baseMeters = 140;
     var factor = 1.14;
-    var additiveValue = 20 * i;
+    var additiveValue = 75 * i;
 
     var maxRandomFactor = 1.1;
     var minRandomFactor = 0.9;
@@ -1822,6 +1824,7 @@ export class GlobalService {
 
   InitializeResources() {
     this.globalVar.resources.push(this.initializeService.initializeResource("Coins", 500));
+    this.globalVar.resources.push(this.initializeService.initializeResource("Renown", 1));
   }
 
   InitializeSettings() {

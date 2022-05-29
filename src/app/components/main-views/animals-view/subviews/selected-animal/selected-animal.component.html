@@ -2,13 +2,21 @@
     <div class="info">
         <div class="equippable">
             <div>
-                <span *ngIf="selectedAnimal.equippedItem !== undefined && selectedAnimal.equippedItem !== null"
+                <div *ngIf="selectedAnimal.equippedItem !== undefined && selectedAnimal.equippedItem !== null"
                     [ngbPopover]="getEquipmentShortDescription(selectedAnimal.equippedItem.name)"
-                    triggers="mouseenter:mouseleave" popoverClass="popoverClass"> {{ selectedAnimal.equippedItem.name
-                    }}</span>
+                    triggers="mouseenter:mouseleave" popoverClass="popoverClass">Equipped: {{ selectedAnimal.equippedItem.name
+                    }}
+                    <br/>
+                    <br/>
+                    {{getEquipmentShortDescription(selectedAnimal.equippedItem.name)}}
+                </div>
+                <div *ngIf="selectedAnimal.equippedItem === undefined || selectedAnimal.equippedItem === null">
+                    Equipped: None
+                </div>
                 <br />
 
-                <button (click)="openEquipmentModal(equipment)">Change Equipment</button>
+                <button *ngIf="selectedAnimal.equippedItem !== undefined && selectedAnimal.equippedItem !== null" (click)="unequipItem()">Unequip Item</button> 
+                <button (click)="openEquipmentModal(equipment)">Equip New Item</button>
             </div>
         </div>
         <div class="animalInfo">
@@ -46,7 +54,8 @@
             <span ngbPopover="{{ breedLevelPopover }}"
             triggers="mouseenter:mouseleave" popoverClass="popoverClass">Breed Level {{selectedAnimal.breedLevel}}</span>
             <br />
-            <span>Breed XP: {{selectedAnimal.breedGaugeXp | number : '1.2-2'}}/{{selectedAnimal.breedGaugeMax}}
+            <span [ngbPopover]="breedDescriptionPopover"
+            triggers="mouseenter:mouseleave" popoverClass="popoverClass">Breed XP: {{selectedAnimal.breedGaugeXp | number : '1.2-2'}}/{{selectedAnimal.breedGaugeMax}}
                 <button (click)="breed()">Breed</button>
             </span>
             <!--TODO: Move this to one of the sides of dead space-->
@@ -114,7 +123,7 @@
             <br />
             <span ngbPopover="{{ selectedAnimal.currentStats.accelerationMsPopover() }}"
                 triggers="mouseenter:mouseleave" popoverClass="popoverClass">
-                Acceleration: {{ selectedAnimal.currentStats.accelerationMs | number : '1.2-2' }} m/s
+                Acceleration Rate: {{ selectedAnimal.currentStats.accelerationMs | number : '1.2-2' }} m/s
             </span>
             <br />
             <span ngbPopover="{{ selectedAnimal.currentStats.staminaPopover() }}" triggers="mouseenter:mouseleave"
@@ -124,17 +133,17 @@
             <br />
             <span ngbPopover="{{ selectedAnimal.currentStats.powerMsPopover() }}" triggers="mouseenter:mouseleave"
                 popoverClass="popoverClass">
-                Power: {{ selectedAnimal.currentStats.powerMs | number : '1.2-2' }}%
+                Power Efficiency: {{ selectedAnimal.currentStats.powerMs | number : '1.2-2' }}%
             </span>
             <br />
             <span ngbPopover="{{ selectedAnimal.currentStats.focusMsPopover() }}" triggers="mouseenter:mouseleave"
                 popoverClass="popoverClass">
-                Focus: ~{{ selectedAnimal.currentStats.focusMs | number : '1.2-2' }} m
+                Focus Distance: ~{{ selectedAnimal.currentStats.focusMs | number : '1.2-2' }} m
             </span>
             <br />
             <span ngbPopover="{{ selectedAnimal.currentStats.adaptabilityMsPopover() }}"
                 triggers="mouseenter:mouseleave" popoverClass="popoverClass">
-                Adaptability: ~{{ selectedAnimal.currentStats.adaptabilityMs | number : '1.2-2' }} m
+                Adaptability Distance: ~{{ selectedAnimal.currentStats.adaptabilityMs | number : '1.2-2' }} m
             </span>
             <br />
             <span ngbPopover="{{ selectedAnimal.currentStats.burstChancePopover() }}" triggers="mouseenter:mouseleave"

@@ -12,4 +12,12 @@ export class ResourceValue {
         if (type !== undefined)
             this.itemType = type;
     }
+
+    makeCopy(originalResourceValue: ResourceValue) {
+        var copy = new ResourceValue("", 0);       
+        copy.name = JSON.parse(JSON.stringify(originalResourceValue.name));
+        copy.amount = JSON.parse(JSON.stringify(originalResourceValue.amount));
+        copy.itemType = JSON.parse(JSON.stringify(originalResourceValue.itemType));
+        return copy;
+    }
 }

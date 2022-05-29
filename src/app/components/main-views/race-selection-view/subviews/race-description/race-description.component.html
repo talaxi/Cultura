@@ -1,5 +1,5 @@
 <div class="raceDescription">
-    <span *ngIf="index !== undefined && index !== null && index > -1">Race {{ index+1 }} </span>
+    <span *ngIf="index !== undefined && index !== null && index > -1">Race {{ index+1 }} </span>        
     <br />
     <div [ngClass]="{'raceNotAllowed': cannotRace}" [ngbPopover]="popContent" [disablePopover]="popoverText === ''" triggers="mouseenter:mouseleave"
         popoverClass="popoverClass">
