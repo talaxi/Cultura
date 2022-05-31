@@ -12,13 +12,14 @@ export class AnimalsViewComponent implements OnInit {
   availableAnimals: Animal[];
   animalSelected = false;
   animal: Animal;
+  subscription: any;
 
   constructor(private globalService: GlobalService, private componentCommunicationService: ComponentCommunicationService) { }
 
   ngOnInit(): void {
     this.availableAnimals = this.globalService.globalVar.animals.filter(item => item.isAvailable);
 
-    this.componentCommunicationService.getAnimalView().subscribe((value) => {
+    this.subscription = this.componentCommunicationService.getAnimalView().subscribe((value) => {
       if (value.type !== undefined && value.type !== null) {
         this.animalSelected = true;
         this.animal = value;
@@ -33,5 +34,11 @@ export class AnimalsViewComponent implements OnInit {
 
   returnToAnimalView($event: boolean) {
     this.animalSelected = false;
+  }
+
+  ngOnDestroy() {
+    if (this.subscription !== null && this.subscription !== undefined) {
+      this.subscription.unsubscribe();
+    }
   }
 }

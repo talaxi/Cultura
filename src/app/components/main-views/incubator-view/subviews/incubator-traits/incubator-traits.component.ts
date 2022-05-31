@@ -20,6 +20,7 @@ export class IncubatorTraitsComponent implements OnInit {
   existingTrait: AnimalTraits | null;
   trainingProgressBarPercent: number;
   availableTraits: AnimalTraits[];
+  subscription: any;
 
   constructor(private globalService: GlobalService, private gameLoopService: GameLoopService,
     private lookupService: LookupService) { }
@@ -41,7 +42,7 @@ export class IncubatorTraitsComponent implements OnInit {
         selectedTraining.isSelected = true;
     }
 
-    this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {
+    var subscription = this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {
       var incubator = this.globalService.globalVar.incubator;
 
       //UI updates          
@@ -119,5 +120,11 @@ export class IncubatorTraitsComponent implements OnInit {
 
   returnToAnimalView(): void {
     this.returnEmitter.emit(false);
+  }
+
+  ngOnDestroy() {
+    if (this.subscription !== null && this.subscription !== undefined) {
+      this.subscription.unsubscribe();
+    }
   }
 }

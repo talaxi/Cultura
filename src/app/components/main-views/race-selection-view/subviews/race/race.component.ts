@@ -51,6 +51,7 @@ export class RaceComponent implements OnInit {
   staminaAtCurrentFrame: any;
   frameByFrameSubscription: any;
   currentLostFocusOpportunity = 0;
+  currentBurstOpportunity = 0;
   displayVisualRace = true;
   displayTextUpdates = true;
   circuitIncreaseReward: any;
@@ -105,7 +106,7 @@ export class RaceComponent implements OnInit {
     var previousLegDistancePercentComplete = 0;
     var herdMentalityStaminaGain = 0; //Caribou Ability - Herd Mentality  
     var specialDeliveryMaxSpeedBonus = 0;
-    var buriedTreasureModifier = 1;    
+    var buriedTreasureModifier = 1;
 
     if (selectedDeck === undefined) {
       raceResult.errorMessage = 'No animal deck selected.';
@@ -265,7 +266,7 @@ export class RaceComponent implements OnInit {
 
             racingAnimal.currentStats.stamina += herdMentalityStaminaGain;
             herdMentalityStaminaGain = 0;
-            lastAnimal.ability.abilityUsed = true;            
+            lastAnimal.ability.abilityUsed = true;
           }
         }
 
@@ -273,7 +274,7 @@ export class RaceComponent implements OnInit {
           var length = this.lookupService.GetAbilityEffectiveAmount(nextAnimal, nextLeg.terrain.powerModifier, statLossFromExhaustion);
           this.AddRelayEffect(racingAnimal, length, new AnimalStats(1, 1, 1, 1, 1, 1.25));
           nextAnimal.ability.abilityInUse = true;
-        }        
+        }
 
         if (racingAnimal.ability.name === "Camouflage" && racingAnimal.type === AnimalTypeEnum.Gecko) {
           racingAnimal.ability.abilityInUse = false;
@@ -460,9 +461,9 @@ export class RaceComponent implements OnInit {
 
         //if you are entering a new path, check if you burst here
         //if so, do the necessary number adjustments
-        if (currentDistanceInLeg + velocity >= currentPath.legStartingDistance + currentPath.length && this.isSecond(framesPassed)) {
+        //if (currentDistanceInLeg + velocity >= currentPath.legStartingDistance + currentPath.length) {
           //Entering new path
-          var doesRacerBurst = this.doesRacerBurst(racingAnimal, currentPath);
+          var doesRacerBurst = this.doesRacerBurst(racingAnimal, currentPath, this.timeToComplete, race.length, distanceCovered);
           if (doesRacerBurst) {
             //do a raceupdate
             racingAnimal.raceVariables.isBursting = true;
@@ -510,7 +511,7 @@ export class RaceComponent implements OnInit {
               }
             }
           }
-        }
+        //}
 
         var modifiedVelocity = velocity;
         //do any velocity modifications here before finalizing distance traveled per sec
@@ -523,7 +524,7 @@ export class RaceComponent implements OnInit {
           if (racingAnimal.type === AnimalTypeEnum.Goat && racingAnimal.ability.name === "In The Rhythm") {
             burstModifier += this.lookupService.GetAbilityEffectiveAmount(racingAnimal, item.terrain.powerModifier, statLossFromExhaustion);
           }
-          
+
           burstModifier += specialDeliveryMaxSpeedBonus;
 
           if (racingAnimal.raceVariables.remainingBurstMeters >= modifiedVelocity / this.frameModifier) {
@@ -554,7 +555,7 @@ export class RaceComponent implements OnInit {
           var totalDistance = this.lookupService.GetAbilityEffectiveAmount(racingAnimal, item.terrain.powerModifier, statLossFromExhaustion);
           var extraDistanceCovered = totalDistance / racingAnimal.ability.totalFrames;
           distanceCoveredPerFrame += extraDistanceCovered;
-          console.log("Leap/Breach");
+
           racingAnimal.ability.remainingFrames -= 1;
 
           if (racingAnimal.ability.remainingFrames <= 0) {
@@ -683,13 +684,13 @@ export class RaceComponent implements OnInit {
           legCounter += 1;
           if (racingAnimal.type === AnimalTypeEnum.Caribou && racingAnimal.ability.name === "Herd Mentality" && !racingAnimal.raceVariables.ranOutOfStamina) {
             herdMentalityStaminaGain = racingAnimal.currentStats.stamina * this.lookupService.GetAbilityEffectiveAmount(racingAnimal, item.terrain.powerModifier, statLossFromExhaustion);
-          } 
+          }
           if (racingAnimal.type === AnimalTypeEnum.Caribou && racingAnimal.ability.name === "Special Delivery" && !racingAnimal.raceVariables.ranOutOfStamina) {
             specialDeliveryMaxSpeedBonus = ((racingAnimal.currentStats.stamina / animalMaxStamina) * 100) * this.lookupService.GetAbilityEffectiveAmount(racingAnimal, item.terrain.powerModifier, statLossFromExhaustion);
-          } 
+          }
           if (racingAnimal.ability.name === "Buried Treasure" && racingAnimal.type === AnimalTypeEnum.Octopus) {
             buriedTreasureModifier = 1 + this.lookupService.GetAbilityEffectiveAmount(racingAnimal, item.terrain.powerModifier, statLossFromExhaustion) / 100;
-          }                
+          }
           this.PrepareRacingAnimal(racingAnimal, undefined, undefined, undefined, statLossFromExhaustion); //Reset so that stamina and such look correct on view pages
           completedAnimals.push(racingAnimal);
           completedLegs.push(item);
@@ -747,38 +748,49 @@ export class RaceComponent implements OnInit {
 
     if (racingAnimal.currentStats.stamina < 0)
       racingAnimal.currentStats.stamina = 0;
-      racingAnimal.raceVariables.ranOutOfStamina = true;
+    racingAnimal.raceVariables.ranOutOfStamina = true;
   }
 
-  doesRacerBurst(animal: Animal, currentPath: RacePath): boolean {
+  doesRacerBurst(animal: Animal, currentPath: RacePath, timeToComplete: number, raceLength: number, currentDistanceInRace: number): boolean {
     var distanceModifier = 1000 / this.selectedRace.length; //TODO: should this be leg or total distance?
     var modifiedBurstChance = animal.currentStats.burstChance * distanceModifier;
 
-    if (animal.type === AnimalTypeEnum.Hare && animal.ability.name === "Prey Instinct" && !animal.ability.abilityUsed) {
-      return true;
-    }
+    //var burstBreakpoint = raceLength / timeToComplete;
 
-    if (currentPath.isSpecialPath) {
-      var racerMaps = this.lookupService.getResourceByName("Course Maps");
-      if (racerMaps === undefined || racerMaps === null)
-        racerMaps = 0;
+    if (currentPath.checkedForBurst)
+      return false;
+    
+      currentPath.checkedForBurst = true;
 
-      if (racerMaps > 0) {
-        var racerMapModifier = 1;
+    //if (this.currentBurstOpportunity * burstBreakpoint < currentDistanceInRace) {
+    //  this.currentBurstOpportunity += 1;
 
-        var racerMapModifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "racerMapsModifier");
-        if (racerMapModifierPair !== undefined && racerMapModifierPair !== null)
-          racerMapModifier = 1 + (racerMaps * racerMapModifierPair.value);
-
-        modifiedBurstChance *= racerMapModifier;
+      if (animal.type === AnimalTypeEnum.Hare && animal.ability.name === "Prey Instinct" && !animal.ability.abilityUsed) {
+        return true;
       }
-    }
 
-    var rng = this.utilityService.getRandomNumber(1, 100);
+      if (currentPath.isSpecialPath) {
+        var racerMaps = this.lookupService.getResourceByName("Course Maps");
+        if (racerMaps === undefined || racerMaps === null)
+          racerMaps = 0;
 
-    if (rng <= (modifiedBurstChance + 1))
-      return true;
+        if (racerMaps > 0) {
+          var racerMapModifier = 1;
 
+          var racerMapModifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "racerMapsModifier");
+          if (racerMapModifierPair !== undefined && racerMapModifierPair !== null)
+            racerMapModifier = 1 + (racerMaps * racerMapModifierPair.value);
+
+          modifiedBurstChance *= racerMapModifier;
+        }
+      }
+
+      var rng = this.utilityService.getRandomNumber(1, 100);
+
+      console.log(rng + " vs " + (modifiedBurstChance + 1));
+      if (rng <= (modifiedBurstChance + 1))
+        return true;
+    //}
     return false;
   }
 
@@ -883,6 +895,11 @@ export class RaceComponent implements OnInit {
       if (globalRaceVal === undefined)
         return;
 
+      if (this.selectedRace.localRaceType === LocalRaceTypeEnum.Mono) {
+        var courseType = this.selectedRace.raceLegs[0].courseType;
+        this.globalService.globalVar.lastMonoRaceCourseType = courseType;
+      }
+
       this.globalService.IncreaseLocalRaceRank(this.selectedRace.localRaceType);
       globalRaceVal.isCompleted = true;
     }
@@ -891,7 +908,7 @@ export class RaceComponent implements OnInit {
     }
 
     this.racingAnimals.forEach(animal => {
-      this.globalService.IncreaseAnimalBreedGauge(animal, breedGaugeIncrease);     
+      this.globalService.IncreaseAnimalBreedGauge(animal, breedGaugeIncrease);
     });
 
     raceResult.beatMoneyMark = this.checkMoneyMark(raceResult);
@@ -917,12 +934,8 @@ export class RaceComponent implements OnInit {
                 }
 
                 //adjust for renown                
-                var currentRenown = this.lookupService.getRenown();  
-                console.log("Renown: " + currentRenown);
-                console.log("Amount: " + item.amount);
-                console.log("Additive: Amount * " + (currentRenown/100));               
-                item.amount += Math.round(item.amount * (currentRenown/100));
-                console.log("New Amount: " + item.amount);
+                var currentRenown = this.lookupService.getRenown();
+                item.amount += Math.round(item.amount * (currentRenown / 100));
 
                 //adjust for buried treasure
                 item.amount = Math.round(item.amount * buriedTreasureModifier);
@@ -933,9 +946,8 @@ export class RaceComponent implements OnInit {
                 globalResource.amount += item.amount;
                 this.lookupService.recalculateAllAnimalStats();
               }
-              else if (globalResource.name === "Renown")
-              {
-                globalResource.amount =  parseFloat((globalResource.amount + item.amount).toFixed(3));
+              else if (globalResource.name === "Renown") {
+                globalResource.amount = parseFloat((globalResource.amount + item.amount).toFixed(3));
               }
               else
                 globalResource.amount += item.amount;
@@ -962,8 +974,6 @@ export class RaceComponent implements OnInit {
 
     var totalRaceTime = this.timeToComplete * this.frameModifier;
 
-    console.log("Total Frames Passed: " + result.totalFramesPassed);
-    console.log("MM Pace: " + totalRaceTime * moneyMarkPace.value);
     if (result.totalFramesPassed <= totalRaceTime * moneyMarkPace.value) {
       beatMoneyMark = true;
     }
@@ -1109,7 +1119,7 @@ export class RaceComponent implements OnInit {
     racingAnimal.raceVariables.relayAffectedStatRatios = statMultiplers;
   }
 
-  didAnimalStumble(racingAnimal: Animal, currentPath: RacePath, currentDistanceInPath: number, terrain: Terrain, obj: { permanentAdaptabilityIncreaseMultiplier: number }, modifiedAdaptabilityMs: number, statLossFromExhaustion: number): boolean {    
+  didAnimalStumble(racingAnimal: Animal, currentPath: RacePath, currentDistanceInPath: number, terrain: Terrain, obj: { permanentAdaptabilityIncreaseMultiplier: number }, modifiedAdaptabilityMs: number, statLossFromExhaustion: number): boolean {
     if (racingAnimal.raceVariables.stumbled)
       return false; //already stumbling
 
@@ -1122,7 +1132,7 @@ export class RaceComponent implements OnInit {
 
     if (racingAnimal.type === AnimalTypeEnum.Monkey && racingAnimal.ability.name === "Frenzy" && racingAnimal.raceVariables.isBursting) {
       return false;
-    }    
+    }
 
     if (racingAnimal.getEquippedItemName() === this.globalService.getEquipmentName(EquipmentEnum.headband)) {
       var headbandMaxStumblePrevention = 3;
@@ -1138,7 +1148,7 @@ export class RaceComponent implements OnInit {
     }
 
     var stumbleBreakpoint = currentPath.length / currentPath.stumbleOpportunities;
-    
+
     //made it through without stumbling
     if (currentPath.currentStumbleOpportunity === currentPath.stumbleOpportunities && currentPath.routeDesign !== RaceDesignEnum.Regular) {
       if (racingAnimal.type === AnimalTypeEnum.Goat && racingAnimal.ability.name === "Sure-footed") {
@@ -1230,7 +1240,7 @@ export class RaceComponent implements OnInit {
         return false;
       }
     }
-    
+
     if (racingAnimal.ability.name === "Sticky" && racingAnimal.type === AnimalTypeEnum.Gecko &&
       currentPath.frequencyOfStumble === 0)
       return false;
@@ -1384,11 +1394,10 @@ export class RaceComponent implements OnInit {
     return wallHit;
   }
 
-  handleLavaFall(racingAnimal: Animal, framesInCurrentLeg: number, averageDistancePerSecond: number, currentDistanceInLeg: number, legDistance: number)
-  {
+  handleLavaFall(racingAnimal: Animal, framesInCurrentLeg: number, averageDistancePerSecond: number, currentDistanceInLeg: number, legDistance: number) {
     var ranIntoLava = false;
     var secondsIntoLeg = framesInCurrentLeg / this.frameModifier;
-    
+
     //divide total leg distance by distance per second to get expected time to finish leg
     var legTimeCompleteExpectancy = legDistance / averageDistancePerSecond;
 
@@ -1396,8 +1405,7 @@ export class RaceComponent implements OnInit {
     var lavaFallPercent = [.4, .45, .475, .525, .55, .6];
     var percentOfLavaDropPerFrame = [];
 
-    for (var i = 0; i < lavaFallPercent.length; i++)
-    {
+    for (var i = 0; i < lavaFallPercent.length; i++) {
       var timeLavaDrops = legTimeCompleteExpectancy * lavaFallPercent[i];
       var percentOfIndividualLavaDropPerFrame = secondsIntoLeg / timeLavaDrops;
       percentOfLavaDropPerFrame.push(percentOfIndividualLavaDropPerFrame);

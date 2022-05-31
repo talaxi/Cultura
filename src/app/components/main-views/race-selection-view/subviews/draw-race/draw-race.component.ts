@@ -10,6 +10,7 @@ import { GameLoopService } from 'src/app/services/game-loop/game-loop.service';
 import { GlobalService } from 'src/app/services/global-service.service';
 import { LookupService } from 'src/app/services/lookup.service';
 import { UtilityService } from 'src/app/services/utility/utility.service';
+import { ThemeService } from 'src/app/theme/theme.service';
 
 @Component({
   selector: 'app-draw-race',
@@ -64,7 +65,7 @@ export class DrawRaceComponent implements OnInit {
 
 
   constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private utilityService: UtilityService,
-    private lookupService: LookupService) { }
+    private lookupService: LookupService, private themeService: ThemeService) { }
 
   ngOnInit(): void {
     this.globalService.globalVar.userIsRacing = true;
@@ -603,8 +604,12 @@ export class DrawRaceComponent implements OnInit {
         //we are in this leg
         if (leg.courseType === RaceCourseTypeEnum.Flatland)
           color = "#7d3f00";//"#8f1c14";
-        if (leg.courseType === RaceCourseTypeEnum.Mountain)
-          color = "#4d6b48";
+        if (leg.courseType === RaceCourseTypeEnum.Mountain) {
+          if (this.themeService.getActiveThemeName() === "light")
+            color = "#1b630d";
+          else
+            color = "#4d6b48";
+        }
         if (leg.courseType === RaceCourseTypeEnum.Ocean)
           color = "#16148f";
         if (leg.courseType === RaceCourseTypeEnum.Tundra)
@@ -624,8 +629,12 @@ export class DrawRaceComponent implements OnInit {
 
     if (courseType === RaceCourseTypeEnum.Flatland)
       color = "#7d3f00";
-    if (courseType === RaceCourseTypeEnum.Mountain)
-      color = "#4d6b48";
+    if (courseType === RaceCourseTypeEnum.Mountain) {
+      if (this.themeService.getActiveThemeName() === "light")
+        color = "#1b630d";
+      else
+        color = "#4d6b48";
+    }
     if (courseType === RaceCourseTypeEnum.Ocean)
       color = "#16148f";
     if (courseType === RaceCourseTypeEnum.Tundra)
@@ -644,8 +653,12 @@ export class DrawRaceComponent implements OnInit {
         //we are in this leg
         if (leg.courseType === RaceCourseTypeEnum.Flatland)
           color = "#D16900";//"#eb3023";
-        if (leg.courseType === RaceCourseTypeEnum.Mountain)
-          color = "#A1DB97";
+        if (leg.courseType === RaceCourseTypeEnum.Mountain) {
+          if (this.themeService.getActiveThemeName() === "light")
+            color = "#279113";
+          else
+            color = "#A1DB97";
+        }
         if (leg.courseType === RaceCourseTypeEnum.Ocean)
           color = "#0000FF";
         if (leg.courseType === RaceCourseTypeEnum.Tundra)
@@ -1579,7 +1592,7 @@ export class DrawRaceComponent implements OnInit {
     var volcanoTopBezierY1 = volcanoBezier1Y3 + (volcanoYRadius / 2);
     var volcanoTopBezierX2 = volcanoBezier2X3 * 1.05;
     var volcanoTopBezierY2 = volcanoBezier1Y3 + (volcanoYRadius / 2);
-    
+
     context.beginPath();
     context.moveTo(volcanoBezier1X3, volcanoBezier1Y3);
     context.bezierCurveTo(volcanoTopBezierX1, volcanoTopBezierY1, volcanoTopBezierX2, volcanoTopBezierY2, volcanoBezier2X3, volcanoBezier2Y3);

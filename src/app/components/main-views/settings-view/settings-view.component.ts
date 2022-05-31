@@ -69,8 +69,7 @@ export class SettingsViewComponent implements OnInit {
     this.globalService.globalVar.settings.set("finishTrainingBeforeSwitching", this.finishTrainingBeforeSwitching);
   }
 
-  saveRaceDisplayInfo() {
-    console.log(this.raceDisplayInfo);
+  saveRaceDisplayInfo() {    
     this.globalService.globalVar.settings.set("raceDisplayInfo", this.raceDisplayInfo);
   }
 

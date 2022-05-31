@@ -1,5 +1,6 @@
 <div class="barn">
     <div class="unlocked" *ngIf="this.isOccupied">
+        <span>{{ barnName }}</span>
         <div *ngIf="associatedAnimal.name !== associatedAnimal.getAnimalType()">
             <span>{{ this.associatedAnimalName }}</span>
             <br />
@@ -8,8 +9,7 @@
         <div *ngIf="associatedAnimal.name === associatedAnimal.getAnimalType()">            
             <span>{{ this.associatedAnimalType }}</span>
         </div>
-        <br />
-        <br />
+        <br />        
         <p>
             <ngb-progressbar type="success" [value]="this.trainingProgressBarPercent"></ngb-progressbar>
         </p>

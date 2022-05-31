@@ -9,10 +9,12 @@ import { NavigationEnum } from '../models/navigation-enum.model';
 export class ComponentCommunicationService {
   switchView: BehaviorSubject<NavigationEnum>;
   selectAnimalView: BehaviorSubject<Animal>;
+  selectBarnView: BehaviorSubject<number>;
 
   constructor() { 
     this.switchView = new BehaviorSubject<NavigationEnum>(NavigationEnum.barn);
     this.selectAnimalView = new BehaviorSubject<Animal>(new Animal());
+    this.selectBarnView = new BehaviorSubject<number>(0);
   }
 
   setNewView(newValue: NavigationEnum): void {
@@ -31,5 +33,15 @@ export class ComponentCommunicationService {
 
   getAnimalView(): Observable<Animal> {
     return this.selectAnimalView.asObservable();
+  }
+
+  setBarnView(newView: NavigationEnum, newBarnNumber: number)
+  {
+    this.selectBarnView.next(newBarnNumber);
+    this.switchView.next(newView);
+  }
+
+  getBarnView(): Observable<number> {
+    return this.selectBarnView.asObservable();
   }
 }

@@ -58,6 +58,7 @@ export interface Theme {
       "--mountainSubcolor": "#1b630d",  
       "--waterColor": "#0000ff",
       "--waterSubcolor": "#16148f",
+      "--tundraColor": "#1a83b0",
   
       "--background-tertiary-shadow": "0 1px 3px 0 rgba(92, 125, 153, 0.5)"
     }
@@ -116,6 +117,7 @@ export interface Theme {
 
       "--waterColor": "#4d4dff",
       "--waterSubcolor": "#2c2c91",
+      "--tundraColor": "#1ca1c9",
   
       "--background-tertiary-shadow": "0 1px 3px 0 rgba(8, 9, 10, 0.5)"
     }

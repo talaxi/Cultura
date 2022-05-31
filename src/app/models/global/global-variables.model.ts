@@ -3,6 +3,7 @@ import { AnimalDeck } from "../animals/animal-deck.model";
 import { Animal } from "../animals/animal.model";
 import { Barn } from "../barns/barn.model";
 import { Incubator } from "../incubator.model";
+import { RaceCourseTypeEnum } from "../race-course-type-enum.model";
 import { Race } from "../races/race.model";
 import { ResourceValue } from "../resources/resource-value.model";
 import { ShopSection } from "../shop/shop-section.model";
@@ -48,7 +49,8 @@ export class GlobalVariables {
     nationalRaceCountdown: number;
     userIsRacing = false;        
     freeRaceCounter: number;
-    freeRaceTimePeriodCounter: number;    
+    freeRaceTimePeriodCounter: number;   
+    lastMonoRaceCourseType: RaceCourseTypeEnum; 
 
     constructor(existingVariables?: GlobalVariables) {
         if (existingVariables !== undefined && existingVariables !== null) {            

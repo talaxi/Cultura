@@ -17,7 +17,7 @@
                 </div>
             </div>
             <div class="info">
-                <span>Barn {{ this.selectedBarnNumber }}</span>
+                <span> {{ this.barnName }}</span>
                 <br />
                 <div *ngIf="this.associatedAnimal.name !== this.associatedAnimal.getAnimalType()"
                     (click)="goToAnimal()">

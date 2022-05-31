@@ -6,6 +6,7 @@ import { AnimalTraits } from '../models/animals/animal-traits.model';
 import { Animal } from '../models/animals/animal.model';
 import { BarnSpecializationEnum } from '../models/barn-specialization-enum.model';
 import { BarnUpgrades } from '../models/barns/barn-upgrades.model';
+import { Barn } from '../models/barns/barn.model';
 import { RaceCourseTypeEnum } from '../models/race-course-type-enum.model';
 import { RaceLeg } from '../models/races/race-leg.model';
 import { Terrain } from '../models/races/terrain.model';
@@ -326,9 +327,9 @@ export class LookupService {
     var breedLevelModifier = 0.2;
     var modifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "breedLevelStatModifier");
     if (modifierPair !== null && modifierPair !== undefined)
-    breedLevelModifier = modifierPair.value;
+      breedLevelModifier = modifierPair.value;
 
-    return "Increase racing stat gain from base stats by " + ((breedLevelModifier * (breedLevel-1)) * 100) + "%";
+    return "Increase racing stat gain from base stats by " + ((breedLevelModifier * (breedLevel - 1)) * 100) + "%";
   }
 
   getResourcePopover(name: string) {
@@ -336,9 +337,8 @@ export class LookupService {
       return "Good ol classic Coins. Gain from most actions and buy most things with this.";
     else if (name === "Medals")
       return "Rare currency gained from improving your circuit rank and winning certain special races.";
-    else if (name === "Renown")
-    {
-      var currentRenown = this.getRenown();      
+    else if (name === "Renown") {
+      var currentRenown = this.getRenown();
       return "Increases Coins gained from races by " + currentRenown + "%";
     }
     else if (name === "Stopwatch")
@@ -409,10 +409,11 @@ export class LookupService {
     if (statLossFromExhaustion === null || statLossFromExhaustion === undefined)
       statLossFromExhaustion = 1;
 
-    var modifiedPower = animal.currentStats.powerMs * terrainModifier * statLossFromExhaustion;
+    var modifiedPower = (animal.currentStats.powerMs * terrainModifier * statLossFromExhaustion) / 100;
+    console.log("Efficiency: " + animal.ability.efficiency + " Power: " + modifiedPower);
 
     if (animal.ability.name === "Thoroughbred") {
-      return animal.ability.efficiency * (1 + modifiedPower);
+      return (animal.ability.efficiency * (1 + modifiedPower));
     }
     if (animal.ability.name === "Inspiration") {
       return animal.ability.efficiency * (1 + modifiedPower);
@@ -619,6 +620,24 @@ export class LookupService {
     Coins.amount *= (currentLevel + 1);
     allResourcesRequired.push(Coins);
     return allResourcesRequired;
+  }
+
+  getBarnName(barn: Barn) {
+    var barnName = "";
+    
+    if (barn.barnUpgrades.specialization === BarnSpecializationEnum.None || barn.barnUpgrades.specialization === undefined ||
+      barn.barnUpgrades.specialization === null)
+      barnName = "Barn " + barn.barnNumber;
+    if (barn.barnUpgrades.specialization === BarnSpecializationEnum.Attraction)
+      barnName = "Attraction " + barn.barnNumber;
+    if (barn.barnUpgrades.specialization === BarnSpecializationEnum.BreedingGrounds)
+      barnName = "Breeding Grounds " + barn.barnNumber;
+    if (barn.barnUpgrades.specialization === BarnSpecializationEnum.TrainingFacility)
+      barnName = "Training Facility " + barn.barnNumber;
+    if (barn.barnUpgrades.specialization === BarnSpecializationEnum.ResearchCenter)
+      barnName = "Research Center " + barn.barnNumber;
+
+    return barnName;
   }
 
   getTerrainPopoverText(terrain: Terrain, raceLeg: RaceLeg) {

@@ -11,6 +11,7 @@ export class RacePath {
     legStartingDistance: number;
     isSpecialPath: boolean;
     didAnimalStumble = false;
+    checkedForBurst = false;
     frequencyOfDrift: number; //used for tundra
     driftAmount: number; //used for tundra
     totalTundraYAmount: number; //used for tundra

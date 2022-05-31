@@ -11,27 +11,12 @@ import { Animal } from 'src/app/models/animals/animal.model';
 @Component({
   selector: 'app-barn',
   templateUrl: './barn.component.html',
-  styleUrls: ['./barn.component.css'],
-  /*animations: [
-    trigger('trainingComplete', [
-      state('notComplete',
-        style({ opacity: .5}),//, transform: 'translateY(0px)' }),
-      ),
-      state('complete',
-        style({ opacity: 0,}),// transform: 'translateY(-30px)' }),
-      ),
-      transition('notComplete => complete', [
-        animate('3s')
-      ]),
-      transition('complete => notComplete', [
-        animate('1s')
-      ])
-    ])
-  ]*/
+  styleUrls: ['./barn.component.css'],  
 })
 export class BarnComponent implements OnInit {
   @Input() barnNumber: number;
   barn: Barn;
+  barnName: string;
   associatedAnimalName: string;
   associatedAnimalType: string;
   associatedAnimal: Animal;
@@ -54,6 +39,7 @@ export class BarnComponent implements OnInit {
 
       if (globalBarn !== undefined) {
         this.barn = globalBarn;
+        this.barnName = this.lookupService.getBarnName(globalBarn);
 
         var associatedAnimal = this.globalService.globalVar.animals.find(item => item.associatedBarnNumber == this.barnNumber);
 
@@ -103,17 +89,6 @@ export class BarnComponent implements OnInit {
       });
     }
   }
-
-  /*
-  onTrainingAnimationStart($event: any) {
-    this.trainingCompleteText = "";
-    this.showTrainingAnimation = false;
-  }
-
-  onTrainingAnimationEnd($event: any) {
-    this.trainingCompleteText = "";
-    this.showTrainingAnimation = false;
-  }*/
 
   ngOnDestroy() {
     this.previousTrainedAmount = 0;

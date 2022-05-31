@@ -57,7 +57,7 @@ export class DecksViewComponent implements OnInit {
     this.selectedCourseType = "Flatland";  
     
     this.isRaceOrderOn = deck.isCourseOrderActive;
-    console.log(this.selectedDeckOrder);
+    
     if (deck.courseTypeOrder !== null && deck.courseTypeOrder !== undefined && deck.courseTypeOrder.length > 0)
     {
       this.selectedDeckOrder = [];

@@ -25,6 +25,7 @@ export class SelectedBarnComponent implements OnInit {
   @ViewChild('specializationModal', { static: true }) specializationModal: ElementRef;
 
   barn: Barn;
+  barnName: string;
   animalAssigned: boolean;
   associatedAnimal: Animal;
   associatedAnimalName: string;
@@ -44,6 +45,7 @@ export class SelectedBarnComponent implements OnInit {
   specializationDescription: string;
   inDepthSpecializationDescription: string;
   barnSpecializationsUnlocked = false;
+  subscription: any;
 
   filterSpeed = false;
   filterAcceleration = false;
@@ -70,6 +72,7 @@ export class SelectedBarnComponent implements OnInit {
 
       if (globalBarn !== undefined) {
         this.barn = globalBarn;
+        this.barnName = this.lookupService.getBarnName(globalBarn);
         this.getSizeValue();
         this.totalBarnStatsPopover = this.getTotalBarnStatsPopover();
         this.upgradeBarnPopover = this.getUpgradeBarnPopover();
@@ -101,7 +104,9 @@ export class SelectedBarnComponent implements OnInit {
           this.availableAnimals = this.GetAvailableAnimalOptions();
         }
 
-        this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {
+        this.componentCommunicationService.setBarnView(NavigationEnum.barn, 0);
+
+        this.subscription = this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {
           if (!this.barn.isLocked) {
             var associatedAnimal = this.globalService.globalVar.animals.find(item => item.associatedBarnNumber == this.selectedBarnNumber);
             if (associatedAnimal === undefined || associatedAnimal === null) {
@@ -523,5 +528,11 @@ export class SelectedBarnComponent implements OnInit {
 
   goToAnimal() {
     this.componentCommunicationService.setAnimalView(NavigationEnum.animals, this.associatedAnimal);
+  }
+
+  ngOnDestroy() {
+    if (this.subscription !== null && this.subscription !== undefined) {
+      this.subscription.unsubscribe();
+    }
   }
 }

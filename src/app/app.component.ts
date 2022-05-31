@@ -39,7 +39,7 @@ export class AppComponent {
 
     //PURELY for testing, should be false when deployed
     //TODO: set this up so that it won't overwrite a user's save if you forget to turn this off
-    var overrideNewGame = false;
+    var overrideNewGame = true;
     var devMode = false;
 
     if (this.newGame || overrideNewGame)
@@ -47,7 +47,7 @@ export class AppComponent {
 
     if (devMode) {
       this.globalService.globalVar.tutorialCompleted = true;
-      this.globalService.devModeInitialize(29);
+      this.globalService.devModeInitialize(52);
     }
 
     this.gameLoopService.Update();

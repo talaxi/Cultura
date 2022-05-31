@@ -17,6 +17,19 @@ export class ThemeService {
     return this.active;
   }
 
+  getActiveThemeName() {
+    if (this.active === night)
+      return "night";
+    if (this.active === light)
+      return "light";
+    if (this.active === white)
+      return "white";
+    if (this.active === twilight)
+      return "twilight";
+
+    return "";
+  }
+
   setNightTheme() {
     return this.setActiveTheme(night);
   }

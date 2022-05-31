@@ -35,6 +35,7 @@ export class SelectedAnimalComponent implements OnInit {
   traitStatGainDescription: string;
   autoBreedActive: boolean;
   canAutoBreed = false;
+  assignedBarnName: string;
 
   ability1: Ability;
   ability2: Ability;
@@ -114,21 +115,25 @@ export class SelectedAnimalComponent implements OnInit {
       if (listItem !== null && listItem !== undefined)
       {
         if (listItem.amount > 0)
-        {
-          console.log("Subtract 1 " + listItem.name + " from " + animal.name);
+        {          
           listItem.amount -= 1;
         }
 
         if (listItem.amount <= 0)
         {
-          this.equipmentList = this.equipmentList.filter(item => item.name !== listItem?.name);
-          console.log("list with item removed: " + listItem?.name)
-          console.log(this.equipmentList);
+          this.equipmentList = this.equipmentList.filter(item => item.name !== listItem?.name);          
         }
       }
     });
 
     this.componentCommunicationService.setAnimalView(NavigationEnum.animals, new Animal());
+
+    var assignedBarn = this.globalService.globalVar.barns.find(item => item.barnNumber === this.selectedAnimal.associatedBarnNumber);
+    if (assignedBarn === null || assignedBarn === undefined)
+      this.assignedBarnName = "Unassigned";
+    else
+      this.assignedBarnName = "Assigned to: " + this.lookupService.getBarnName(assignedBarn);
+
     this.breedDescriptionPopover = "When your Breed XP reaches the max, you can Breed your animal. This will reset your base stats, but it will also increase the amount that your base stats contribute to your racing stats.";
   }
 
@@ -277,5 +282,11 @@ export class SelectedAnimalComponent implements OnInit {
     description = this.globalService.getItemDescription(name);
 
     return description;
+  }
+
+  goToAssignedBarn() {
+    var assignedBarn = this.globalService.globalVar.barns.find(item => item.barnNumber === this.selectedAnimal.associatedBarnNumber);
+    if (assignedBarn !== null && assignedBarn !== undefined)    
+      this.componentCommunicationService.setBarnView(NavigationEnum.barn, assignedBarn.barnNumber);
   }
 }

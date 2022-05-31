@@ -143,7 +143,8 @@ export class AnimalStats {
         var statTotal = this.adaptability + this.focus;
         var offset = 1000;
         
-        return (statTotal/(statTotal + offset) * 100); 
+        //this is set up to prevent getting above 100, need to fix that
+        return (statTotal/(offset) * 100); 
     }
 
     calculateBurstDistance(animalDefaultModifier?: number): number {
