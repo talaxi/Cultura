@@ -12,6 +12,7 @@ export class RacePath {
     isSpecialPath: boolean;
     didAnimalStumble = false;
     checkedForBurst = false;
+    checkedForNineTails = false; //used for Fox Ability -- Nine Tails
     frequencyOfDrift: number; //used for tundra
     driftAmount: number; //used for tundra
     totalTundraYAmount: number; //used for tundra

@@ -1481,10 +1481,9 @@ export class DrawRaceComponent implements OnInit {
     var volcanoXLength = volcanoEndX - volcanoStartX;
 
     //already verified that this radius matches the one in race view
-    var volcanoYRadius = ((legEndX - legStartX) * this.canvasXDistanceScale * xRaceModeModifier) / this.volcanoRadiusXModifier;
-    //var volcanoStartY = this.backgroundVolcanoYStart + (volcanoYRadius * .75) + yDistanceOffset; //original design
+    var volcanoYRadius = ((legEndX - legStartX) * this.canvasXDistanceScale * xRaceModeModifier) / this.volcanoRadiusXModifier;    
     var volcanoStartY = this.canvasHeight * xRaceModeModifier;
-    var volcanoEndY = this.backgroundVolcanoYStart - (volcanoYRadius * .75) + yDistanceOffset;
+    var volcanoEndY = this.backgroundVolcanoYStart - (volcanoYRadius * .75) + yDistanceOffset;    
 
     //left side of volcano
     var volcanoBezier1X1 = volcanoStartX + (volcanoXLength * .15);
@@ -1526,7 +1525,8 @@ export class DrawRaceComponent implements OnInit {
     var originalLineWidth = context.lineWidth;
     context.lineWidth = 2;
 
-    //quarter 1 of volcano
+    //temporarily hide this to make the lava stuff easier to see
+    /*//quarter 1 of volcano
     var xQuarterOffset = (70 / 4) / 100;
     var volcanoBezier4X1 = volcanoStartX + (volcanoXLength * (xQuarterOffset + .025));
     var volcanoBezier4Y1 = volcanoStartY * .95 - (5 * yRaceModeModifier);
@@ -1581,7 +1581,7 @@ export class DrawRaceComponent implements OnInit {
     context.beginPath();
     context.moveTo(volcanoEndX - (volcanoXLength * xQuarterOffset), volcanoStartY * .95);
     context.bezierCurveTo(volcanoBezier7X1, volcanoBezier7Y1, volcanoBezier7X2, volcanoBezier7Y2, volcanoBezier7X3, volcanoBezier7Y3);
-    context.stroke();
+    context.stroke();*/
 
     var lavaFallPercent = [.4, .45, .475, .525, .55, .6];
     var originalFillColor = context.fillStyle;
@@ -1600,8 +1600,39 @@ export class DrawRaceComponent implements OnInit {
     context.lineTo(volcanoBezier1X3, volcanoBezier1Y3);
     context.fill();
 
-    var lavaFallPercentByFrame = this.race.raceUI.lavaFallPercentByFrame[currentFrame];
-    var lava1FallDistance = legStartX + ((legEndX - legStartX) * .4);
+    if (xRaceModeModifier === 1) //overview mode
+      currentFrame = this.race.raceUI.lavaFallPercentByFrame.length - 1;
+    var lavaFallPercentByFrame = this.race.raceUI.lavaFallPercentByFrame[currentFrame]; //array of values between 0-1 that represent how far lava has fallen
+    var legDistanceX = (legEndX - legStartX) * this.canvasXDistanceScale * xRaceModeModifier;
+    var volcanicLegStartX = legStartX * this.canvasXDistanceScale * xRaceModeModifier;
+    var lava1FallXDropPoint = volcanicLegStartX + (legDistanceX * .4)  - xDistanceOffset;
+    var lava2FallXDropPoint = ((legEndX - legStartX) * .45);
+    var lava3FallXDropPoint = ((legEndX - legStartX) * .5);
+    var lava4FallXDropPoint = ((legEndX - legStartX) * .55);
+    var lava5FallXDropPoint = volcanicLegStartX + (legDistanceX * .6) - xDistanceOffset;
+    var lavaFallXOffset = (legEndX - legStartX) * .005 * this.canvasXDistanceScale * xRaceModeModifier;
+    
+    var bottomOfPath = this.backgroundVolcanoYStart + volcanoYRadius + yDistanceOffset;
+    context.moveTo(0, bottomOfPath);        
+    context.lineTo(100000, bottomOfPath);
+    context.stroke();
+
+    console.log(lavaFallPercentByFrame[0] + " " + lavaFallPercentByFrame[4]);
+    //lava drop 1
+    //console.log(lava1FallXDropPoint - lavaFallXOffset + ", " + volcanoEndY)
+    //this is making a diagonal line
+    var lava1YAmountFallen = (bottomOfPath - volcanoEndY) * lavaFallPercentByFrame[0];
+    context.moveTo(lava1FallXDropPoint - lavaFallXOffset, volcanoEndY); //top of volcano = volcanoEndY        
+    context.lineTo(lava1FallXDropPoint + lavaFallXOffset, volcanoEndY + lava1YAmountFallen);
+    context.stroke();
+
+    //lava drop 2
+
+    //lava drop 5
+    var lava5YAmountFallen = (bottomOfPath - volcanoEndY) * lavaFallPercentByFrame[4];
+    context.moveTo(lava5FallXDropPoint - lavaFallXOffset, volcanoEndY); //top of volcano = volcanoEndY        
+    context.lineTo(lava5FallXDropPoint + lavaFallXOffset, volcanoEndY + lava5YAmountFallen);
+    context.stroke();
 
     /*//lava drop 1
     var drop1XBeginningStart = volcanoStartX + (volcanoXLength * .4);

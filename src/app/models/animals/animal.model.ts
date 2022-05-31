@@ -50,8 +50,8 @@ export class Animal {
         return this.ability.name;
     }
 
-    getAbilityUseUpdateText(animalDisplayName: string): string {
-        return animalDisplayName + " uses " + this.ability.name + ".";
+    getAbilityUseUpdateText(animalDisplayName: string, additionalAbilityInfo: string = ""): string {
+        return animalDisplayName + " uses " + this.ability.name + additionalAbilityInfo + ".";
     }
 
     useAbility(): void {
@@ -576,7 +576,7 @@ export class Fox extends Animal {
         this.availableAbilities.push(this.ability);
 
         var ability2 = new Ability();
-        ability2.efficiency = 2;
+        ability2.efficiency = 20;
         ability2.oneTimeEffect = false;
         ability2.name = "Fleeting Speed";
         ability2.isAbilityPurchased = false;

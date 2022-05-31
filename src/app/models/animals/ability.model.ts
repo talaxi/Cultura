@@ -13,4 +13,8 @@ export class Ability {
     purchasePrice: number;
     totalFrames: number; 
     remainingFrames: number; //in frames
+
+    //specific to Fox ability, maybe make a separate class for ability-specific stuff?
+    tricksterStatLoss: string;
+    tricksterStatGain: string;
 }

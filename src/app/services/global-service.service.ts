@@ -1159,7 +1159,7 @@ export class GlobalService {
         else
           leg.terrain = new Terrain(TerrainTypeEnum.Sunny);
 
-        leg.distance = Math.round((baseMeters * (factor ** i) + additiveValue) * this.utilityService.getRandomSeededNumber(minRandomFactor, maxRandomFactor, seedValue));
+        leg.distance = Math.round((baseMeters * (factor ** i) + additiveValue));
         raceLegs.push(leg);
       }
       else if (i <= 9) {
@@ -2057,7 +2057,7 @@ export class GlobalService {
 
     var salamander = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Salamander);
     if (salamander !== undefined) {
-      salamander.currentStats.topSpeed = 30;
+      salamander.currentStats.topSpeed = 25;
       salamander.currentStats.acceleration = 8;
       this.calculateAnimalRacingStats(salamander);
     }

@@ -393,6 +393,15 @@ export class LookupService {
     else if (type === "Ocean") {
       itemList.push(AnimalTypeEnum[AnimalTypeEnum.Dolphin]);
       itemList.push(AnimalTypeEnum[AnimalTypeEnum.Shark]);
+      itemList.push(AnimalTypeEnum[AnimalTypeEnum.Octopus]);
+    }
+    else if (type === "Tundra") {
+      itemList.push(AnimalTypeEnum[AnimalTypeEnum.Penguin]);
+      itemList.push(AnimalTypeEnum[AnimalTypeEnum.Caribou]);
+    }
+    else if (type === "Volcanic") {
+      itemList.push(AnimalTypeEnum[AnimalTypeEnum.Salamander]);
+      itemList.push(AnimalTypeEnum[AnimalTypeEnum.Fox]);
     }
 
     return itemList;
@@ -409,8 +418,15 @@ export class LookupService {
     if (statLossFromExhaustion === null || statLossFromExhaustion === undefined)
       statLossFromExhaustion = 1;
 
-    var modifiedPower = (animal.currentStats.powerMs * terrainModifier * statLossFromExhaustion) / 100;
-    console.log("Efficiency: " + animal.ability.efficiency + " Power: " + modifiedPower);
+    var powerAbilityModifier = 1;
+    if (animal.type === AnimalTypeEnum.Fox && animal.ability.name === "Trickster" && animal.ability.tricksterStatLoss === "Power"  && animal.ability.abilityInUse) {
+      powerAbilityModifier *= .8;
+    }
+    if (animal.type === AnimalTypeEnum.Fox && animal.ability.name === "Trickster" && animal.ability.tricksterStatGain === "Power"  && animal.ability.abilityInUse) {
+      powerAbilityModifier *= 1.4;
+    }
+
+    var modifiedPower = (animal.currentStats.powerMs * powerAbilityModifier * terrainModifier * statLossFromExhaustion) / 100;    
 
     if (animal.ability.name === "Thoroughbred") {
       return (animal.ability.efficiency * (1 + modifiedPower));
