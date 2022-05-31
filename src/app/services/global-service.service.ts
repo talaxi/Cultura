@@ -55,8 +55,8 @@ export class GlobalService {
     this.globalVar.currentTutorialId = 1;
     this.globalVar.nationalRaceCountdown = 0;
     this.globalVar.freeRaceCounter = 0;
-    this.globalVar.freeRaceTimePeriodCounter = 0;    
-    
+    this.globalVar.freeRaceTimePeriodCounter = 0;
+
     //Initialize modifiers
     this.InitializeModifiers();
 
@@ -912,16 +912,12 @@ export class GlobalService {
 
       returnVal = ["Dolphin", "The Monkey is a powerful Mountain climbing animal capable of slowing its competitors."];
 
-      var amount = 5;
-      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(12) + amount + " Apples";
+      var amount = 10;
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(12) + amount + " Stat Increasing Food";
     }
     else if (numericValue === 12) {
-      var appleAmount = 5;
-      var appleResource = this.globalVar.resources.find(item => item.name === "Apples");
-      if (appleResource === null || appleResource === undefined)
-        this.globalVar.resources.push(new ResourceValue("Apples", appleAmount));
-      else
-        appleResource.amount += appleAmount;
+      var amount = 10;
+      this.increaseAllFood(amount);
 
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(15) + "Attraction Specialization";
     }
@@ -948,12 +944,8 @@ export class GlobalService {
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(22) + orangeAmount + " Oranges";
     }
     else if (numericValue === 22) {
-      var orangeAmount = 1;
-      var resource = this.globalVar.resources.find(item => item.name === "Oranges");
-      if (resource === null || resource === undefined)
-        this.globalVar.resources.push(new ResourceValue("Oranges", orangeAmount));
-      else
-        resource.amount += orangeAmount;
+      var amount = 50;
+      this.increaseAllFood(amount);
 
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(25) + "Research Facility Specialization";
     }
@@ -980,6 +972,7 @@ export class GlobalService {
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(33) + turnipAmount + " Turnips";
     }
     else if (numericValue === 33) {
+      //TODO: when you decide on a breed food item, it goes here
       var turnipAmount = 15;
       var resource = this.globalVar.resources.find(item => item.name === "Turnips");
       if (resource === null || resource === undefined)
@@ -1028,12 +1021,8 @@ export class GlobalService {
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(43) + amount + " Carrots";
     }
     else if (numericValue === 43) {
-      var amount = 20;
-      var resource = this.globalVar.resources.find(item => item.name === "Carrots");
-      if (resource === null || resource === undefined)
-        this.globalVar.resources.push(new ResourceValue("Carrots", amount));
-      else
-        resource.amount += amount;
+      var amount = 100;
+      this.increaseAllFood(amount);
 
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(45) + "Salamander";
     }
@@ -1089,6 +1078,44 @@ export class GlobalService {
     }
 
     return returnVal;
+  }
+
+  increaseAllFood(amount: number) {
+    var appleResource = this.globalVar.resources.find(item => item.name === "Apple");
+    if (appleResource === null || appleResource === undefined)
+      this.globalVar.resources.push(new ResourceValue("Apple", amount, ShopItemTypeEnum.Food));
+    else
+      appleResource.amount += amount;
+
+    var bananaResource = this.globalVar.resources.find(item => item.name === "Banana");
+    if (bananaResource === null || bananaResource === undefined)
+      this.globalVar.resources.push(new ResourceValue("Banana", amount, ShopItemTypeEnum.Food));
+    else
+      bananaResource.amount += amount;
+
+    var orangeResource = this.globalVar.resources.find(item => item.name === "Orange");
+    if (orangeResource === null || orangeResource === undefined)
+      this.globalVar.resources.push(new ResourceValue("Orange", amount, ShopItemTypeEnum.Food));
+    else
+      orangeResource.amount += amount;
+
+    var strawberryResource = this.globalVar.resources.find(item => item.name === "Strawberry");
+    if (strawberryResource === null || strawberryResource === undefined)
+      this.globalVar.resources.push(new ResourceValue("Strawberry", amount, ShopItemTypeEnum.Food));
+    else
+      strawberryResource.amount += amount;
+
+    var carrotResource = this.globalVar.resources.find(item => item.name === "Carrot");
+    if (carrotResource === null || carrotResource === undefined)
+      this.globalVar.resources.push(new ResourceValue("Carrot", amount, ShopItemTypeEnum.Food));
+    else
+      carrotResource.amount += amount;
+
+    var turnipResource = this.globalVar.resources.find(item => item.name === "Turnip");
+    if (turnipResource === null || turnipResource === undefined)
+      this.globalVar.resources.push(new ResourceValue("Turnip", amount, ShopItemTypeEnum.Food));
+    else
+      turnipResource.amount += amount;
   }
 
   GenerateCircuitRacesForRank(circuitRank: string): void {
@@ -1260,7 +1287,7 @@ export class GlobalService {
 
   reorganizeLegsByDeckOrder(raceLegs: RaceLeg[], selectedDeck: AnimalDeck) {
     if (!selectedDeck.isCourseOrderActive)
-    return raceLegs;
+      return raceLegs;
 
     return raceLegs.sort((a, b) => selectedDeck.courseTypeOrder.indexOf(a.courseType) - selectedDeck.courseTypeOrder.indexOf(b.courseType));
   }
@@ -1558,18 +1585,18 @@ export class GlobalService {
     else if (i < 15) {
       availableCourses.push(RaceCourseTypeEnum.Flatland);
       availableCourses.push(RaceCourseTypeEnum.Mountain);
-      availableCourses.push(RaceCourseTypeEnum.Ocean);      
+      availableCourses.push(RaceCourseTypeEnum.Ocean);
     }
     else if (i < 20) {
       availableCourses.push(RaceCourseTypeEnum.Flatland);
       availableCourses.push(RaceCourseTypeEnum.Mountain);
-      availableCourses.push(RaceCourseTypeEnum.Ocean); 
+      availableCourses.push(RaceCourseTypeEnum.Ocean);
       availableCourses.push(RaceCourseTypeEnum.Tundra);
     }
-    else {      
+    else {
       availableCourses.push(RaceCourseTypeEnum.Flatland);
       availableCourses.push(RaceCourseTypeEnum.Mountain);
-      availableCourses.push(RaceCourseTypeEnum.Ocean); 
+      availableCourses.push(RaceCourseTypeEnum.Ocean);
       availableCourses.push(RaceCourseTypeEnum.Tundra);
       availableCourses.push(RaceCourseTypeEnum.Volcanic);
     }
