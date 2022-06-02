@@ -14,6 +14,7 @@ import { Unlockables } from "../utility/unlockables.model";
 
 //list all of them, need to give everything a 'display' variable or something of the sort
 export class GlobalVariables {
+    lastTimeStamp: number;
     @Type(() => Animal)
     animals: Animal[];
     @Type(() => Barn)

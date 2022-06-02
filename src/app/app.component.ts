@@ -47,7 +47,7 @@ export class AppComponent {
 
     if (devMode) {
       this.globalService.globalVar.tutorialCompleted = true;
-      this.globalService.devModeInitialize(50);
+      this.globalService.devModeInitialize(80);
     }
 
     this.gameLoopService.Update();

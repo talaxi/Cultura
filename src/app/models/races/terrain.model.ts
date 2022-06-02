@@ -17,13 +17,14 @@ export class Terrain {
         var minorDetriment = .8;
         var majorDetriment = .5;
         var minorImprovement = 1.2;
-        var staminaIncrease = 0.2;
+        var staminaIncrease = 0.04;
+        var staminaDecrease = -0.04;
 
         this.maxSpeedModifier = 1;
         this.accelerationModifier = 1;
         this.powerModifier = 1;
         this.focusModifier = 1;
-        this.adaptabilityModifier = 1;
+        this.adaptabilityModifier = 1;    
 
         if (terrainType !== null)
         {
@@ -73,7 +74,7 @@ export class Terrain {
 
             if (terrainType === TerrainTypeEnum.Snowfall)
             {
-                this.staminaModifier = staminaIncrease;
+                this.staminaModifier = staminaDecrease;
                 this.maxSpeedModifier = minorDetriment;
                 this.accelerationModifier = minorDetriment;
             }

@@ -428,7 +428,7 @@ export class LookupService {
 
     var modifiedPower = (animal.currentStats.powerMs * powerAbilityModifier * terrainModifier * statLossFromExhaustion) / 100;    
 
-    if (animal.ability.name === "Thoroughbred") {
+    if (animal.ability.name === "Second Wind") {
       return (animal.ability.efficiency * (1 + modifiedPower));
     }
     if (animal.ability.name === "Inspiration") {
@@ -458,7 +458,7 @@ export class LookupService {
 
   getAnimalAbilityDescription(shortDescription: boolean, abilityName: string, animal?: Animal) {
     if (shortDescription) {
-      if (abilityName === "Thoroughbred") {
+      if (abilityName === "Second Wind") {
         return "Stamina does not go down for a short period";
       }
       if (abilityName === "Inspiration") {
@@ -552,7 +552,7 @@ export class LookupService {
         if (cooldownDisplay === "" && animal.ability.cooldown !== undefined && animal.ability.cooldown !== null)
           cooldownDisplay = animal.ability.cooldown.toString();
 
-        if (abilityName === "Thoroughbred") {
+        if (abilityName === "Second Wind") {
           return "Stamina does not go down for " + effectiveAmountDisplay + " meters. " + cooldownDisplay + " second cooldown.";
         }
         if (abilityName === "Inspiration") {

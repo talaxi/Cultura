@@ -87,6 +87,8 @@ export class RaceComponent implements OnInit {
   }
 
   runRace(race: Race): RaceResult {
+    console.log("Race Info:");
+    console.log(race);
     var raceResult = new RaceResult();
     var totalRaceDistance = 0;
     var distanceCovered = 0;
@@ -181,6 +183,7 @@ export class RaceComponent implements OnInit {
       var aheadOfAveragePace = false;
       var legPercentBreakpoint = 0; //used to keep up with various ability distance breakpoints
       var framesInCurrentLeg = 0;
+      var previousPassedLavaBreakpoint = [false, false, false, false, false];
 
       if (racingAnimal.ability.name === "Nap" && racingAnimal.type === AnimalTypeEnum.Hare) {
         var distanceFromEnd = item.distance - this.lookupService.GetAbilityEffectiveAmount(racingAnimal, item.terrain.powerModifier, statLossFromExhaustion)
@@ -484,10 +487,10 @@ export class RaceComponent implements OnInit {
         if (racingAnimal.type === AnimalTypeEnum.Fox && racingAnimal.ability.name === "Fleeting Speed") {
           var percentComplete = Math.floor((currentDistanceInLeg / item.distance) * 100);
           var modifiedFleetingSpeedIncreaseMultiplier = fleetingSpeedIncreaseMultiplier;
-          
+
           modifiedFleetingSpeedIncreaseMultiplier -= (percentComplete * .02) * (modifiedFleetingSpeedIncreaseMultiplier - 1);
           if (modifiedFleetingSpeedIncreaseMultiplier < 1)
-          modifiedFleetingSpeedIncreaseMultiplier = 1;
+            modifiedFleetingSpeedIncreaseMultiplier = 1;
 
           modifiedMaxSpeed *= modifiedFleetingSpeedIncreaseMultiplier;
         }
@@ -620,9 +623,25 @@ export class RaceComponent implements OnInit {
           this.tundraPreviousYAmount = racingAnimal.raceVariables.icyCurrentYAmount;
         }
         if (item.courseType === RaceCourseTypeEnum.Volcanic) {
-          this.handleLavaFall(racingAnimal, framesInCurrentLeg, race.length / this.timeToComplete, currentDistanceInLeg, item.distance);
-        }
+          var ranIntoLava = this.handleLavaFall(racingAnimal, framesInCurrentLeg, race.length / this.timeToComplete, currentDistanceInLeg, item.distance, raceResult, framesPassed, previousPassedLavaBreakpoint);
 
+          if (ranIntoLava) {
+            this.timeToComplete = framesPassed / this.frameModifier;
+          }
+        }
+        else {
+          var percentOfLavaDropPerFrame: number[] = [];
+
+          if (this.selectedRace.raceUI.lavaFallPercentByFrame.length > 0 &&
+            this.selectedRace.raceUI.lavaFallPercentByFrame[this.selectedRace.raceUI.lavaFallPercentByFrame.length - 1][0] !== null &&
+            this.selectedRace.raceUI.lavaFallPercentByFrame[this.selectedRace.raceUI.lavaFallPercentByFrame.length - 1][0] !== undefined &&
+            this.selectedRace.raceUI.lavaFallPercentByFrame[this.selectedRace.raceUI.lavaFallPercentByFrame.length - 1][0] > 0)
+            percentOfLavaDropPerFrame = this.selectedRace.raceUI.lavaFallPercentByFrame[this.selectedRace.raceUI.lavaFallPercentByFrame.length - 1];
+          else
+            percentOfLavaDropPerFrame = [0, 0, 0, 0, 0];
+
+          this.selectedRace.raceUI.lavaFallPercentByFrame.push(percentOfLavaDropPerFrame);
+        }
 
         distanceCovered += distanceCoveredPerFrame > distanceToGo ? distanceToGo : distanceCoveredPerFrame;
         distanceToGo -= distanceCoveredPerFrame;
@@ -792,8 +811,8 @@ export class RaceComponent implements OnInit {
   handleStamina(racingAnimal: Animal, raceResult: RaceResult, distanceCoveredPerFrame: number, framesPassed: number, terrain: Terrain) {
     var staminaModifier = this.getStaminaModifier(terrain);
 
-    //if using thoroughbred, don't reduce stamina at all
-    if (!(racingAnimal.type === AnimalTypeEnum.Horse && racingAnimal.ability.name === "Thoroughbred" && racingAnimal.ability.abilityInUse)) {
+    //if using Second Wind, don't reduce stamina at all
+    if (!(racingAnimal.type === AnimalTypeEnum.Horse && racingAnimal.ability.name === "Second Wind" && racingAnimal.ability.abilityInUse)) {
       if (racingAnimal.type === AnimalTypeEnum.Cheetah && racingAnimal.ability.name === "Sprint" && racingAnimal.ability.abilityInUse)
         racingAnimal.currentStats.stamina -= (distanceCoveredPerFrame * staminaModifier) * 2;
       else
@@ -1260,16 +1279,16 @@ export class RaceComponent implements OnInit {
       if (racingAnimal.type === AnimalTypeEnum.Hare && racingAnimal.ability.name === "Nap") {
         unwaveringFocus *= 2;
       }
-      if (racingAnimal.type === AnimalTypeEnum.Fox && racingAnimal.ability.name === "Trickster" && racingAnimal.ability.tricksterStatLoss === "Focus"  && racingAnimal.ability.abilityInUse) {
+      if (racingAnimal.type === AnimalTypeEnum.Fox && racingAnimal.ability.name === "Trickster" && racingAnimal.ability.tricksterStatLoss === "Focus" && racingAnimal.ability.abilityInUse) {
         unwaveringFocus *= .8;
       }
-      if (racingAnimal.type === AnimalTypeEnum.Fox && racingAnimal.ability.name === "Trickster" && racingAnimal.ability.tricksterStatGain === "Focus"  && racingAnimal.ability.abilityInUse) {
+      if (racingAnimal.type === AnimalTypeEnum.Fox && racingAnimal.ability.name === "Trickster" && racingAnimal.ability.tricksterStatGain === "Focus" && racingAnimal.ability.abilityInUse) {
         unwaveringFocus *= 1.4;
       }
       if (racingAnimal.type === AnimalTypeEnum.Fox && racingAnimal.ability.name === "Nine Tails") {
         unwaveringFocus *= 1 + (this.getNineTailsBuffCount("Focus", nineTailsBuffs) * .1);
       }
-      if (racingAnimal.type === AnimalTypeEnum.Salamander && racingAnimal.ability.name === "Cold Blooded" && racingAnimal.ability.tricksterStatGain === "Focus"  && racingAnimal.ability.abilityInUse) {
+      if (racingAnimal.type === AnimalTypeEnum.Salamander && racingAnimal.ability.name === "Cold Blooded" && racingAnimal.ability.tricksterStatGain === "Focus" && racingAnimal.ability.abilityInUse) {
         unwaveringFocus *= obj.coldBloodedIncreaseMultiplier;
       }
 
@@ -1291,7 +1310,7 @@ export class RaceComponent implements OnInit {
     if (racingAnimal.ability.oneTimeEffect && racingAnimal.ability.abilityUsed)
       return false;
 
-    if (racingAnimal.ability.name === "Thoroughbred" && racingAnimal.type === AnimalTypeEnum.Horse &&
+    if (racingAnimal.ability.name === "Second Wind" && racingAnimal.type === AnimalTypeEnum.Horse &&
       racingAnimal.raceVariables.recoveringStamina)
       return false;
 
@@ -1317,7 +1336,7 @@ export class RaceComponent implements OnInit {
     racingAnimal.ability.abilityUsed = true;
 
     if (racingAnimal.type === AnimalTypeEnum.Horse) {
-      if (racingAnimal.ability.name === "Thoroughbred" ||
+      if (racingAnimal.ability.name === "Second Wind" ||
         racingAnimal.ability.name === "Pacemaker") {
         racingAnimal.ability.abilityInUse = true;
         racingAnimal.ability.remainingLength = this.lookupService.GetAbilityEffectiveAmount(racingAnimal, currentLeg.terrain.powerModifier, statLossFromExhaustion);
@@ -1372,16 +1391,16 @@ export class RaceComponent implements OnInit {
 
     if (racingAnimal.type === AnimalTypeEnum.Salamander) {
       if (racingAnimal.ability.name === "Cold Blooded") {
-        racingAnimal.ability.abilityInUse = true;        
+        racingAnimal.ability.abilityInUse = true;
         racingAnimal.ability.remainingLength = this.lookupService.GetAbilityEffectiveAmount(racingAnimal, currentLeg.terrain.powerModifier, statLossFromExhaustion);
         var percentInLeg = (currentDistanceInLeg / currentLeg.distance);
         if (percentInLeg > .5)
           percentInLeg = .5 - (percentInLeg - .5);
-        
-          racingAnimal.currentStats.stamina += animalMaxStamina * percentInLeg; 
-          if (racingAnimal.currentStats.stamina > animalMaxStamina)
-            racingAnimal.currentStats.stamina = animalMaxStamina; 
-          obj.coldBloodedIncreaseMultiplier = 1 + percentInLeg;
+
+        racingAnimal.currentStats.stamina += animalMaxStamina * percentInLeg;
+        if (racingAnimal.currentStats.stamina > animalMaxStamina)
+          racingAnimal.currentStats.stamina = animalMaxStamina;
+        obj.coldBloodedIncreaseMultiplier = 1 + percentInLeg;
       }
 
       if (racingAnimal.ability.name === "Heat Up") {
@@ -1404,10 +1423,9 @@ export class RaceComponent implements OnInit {
           racingAnimal.ability.tricksterStatLoss = "Adaptability";
         if (statLoss === 4)
           racingAnimal.ability.tricksterStatLoss = "Focus";
-        if (statLoss === 5)
-        {
+        if (statLoss === 5) {
           racingAnimal.ability.tricksterStatLoss = "Stamina";
-          racingAnimal.currentStats.stamina -= animalMaxStamina * .2; 
+          racingAnimal.currentStats.stamina -= animalMaxStamina * .2;
           if (racingAnimal.currentStats.stamina < 0)
             racingAnimal.currentStats.stamina = 0;
         }
@@ -1423,12 +1441,11 @@ export class RaceComponent implements OnInit {
           racingAnimal.ability.tricksterStatGain = "Adaptability";
         if (statGain === 4)
           racingAnimal.ability.tricksterStatGain = "Focus";
-        if (statGain === 5)
-        {
+        if (statGain === 5) {
           racingAnimal.ability.tricksterStatGain = "Stamina";
-          racingAnimal.currentStats.stamina += animalMaxStamina * .4; 
+          racingAnimal.currentStats.stamina += animalMaxStamina * .4;
           if (racingAnimal.currentStats.stamina > animalMaxStamina)
-            racingAnimal.currentStats.stamina = animalMaxStamina; 
+            racingAnimal.currentStats.stamina = animalMaxStamina;
         }
         if (statGain === 6)
           racingAnimal.ability.tricksterStatGain = "Power";
@@ -1489,10 +1506,10 @@ export class RaceComponent implements OnInit {
     if (racingAnimal.type === AnimalTypeEnum.Penguin && racingAnimal.ability.name === "Careful Toboggan" && racingAnimal.ability.abilityInUse) {
       modifiedAdaptabilityMs *= 1.4;
     }
-    if (racingAnimal.type === AnimalTypeEnum.Fox && racingAnimal.ability.name === "Trickster" && racingAnimal.ability.tricksterStatLoss === "Adaptability"  && racingAnimal.ability.abilityInUse) {
+    if (racingAnimal.type === AnimalTypeEnum.Fox && racingAnimal.ability.name === "Trickster" && racingAnimal.ability.tricksterStatLoss === "Adaptability" && racingAnimal.ability.abilityInUse) {
       modifiedAdaptabilityMs *= .8;
     }
-    if (racingAnimal.type === AnimalTypeEnum.Fox && racingAnimal.ability.name === "Trickster" && racingAnimal.ability.tricksterStatGain === "Adaptability"  && racingAnimal.ability.abilityInUse) {
+    if (racingAnimal.type === AnimalTypeEnum.Fox && racingAnimal.ability.name === "Trickster" && racingAnimal.ability.tricksterStatGain === "Adaptability" && racingAnimal.ability.abilityInUse) {
       modifiedAdaptabilityMs *= 1.4;
     }
     if (racingAnimal.type === AnimalTypeEnum.Fox && racingAnimal.ability.name === "Nine Tails") {
@@ -1586,7 +1603,7 @@ export class RaceComponent implements OnInit {
     return wallHit;
   }
 
-  handleLavaFall(racingAnimal: Animal, framesInCurrentLeg: number, averageDistancePerSecond: number, currentDistanceInLeg: number, legDistance: number) {
+  handleLavaFall(racingAnimal: Animal, framesInCurrentLeg: number, averageDistancePerSecond: number, currentDistanceInLeg: number, legDistance: number, raceResult: RaceResult, framesPassed: number, previousPassedBreakpoint: boolean[]) {
     var ranIntoLava = false;
     var secondsIntoLeg = framesInCurrentLeg / this.frameModifier;
 
@@ -1597,6 +1614,7 @@ export class RaceComponent implements OnInit {
     var lavaFallPercent = [.4, .45, .5, .55, .6];
     var percentOfLavaDropPerFrame = [];
 
+    //console.log(secondsIntoLeg + " " + legDistance + " " + averageDistancePerSecond);
     //needs to drop only if volcanic
     for (var i = 0; i < lavaFallPercent.length; i++) {
       var timeLavaDrops = legTimeCompleteExpectancy * lavaFallPercent[i];
@@ -1605,8 +1623,15 @@ export class RaceComponent implements OnInit {
         percentOfIndividualLavaDropPerFrame = 1;
       percentOfLavaDropPerFrame.push(percentOfIndividualLavaDropPerFrame);
 
-      if (secondsIntoLeg >= timeLavaDrops)
+      var passedBreakpoint = currentDistanceInLeg > lavaFallPercent[i] * legDistance;
+      var didJustPass = passedBreakpoint != previousPassedBreakpoint[i];
+      previousPassedBreakpoint[i] = passedBreakpoint;
+
+      if (secondsIntoLeg >= timeLavaDrops && didJustPass) {
+        console.log("Hit Wall " + i);
+        raceResult.addRaceUpdate(framesPassed, "Lava spilled out onto the course, forcing you to evacuate.");
         ranIntoLava = true;
+      }
     }
 
     this.selectedRace.raceUI.lavaFallPercentByFrame.push(percentOfLavaDropPerFrame);

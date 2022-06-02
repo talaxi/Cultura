@@ -56,6 +56,7 @@ export class GlobalService {
     this.globalVar.nationalRaceCountdown = 0;
     this.globalVar.freeRaceCounter = 0;
     this.globalVar.freeRaceTimePeriodCounter = 0;
+    this.globalVar.lastTimeStamp = Date.now();
 
     //Initialize modifiers
     this.InitializeModifiers();
@@ -140,8 +141,8 @@ export class GlobalService {
     this.globalVar.modifiers.push(new StringNumberPair((4 * 60 * 60), "mediumBarnTrainingTimeModifier"));
     this.globalVar.modifiers.push(new StringNumberPair((8 * 60 * 60), "largeBarnTrainingTimeModifier"));
 
-    this.globalVar.modifiers.push(new StringNumberPair(10, "freeRacesPerTimePeriodModifier"));
-    this.globalVar.modifiers.push(new StringNumberPair((15 * 60), "freeRacesTimePeriodModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(5, "freeRacesPerTimePeriodModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair((5 * 60), "freeRacesTimePeriodModifier"));
 
     //ability modifiers
     this.globalVar.modifiers.push(new StringNumberPair(1.5, "feedingFrenzyPositiveModifier"));
@@ -150,7 +151,7 @@ export class GlobalService {
     var baseMaxSpeedModifier = .3;
     var baseAccelerationModifier = .1;
     var baseStaminaModifier = 7.5;
-    var basePowerModifier = .1;
+    var basePowerModifier = .5;
     var baseFocusModifier = 5;
     var baseAdaptabilityModifier = 5;
 
@@ -531,7 +532,7 @@ export class GlobalService {
     var stockbreeder = new ShopItem();
     stockbreeder.name = "Stockbreeder";
     stockbreeder.shortDescription = "Add option to auto breed when Breed XP is full";
-    stockbreeder.purchasePrice.push(this.getCoinsResourceValue(1000));
+    stockbreeder.purchasePrice.push(this.getCoinsResourceValue(500));
     stockbreeder.canHaveMultiples = false;
     stockbreeder.type = ShopItemTypeEnum.Specialty;
     specialtyShopItems.push(stockbreeder);
@@ -1146,7 +1147,7 @@ export class GlobalService {
 
       if (i <= 2) //make these breakpoints configurable, figure out your time horizon on new races
       {
-        additiveValue = 0;
+        additiveValue = -17;
 
         var leg = new RaceLeg();
         leg.courseType = RaceCourseTypeEnum.Flatland;
@@ -1204,6 +1205,11 @@ export class GlobalService {
       else {
         legLengthCutoff = timeToComplete / 6;
 
+        if (i === 10)
+          additiveValue = 50 * i;
+        else if (i === 11)
+          additiveValue = 60 * i;
+
         var availableCourses: RaceCourseTypeEnum[] = [];
         if (i <= 53) {
           availableCourses.push(RaceCourseTypeEnum.Flatland);
@@ -1248,7 +1254,7 @@ export class GlobalService {
           var leg1 = new RaceLeg();
           leg1.courseType = randomizedCourseList[0];
           leg1.distance = ((Math.round(baseMeters * (factor ** i) + additiveValue) * this.utilityService.getRandomSeededNumber(minRandomFactor, maxRandomFactor, seedValue + "l1r")) * (leg1Normalized / timeToComplete));
-          leg1.terrain = this.getRandomTerrain(leg1.courseType, seedValue + "lt1d");
+          leg1.terrain = this.getRandomTerrain(leg1.courseType, seedValue + "tl1d");
           raceLegs.push(leg1);
         }
 
@@ -1256,7 +1262,7 @@ export class GlobalService {
           var leg2 = new RaceLeg();
           leg2.courseType = randomizedCourseList[1];
           leg2.distance = ((Math.round(baseMeters * (factor ** i) + additiveValue) * this.utilityService.getRandomSeededNumber(minRandomFactor, maxRandomFactor, seedValue + "l2r")) * (leg2Normalized / timeToComplete));
-          leg2.terrain = this.getRandomTerrain(leg2.courseType, seedValue + "lt2d");
+          leg2.terrain = this.getRandomTerrain(leg2.courseType, seedValue + "tl2d");
           raceLegs.push(leg2);
         }
 
@@ -1264,7 +1270,7 @@ export class GlobalService {
           var leg3 = new RaceLeg();
           leg3.courseType = randomizedCourseList[2];
           leg3.distance = ((Math.round(baseMeters * (factor ** i) + additiveValue) * this.utilityService.getRandomSeededNumber(minRandomFactor, maxRandomFactor, seedValue + "l3r")) * (leg3Normalized / timeToComplete));
-          leg3.terrain = this.getRandomTerrain(leg3.courseType, seedValue + "lt3d");
+          leg3.terrain = this.getRandomTerrain(leg3.courseType, seedValue + "tl3d");
           raceLegs.push(leg3);
         }
       }
@@ -1493,7 +1499,7 @@ export class GlobalService {
     return rewards;
   }
 
-  GenerateRainbowRaceRewards(): ResourceValue[] {
+  GenerateRainbowRaceRewards(rainbowRank: string): ResourceValue[] {
     var rewards: ResourceValue[] = [];
     rewards.push(new ResourceValue("Facility Level", 1));
     return rewards;
@@ -1579,8 +1585,8 @@ export class GlobalService {
 
     var availableCourses: RaceCourseTypeEnum[] = [];
     if (i == 1) {
-      availableCourses.push(RaceCourseTypeEnum.Mountain);
       availableCourses.push(RaceCourseTypeEnum.Flatland);
+      availableCourses.push(RaceCourseTypeEnum.Mountain);
     }
     else if (i < 15) {
       availableCourses.push(RaceCourseTypeEnum.Flatland);
@@ -1606,13 +1612,13 @@ export class GlobalService {
     var randomFactor = this.utilityService.getRandomSeededNumber(minRandomFactor, maxRandomFactor);
     var leg1 = new RaceLeg();
     leg1.courseType = randomizedCourseList[0];
-    leg1.distance = (Math.round((baseMeters * (factor ** i) * randomFactor) / 2));
+    leg1.distance = (Math.round((baseMeters * (factor ** i) * randomFactor) * .5));
     leg1.terrain = this.getRandomTerrain(leg1.courseType, 'duoseedl1' + duoRank + i);
     raceLegs.push(leg1);
 
     var leg2 = new RaceLeg();
     leg2.courseType = randomizedCourseList[1];
-    leg2.distance = (Math.round((baseMeters * (factor ** i) * randomFactor) / 2));
+    leg2.distance = (Math.round((baseMeters * (factor ** i) * randomFactor) * .5));
     leg2.terrain = this.getRandomTerrain(leg2.courseType, 'duoseedl2' + duoRank + i);
     raceLegs.push(leg2);
 
@@ -1627,8 +1633,72 @@ export class GlobalService {
     raceIndex += 1;
   }
 
-  GenerateRainbowRaces(circuitRank: string): void {
+  GenerateRainbowRaces(rainbowRank: string): void {
+    var i = this.utilityService.getNumericValueOfCircuitRank(rainbowRank);
+    this.globalVar.localRaces = this.globalVar.localRaces.filter(item => item.localRaceType !== LocalRaceTypeEnum.Rainbow);
 
+    if (i >= this.utilityService.getNumericValueOfCircuitRank(this.globalVar.circuitRank))
+      return;
+
+    var raceIndex = 1;
+    var timeToComplete = 120;
+
+    var baseMeters = 1500;
+    var factor = 1.135;
+
+    var maxRandomFactor = 1.2;
+    var minRandomFactor = 0.8;
+    var raceLegs: RaceLeg[] = [];
+
+    var availableCourses: RaceCourseTypeEnum[] = [];
+    availableCourses.push(RaceCourseTypeEnum.Flatland);
+    availableCourses.push(RaceCourseTypeEnum.Mountain);
+    availableCourses.push(RaceCourseTypeEnum.Ocean);
+    availableCourses.push(RaceCourseTypeEnum.Tundra);
+    availableCourses.push(RaceCourseTypeEnum.Volcanic);
+ 
+    var randomizedCourseList = this.getCourseTypeInRandomOrderSeeded(availableCourses, 'rainbowseed' + rainbowRank + i);
+
+    var randomFactor = this.utilityService.getRandomSeededNumber(minRandomFactor, maxRandomFactor);
+    var leg1 = new RaceLeg();
+    leg1.courseType = randomizedCourseList[0];
+    leg1.distance = (Math.round((baseMeters * (factor ** i) * randomFactor) * .2));
+    leg1.terrain = this.getRandomTerrain(leg1.courseType, 'rainbowseedl1' + rainbowRank + i);
+    raceLegs.push(leg1);
+
+    var leg2 = new RaceLeg();
+    leg2.courseType = randomizedCourseList[1];
+    leg2.distance = (Math.round((baseMeters * (factor ** i) * randomFactor) * .2));
+    leg2.terrain = this.getRandomTerrain(leg2.courseType, 'rainbowseedl2' + rainbowRank + i);
+    raceLegs.push(leg2);
+    
+    var leg3 = new RaceLeg();
+    leg3.courseType = randomizedCourseList[2];
+    leg3.distance = (Math.round((baseMeters * (factor ** i) * randomFactor) * .2));
+    leg3.terrain = this.getRandomTerrain(leg3.courseType, 'rainbowseedl3' + rainbowRank + i);
+    raceLegs.push(leg3);
+    
+    var leg4 = new RaceLeg();
+    leg4.courseType = randomizedCourseList[3];
+    leg4.distance = (Math.round((baseMeters * (factor ** i) * randomFactor) * .2));
+    leg4.terrain = this.getRandomTerrain(leg4.courseType, 'rainbowseedl4' + rainbowRank + i);
+    raceLegs.push(leg4);
+
+    var leg5 = new RaceLeg();
+    leg5.courseType = randomizedCourseList[4];
+    leg5.distance = (Math.round((baseMeters * (factor ** i) * randomFactor) * .2));
+    leg5.terrain = this.getRandomTerrain(leg5.courseType, 'rainbowseedl5' + rainbowRank + i);
+    raceLegs.push(leg5);
+
+    var totalDistance = leg1.distance + leg2.distance + leg3.distance + leg4.distance + leg5.distance;
+
+    raceLegs.forEach(leg => {
+      leg.pathData = this.GenerateRaceLegPaths(leg, totalDistance);
+    });
+
+    this.globalVar.localRaces.push(new Race(raceLegs, rainbowRank, false, raceIndex, totalDistance, timeToComplete, this.GenerateRainbowRaceRewards(rainbowRank), LocalRaceTypeEnum.Rainbow));
+
+    raceIndex += 1;
   }
 
   GenerateRaceLegPaths(leg: RaceLeg, totalDistance: number): RacePath[] {
@@ -2009,7 +2079,7 @@ export class GlobalService {
       monkey.currentStats.power = 20000;
       monkey.currentStats.focus = 20000;
       monkey.currentStats.adaptability = 20000;
-      monkey.breedLevel = 20000;
+      monkey.breedLevel = 500;
       this.calculateAnimalRacingStats(monkey);
 
       //monkey.breedGaugeMax = 5;
@@ -2057,8 +2127,10 @@ export class GlobalService {
 
     var salamander = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Salamander);
     if (salamander !== undefined) {
-      salamander.currentStats.topSpeed = 25;
-      salamander.currentStats.acceleration = 8;
+      //salamander.currentStats.topSpeed = 480;
+      //salamander.currentStats.acceleration = 450;
+      //salamander.currentStats.focus = 450;
+      //salamander.breedLevel = 50;
       this.calculateAnimalRacingStats(salamander);
     }
   }

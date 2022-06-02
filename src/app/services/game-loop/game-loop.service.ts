@@ -7,7 +7,6 @@ declare var LZString: any;
   providedIn: 'root'
 })
 export class GameLoopService {
-  private last_timestamp = Date.now();
   lastPerformanceNow: number;
   deltaTime: number;
   gameUpdateEvent = new EventEmitter<number>();
@@ -15,7 +14,8 @@ export class GameLoopService {
   constructor(private globalService: GlobalService, private lookupService: LookupService) { }
 
   public Update(): void {
-    const deltaTime = (Date.now() - this.last_timestamp) / 1000;
+    var dateNow = Date.now();
+    const deltaTime = (dateNow - this.globalService.globalVar.lastTimeStamp) / 1000;
     this.deltaTime = deltaTime;
 
     var performanceNow = performance.now();
@@ -24,7 +24,7 @@ export class GameLoopService {
       //console.log(`Call to doSomething took ${performanceNow - this.lastPerformanceNow} milliseconds.`);
 
     this.gameUpdateEvent.emit(deltaTime);
-    this.last_timestamp = Date.now();
+    this.globalService.globalVar.lastTimeStamp = dateNow;
     this.lastPerformanceNow = performanceNow;
     //maybe switch this to setInterval if not working when tab isn't focused? setInterval should work fine
     window.requestAnimationFrame(() => this.Update());

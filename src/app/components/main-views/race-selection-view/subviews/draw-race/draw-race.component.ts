@@ -95,8 +95,7 @@ export class DrawRaceComponent implements OnInit {
       //clear canvas
       //var startTime = performance.now();
       context.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-      context.lineWidth = 6;
-      //context.lineCap = "round";
+      context.lineWidth = 6;      
 
       if (!this.pauseRace) {
         //keep up with current time
@@ -131,6 +130,8 @@ export class DrawRaceComponent implements OnInit {
       return;
 
     this.icyPatchBackgroundLines = [];
+    //track color
+    context.strokeStyle = "gray";
 
     context.globalCompositeOperation = "source-over";
 
@@ -150,6 +151,7 @@ export class DrawRaceComponent implements OnInit {
 
         leg.pathData.forEach(path => {
           if (leg.courseType === RaceCourseTypeEnum.Flatland) {
+            context.lineCap = "round";
             if (path.routeDesign === RaceDesignEnum.Regular)
               this.drawRegularFlatlandOverview(context, path, 1, 1);
             if (path.routeDesign === RaceDesignEnum.S)
@@ -158,6 +160,7 @@ export class DrawRaceComponent implements OnInit {
               this.drawBumpsFlatlandOverview(context, path, 1, 1);
           }
           else if (leg.courseType === RaceCourseTypeEnum.Mountain) {
+            context.lineCap = "round";
             var goingUp = this.getCurrentAnimalRacingCourse(this.lengthCompleted) !== RaceCourseTypeEnum.Mountain || mountainLegDistance < leg.distance * this.mountainClimbPercent;
             if (path.routeDesign === RaceDesignEnum.Regular) {
               this.drawRegularMountainOverview(context, path, 1, this.overviewYOffsetModifier, goingUp);
@@ -172,6 +175,7 @@ export class DrawRaceComponent implements OnInit {
             mountainLegDistance += path.length;
           }
           else if (leg.courseType === RaceCourseTypeEnum.Ocean) {
+            context.lineCap = "round";
             if (path.routeDesign === RaceDesignEnum.Regular)
               this.drawRegularWaterOverview(context, path, 1, 1, waterGoingUp);
             if (path.routeDesign === RaceDesignEnum.Waves)
@@ -182,6 +186,7 @@ export class DrawRaceComponent implements OnInit {
             waterGoingUp = !waterGoingUp;
           }
           if (leg.courseType === RaceCourseTypeEnum.Tundra) {
+            context.lineCap = "round";
             if (path.routeDesign === RaceDesignEnum.Regular)
               this.drawRegularTundraOverview(context, path, 1, 1);
             if (path.routeDesign === RaceDesignEnum.Cavern)
@@ -190,6 +195,7 @@ export class DrawRaceComponent implements OnInit {
               this.drawHillsTundraOverview(context, path, 1, 1);
           }
           if (leg.courseType === RaceCourseTypeEnum.Volcanic) {
+            context.lineCap = "round";
             this.backgroundVolcanoYStart = this.lastPathEndingY;
             if (path.routeDesign === RaceDesignEnum.Regular || path.routeDesign === RaceDesignEnum.FirstRegular || path.routeDesign === RaceDesignEnum.LastRegular)
               this.drawRegularVolcanoOverview(context, 0, pathCounter, path, leg.pathData.length, 1, 1);
@@ -215,8 +221,7 @@ export class DrawRaceComponent implements OnInit {
 
     if (raceFinished) {
       this.globalService.globalVar.userIsRacing = false;
-
-      //context.lineCap = "butt";
+      
       context.globalCompositeOperation = "source-atop";
 
       var secondsTaken = this.race.raceUI.distanceCoveredByFrame.length;
@@ -1485,7 +1490,6 @@ export class DrawRaceComponent implements OnInit {
     var volcanoStartY = this.canvasHeight * xRaceModeModifier;
     var volcanoEndY = this.backgroundVolcanoYStart - (volcanoYRadius * .75) + yDistanceOffset;    
 
-    //left side of volcano
     var volcanoBezier1X1 = volcanoStartX + (volcanoXLength * .15);
     var volcanoBezier1Y1 = volcanoStartY - (10 * yRaceModeModifier);
     var volcanoBezier1X2 = volcanoStartX + (volcanoXLength * .35);
@@ -1493,12 +1497,6 @@ export class DrawRaceComponent implements OnInit {
     var volcanoBezier1X3 = volcanoStartX + (volcanoXLength * .4);
     var volcanoBezier1Y3 = volcanoEndY;
 
-    context.beginPath();
-    context.moveTo(volcanoStartX, volcanoStartY);
-    context.bezierCurveTo(volcanoBezier1X1, volcanoBezier1Y1, volcanoBezier1X2, volcanoBezier1Y2, volcanoBezier1X3, volcanoBezier1Y3);
-    context.stroke();
-
-    //right side of volcano
     var volcanoBezier2X1 = volcanoEndX - (volcanoXLength * .15);
     var volcanoBezier2Y1 = volcanoStartY - (10 * yRaceModeModifier);
     var volcanoBezier2X2 = volcanoEndX - (volcanoXLength * .35);
@@ -1506,34 +1504,144 @@ export class DrawRaceComponent implements OnInit {
     var volcanoBezier2X3 = volcanoEndX - (volcanoXLength * .4);
     var volcanoBezier2Y3 = volcanoEndY;
 
+    //lava
+    var originalFillColor = context.fillStyle;
+    context.fillStyle = "orange";    
+
+    //lava top fill
+    //top of volcano
+    var volcanoBezier3X1 = volcanoBezier1X3 + ((volcanoBezier2X3 - volcanoBezier1X3) / 3);
+    var volcanoBezier3Y1 = volcanoEndY + volcanoYRadius/4;// + (20 * yRaceModeModifier);
+    var volcanoBezier3X2 = volcanoBezier1X3 + (2 * (volcanoBezier2X3 - volcanoBezier1X3) / 3);
+    var volcanoBezier3Y2 = volcanoEndY + volcanoYRadius/4;// + (20 * yRaceModeModifier);
+    var volcanoTopBezierX1 = volcanoBezier1X3 * .75;
+    var volcanoTopBezierY1 = volcanoBezier1Y3 + (volcanoYRadius / 2);
+    var volcanoTopBezierX2 = volcanoBezier2X3 * 1.25;
+    var volcanoTopBezierY2 = volcanoBezier1Y3 + (volcanoYRadius / 2);
+
+    var leftSideXEndingPoint = volcanoBezier1X3 - (volcanoXLength * .075);
+    var leftSideYEndingPoint = volcanoBezier1Y3 + volcanoYRadius/2;
+    var rightSideXEndingPoint = volcanoBezier2X3 + (volcanoXLength * .075);
+    var rightSideYEndingPoint = volcanoBezier2Y3 + volcanoYRadius/2;
+    var lavaFallXBezier1 = leftSideXEndingPoint + (1.7 * (rightSideXEndingPoint - leftSideXEndingPoint) / 5);
+    var lavaFallYBezier1 = leftSideYEndingPoint + 1.5*volcanoYRadius;
+    var lavaFallXBezier2 = leftSideXEndingPoint + (1.4 * (rightSideXEndingPoint - leftSideXEndingPoint) / 5);
+    var lavaFallYBezier2 = leftSideYEndingPoint - volcanoYRadius/2;
+    var xEndPointBezier1 = leftSideXEndingPoint + (2.5 * (rightSideXEndingPoint - leftSideXEndingPoint) / 5);
+    var yEndPointBezier1 = leftSideYEndingPoint;
+    var lavaFallXBezier3 = leftSideXEndingPoint + (3.6 * (rightSideXEndingPoint - leftSideXEndingPoint) / 5);
+    var lavaFallYBezier3 = leftSideYEndingPoint + volcanoYRadius;
+    var lavaFallXBezier4 = leftSideXEndingPoint + (3.3 * (rightSideXEndingPoint - leftSideXEndingPoint) / 5);
+    var lavaFallYBezier4 = leftSideYEndingPoint - .25 * volcanoYRadius;
+
+    context.beginPath();
+    //draw top curved part
+    context.moveTo(volcanoBezier1X3, volcanoBezier1Y3);
+    context.bezierCurveTo(volcanoBezier3X1, volcanoBezier3Y1, volcanoBezier3X2, volcanoBezier3Y2, volcanoBezier2X3, volcanoBezier2Y3);
+    
+    //draw straight sides
+    context.lineTo(rightSideXEndingPoint, rightSideYEndingPoint);
+
+    //draw bezier curves that looks like lava fall
+    context.moveTo(rightSideXEndingPoint, rightSideYEndingPoint);
+    context.bezierCurveTo(lavaFallXBezier3, lavaFallYBezier3, lavaFallXBezier4, lavaFallYBezier4, xEndPointBezier1, yEndPointBezier1);        
+    context.bezierCurveTo(lavaFallXBezier1, lavaFallYBezier1, lavaFallXBezier2, lavaFallYBezier2, leftSideXEndingPoint, leftSideYEndingPoint);    
+    
+    context.lineTo(volcanoBezier1X3, volcanoBezier1Y3);
+    context.fill();
+
+    var racerXOffset = 0;
+    if (xRaceModeModifier === 1) //overview mode
+    {    
+      currentFrame = this.race.raceUI.lavaFallPercentByFrame.length - 1;
+    }
+
+    //currentframe doesn't work because the array is only populated with volcano
+    var lavaFallPercentByFrame = this.race.raceUI.lavaFallPercentByFrame[currentFrame]; //array of values between 0-1 that represent how far lava has fallen
+    var legDistanceX = (legEndX - legStartX) * this.canvasXDistanceScale * xRaceModeModifier;
+    var volcanicLegStartX = legStartX * this.canvasXDistanceScale * xRaceModeModifier;
+    var lava1FallXDropPoint = volcanicLegStartX + (legDistanceX * .4) - xDistanceOffset + racerXOffset;
+    var lava2FallXDropPoint = volcanicLegStartX + (legDistanceX * .45) - xDistanceOffset + racerXOffset;
+    var lava3FallXDropPoint = volcanicLegStartX + (legDistanceX * .5) - xDistanceOffset + racerXOffset;
+    var lava4FallXDropPoint = volcanicLegStartX + (legDistanceX * .55) - xDistanceOffset + racerXOffset;
+    var lava5FallXDropPoint = volcanicLegStartX + (legDistanceX * .6) - xDistanceOffset + racerXOffset;
+    var lavaFallXOffset = (legEndX - legStartX) * .01 * this.canvasXDistanceScale * xRaceModeModifier;
+
+    var lavaFallYRadius = lavaFallXOffset / 2; 
+    var lavaFallYStart = volcanoEndY + volcanoYRadius/4;
+    var bottomOfPath = this.backgroundVolcanoYStart + volcanoYRadius + yDistanceOffset;
+
+    //lava drop 1
+    var lava1YAmountFallen = (bottomOfPath - lavaFallYStart) * lavaFallPercentByFrame[0];
+    context.beginPath();
+    context.ellipse(lava1FallXDropPoint, (lavaFallYStart + lava1YAmountFallen) - lavaFallYRadius, lavaFallXOffset, lavaFallYRadius, 0, 0, 1 * Math.PI);
+    context.fill();
+    context.beginPath();
+    context.fillRect(lava1FallXDropPoint - lavaFallXOffset, lavaFallYStart, lavaFallXOffset*2, lava1YAmountFallen - (lavaFallYRadius-1));
+    
+    //lava drop 2
+    var lava2YAmountFallen = (bottomOfPath - lavaFallYStart) * lavaFallPercentByFrame[1];
+    context.beginPath();
+    context.ellipse(lava2FallXDropPoint, (lavaFallYStart + lava2YAmountFallen) - lavaFallYRadius, lavaFallXOffset, lavaFallYRadius, 0, 0, 1 * Math.PI);
+    context.fill();
+    context.beginPath();
+    context.fillRect(lava2FallXDropPoint - lavaFallXOffset, lavaFallYStart, lavaFallXOffset*2, lava2YAmountFallen - (lavaFallYRadius-1));
+    
+    //lava drop 3
+    var lava3YAmountFallen = (bottomOfPath - lavaFallYStart) * lavaFallPercentByFrame[2];
+    context.beginPath();
+    context.ellipse(lava3FallXDropPoint, (lavaFallYStart + lava3YAmountFallen) - lavaFallYRadius, lavaFallXOffset, lavaFallYRadius, 0, 0, 1 * Math.PI);
+    context.fill();
+    context.beginPath();
+    context.fillRect(lava3FallXDropPoint - lavaFallXOffset, lavaFallYStart, lavaFallXOffset*2, lava3YAmountFallen - (lavaFallYRadius-1));
+    
+    //lava drop 4
+    var lava4YAmountFallen = (bottomOfPath - lavaFallYStart) * lavaFallPercentByFrame[3];
+    context.beginPath();
+    context.ellipse(lava4FallXDropPoint, (lavaFallYStart + lava4YAmountFallen) - lavaFallYRadius, lavaFallXOffset, lavaFallYRadius, 0, 0, 1 * Math.PI);
+    context.fill();
+    context.beginPath();
+    context.fillRect(lava4FallXDropPoint - lavaFallXOffset, lavaFallYStart, lavaFallXOffset*2, lava4YAmountFallen - (lavaFallYRadius-1));
+    
+    //lava drop 5
+    var lava5YAmountFallen = (bottomOfPath - lavaFallYStart) * lavaFallPercentByFrame[4];
+    context.beginPath();
+    context.ellipse(lava5FallXDropPoint, (lavaFallYStart + lava5YAmountFallen) - lavaFallYRadius, lavaFallXOffset, lavaFallYRadius, 0, 0, 1 * Math.PI);
+    context.fill();
+    context.beginPath();
+    context.fillRect(lava5FallXDropPoint - lavaFallXOffset, lavaFallYStart, lavaFallXOffset*2, lava5YAmountFallen - (lavaFallYRadius-1));
+    
+    context.fillStyle = originalFillColor;
+
+    //left side of volcano
+    context.beginPath();
+    context.moveTo(volcanoStartX, volcanoStartY);
+    context.bezierCurveTo(volcanoBezier1X1, volcanoBezier1Y1, volcanoBezier1X2, volcanoBezier1Y2, volcanoBezier1X3, volcanoBezier1Y3);
+    context.stroke();
+
+    //right side of volcano
     context.beginPath();
     context.moveTo(volcanoEndX, volcanoStartY);
     context.bezierCurveTo(volcanoBezier2X1, volcanoBezier2Y1, volcanoBezier2X2, volcanoBezier2Y2, volcanoBezier2X3, volcanoBezier2Y3);
     context.stroke();
 
-    //top of volcano
-    var volcanoBezier3X1 = volcanoBezier1X3 + ((volcanoBezier2X3 - volcanoBezier1X3) / 3);
-    var volcanoBezier3Y1 = volcanoEndY + (20 * yRaceModeModifier);
-    var volcanoBezier3X2 = volcanoBezier1X3 + (2 * (volcanoBezier2X3 - volcanoBezier1X3) / 3);
-    var volcanoBezier3Y2 = volcanoEndY + (20 * yRaceModeModifier);
-
-    context.beginPath();
-    context.moveTo(volcanoBezier1X3, volcanoBezier1Y3);
-    context.bezierCurveTo(volcanoBezier3X1, volcanoBezier3Y1, volcanoBezier3X2, volcanoBezier3Y2, volcanoBezier2X3, volcanoBezier2Y3);
-    context.stroke();
-
     var originalLineWidth = context.lineWidth;
     context.lineWidth = 2;
 
-    //temporarily hide this to make the lava stuff easier to see
-    /*//quarter 1 of volcano
+    //quarter 1 of volcano
     var xQuarterOffset = (70 / 4) / 100;
-    var volcanoBezier4X1 = volcanoStartX + (volcanoXLength * (xQuarterOffset + .025));
-    var volcanoBezier4Y1 = volcanoStartY * .95 - (5 * yRaceModeModifier);
+    /*var volcanoBezier4X1 = volcanoStartX + (volcanoXLength * (xQuarterOffset + .025));
+    var volcanoBezier4Y1 = volcanoStartY * .9;
     var volcanoBezier4X2 = volcanoStartX + (volcanoXLength * (xQuarterOffset + .2));
-    var volcanoBezier4Y2 = volcanoEndY * 1.1 + (20 * yRaceModeModifier);
+    var volcanoBezier4Y2 = volcanoEndY * 1.2;
     var volcanoBezier4X3 = volcanoStartX + (volcanoXLength * (xQuarterOffset + .25));
-    var volcanoBezier4Y3 = volcanoEndY * 1.1;
+    var volcanoBezier4Y3 = volcanoEndY * 1.15;*/
+    var volcanoBezier4X1 = volcanoStartX + (volcanoXLength * (xQuarterOffset + .025));
+    var volcanoBezier4Y1 = volcanoStartY - (volcanoYRadius/4);
+    var volcanoBezier4X2 = volcanoStartX + (volcanoXLength * (xQuarterOffset + .2));
+    var volcanoBezier4Y2 = volcanoEndY + (volcanoYRadius/3);
+    var volcanoBezier4X3 = volcanoStartX + (volcanoXLength * (xQuarterOffset + .25));
+    var volcanoBezier4Y3 = volcanoEndY + (volcanoYRadius/4);
 
     context.beginPath();
     context.moveTo(volcanoStartX + (volcanoXLength * xQuarterOffset), volcanoStartY * .95);
@@ -1543,11 +1651,11 @@ export class DrawRaceComponent implements OnInit {
     //quarter 2 of volcano
     xQuarterOffset = (70 / 2) / 100;
     var volcanoBezier5X1 = volcanoStartX + (volcanoXLength * (xQuarterOffset + .025));
-    var volcanoBezier5Y1 = volcanoStartY * .95 - (5 * yRaceModeModifier);
+    var volcanoBezier5Y1 = volcanoStartY - (volcanoYRadius/4);
     var volcanoBezier5X2 = volcanoStartX + (volcanoXLength * (xQuarterOffset + .075));
-    var volcanoBezier5Y2 = volcanoEndY * 1.2 + (20 * yRaceModeModifier);
+    var volcanoBezier5Y2 = volcanoEndY + (volcanoYRadius/2);
     var volcanoBezier5X3 = volcanoStartX + (volcanoXLength * (xQuarterOffset + .1));
-    var volcanoBezier5Y3 = volcanoEndY * 1.2;
+    var volcanoBezier5Y3 = volcanoEndY + (volcanoYRadius/3);
 
     context.beginPath();
     context.moveTo(volcanoStartX + (volcanoXLength * xQuarterOffset), volcanoStartY * .95);
@@ -1558,11 +1666,11 @@ export class DrawRaceComponent implements OnInit {
     //quarter 3 of volcano
     xQuarterOffset = (70 / 2) / 100;
     var volcanoBezier6X1 = volcanoEndX - (volcanoXLength * (xQuarterOffset + .025));
-    var volcanoBezier6Y1 = volcanoStartY * .95 - (5 * yRaceModeModifier);
+    var volcanoBezier6Y1 = volcanoStartY - (volcanoYRadius/4);
     var volcanoBezier6X2 = volcanoEndX - (volcanoXLength * (xQuarterOffset + .075));
-    var volcanoBezier6Y2 = volcanoEndY * 1.2 + (20 * yRaceModeModifier);
+    var volcanoBezier6Y2 = volcanoEndY + (volcanoYRadius/2);
     var volcanoBezier6X3 = volcanoEndX - (volcanoXLength * (xQuarterOffset + .1));
-    var volcanoBezier6Y3 = volcanoEndY * 1.2;
+    var volcanoBezier6Y3 = volcanoEndY + (volcanoYRadius/3);
 
     context.beginPath();
     context.moveTo(volcanoEndX - (volcanoXLength * xQuarterOffset), volcanoStartY * .95);
@@ -1572,110 +1680,18 @@ export class DrawRaceComponent implements OnInit {
     //quarter 4 of volcano
     xQuarterOffset = (70 / 4) / 100;
     var volcanoBezier7X1 = volcanoEndX - (volcanoXLength * (xQuarterOffset + .025));
-    var volcanoBezier7Y1 = volcanoStartY * .95 - (5 * yRaceModeModifier);
+    var volcanoBezier7Y1 = volcanoStartY - (volcanoYRadius/4);
     var volcanoBezier7X2 = volcanoEndX - (volcanoXLength * (xQuarterOffset + .2));
-    var volcanoBezier7Y2 = volcanoEndY * 1.1 + (20 * yRaceModeModifier);
+    var volcanoBezier7Y2 = volcanoEndY + (volcanoYRadius/3);
     var volcanoBezier7X3 = volcanoEndX - (volcanoXLength * (xQuarterOffset + .25));
-    var volcanoBezier7Y3 = volcanoEndY * 1.1;
+    var volcanoBezier7Y3 = volcanoEndY + (volcanoYRadius/4);
 
     context.beginPath();
     context.moveTo(volcanoEndX - (volcanoXLength * xQuarterOffset), volcanoStartY * .95);
     context.bezierCurveTo(volcanoBezier7X1, volcanoBezier7Y1, volcanoBezier7X2, volcanoBezier7Y2, volcanoBezier7X3, volcanoBezier7Y3);
-    context.stroke();*/
-
-    var lavaFallPercent = [.4, .45, .475, .525, .55, .6];
-    var originalFillColor = context.fillStyle;
-    context.fillStyle = "orange";
-
-    //lava top fill
-    var volcanoTopBezierX1 = volcanoBezier1X3 * .95;
-    var volcanoTopBezierY1 = volcanoBezier1Y3 + (volcanoYRadius / 2);
-    var volcanoTopBezierX2 = volcanoBezier2X3 * 1.05;
-    var volcanoTopBezierY2 = volcanoBezier1Y3 + (volcanoYRadius / 2);
-
-    context.beginPath();
-    context.moveTo(volcanoBezier1X3, volcanoBezier1Y3);
-    context.bezierCurveTo(volcanoTopBezierX1, volcanoTopBezierY1, volcanoTopBezierX2, volcanoTopBezierY2, volcanoBezier2X3, volcanoBezier2Y3);
-    context.moveTo(volcanoBezier2X3, volcanoBezier2Y3);
-    context.lineTo(volcanoBezier1X3, volcanoBezier1Y3);
-    context.fill();
-
-    if (xRaceModeModifier === 1) //overview mode
-      currentFrame = this.race.raceUI.lavaFallPercentByFrame.length - 1;
-    var lavaFallPercentByFrame = this.race.raceUI.lavaFallPercentByFrame[currentFrame]; //array of values between 0-1 that represent how far lava has fallen
-    var legDistanceX = (legEndX - legStartX) * this.canvasXDistanceScale * xRaceModeModifier;
-    var volcanicLegStartX = legStartX * this.canvasXDistanceScale * xRaceModeModifier;
-    var lava1FallXDropPoint = volcanicLegStartX + (legDistanceX * .4)  - xDistanceOffset;
-    var lava2FallXDropPoint = ((legEndX - legStartX) * .45);
-    var lava3FallXDropPoint = ((legEndX - legStartX) * .5);
-    var lava4FallXDropPoint = ((legEndX - legStartX) * .55);
-    var lava5FallXDropPoint = volcanicLegStartX + (legDistanceX * .6) - xDistanceOffset;
-    var lavaFallXOffset = (legEndX - legStartX) * .005 * this.canvasXDistanceScale * xRaceModeModifier;
-    
-    var bottomOfPath = this.backgroundVolcanoYStart + volcanoYRadius + yDistanceOffset;
-    context.moveTo(0, bottomOfPath);        
-    context.lineTo(100000, bottomOfPath);
-    context.stroke();
-
-    console.log(lavaFallPercentByFrame[0] + " " + lavaFallPercentByFrame[4]);
-    //lava drop 1
-    //console.log(lava1FallXDropPoint - lavaFallXOffset + ", " + volcanoEndY)
-    //this is making a diagonal line
-    var lava1YAmountFallen = (bottomOfPath - volcanoEndY) * lavaFallPercentByFrame[0];
-    context.moveTo(lava1FallXDropPoint - lavaFallXOffset, volcanoEndY); //top of volcano = volcanoEndY        
-    context.lineTo(lava1FallXDropPoint + lavaFallXOffset, volcanoEndY + lava1YAmountFallen);
-    context.stroke();
-
-    //lava drop 2
-
-    //lava drop 5
-    var lava5YAmountFallen = (bottomOfPath - volcanoEndY) * lavaFallPercentByFrame[4];
-    context.moveTo(lava5FallXDropPoint - lavaFallXOffset, volcanoEndY); //top of volcano = volcanoEndY        
-    context.lineTo(lava5FallXDropPoint + lavaFallXOffset, volcanoEndY + lava5YAmountFallen);
-    context.stroke();
-
-    /*//lava drop 1
-    var drop1XBeginningStart = volcanoStartX + (volcanoXLength * .4);
-    var drop1XBeginningEnd = volcanoStartX + (volcanoXLength * (xQuarterOffset + .25));
-    var drop1YBeginningStart = volcanoEndY;
-    console.log(volcanoStartX + " " + volcanoXLength);
-
-    //var volcanoXOffset = .10 * (legEndX - legStartX);
-    //var volcanoStartX = (legStartX + volcanoXOffset) * this.canvasXDistanceScale * xRaceModeModifier - xDistanceOffset;
-    //need to account for racer timing, should be able to just multiply by a factor 
-    var drop1XFinishStart = volcanoStartX;
-    var drop1XFinishEnd = volcanoStartX + (volcanoXLength * xQuarterOffset);
-    var drop1YPath = (this.volcanoYEndPosition + volcanoYRadius) * 1.25;
-    var drop1YEnd = this.canvasHeight * 1.3 * xRaceModeModifier;
-
-    context.beginPath();
-    context.moveTo(drop1XBeginningStart, drop1YBeginningStart);
-    context.bezierCurveTo(drop1XFinishStart, drop1YPath, drop1XFinishEnd, drop1YPath, drop1XBeginningEnd, drop1YBeginningStart);
-    context.moveTo(drop1XBeginningEnd, drop1YBeginningStart);
-    context.lineTo(drop1XBeginningStart, drop1YBeginningStart);
-    context.fill();
-
-    //lava drop 2
-    var drop2XBeginningStart = volcanoStartX + (volcanoXLength * (xQuarterOffset + .25));
-    var drop2XBeginningEnd = volcanoStartX + (volcanoXLength * (xQuarterOffset + .325)); //.425
-    var drop2YBeginningStart = volcanoEndY;
-
-    //need to account for racer timing, should be able to just multiply by a factor 
-    var drop2XFinishStart = volcanoStartX + (volcanoXLength * xQuarterOffset - .225);
-    var drop2XFinishEnd = volcanoStartX + (volcanoXLength * (xQuarterOffset));
-    var drop2YPath = (this.volcanoYEndPosition + volcanoYRadius) * 1.3;
-    var drop2YEnd = this.canvasHeight * 1.3 * xRaceModeModifier;    
-
-    context.beginPath();
-    context.moveTo(drop2XBeginningStart, drop2YBeginningStart);
-    context.bezierCurveTo(volcanoStartX + (volcanoXLength * ((70 / 4) / 100)), drop2YPath, volcanoStartX + (volcanoXLength * ((70 / 2) / 100)), drop2YPath, drop2XBeginningEnd, drop2YBeginningStart);
-    context.moveTo(drop2XBeginningEnd, drop2YBeginningStart);
-    context.lineTo(drop2XBeginningStart, drop2YBeginningStart);
-    context.fill();*/
-
+    context.stroke();    
 
     context.lineWidth = originalLineWidth;
-    context.fillStyle = originalFillColor;
   }
 
   ngOnDestroy() {
