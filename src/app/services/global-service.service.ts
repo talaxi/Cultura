@@ -151,7 +151,7 @@ export class GlobalService {
     var baseMaxSpeedModifier = .3;
     var baseAccelerationModifier = .1;
     var baseStaminaModifier = 7.5;
-    var basePowerModifier = .5;
+    var basePowerModifier = 1;
     var baseFocusModifier = 5;
     var baseAdaptabilityModifier = 5;
 
