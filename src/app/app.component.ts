@@ -50,9 +50,8 @@ export class AppComponent {
       this.globalService.devModeInitialize(80);
     }
 
-    this.gameLoopService.Update();
-
     var subscription = this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {
+      //console.log("GameCheckup: " + deltaTime);
       this.gameCheckup(deltaTime);
       this.saveTime += deltaTime;
 
@@ -66,6 +65,8 @@ export class AppComponent {
         this.saveGame();
       }
     });
+
+    this.gameLoopService.Update();
   }
 
   public gameCheckup(deltaTime: number): void {
