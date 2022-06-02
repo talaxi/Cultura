@@ -14,8 +14,9 @@ export class GameLoopService {
   constructor(private globalService: GlobalService, private lookupService: LookupService) { }
 
   public Update(): void {
-    var dateNow = Date.now();
+    var dateNow = Date.now();    
     const deltaTime = (dateNow - this.globalService.globalVar.lastTimeStamp) / 1000;
+    alert(deltaTime);
     this.deltaTime = deltaTime;
 
     var performanceNow = performance.now();
