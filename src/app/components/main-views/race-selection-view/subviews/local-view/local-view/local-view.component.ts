@@ -47,7 +47,9 @@ export class LocalViewComponent implements OnInit {
     if (nextRainbowRace !== undefined)
       this.availableRainbowRace = nextRainbowRace;
 
-    this.createLocalRaces();
+    this.availableLocalRaces.push(this.globalService.generateFreeRace());
+    this.availableLocalRaces.push(this.globalService.generateFreeRace());
+    this.availableLocalRaces.push(this.globalService.generateFreeRace());
 
     this.areMonoRacesAvailable = this.lookupService.isItemUnlocked("monoRace");
     this.areDuoRacesAvailable = this.lookupService.isItemUnlocked("duoRace");
@@ -138,9 +140,8 @@ export class LocalViewComponent implements OnInit {
     }
   }
 
-  createLocalRaces() {
-    var numericalRank = this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.circuitRank);
-    var raceIndex = 1;
+  /*createLocalRaces() {
+    var numericalRank = this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.circuitRank);    
     var timeToComplete = 60;
     var legLengthCutoff = timeToComplete / 4; //a leg cannot be any shorter than this as a percentage
 
@@ -150,8 +151,8 @@ export class LocalViewComponent implements OnInit {
     var maxRandomFactor = 1.05;
     var minRandomFactor = 0.8;
 
-    var legMinimumDistance = 30; //as a percentage of 100
-    var legMaximumDistance = 80; //as a percentage of 100
+    var legMinimumDistance = 10; //as a percentage of 100
+    var legMaximumDistance = 90; //as a percentage of 100
 
 
     var localRaces = 3;
@@ -290,7 +291,7 @@ export class LocalViewComponent implements OnInit {
       this.availableLocalRaces.push(new Race(raceLegs, this.globalService.globalVar.circuitRank, false,
         1, totalDistance, timeToComplete, this.globalService.GenerateLocalRaceRewards(this.globalService.globalVar.circuitRank), LocalRaceTypeEnum.Free));
     }
-  }
+  }*/
 
   ngOnDestroy() {    
     if (this.subscription !== null && this.subscription !== undefined) {

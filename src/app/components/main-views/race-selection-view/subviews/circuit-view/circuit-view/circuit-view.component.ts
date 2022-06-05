@@ -40,6 +40,9 @@ export class CircuitViewComponent implements OnInit {
         canRace = false;
     });
 
+    if (race.isCompleted)
+      canRace = false;
+
     if (canRace) {
       /* bubble back up to race selection with the chosen race, over there show the race occur */
       this.raceSelected.emit(race);

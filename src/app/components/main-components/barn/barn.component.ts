@@ -69,8 +69,10 @@ export class BarnComponent implements OnInit {
         else {
           //UI updates          
           if (associatedAnimal.currentTraining === undefined || associatedAnimal.currentTraining === null)
+          {
+            this.trainingProgressBarPercent = 0;
             return;
-          
+          }
           if (associatedAnimal.currentTraining.timeTrained < this.previousTrainedAmount) {            
             this.trainingCompleteText = this.lookupService.getTrainingProgressionAnimationText(associatedAnimal.currentTraining);
             this.showTrainingAnimation = true;

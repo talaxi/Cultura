@@ -17,6 +17,7 @@ export class Terrain {
         var minorDetriment = .8;
         var majorDetriment = .5;
         var minorImprovement = 1.2;
+        var majorImprovement = 1.5;
         var staminaIncrease = 0.04;
         var staminaDecrease = -0.04;
 
@@ -33,7 +34,7 @@ export class Terrain {
             //increase stamina loss due to heat
             if (terrainType === TerrainTypeEnum.Sunny)
             {
-                this.staminaModifier = staminaIncrease;
+                this.staminaModifier = majorImprovement;
                 this.maxSpeedModifier = minorImprovement;                
             }
 
@@ -67,14 +68,14 @@ export class Terrain {
 
             if (terrainType === TerrainTypeEnum.Ashfall)
             {
-                this.staminaModifier = staminaIncrease;
+                this.staminaModifier = minorImprovement;
                 this.accelerationModifier = minorDetriment;
                 this.powerModifier = minorDetriment;
             }
 
             if (terrainType === TerrainTypeEnum.Snowfall)
             {
-                this.staminaModifier = staminaDecrease;
+                this.staminaModifier = minorDetriment;
                 this.maxSpeedModifier = minorDetriment;
                 this.accelerationModifier = minorDetriment;
             }

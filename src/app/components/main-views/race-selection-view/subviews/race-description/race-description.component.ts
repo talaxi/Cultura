@@ -37,6 +37,9 @@ export class RaceDescriptionComponent implements OnInit {
       }
     });
 
+    if (!this.cannotRace && this.race.isCompleted)
+      this.cannotRace = true;      
+
     if (this.cannotRace)
       this.popoverText = this.getErrorPopoverText();
     else
@@ -83,6 +86,9 @@ export class RaceDescriptionComponent implements OnInit {
     this.missingRacers.forEach(racer => {
       popoverText += "-Missing " + RaceCourseTypeEnum[racer] + " racer\n";
     });
+
+    if (this.race.isCompleted)
+      popoverText += "-You've already completed this race.";
 
     return popoverText;
   }

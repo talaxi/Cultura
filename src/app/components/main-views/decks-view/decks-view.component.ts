@@ -18,6 +18,7 @@ export class DecksViewComponent implements OnInit {
   raceCourseTypeList: string[];
   possibleAnimalsList: string[];
   selectedDeck: AnimalDeck;
+  showAutoRaceButton: boolean;
   newAnimalList: Animal[];
   selectedAnimalName: string;
   selectedCourseType: string;
@@ -39,7 +40,7 @@ export class DecksViewComponent implements OnInit {
     this.animalDecks = this.globalService.globalVar.animalDecks;
     this.raceCourseTypeList = this.lookupService.getAllRaceCourseTypes();
     var scouts = this.lookupService.getResourceByName("Scouts");
-    if (scouts !== undefined && scouts !== null && scouts > 0) {      
+    if (scouts !== undefined && scouts !== null && scouts > 0) {
       this.displayRaceOrder = true;
     }
     this.selectedDeckOrder = [];
@@ -47,31 +48,39 @@ export class DecksViewComponent implements OnInit {
     this.selectedDeckOrder.push("Mountain");
     this.selectedDeckOrder.push("Ocean");
     this.selectedDeckOrder.push("Tundra");
-    this.selectedDeckOrder.push("Volcanic");    
+    this.selectedDeckOrder.push("Volcanic");
+
+    var teamManager = this.lookupService.getResourceByName("Team Manager");
+    if (teamManager === undefined || teamManager === null)
+      teamManager = 0;
+
+    if (teamManager > 0)
+      this.showAutoRaceButton = true;
+    else
+      this.showAutoRaceButton = false;
   }
 
   editDeck(content: any, deck: AnimalDeck) {
     this.selectedDeck = deck;
     this.newAnimalList = [];
     this.selectedAnimalName = "";
-    this.selectedCourseType = "Flatland";  
-    
+    this.selectedCourseType = "Flatland";
+
     this.isRaceOrderOn = deck.isCourseOrderActive;
-    
-    if (deck.courseTypeOrder !== null && deck.courseTypeOrder !== undefined && deck.courseTypeOrder.length > 0)
-    {
+
+    if (deck.courseTypeOrder !== null && deck.courseTypeOrder !== undefined && deck.courseTypeOrder.length > 0) {
       this.selectedDeckOrder = [];
       deck.courseTypeOrder.forEach(item => {
         if (item === RaceCourseTypeEnum.Flatland)
-        this.selectedDeckOrder.push("Flatland");
+          this.selectedDeckOrder.push("Flatland");
         if (item === RaceCourseTypeEnum.Mountain)
-        this.selectedDeckOrder.push("Mountain");
+          this.selectedDeckOrder.push("Mountain");
         if (item === RaceCourseTypeEnum.Ocean)
-        this.selectedDeckOrder.push("Ocean");
+          this.selectedDeckOrder.push("Ocean");
         if (item === RaceCourseTypeEnum.Tundra)
-        this.selectedDeckOrder.push("Tundra");
+          this.selectedDeckOrder.push("Tundra");
         if (item === RaceCourseTypeEnum.Volcanic)
-        this.selectedDeckOrder.push("Volcanic");
+          this.selectedDeckOrder.push("Volcanic");
       });
     }
 
@@ -191,10 +200,22 @@ export class DecksViewComponent implements OnInit {
     var selectedDeck = this.globalService.globalVar.animalDecks.find(item => item.deckNumber === deck.deckNumber);
 
     if (selectedDeck !== undefined && selectedDeck !== null) {
-      selectedDeck.isPrimaryDeck = true;
-
       if (existingPrimaryDeck !== undefined && existingPrimaryDeck !== null)
         existingPrimaryDeck.isPrimaryDeck = false;
+
+      selectedDeck.isPrimaryDeck = true;
+    }
+  }
+
+  setAsAutoRunFreeRace(deck: AnimalDeck) {
+    var existingAutoRunFreeRace = this.globalService.globalVar.animalDecks.find(item => item.autoRunFreeRace);
+    var selectedDeck = this.globalService.globalVar.animalDecks.find(item => item.deckNumber === deck.deckNumber);
+
+    if (selectedDeck !== undefined && selectedDeck !== null) {
+      if (existingAutoRunFreeRace !== undefined && existingAutoRunFreeRace !== null)
+        existingAutoRunFreeRace.autoRunFreeRace = false;
+
+      selectedDeck.autoRunFreeRace = true;
     }
   }
 
@@ -223,9 +244,9 @@ export class DecksViewComponent implements OnInit {
 
     var targetItem = this.selectedDeckOrder.indexOf(targetEventHtml);
     var sourceItem = this.selectedDeckOrder.indexOf(dataElement?.innerHTML);
-    
+
     this.selectedDeckOrder[targetItem] = dataElement.innerHTML;
-    this.selectedDeckOrder[sourceItem] = targetEventHtml;    
+    this.selectedDeckOrder[sourceItem] = targetEventHtml;
 
     event.target.innerHTML = "";
     event.target.className = targetClass;
@@ -241,14 +262,14 @@ export class DecksViewComponent implements OnInit {
     this.selectedDeck.isCourseOrderActive = this.isRaceOrderOn;
   }
 
-  getColorClass(courseTypeName: string) {    
-      var colorConditional = {
-        'flatlandColor': courseTypeName === 'Flatland',
-        'mountainColor': courseTypeName === 'Mountain',
-        'waterColor': courseTypeName === 'Ocean',
-        'tundraColor': courseTypeName === 'Tundra',
-        'volcanicColor': courseTypeName === 'Volcanic'
-      };
-      return colorConditional;    
+  getColorClass(courseTypeName: string) {
+    var colorConditional = {
+      'flatlandColor': courseTypeName === 'Flatland',
+      'mountainColor': courseTypeName === 'Mountain',
+      'waterColor': courseTypeName === 'Ocean',
+      'tundraColor': courseTypeName === 'Tundra',
+      'volcanicColor': courseTypeName === 'Volcanic'
+    };
+    return colorConditional;
   }
 }

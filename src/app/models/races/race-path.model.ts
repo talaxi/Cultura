@@ -30,7 +30,7 @@ export class RacePath {
     setStumbleFields() {
         this.currentStumbleOpportunity = 0;
 
-        if (this.routeDesign === RaceDesignEnum.Regular || this.routeDesign === RaceDesignEnum.FirstRegular || this.routeDesign === RaceDesignEnum.LastRegular) {
+        if (this.routeDesign === RaceDesignEnum.Regular) {
             this.stumbleSeverity = StumbleSeverityEnum.None;
             this.frequencyOfStumble = 0;
             this.stumbleOpportunities = 0;
@@ -83,6 +83,18 @@ export class RacePath {
             this.frequencyOfStumble = 120;
             this.stumbleOpportunities = 3;
             this.frequencyOfDrift = 250;
+        }
+        if (this.routeDesign === RaceDesignEnum.FirstRegular || this.routeDesign === RaceDesignEnum.LastRegular) {
+            this.isSpecialPath = true;
+            this.stumbleSeverity = StumbleSeverityEnum.Medium;
+            this.frequencyOfStumble = 100;
+            this.stumbleOpportunities = 4;
+        }
+        if (this.routeDesign === RaceDesignEnum.SteppingStones) {
+            this.isSpecialPath = true;
+            this.stumbleSeverity = StumbleSeverityEnum.High;
+            this.frequencyOfStumble = 60;
+            this.stumbleOpportunities = 10;
         }
     }
 }

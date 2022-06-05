@@ -199,6 +199,8 @@ export class DrawRaceComponent implements OnInit {
             this.backgroundVolcanoYStart = this.lastPathEndingY;
             if (path.routeDesign === RaceDesignEnum.Regular || path.routeDesign === RaceDesignEnum.FirstRegular || path.routeDesign === RaceDesignEnum.LastRegular)
               this.drawRegularVolcanoOverview(context, 0, pathCounter, path, leg.pathData.length, 1, 1);
+            if (path.routeDesign === RaceDesignEnum.SteppingStones)
+              this.drawSteppingStonesVolcanoOverview(context, 0, pathCounter, path, leg.pathData.length, 1, 1);
           }
 
           this.lengthCompleted += path.length;
@@ -486,9 +488,11 @@ export class DrawRaceComponent implements OnInit {
           if (leg.courseType === RaceCourseTypeEnum.Volcanic) {
             context.lineCap = "round";
             this.backgroundVolcanoYStart = this.lastPathEndingY;
-            //if (path.routeDesign === RaceDesignEnum.Regular || path.routeDesign === RaceDesignEnum.FirstRegular || path.routeDesign === RaceDesignEnum.LastRegular)
-            this.drawRegularVolcanoOverview(context, 0, pathCounter, path, leg.pathData.length, xRaceModeModifier, yRaceModeModifier, xDistanceOffset, yDistanceOffset);
-          }//this.volcanoYOffset for the 0
+            if (path.routeDesign === RaceDesignEnum.Regular || path.routeDesign === RaceDesignEnum.FirstRegular || path.routeDesign === RaceDesignEnum.LastRegular)
+              this.drawRegularVolcanoOverview(context, 0, pathCounter, path, leg.pathData.length, xRaceModeModifier, yRaceModeModifier, xDistanceOffset, yDistanceOffset);
+            if (path.routeDesign === RaceDesignEnum.SteppingStones)
+              this.drawSteppingStonesVolcanoOverview(context, 0, pathCounter, path, leg.pathData.length, xRaceModeModifier, yRaceModeModifier, xDistanceOffset, yDistanceOffset);
+          }
 
           pathCounter += 1;
           this.lengthCompleted += path.length;
@@ -1465,6 +1469,75 @@ export class DrawRaceComponent implements OnInit {
     context.ellipse(xCenterOfOval, yCenterOfOval, radiusOfOvalX, radiusOfOvalY, rotationOfOval, this.volcanoStartingAngle * (Math.PI / 180), endingAngle * (Math.PI / 180), true);
     context.stroke();
     //}
+
+    this.lastPathEndingX = this.lastPathEndingX + horizontalLength;
+    this.volcanoStartingAngle = endingAngle;
+  }
+
+  //ellipse is rotated so X handles Y and Y handles X
+  drawSteppingStonesVolcanoOverview(context: any, volcanicYOffset: number, pathCounter: number, path: RacePath, numberOfPaths: number, xRaceModeModifier: number, yRaceModeModifier: number, xDistanceOffset?: number, yDistanceOffset?: number) {
+    var horizontalLength = (path.length / this.race.length) * this.canvasWidth * xRaceModeModifier;
+    var verticalLength = (path.length / this.race.length) * this.canvasWidth * yRaceModeModifier;
+
+    if (xDistanceOffset === undefined || xDistanceOffset === null)
+      xDistanceOffset = 0;
+
+    if (yDistanceOffset === undefined || yDistanceOffset === null)
+      yDistanceOffset = 0;
+
+    var xCenterOfOvalOffset = horizontalLength * (pathCounter);
+    var xRegularOffset = horizontalLength / xRaceModeModifier;    
+    volcanicYOffset = 0;
+
+    var startingX = this.lastPathEndingX - xDistanceOffset;
+    var startingY = this.lastPathEndingY + volcanicYOffset + yDistanceOffset;
+    var xCenterOfOval = startingX - (xCenterOfOvalOffset) + ((horizontalLength * numberOfPaths) / 2);
+    var yCenterOfOval = startingY;
+    var radiusOfOvalX = (horizontalLength * numberOfPaths) / this.volcanoRadiusXModifier;    
+    var radiusOfOvalY = ((horizontalLength * numberOfPaths) / 2) - xRegularOffset;
+    var rotationOfOval = Math.PI / 2;
+    var baselineStartingAngle = 90; //go from 90 to 270
+    var baselineEndingAngle = 270;
+    var anglePerPath = (baselineEndingAngle - baselineStartingAngle) / numberOfPaths;
+    var endingAngle = 0;    
+
+    var steppingStoneAngle = anglePerPath / 20;
+
+    //var alternatingOffset = false;
+    for (var i = 0; i < 10; i++)
+    {      
+      //var offsetXDistance = .01; 
+      //var offsetYDistance = .01;
+
+      var startingAngle = this.volcanoStartingAngle - (steppingStoneAngle * (2 * i));
+      if (startingAngle < 0)
+        startingAngle = 360 - Math.abs(startingAngle);
+
+      endingAngle = startingAngle - steppingStoneAngle;
+      if (endingAngle < 0)
+        endingAngle = 360 - Math.abs(endingAngle);
+        
+/*      var distanceFromZero = 0;
+      if (startingAngle >= 270)
+        distanceFromZero = 360 - startingAngle;
+      else
+        distanceFromZero = startingAngle;
+
+      offsetXDistance += distanceFromZero / 5000;
+
+      offsetXDistance = alternatingOffset ? offsetXDistance : -offsetXDistance; 
+      offsetYDistance = alternatingOffset ? offsetYDistance : -offsetYDistance; 
+      alternatingOffset = !alternatingOffset;*/
+
+      //console.log("Radius: " + radiusOfOvalX + " Offset: " + offsetDistance + " Total: " + (radiusOfOvalX + offsetDistance));
+      context.beginPath();
+      context.ellipse(xCenterOfOval, yCenterOfOval, radiusOfOvalX, radiusOfOvalY, rotationOfOval, startingAngle * (Math.PI / 180), endingAngle * (Math.PI / 180), true);
+      context.stroke();    
+    }
+
+    var endingAngle = this.volcanoStartingAngle - anglePerPath;
+    if (endingAngle < 0)
+      endingAngle = 360 - Math.abs(endingAngle);
 
     this.lastPathEndingX = this.lastPathEndingX + horizontalLength;
     this.volcanoStartingAngle = endingAngle;

@@ -196,6 +196,11 @@ button:active:enabled {
   color: #28a745;
 }
 
+.miniHr {
+  width: 80%;
+  opacity: .75;
+}
+
 .flatlandColor {
   color: var(--flatlandColor);
   /*#eb3023;   */

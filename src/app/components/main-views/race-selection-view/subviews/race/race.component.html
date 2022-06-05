@@ -12,7 +12,7 @@
                     [pause]="pauseRace.asObservable()">
                 </app-draw-race>
             </div>
-            <div class="raceUpdates" [innerHTML]="incrementalRaceUpdates.trim()">
+            <div class="raceUpdates" #scrollMe [scrollTop]="scrollMe.scrollHeight" [innerHTML]="incrementalRaceUpdates.trim()">
             </div>
         </div>
     </div>
@@ -22,7 +22,7 @@
             <div><button (click)="skipRaceAnimation()">Skip</button></div>
             <div><button (click)="pauseRaceAnimation()">Pause</button></div>
         </div>
-        <div class="raceUpdates onlyText" [innerHTML]="incrementalRaceUpdates.trim()">
+        <div class="raceUpdates onlyText" #scrollMe [scrollTop]="scrollMe.scrollHeight" [innerHTML]="incrementalRaceUpdates.trim()">
         </div>
     </div>
     <div class="oneDisplayValue" *ngIf="displayVisualRace && !displayTextUpdates">

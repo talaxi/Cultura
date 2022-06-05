@@ -4,5 +4,7 @@ export enum ShopItemTypeEnum {
     Training,
     Ability,
     Specialty,
-    Equipment
+    Equipment,
+    Resources,
+    Progression
   }

@@ -8,6 +8,7 @@ import { AnimalStats } from './models/animals/animal-stats.model';
 import { BarnSpecializationEnum } from './models/barn-specialization-enum.model';
 import { SpecializationService } from './services/specialization.service';
 import { ThemeService } from './theme/theme.service';
+import { RaceLogicService } from './services/race-logic/race-logic.service';
 declare var LZString: any;
 
 @Component({
@@ -23,7 +24,7 @@ export class AppComponent {
   racingSaveFrequency = 120; // in seconds
 
   constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private lookupService: LookupService,
-    private specializationService: SpecializationService, private themeService: ThemeService) {
+    private specializationService: SpecializationService, private themeService: ThemeService, private raceLogicService: RaceLogicService) {
 
   }
 
@@ -39,15 +40,15 @@ export class AppComponent {
 
     //PURELY for testing, should be false when deployed
     //TODO: set this up so that it won't overwrite a user's save if you forget to turn this off
-    var overrideNewGame = false;
-    var devMode = false;
+    var overrideNewGame = true;
+    var devMode = true;
 
     if (this.newGame || overrideNewGame)
       this.globalService.initializeGlobalVariables();
 
     if (devMode) {
       this.globalService.globalVar.tutorialCompleted = true;
-      this.globalService.devModeInitialize(80);
+      this.globalService.devModeInitialize(1);
     }
 
     var subscription = this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {
@@ -75,16 +76,18 @@ export class AppComponent {
       return;
     }
 
+    this.handleAutoFreeRace(deltaTime);
+
     var allTrainingAnimals = this.globalService.globalVar.animals.filter(item => item.isAvailable &&
       item.currentTraining !== undefined && item.currentTraining !== null);
 
     if (allTrainingAnimals.length > 0) {
-      allTrainingAnimals.forEach(animal => {        
+      allTrainingAnimals.forEach(animal => {
         if (animal.currentTraining !== null && animal.currentTraining !== undefined) {
-          animal.currentTraining.timeTrained += deltaTime;          
+          animal.currentTraining.timeTrained += deltaTime;
           this.specializationService.handleAttractionRevenue(deltaTime);
 
-          while (animal.currentTraining !== null && animal.currentTraining.timeTrained >= animal.currentTraining.timeToComplete) {            
+          while (animal.currentTraining !== null && animal.currentTraining.timeTrained >= animal.currentTraining.timeToComplete) {
             var associatedBarn = this.globalService.globalVar.barns.find(item => item.barnNumber === animal.associatedBarnNumber);
             var breedingGroundsSpecializationLevel = 0;
 
@@ -100,22 +103,22 @@ export class AppComponent {
             this.globalService.calculateAnimalRacingStats(animal);
             var breedGaugeIncrease = this.lookupService.getTrainingBreedGaugeIncrease(breedingGroundsSpecializationLevel);
             this.globalService.IncreaseAnimalBreedGauge(animal, breedGaugeIncrease);
-            
+
             animal.currentTraining.timeTrained -= animal.currentTraining.timeToComplete;
             animal.currentTraining.trainingTimeRemaining -= animal.currentTraining.timeToComplete;
 
-            if (animal.currentTraining.trainingTimeRemaining <= 0)                                   
-              animal.currentTraining = null;            
+            if (animal.currentTraining.trainingTimeRemaining <= 0)
+              animal.currentTraining = null;
 
-            if (animal.queuedTraining !== undefined && animal.queuedTraining !== null) {              
+            if (animal.queuedTraining !== undefined && animal.queuedTraining !== null) {
               if (animal.currentTraining !== null && animal.currentTraining.trainingTimeRemaining > 0)
                 animal.queuedTraining.timeTrained += animal.currentTraining?.timeTrained;
-                
+
               animal.currentTraining = animal.queuedTraining;
               animal.queuedTraining = null;
             }
           }
-        }        
+        }
       });
     }
 
@@ -132,7 +135,7 @@ export class AppComponent {
 
         incubator.timeTrained = 0;
         incubator.assignedAnimal = null;
-        incubator.assignedTrait = null;        
+        incubator.assignedTrait = null;
       }
     }
 
@@ -142,15 +145,62 @@ export class AppComponent {
   handleFreeRaceTimer(deltaTime: number) {
     this.globalService.globalVar.freeRaceTimePeriodCounter += deltaTime;
 
-    var freeRaceTimePeriod = 15*60;
+    var freeRaceTimePeriod = 15 * 60;
     var freeRaceTimePeriodPair = this.globalService.globalVar.modifiers.find(item => item.text === "freeRacesTimePeriodModifier");
     if (freeRaceTimePeriodPair !== undefined)
       freeRaceTimePeriod = freeRaceTimePeriodPair.value;
 
-    if (this.globalService.globalVar.freeRaceTimePeriodCounter >= freeRaceTimePeriod)
-    {
+    if (this.globalService.globalVar.freeRaceTimePeriodCounter >= freeRaceTimePeriod) {
       this.globalService.globalVar.freeRaceTimePeriodCounter = 0;
       this.globalService.globalVar.freeRaceCounter = 0;
+      this.globalService.globalVar.autoFreeRaceCounter = 0;
+    }
+  }
+
+  handleAutoFreeRace(deltaTime: number) {
+    var teamManager = this.lookupService.getResourceByName("Team Manager");
+    if (teamManager === undefined || teamManager === null)
+      teamManager = 0;
+
+    //don't run while user is racing, can cause issues
+    if (teamManager === 0 || !this.globalService.globalVar.animalDecks.some(item => item.autoRunFreeRace) ||
+      this.globalService.globalVar.userIsRacing) {
+      return;
+    }
+
+    var autoRunDeck = this.globalService.globalVar.animalDecks.find(item => item.autoRunFreeRace);
+    if (autoRunDeck === undefined || autoRunDeck === null) {
+      return;
+    }
+
+    var remainingFreeRuns = teamManager - this.globalService.globalVar.autoFreeRaceCounter;
+
+    var freeRacePerTimePeriod = 10;
+    var freeRacePerTimePeriodPair = this.globalService.globalVar.modifiers.find(item => item.text === "freeRacesPerTimePeriodModifier");
+    if (freeRacePerTimePeriodPair !== undefined)
+      freeRacePerTimePeriod = freeRacePerTimePeriodPair.value;
+
+    for (var i = 0; i < remainingFreeRuns; i++) {
+      if (this.globalService.globalVar.freeRaceCounter >= freeRacePerTimePeriod) {
+        return;
+      }
+      this.globalService.globalVar.autoFreeRaceCounter += 1;
+      this.globalService.globalVar.freeRaceCounter += 1;
+
+      var freeRace = this.globalService.generateFreeRace();
+
+      var canRun = true;
+      freeRace.raceLegs.forEach(leg => {
+        if (!autoRunDeck?.selectedAnimals.some(animal => animal.raceCourseType === leg.courseType))
+          canRun = false;
+      });
+
+      if (!canRun)
+      {
+        continue;
+      }
+
+      var raceResult = this.raceLogicService.runRace(freeRace);
     }
   }
 

@@ -4,6 +4,7 @@
             <app-animal-deck [deckNumber]="(i+1)" class="deck"></app-animal-deck>
             <button (click)="editDeck(content, deck)" class="edit">Edit</button>
             <button (click)="setAsPrimary(deck)" class="primary">Set as Primary</button>
+            <button *ngIf="showAutoRaceButton" (click)="setAsAutoRunFreeRace(deck)" class="autoRunFreeRace">Auto Run Free Race</button>
         </div>
         <hr />
     </div>

@@ -9,5 +9,6 @@ export enum RaceDesignEnum {
     Cavern,
     Hills,
     FirstRegular,
-    LastRegular
+    LastRegular,
+    SteppingStones
   }

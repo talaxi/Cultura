@@ -9,6 +9,7 @@ export class AnimalDeck {
     courseTypeOrder: RaceCourseTypeEnum[];
     isCourseOrderActive: boolean;
     isPrimaryDeck: boolean;
+    autoRunFreeRace: boolean;
     deckNumber: number;
     isAvailable: boolean;
 
@@ -16,5 +17,6 @@ export class AnimalDeck {
         this.selectedAnimals = [];
         this.courseTypeOrder = [];
         this.isCourseOrderActive = false;
+        this.autoRunFreeRace = false;
     }
 }

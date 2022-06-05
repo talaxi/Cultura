@@ -266,6 +266,7 @@ export class SelectedBarnComponent implements OnInit {
       associatedAnimal.currentTraining = null;
     }
 
+    this.existingTraining = null;
     this.animalAssigned = false;
 
     this.availableAnimals = this.GetAvailableAnimalOptions();
@@ -356,14 +357,38 @@ export class SelectedBarnComponent implements OnInit {
     var CoinsAmount = this.lookupService.getCoins();
 
     if (CoinsAmount >= this.barn.facilityUpgradePrice) {
+      this.lookupService.spendCoins(this.barn.facilityUpgradePrice);
+
       if (this.barn.size === FacilitySizeEnum.Small)
+      {
         this.barn.size = FacilitySizeEnum.Medium;
+        this.barn.facilityUpgradePrice = 4000;
+        var trainingShop = this.globalService.globalVar.shop.find(item => item.name === "Trainings");
+        if (trainingShop !== null && trainingShop !== undefined)
+        {
+          trainingShop.itemList.filter(item => item.additionalIdentifier === FacilitySizeEnum.Medium.toString()).forEach(item => 
+          {
+            item.isAvailable = true;
+          });
+        }
+      }
       else if (this.barn.size === FacilitySizeEnum.Medium)
+      {
         this.barn.size = FacilitySizeEnum.Large;
 
+        var trainingShop = this.globalService.globalVar.shop.find(item => item.name === "Trainings");
+        if (trainingShop !== null && trainingShop !== undefined)
+        {
+          trainingShop.itemList.filter(item => item.additionalIdentifier === FacilitySizeEnum.Large.toString()).forEach(item => 
+          {
+            item.isAvailable = true;
+          });
+        }
+      }
+
       this.getSizeValue();
-      this.availableTrainings = this.GetAvailableTrainingOptions(this.associatedAnimal);
-      this.lookupService.spendCoins(this.barn.facilityUpgradePrice);
+      this.availableTrainings = this.GetAvailableTrainingOptions(this.associatedAnimal);     
+      this.buildBiggerBarnPopover = this.getBuildLargerBarnPopover(); 
     }
   }
 
@@ -496,14 +521,17 @@ export class SelectedBarnComponent implements OnInit {
 
     popover += this.barn.facilityUpgradePrice + " Coins \n\n";
 
-    popover += "You will be able to do Medium trainings and increase idle training time to 4 hours.";
+    if (this.barn.size === FacilitySizeEnum.Small)
+      popover += "You will be able to do Medium trainings and increase idle training time to 4 hours.";
+    else if (this.barn.size === FacilitySizeEnum.Medium)
+      popover += "You will be able to do Large trainings and increase idle training time to 8 hours.";
 
     return popover;
   }
 
   filterSpecialization(specialization: string) {
     this.selectedSpecialization = specialization;
-    this.specializationDescription = this.lookupService.getSpecializationDescription(specialization);
+    this.specializationDescription = this.globalService.getSpecializationDescription(specialization);
     this.inDepthSpecializationDescription = this.lookupService.getInDepthSpecializationDescription(specialization);
   }
 

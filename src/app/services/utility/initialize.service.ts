@@ -4,6 +4,7 @@ import { FacilitySizeEnum } from 'src/app/models/facility-size-enum.model';
 import { RaceCourseTypeEnum } from 'src/app/models/race-course-type-enum.model';
 import { Terrain } from 'src/app/models/races/terrain.model';
 import { ResourceValue } from 'src/app/models/resources/resource-value.model';
+import { ShopItemTypeEnum } from 'src/app/models/shop-item-type-enum.model';
 import { TerrainTypeEnum } from 'src/app/models/terrain-type-enum.model';
 import { TrainingOptionsEnum } from 'src/app/models/training-options-enum.model';
 import { TrainingOption } from 'src/app/models/training/training-option.model';
@@ -19,8 +20,8 @@ export class InitializeService {
 
   }
 
-  initializeResource(name: string, amount: number) {
-    return new ResourceValue(name, amount);
+  initializeResource(name: string, amount: number, type: ShopItemTypeEnum) {
+    return new ResourceValue(name, amount, type);
   }
 
   initializeTraining(trainingType: TrainingOptionsEnum) {

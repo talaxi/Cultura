@@ -240,9 +240,8 @@ export class Monkey extends Animal {
         this.raceCourseType = RaceCourseTypeEnum.Mountain;
 
         this.ability = new Ability();
-        this.ability.cooldown = 7;
-        this.ability.efficiency = 45;
-        this.ability.oneTimeEffect = true;
+        this.ability.cooldown = 16;
+        this.ability.efficiency = 17;        
         this.ability.name = "Landslide";
         this.ability.isAbilityPurchased = true;
         this.availableAbilities.push(this.ability);
@@ -350,8 +349,8 @@ export class Dolphin extends Animal {
         this.raceCourseType = RaceCourseTypeEnum.Ocean;
 
         this.ability = new Ability();
-        this.ability.cooldown = 4;
-        this.ability.efficiency = 25;
+        this.ability.cooldown = 5;
+        this.ability.efficiency = 20;
         this.ability.totalFrames = 15;
         this.ability.oneTimeEffect = false;
         this.ability.name = "Breach";        

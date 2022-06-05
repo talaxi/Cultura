@@ -31,7 +31,7 @@ export class SelectedAnimalComponent implements OnInit {
   colorConditional: any;
   editingName: boolean;
   newName: string;
-  longDescription: string;  
+  longDescription: string;
   traitStatGainDescription: string;
   autoBreedActive: boolean;
   canAutoBreed = false;
@@ -66,7 +66,7 @@ export class SelectedAnimalComponent implements OnInit {
     this.breedLevelPopover = this.lookupService.getBreedLevelPopover(this.selectedAnimal.breedLevel);
 
     var stockbreeder = this.lookupService.getStockbreeder();
-    
+
     if (stockbreeder !== null && stockbreeder !== undefined && stockbreeder > 0)
       this.canAutoBreed = true;
 
@@ -112,16 +112,13 @@ export class SelectedAnimalComponent implements OnInit {
     //remove any equipment already in use
     this.globalService.globalVar.animals.filter(item => item.equippedItem !== null && item.equippedItem !== undefined).forEach(animal => {
       var listItem = this.equipmentList.find(item => item.name === animal.equippedItem?.name);
-      if (listItem !== null && listItem !== undefined)
-      {
-        if (listItem.amount > 0)
-        {          
+      if (listItem !== null && listItem !== undefined) {
+        if (listItem.amount > 0) {
           listItem.amount -= 1;
         }
 
-        if (listItem.amount <= 0)
-        {
-          this.equipmentList = this.equipmentList.filter(item => item.name !== listItem?.name);          
+        if (listItem.amount <= 0) {
+          this.equipmentList = this.equipmentList.filter(item => item.name !== listItem?.name);
         }
       }
     });
@@ -222,23 +219,29 @@ export class SelectedAnimalComponent implements OnInit {
     globalResource.amount -= this.selectedItemQuantity;
 
     if (this.selectedItem.itemType === ShopItemTypeEnum.Food) {
-      var increaseStats = new AnimalStats(0, 0, 0, 0, 0, 0);
+      if (this.selectedItem.name === "Mangoes") {
+        this.selectedAnimal.breedLevel += this.selectedItemQuantity;
+        this.globalService.calculateAnimalRacingStats(this.selectedAnimal);
+      }
+      else {
+        var increaseStats = new AnimalStats(0, 0, 0, 0, 0, 0);
 
-      if (this.selectedItem.name === "Apple")
-        increaseStats.acceleration = this.selectedItemQuantity;
-      if (this.selectedItem.name === "Banana")
-        increaseStats.topSpeed = this.selectedItemQuantity;
-      if (this.selectedItem.name === "Strawberry")
-        increaseStats.endurance = this.selectedItemQuantity;
-      if (this.selectedItem.name === "Carrot")
-        increaseStats.power = this.selectedItemQuantity;
-      if (this.selectedItem.name === "Turnip")
-        increaseStats.focus = this.selectedItemQuantity;
-      if (this.selectedItem.name === "Orange")
-        increaseStats.adaptability = this.selectedItemQuantity;
+        if (this.selectedItem.name === "Apples")
+          increaseStats.acceleration = this.selectedItemQuantity;
+        if (this.selectedItem.name === "Bananas")
+          increaseStats.topSpeed = this.selectedItemQuantity;
+        if (this.selectedItem.name === "Strawberries")
+          increaseStats.endurance = this.selectedItemQuantity;
+        if (this.selectedItem.name === "Carrots")
+          increaseStats.power = this.selectedItemQuantity;
+        if (this.selectedItem.name === "Turnips")
+          increaseStats.focus = this.selectedItemQuantity;
+        if (this.selectedItem.name === "Oranges")
+          increaseStats.adaptability = this.selectedItemQuantity;
 
-      this.selectedAnimal.increaseStats(increaseStats);
-      this.globalService.calculateAnimalRacingStats(this.selectedAnimal);
+        this.selectedAnimal.increaseStats(increaseStats);
+        this.globalService.calculateAnimalRacingStats(this.selectedAnimal);
+      }
     }
   }
 
@@ -252,7 +255,7 @@ export class SelectedAnimalComponent implements OnInit {
   }
 
   selectEquipment(item: ResourceValue) {
-    this.selectedEquipment = item;    
+    this.selectedEquipment = item;
   }
 
   unequipItem() {
@@ -286,7 +289,7 @@ export class SelectedAnimalComponent implements OnInit {
 
   goToAssignedBarn() {
     var assignedBarn = this.globalService.globalVar.barns.find(item => item.barnNumber === this.selectedAnimal.associatedBarnNumber);
-    if (assignedBarn !== null && assignedBarn !== undefined)    
+    if (assignedBarn !== null && assignedBarn !== undefined)
       this.componentCommunicationService.setBarnView(NavigationEnum.barn, assignedBarn.barnNumber);
   }
 }

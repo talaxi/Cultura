@@ -40,11 +40,11 @@
 .gridContainer {
     height: 100%;
     display: grid;
-    grid-template-columns: 80% 10% 10%;
+    grid-template-columns: 70% 15% 15%;
     grid-template-rows: auto;
     justify-content: stretch;
     grid-template-areas: 
-      "deck . ."
+      "deck . freeRace"
       "deck edit primary";
   }
 
@@ -58,6 +58,10 @@
 
 .primary {
     grid-area: primary;
+}
+
+.autoRunFreeRace {
+    grid-area: freeRace;
 }
 
 .spaced {

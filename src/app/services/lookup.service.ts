@@ -11,6 +11,7 @@ import { RaceCourseTypeEnum } from '../models/race-course-type-enum.model';
 import { RaceLeg } from '../models/races/race-leg.model';
 import { Terrain } from '../models/races/terrain.model';
 import { ResourceValue } from '../models/resources/resource-value.model';
+import { ShopItemTypeEnum } from '../models/shop-item-type-enum.model';
 import { TerrainTypeEnum } from '../models/terrain-type-enum.model';
 import { TrainingOption } from '../models/training/training-option.model';
 import { GlobalService } from './global-service.service';
@@ -314,8 +315,8 @@ export class LookupService {
     return 0;
   }
 
-  getDiminishingReturnsThreshold(animal: Animal): number {
-    var threshold = animal.currentStats.diminishingReturnsDefaultStatThreshold;
+  getDiminishingReturnsThreshold(animal?: Animal): number {
+    var threshold = animal === null || animal === undefined ? 20 : animal.currentStats.diminishingReturnsDefaultStatThreshold;
     var facilityLevelModifier = this.globalService.globalVar.modifiers.find(item => item.text === "facilityLevelModifier");
     if (facilityLevelModifier !== undefined)
       threshold += this.getFacilityLevel() * facilityLevelModifier.value;
@@ -332,7 +333,7 @@ export class LookupService {
     return "Increase racing stat gain from base stats by " + ((breedLevelModifier * (breedLevel - 1)) * 100) + "%";
   }
 
-  getResourcePopover(name: string) {
+  getResourcePopover(name: string, type: ShopItemTypeEnum) {
     if (name === "Coins")
       return "Good ol classic Coins. Gain from most actions and buy most things with this.";
     else if (name === "Medals")
@@ -341,8 +342,24 @@ export class LookupService {
       var currentRenown = this.getRenown();
       return "Increases Coins gained from races by " + currentRenown + "%";
     }
-    else if (name === "Stopwatch")
+    else if (name === "Facility Level") {
+      var diminishingReturnsThreshold = this.getDiminishingReturnsThreshold();
+      return "Increase Diminishing Returns value by 5 for each level for a total of " + diminishingReturnsThreshold + ". You can increase a base stat up to your Diminishing Returns value before that base stat starts to increase your racing stats less and less.";
+    }
+    else if (name === "Research Level") {
+      var researchLevel = this.getResourceByName(name);
+      return "Increase incubator trait values by " + researchLevel + "% and unlock new available traits.";
+    }
+    else if (name === "Apples" || name === "Bananas" || name === "Oranges" || name === "Strawberries" || name === "Turnips"
+     || name === "Carrots" || name === "Mangoes") {
+      return this.globalService.getItemDescription(name);
+    }
+    else if (name === "Stopwatch" || name === "Stockbreeder" || name === "Course Maps" || name === "Animal Handler" ||
+    name === "Scouts" || name === "Money Mark" || name === "National Races" || name === "International Races")
       return this.getSpecialtyItemDescription(name);
+    else if (type === ShopItemTypeEnum.Equipment)
+      return this.globalService.getEquipmentDescription(name);
+
     return "";
   }
 
@@ -509,8 +526,17 @@ export class LookupService {
       if (abilityName === "Feeding Frenzy") {
         return "Slow next and previous racers, increase max speed and acceleration for a distance";
       }
-      if (abilityName === "Blood in the Water") {
-        return "increase max speed when ahead of competitors";
+      if (abilityName === "Blood In The Water") {
+        return "Increase max speed when ahead of competitors";
+      }
+      if (abilityName === "Propulsion") {
+        return "Gain acceleration at regular intervals";
+      }
+      if (abilityName === "Buried Treasure") {
+        return "Delay your start, increase coin gain for winning race";
+      }
+      if (abilityName === "Big Brain") {
+        return "Increase power of other racers after bursting 8 times";
       }
       if (abilityName === "Sure-footed") {
         return "Increase adaptability after not stumbling through path";
@@ -529,6 +555,42 @@ export class LookupService {
       }
       if (abilityName === "Camouflage") {
         return "Increase previous and next racer's adaptability";
+      }
+      if (abilityName === "Herd Mentality") {
+        return "Grant next racer portion of your stamina, they start in burst mode";
+      }
+      if (abilityName === "Great Migration") {
+        return "Sacrifice stamina for acceleration for a short period";
+      }
+      if (abilityName === "Special Delivery") {
+        return "Increase other racers' burst max speed bonus based on stamina";
+      }
+      if (abilityName === "Careful Toboggan") {
+        return "Increase adaptability for a short period";
+      }
+      if (abilityName === "Wild Toboggan") {
+        return "Increase max drift penalty, acceleration based on drift";
+      }
+      if (abilityName === "Quick Toboggan") {
+        return "Increase max speed if you do not drift";
+      }
+      if (abilityName === "Cold Blooded") {
+        return "Increase stamina and focus for a short period based on distance in leg";
+      }
+      if (abilityName === "Burrow") {
+        return "Avoid lava fall, prevent stumbles for a short period";
+      }
+      if (abilityName === "Heat Up") {
+        return "Increase acceleration for a short period, gets stronger every use";
+      }
+      if (abilityName === "Trickster") {
+        return "Decrease one random stat, increase a different random stat for a short period";
+      }
+      if (abilityName === "Fleeting Speed") {
+        return "Increase max speed greatly, lose over time";
+      }
+      if (abilityName === "Nine Tails") {
+        return "Increase random stat for a short period, effect can stack";
       }
     }
     else {
@@ -601,7 +663,7 @@ export class LookupService {
           return "Cannot stumble for " + effectiveAmountDisplay + " meters. " + cooldownDisplay + " second cooldown.";
         }
         if (abilityName === "Night Vision") {
-          return "Every second of the average pace per second that you don't lose focus, increase Max Speed by " + effectiveAmountDisplay + "%. Passive.";
+          return "Increase Max Speed by " + effectiveAmountDisplay + "% for every percent of the total leg distance you complete without losing focus. If you lose focus, reset this bonus back to 0%. Passive.";
         }
         if (abilityName === "Camouflage") {
           return "Assist the previous racer and next racer, boosting their adaptability by 25% of your max for the last and first " + effectiveAmountDisplay + " meters of their legs respectively. Passive.";
@@ -624,6 +686,51 @@ export class LookupService {
         if (abilityName === "Blood In The Water") {
           return "While you are ahead of the average pace, increase max speed by " + effectiveAmountDisplay + "%. Passive.";
         }
+        if (abilityName === "Propulsion") {
+          return "Every 8% of your leg you complete, gain " + effectiveAmountDisplay + "% acceleration for the remainder of the leg. Passive.";
+        }
+        if (abilityName === "Buried Treasure") {
+          return "Delay your start by 8 seconds. If you still win the race, increase your Coin reward by " + effectiveAmountDisplay + "%. Passive.";
+        }
+        if (abilityName === "Big Brain") {
+          return "After Bursting 8 times, increase Power of all remaining racers by " + effectiveAmountDisplay + "%. Passive.";
+        }
+        if (abilityName === "Herd Mentality") {
+          return "After completing your leg, " + effectiveAmountDisplay + "% of your remaining stamina is given to the next racer and they start their leg in burst mode. This does not occur if you run out of stamina during your leg. Passive.";
+        }
+        if (abilityName === "Great Migration") {
+          return "Reduce stamina by 10%. For " + effectiveAmountDisplay + " meters, acceleration is increased by the amount of stamina lost. " + cooldownDisplay + " second cooldown.";
+        }
+        if (abilityName === "Special Delivery") {
+          return "Increase all remaining racers’ burst max speed bonus by " + effectiveAmountDisplay + "% of your remaining stamina percentage after completing your leg. This does not occur if you run out of stamina during your leg. Passive.";
+        }
+        if (abilityName === "Careful Toboggan") {
+          return "Increase adaptability by 40% for " + effectiveAmountDisplay + " meters. " + cooldownDisplay + " second cooldown.";
+        }
+        if (abilityName === "Wild Toboggan") {
+          return "Double the maximum amount of drift per path. Increase acceleration by " + effectiveAmountDisplay + "% based on how much you drift. Passive.";
+        }
+        if (abilityName === "Quick Toboggan") {
+          return "Every time you make it through a path without drifting, gain " + effectiveAmountDisplay + "% max speed. Passive.";
+        }
+        if (abilityName === "Cold Blooded") {
+          return "Increase stamina and focus by 0-50% depending on how close to the center of the volcano you are. Focus boost lasts " + effectiveAmountDisplay + "%. " + cooldownDisplay + " second cooldown.";
+        }
+        if (abilityName === "Burrow") {
+          return "Go underground for " + effectiveAmountDisplay + " meters, dodging lava fall and preventing stumbles. " + cooldownDisplay + " second cooldown.";
+        }
+        if (abilityName === "Heat Up") {
+          return "Increase Acceleration by 15% for " + effectiveAmountDisplay + " meters. This increase doubles every subsequent use this race. " + cooldownDisplay + " second cooldown.";
+        }
+        if (abilityName === "Trickster") {
+          return "When active, sacrifice 20% of one random stat for 40% of another random stat. Lasts " + effectiveAmountDisplay + " meters. " + cooldownDisplay + " second cooldown.";
+        }
+        if (abilityName === "Fleeting Speed") {
+          return "Increase Max Speed by " + effectiveAmountDisplay + "%. Decrease this bonus by 2% for every percent of the leg you complete. Passive.";
+        }
+        if (abilityName === "Nine Tails") {
+          return "At the start of each path, increase either Acceleration, Max Speed, Focus, or Adaptability by 10% for " + effectiveAmountDisplay + " meters. This effect can stack. " + cooldownDisplay + " second cooldown.";
+        }
       }
     }
 
@@ -640,18 +747,19 @@ export class LookupService {
 
   getBarnName(barn: Barn) {
     var barnName = "";
+    var barnSize = barn.getSize();
     
     if (barn.barnUpgrades.specialization === BarnSpecializationEnum.None || barn.barnUpgrades.specialization === undefined ||
       barn.barnUpgrades.specialization === null)
-      barnName = "Barn " + barn.barnNumber;
+      barnName = barnSize + " Barn " + barn.barnNumber;
     if (barn.barnUpgrades.specialization === BarnSpecializationEnum.Attraction)
-      barnName = "Attraction " + barn.barnNumber;
+      barnName = barnSize + " Attraction " + barn.barnNumber;
     if (barn.barnUpgrades.specialization === BarnSpecializationEnum.BreedingGrounds)
-      barnName = "Breeding Grounds " + barn.barnNumber;
+      barnName = barnSize + " Breeding Grounds " + barn.barnNumber;
     if (barn.barnUpgrades.specialization === BarnSpecializationEnum.TrainingFacility)
-      barnName = "Training Facility " + barn.barnNumber;
+      barnName = barnSize + " Training Facility " + barn.barnNumber;
     if (barn.barnUpgrades.specialization === BarnSpecializationEnum.ResearchCenter)
-      barnName = "Research Center " + barn.barnNumber;
+      barnName = barnSize + " Research Center " + barn.barnNumber;
 
     return barnName;
   }
@@ -659,8 +767,14 @@ export class LookupService {
   getTerrainPopoverText(terrain: Terrain, raceLeg: RaceLeg) {
     var popoverText = "The terrain for the " + raceLeg.getCourseTypeName() + " leg is " + terrain.getTerrainType() + ":\n";
 
-    if (terrain.staminaModifier !== null && terrain.staminaModifier !== undefined && terrain.staminaModifier !== 0) {
+    /*if (terrain.staminaModifier !== null && terrain.staminaModifier !== undefined && terrain.staminaModifier !== 0) {
       popoverText += "+" + (terrain.staminaModifier * 100).toFixed(0) + "% stamina cost\n";
+    }*/
+    if (terrain.staminaModifier !== null && terrain.staminaModifier !== undefined && terrain.staminaModifier !== 1) {
+      if (terrain.staminaModifier > 1)
+        popoverText += "+" + ((terrain.staminaModifier - 1) * 100).toFixed(0) + "% stamina loss\n";
+      else
+        popoverText += "-" + ((1 - terrain.staminaModifier) * 100).toFixed(0) + "% stamina loss\n";
     }
 
     if (terrain.maxSpeedModifier !== null && terrain.maxSpeedModifier !== undefined && terrain.maxSpeedModifier !== 1) {
@@ -699,25 +813,6 @@ export class LookupService {
     }
 
     return popoverText;
-  }
-
-  getSpecializationDescription(specializationName: string) {
-    var description = "";
-
-    if (specializationName === "Breeding Grounds") {
-      description = "Turn your barn into a habitat based around the optimal breeding environment for your animals. As you progress, your animals will gain more breeding XP from their training.";
-    }
-    else if (specializationName === "Training Facility") {
-      description = "Pull out all the stops giving your animals the best environment to improve. As you progress, your animals will train faster and gain stats from training at a higher rate.";
-    }
-    else if (specializationName === "Attraction") {
-      description = "Give the people what they want and turn your barn into a tourist attraction. As you progress, your barn will provide passive income at a steady rate while training.";
-    }
-    else if (specializationName === "Research Center") {
-      description = "Bring in the top names in animal research to optimize your training process. As you progress, your animal will gain reduced stats from training but split its improvements with other animals."
-    }
-
-    return description;
   }
 
   getInDepthSpecializationDescription(specializationName: string) {
@@ -873,7 +968,38 @@ export class LookupService {
       description = "Reduce training time by 5%";
     else if (itemName === "Animal Handler")
       description = "Retain 2% of trained stats after breeding";
+      else if (itemName === "Course Maps")
+      description = "Increase your chance to burst during special routes by 10%";
+      else if (itemName === "Stockbreeder")
+      description = "Add option to auto breed when Breed XP is full";
+      else if (itemName === "Scouts")
+      description = "You can choose the order of race legs for each animal deck";
+      else if (itemName === "Money Mark")
+      description = "Add new indicator to race, beat its time to gain increased coins";
+      else if (itemName === "National Races")
+      description = "Gain 1 medal for every 10 free races you complete";
+      else if (itemName === "International Races")
+      description = "Gain 1 medal for every 5 free races you complete";
+      else if (itemName === "Team Manager")
+      description = "Add option to automatically run 1 free race per reset period";
 
     return description;
+  }
+
+  getRandomTip() {
+    var tip = "";
+    var tipList = [];
+
+    if (!this.globalService.globalVar.settings.get("hideTips")) {    
+      tipList.push("After upgrading training options, reselect them to gain their benefits!");
+      tipList.push("Don't forget to export your save regularly!");
+      tipList.push("Have to recite the alphabet to figure out what your next circuit rank is? You're not alone, go to the settings to use numbers instead!");
+      tipList.push("Small barns allow training for 2 hours, medium for 4 hours, and large for 8 hours. Your animals will train even when the game is not active.");
+
+      var rng = this.utilityService.getRandomInteger(0, tipList.length - 1);
+      tip = tipList[rng];
+    }
+
+    return tip;
   }
 }
