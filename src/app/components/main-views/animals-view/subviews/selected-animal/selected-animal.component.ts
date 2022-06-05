@@ -267,6 +267,30 @@ export class SelectedAnimalComponent implements OnInit {
     this.selectedAnimal.autoBreedActive = this.autoBreedActive;
   }
 
+  getTopSpeedPopover() {
+    return this.lookupService.topSpeedPopover(this.selectedAnimal);
+  }
+
+  getAccelerationPopover() {
+    return this.lookupService.accelerationPopover(this.selectedAnimal);
+  }
+
+  getEndurancePopover() {
+    return this.lookupService.endurancePopover(this.selectedAnimal);
+  }
+
+  getPowerPopover() {
+    return this.lookupService.powerPopover(this.selectedAnimal);
+  }
+
+  getFocusPopover() {
+    return this.lookupService.focusPopover(this.selectedAnimal);
+  }
+
+  getAdaptabilityPopover() {
+    return this.lookupService.adaptabilityPopover(this.selectedAnimal);
+  }
+
   getDiminishingReturnsPopover() {
     return "Once a trainable stat is over this number, additional gains in this stat will be reduced. Increase with Facility Level.";
   }

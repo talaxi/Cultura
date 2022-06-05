@@ -7,6 +7,7 @@ import { Ability } from "./ability.model";
 import { AnimalStats } from "./animal-stats.model";
 import { AnimalTraits } from "./animal-traits.model";
 import { Equipment } from "./equipment.model";
+import { IncubatorStatUpgrades } from "./incubator-stat-upgrades.model";
 import { RaceVariables } from "./race-variables.model";
 
 export class Animal {
@@ -28,6 +29,7 @@ export class Animal {
     raceVariables: RaceVariables;
     @Type(() => ResourceValue)
     equippedItem: ResourceValue | null;
+    incubatorStatUpgrades: IncubatorStatUpgrades;
     breedLevel: number;
     breedGaugeXp: number;
     breedGaugeMax: number;
@@ -37,9 +39,10 @@ export class Animal {
     canTrain: boolean;
 
     constructor() {
+        this.incubatorStatUpgrades = new IncubatorStatUpgrades();
         this.breedLevel = 1;
         this.breedGaugeXp = 0;
-        this.breedGaugeMax = 100;
+        this.breedGaugeMax = 0;
         this.canTrain = true;
         this.isAvailable = false;
 

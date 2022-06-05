@@ -111,6 +111,7 @@ export class GlobalService {
 
     this.globalVar.modifiers.push(new StringNumberPair(.02, "breedLevelStatModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(5, "breedGaugeMaxIncreaseModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(.001, "incubatorUpgradeIncreaseModifier"));
 
     this.globalVar.modifiers.push(new StringNumberPair(5, "facilityLevelModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(.02, "animalHandlerModifier"));
@@ -592,6 +593,13 @@ export class GlobalService {
     internationalRace.isAvailable = false;
     internationalRace.type = ShopItemTypeEnum.Specialty;
     specialtyShopItems.push(internationalRace);
+
+    var incubatorUpgrade = new ShopItem();
+    incubatorUpgrade.name = "Incubator Upgrade";
+    incubatorUpgrade.purchasePrice.push(this.getCoinsResourceValue(10000));
+    incubatorUpgrade.canHaveMultiples = false;
+    incubatorUpgrade.type = ShopItemTypeEnum.Specialty;
+    specialtyShopItems.push(incubatorUpgrade);
 
     specialtyShopSection.name = "Specialty";
     specialtyShopSection.itemList = specialtyShopItems;
@@ -1654,8 +1662,8 @@ export class GlobalService {
     var raceIndex = 1;
     var timeToComplete = 80;
 
-    var baseMeters = 1500;
-    var factor = 1.135;
+    var baseMeters = 6500;
+    var factor = 1.175;
 
     var maxRandomFactor = 1.2;
     var minRandomFactor = 0.8;
@@ -2043,7 +2051,7 @@ export class GlobalService {
     var totalPowerModifier = animal.currentStats.defaultPowerModifier;
     var totalFocusModifier = animal.currentStats.defaultFocusModifier;
     var totalAdaptabilityModifier = animal.currentStats.defaultAdaptabilityModifier;
-    var breedLevelStatModifierValue = .01;
+    var breedLevelStatModifierValue = .02;
     var animalTypeName = animal.getAnimalType().toLowerCase();
 
     //get modifiers, replace original variables if they are found
@@ -2083,12 +2091,12 @@ export class GlobalService {
     var diminishingReturnsThreshold = this.GetAnimalDiminishingReturns(animal);
 
     //do the calculations      
-    animal.currentStats.maxSpeedMs = animal.currentStats.calculateMaxSpeed(totalMaxSpeedModifier * breedLevelStatModifierValue * traitMaxSpeedModifier, diminishingReturnsThreshold);
-    animal.currentStats.accelerationMs = animal.currentStats.calculateTrueAcceleration(totalAccelerationModifier * breedLevelStatModifierValue * traitAccelerationModifier, diminishingReturnsThreshold);
-    animal.currentStats.stamina = animal.currentStats.calculateStamina(totalStaminaModifier * breedLevelStatModifierValue * traitEnduranceModifier, diminishingReturnsThreshold);
-    animal.currentStats.powerMs = animal.currentStats.calculateTruePower(totalPowerModifier * breedLevelStatModifierValue * traitPowerModifier, diminishingReturnsThreshold);
-    animal.currentStats.focusMs = animal.currentStats.calculateTrueFocus(totalFocusModifier * breedLevelStatModifierValue * traitFocusModifier, diminishingReturnsThreshold);
-    animal.currentStats.adaptabilityMs = animal.currentStats.calculateTrueAdaptability(totalAdaptabilityModifier * breedLevelStatModifierValue * traitAdaptabilityModifier, diminishingReturnsThreshold);
+    animal.currentStats.maxSpeedMs = animal.currentStats.calculateMaxSpeed(totalMaxSpeedModifier * breedLevelStatModifierValue * traitMaxSpeedModifier * animal.incubatorStatUpgrades.maxSpeedModifier, diminishingReturnsThreshold);
+    animal.currentStats.accelerationMs = animal.currentStats.calculateTrueAcceleration(totalAccelerationModifier * breedLevelStatModifierValue * traitAccelerationModifier * animal.incubatorStatUpgrades.accelerationModifier, diminishingReturnsThreshold);
+    animal.currentStats.stamina = animal.currentStats.calculateStamina(totalStaminaModifier * breedLevelStatModifierValue * traitEnduranceModifier * animal.incubatorStatUpgrades.staminaModifier, diminishingReturnsThreshold);
+    animal.currentStats.powerMs = animal.currentStats.calculateTruePower(totalPowerModifier * breedLevelStatModifierValue * traitPowerModifier * animal.incubatorStatUpgrades.powerModifier, diminishingReturnsThreshold);
+    animal.currentStats.focusMs = animal.currentStats.calculateTrueFocus(totalFocusModifier * breedLevelStatModifierValue * traitFocusModifier * animal.incubatorStatUpgrades.focusModifier, diminishingReturnsThreshold);
+    animal.currentStats.adaptabilityMs = animal.currentStats.calculateTrueAdaptability(totalAdaptabilityModifier * breedLevelStatModifierValue * traitAdaptabilityModifier * animal.incubatorStatUpgrades.adaptabilityModifier, diminishingReturnsThreshold);
     animal.currentStats.burstChance = animal.currentStats.calculateBurstChance();
     animal.currentStats.burstDistance = animal.currentStats.calculateBurstDistance();
   }
@@ -2139,6 +2147,20 @@ export class GlobalService {
     animal.breedGaugeXp = 0;
     animal.breedGaugeMax += breedMaxIncrease;
     //increase max total
+
+    
+    var incubatorUpgrade = this.globalVar.resources.find(item => item.name === "Incubator Upgrade");
+    if (incubatorUpgrade !== null && incubatorUpgrade !== undefined && animal.trait !== null && animal.trait !== undefined)
+    {
+      var incubatorUpgradeIncrease = .001;
+      var incubatorUpgradeIncreaseModifier = this.globalVar.modifiers.find(item => item.text === "incubatorUpgradeIncreaseModifier");
+      if (incubatorUpgradeIncreaseModifier !== null && incubatorUpgradeIncreaseModifier !== undefined)
+        incubatorUpgradeIncrease = incubatorUpgradeIncreaseModifier.value;
+      
+      var increasedAmount = animal.trait.researchLevel * incubatorUpgradeIncrease;
+      if (animal.trait.positiveStatGain === AnimalStatEnum.topSpeed)
+        animal.incubatorStatUpgrades.maxSpeedModifier += increasedAmount;
+    }
 
     var handlers = this.globalVar.resources.find(item => item.name === "Animal Handler");
     var handlerModifier = this.globalVar.modifiers.find(item => item.text === "animalHandlerModifier");
@@ -2294,7 +2316,7 @@ export class GlobalService {
       Coins.amount = 30000;
     this.globalVar.resources.push(this.initializeService.initializeResource("Medals", 15, ShopItemTypeEnum.Resources));
     //this.globalVar.resources.push(this.initializeService.initializeResource("Facility Level", 50));
-    //this.globalVar.resources.push(this.initializeService.initializeResource("Research Level", 50));
+    this.globalVar.resources.push(this.initializeService.initializeResource("Research Level", 50, ShopItemTypeEnum.Progression));
 
     for (var i = 1; i <= circuitRankNumeric; i++) {
       var rank = this.utilityService.getCircuitRankFromNumericValue(i);

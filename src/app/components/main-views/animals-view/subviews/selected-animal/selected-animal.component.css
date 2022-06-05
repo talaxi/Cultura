@@ -84,6 +84,10 @@
   width: 100%;
 }
 
+.popoverClass {
+  white-space: pre-line;
+}
+
 .rightAlign {
   float: right;
 }

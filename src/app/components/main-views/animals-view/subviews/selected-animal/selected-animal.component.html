@@ -79,32 +79,32 @@
             <span>Base Stats</span>
             <br />
             <br />
-            <span ngbPopover="{{ selectedAnimal.currentStats.topSpeedPopover(maxSpeedModifierAmount) }}"
+            <span [ngbPopover]="topSpeedPopoverContent"
                 triggers="mouseenter:mouseleave" popoverClass="popoverClass">
                 Speed: {{ selectedAnimal.currentStats.topSpeed | number : '1.2-2' }}
             </span>
             <br />
-            <span ngbPopover="{{ selectedAnimal.currentStats.accelerationPopover(accelerationModifierAmount) }}"
+            <span [ngbPopover]="accelerationPopoverContent"
                 triggers="mouseenter:mouseleave" popoverClass="popoverClass">
                 Acceleration: {{ selectedAnimal.currentStats.acceleration | number : '1.2-2' }}
             </span>
             <br />
-            <span ngbPopover="{{ selectedAnimal.currentStats.endurancePopover(staminaModifierAmount) }}"
+            <span [ngbPopover]="endurancePopoverContent"
                 triggers="mouseenter:mouseleave" popoverClass="popoverClass">
                 Endurance: {{ selectedAnimal.currentStats.endurance | number : '1.2-2' }}
             </span>
             <br />
-            <span ngbPopover="{{ selectedAnimal.currentStats.powerPopover(powerModifierAmount) }}"
+            <span [ngbPopover]="powerPopoverContent"
                 triggers="mouseenter:mouseleave" popoverClass="popoverClass">
                 Power: {{ selectedAnimal.currentStats.power | number : '1.2-2' }}
             </span>
             <br />
-            <span ngbPopover="{{ selectedAnimal.currentStats.focusPopover(focusModifierAmount) }}"
+            <span [ngbPopover]="focusPopoverContent"
                 triggers="mouseenter:mouseleave" popoverClass="popoverClass">
                 Focus: {{ selectedAnimal.currentStats.focus | number : '1.2-2' }}
             </span>
             <br />
-            <span ngbPopover="{{ selectedAnimal.currentStats.adaptabilityPopover(adaptabilityModifierAmount) }}"
+            <span [ngbPopover]="adaptabilityPopoverContent"
                 triggers="mouseenter:mouseleave" popoverClass="popoverClass">
                 Adaptability: {{ selectedAnimal.currentStats.adaptability | number : '1.2-2' }}
             </span>
@@ -176,7 +176,41 @@
     </div>
 </div>
 
+<ng-template #topSpeedPopoverContent>
+    <div class="popoverClass">
+        {{ getTopSpeedPopover() }}
+    </div>
+</ng-template>
 
+<ng-template #accelerationPopoverContent>
+    <div class="popoverClass">
+        {{ getAccelerationPopover() }}
+    </div>
+</ng-template>
+
+<ng-template #endurancePopoverContent>
+    <div class="popoverClass">
+        {{ getEndurancePopover() }}
+    </div>
+</ng-template>
+
+<ng-template #powerPopoverContent>
+    <div class="popoverClass">
+        {{ getPowerPopover() }}
+    </div>
+</ng-template>
+
+<ng-template #focusPopoverContent>
+    <div class="popoverClass">
+        {{ getFocusPopover() }}
+    </div>
+</ng-template>
+
+<ng-template #adaptabilityPopoverContent>
+    <div class="popoverClass">
+        {{ getAdaptabilityPopover() }}
+    </div>
+</ng-template>
 
 <ng-template #content let-modal>
     <div class="modalClass">

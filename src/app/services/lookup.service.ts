@@ -156,7 +156,7 @@ export class LookupService {
 
       var traitMaxSpeedModifier = this.globalService.getTraitModifier(animal, AnimalStatEnum.topSpeed);
 
-      totalModifier = defaultModifier * breedModifier * traitMaxSpeedModifier;
+      totalModifier = defaultModifier * breedModifier * traitMaxSpeedModifier * animal.incubatorStatUpgrades.maxSpeedModifier;
     }
 
     return totalModifier;
@@ -180,7 +180,7 @@ export class LookupService {
 
       var traitAccelerationModifier = this.globalService.getTraitModifier(animal, AnimalStatEnum.acceleration);
 
-      totalModifier = defaultModifier * breedModifier * traitAccelerationModifier;
+      totalModifier = defaultModifier * breedModifier * traitAccelerationModifier * animal.incubatorStatUpgrades.accelerationModifier;
     }
 
     return totalModifier;
@@ -204,7 +204,7 @@ export class LookupService {
 
       var traitEnduranceModifier = this.globalService.getTraitModifier(animal, AnimalStatEnum.endurance);
 
-      totalModifier = defaultModifier * breedModifier * traitEnduranceModifier;
+      totalModifier = defaultModifier * breedModifier * traitEnduranceModifier * animal.incubatorStatUpgrades.staminaModifier;
     }
 
     return totalModifier;
@@ -229,7 +229,7 @@ export class LookupService {
 
       var traitPowerModifier = this.globalService.getTraitModifier(animal, AnimalStatEnum.power);
 
-      totalModifier = defaultModifier * breedModifier * traitPowerModifier;
+      totalModifier = defaultModifier * breedModifier * traitPowerModifier * animal.incubatorStatUpgrades.powerModifier;
     }
 
     return totalModifier;
@@ -253,7 +253,7 @@ export class LookupService {
 
       var traitFocusModifier = this.globalService.getTraitModifier(animal, AnimalStatEnum.focus);
 
-      totalModifier = defaultModifier * breedModifier * traitFocusModifier;
+      totalModifier = defaultModifier * breedModifier * traitFocusModifier * animal.incubatorStatUpgrades.focusModifier;
     }
 
     return totalModifier;
@@ -277,7 +277,7 @@ export class LookupService {
 
       var traitAdaptabilityModifier = this.globalService.getTraitModifier(animal, AnimalStatEnum.adaptability);
 
-      totalModifier = defaultModifier * breedModifier * traitAdaptabilityModifier;
+      totalModifier = defaultModifier * breedModifier * traitAdaptabilityModifier * animal.incubatorStatUpgrades.adaptabilityModifier;
     }
 
     return totalModifier;
@@ -351,11 +351,11 @@ export class LookupService {
       return "Increase incubator trait values by " + researchLevel + "% and unlock new available traits.";
     }
     else if (name === "Apples" || name === "Bananas" || name === "Oranges" || name === "Strawberries" || name === "Turnips"
-     || name === "Carrots" || name === "Mangoes") {
+      || name === "Carrots" || name === "Mangoes") {
       return this.globalService.getItemDescription(name);
     }
     else if (name === "Stopwatch" || name === "Stockbreeder" || name === "Course Maps" || name === "Animal Handler" ||
-    name === "Scouts" || name === "Money Mark" || name === "National Races" || name === "International Races")
+      name === "Scouts" || name === "Money Mark" || name === "National Races" || name === "International Races")
       return this.getSpecialtyItemDescription(name);
     else if (type === ShopItemTypeEnum.Equipment)
       return this.globalService.getEquipmentDescription(name);
@@ -436,14 +436,14 @@ export class LookupService {
       statLossFromExhaustion = 1;
 
     var powerAbilityModifier = 1;
-    if (animal.type === AnimalTypeEnum.Fox && animal.ability.name === "Trickster" && animal.ability.tricksterStatLoss === "Power"  && animal.ability.abilityInUse) {
+    if (animal.type === AnimalTypeEnum.Fox && animal.ability.name === "Trickster" && animal.ability.tricksterStatLoss === "Power" && animal.ability.abilityInUse) {
       powerAbilityModifier *= .8;
     }
-    if (animal.type === AnimalTypeEnum.Fox && animal.ability.name === "Trickster" && animal.ability.tricksterStatGain === "Power"  && animal.ability.abilityInUse) {
+    if (animal.type === AnimalTypeEnum.Fox && animal.ability.name === "Trickster" && animal.ability.tricksterStatGain === "Power" && animal.ability.abilityInUse) {
       powerAbilityModifier *= 1.4;
     }
 
-    var modifiedPower = (animal.currentStats.powerMs * powerAbilityModifier * terrainModifier * statLossFromExhaustion) / 100;    
+    var modifiedPower = (animal.currentStats.powerMs * powerAbilityModifier * terrainModifier * statLossFromExhaustion) / 100;
 
     if (animal.ability.name === "Second Wind") {
       return (animal.ability.efficiency * (1 + modifiedPower));
@@ -748,7 +748,7 @@ export class LookupService {
   getBarnName(barn: Barn) {
     var barnName = "";
     var barnSize = barn.getSize();
-    
+
     if (barn.barnUpgrades.specialization === BarnSpecializationEnum.None || barn.barnUpgrades.specialization === undefined ||
       barn.barnUpgrades.specialization === null)
       barnName = barnSize + " Barn " + barn.barnNumber;
@@ -968,29 +968,225 @@ export class LookupService {
       description = "Reduce training time by 5%";
     else if (itemName === "Animal Handler")
       description = "Retain 2% of trained stats after breeding";
-      else if (itemName === "Course Maps")
+    else if (itemName === "Course Maps")
       description = "Increase your chance to burst during special routes by 10%";
-      else if (itemName === "Stockbreeder")
+    else if (itemName === "Stockbreeder")
       description = "Add option to auto breed when Breed XP is full";
-      else if (itemName === "Scouts")
+    else if (itemName === "Scouts")
       description = "You can choose the order of race legs for each animal deck";
-      else if (itemName === "Money Mark")
+    else if (itemName === "Money Mark")
       description = "Add new indicator to race, beat its time to gain increased coins";
-      else if (itemName === "National Races")
+    else if (itemName === "National Races")
       description = "Gain 1 medal for every 10 free races you complete";
-      else if (itemName === "International Races")
+    else if (itemName === "International Races")
       description = "Gain 1 medal for every 5 free races you complete";
-      else if (itemName === "Team Manager")
+    else if (itemName === "Team Manager")
       description = "Add option to automatically run 1 free race per reset period";
+    else if (itemName === "Incubator Upgrade")
+      description = "When breeding, permanently increase racing stat gain from base stat by 5% of positive trait value";
 
     return description;
+  }
+
+  topSpeedPopover(animal: Animal): string {
+    var baseMaxSpeedModifier = animal.currentStats.defaultMaxSpeedModifier;
+    var animalTypeName = animal.getAnimalType().toLowerCase();
+
+    var animalMaxSpeedModifier = this.globalService.globalVar.modifiers.find(item => item.text === animalTypeName + "DefaultMaxSpeedModifier");
+
+    if (animalMaxSpeedModifier !== undefined && animalMaxSpeedModifier !== null)
+      baseMaxSpeedModifier = animalMaxSpeedModifier.value;
+
+    var breedLevelStatModifierValue = .02;
+    var breedLevelStatModifier = this.globalService.globalVar.modifiers.find(item => item.text === "breedLevelStatModifier");
+    if (breedLevelStatModifier !== undefined && breedLevelStatModifier !== null)
+      breedLevelStatModifierValue = breedLevelStatModifier.value;
+    breedLevelStatModifierValue = 1 + (breedLevelStatModifierValue * (animal.breedLevel - 1));
+
+    var traitModifier = this.globalService.getTraitModifier(animal, AnimalStatEnum.topSpeed);
+
+    var popover = "Every stat point increases top speed by " + this.getMaxSpeedModifierByAnimalType(animal.type).toFixed(3) + "m/s up to diminishing returns. \n\n" +
+      "Base: " + baseMaxSpeedModifier.toFixed(3) + "\n";
+
+      if (breedLevelStatModifierValue > 1)
+        popover += "Breed Modifier: *" + breedLevelStatModifierValue.toFixed(2) + "\n";
+    
+      if (traitModifier !== 1)
+        popover += "Trait Name (Trait): *" + traitModifier.toFixed(1)+ "\n";
+
+      if (animal.incubatorStatUpgrades.maxSpeedModifier > 1)
+        popover += "Incubator Upgrade: *" + animal.incubatorStatUpgrades.maxSpeedModifier.toFixed(3)+ "\n";
+
+    return popover;
+  }
+
+  accelerationPopover(animal: Animal): string {
+    var baseAccelerationModifier = animal.currentStats.defaultAccelerationModifier;
+    var animalTypeName = animal.getAnimalType().toLowerCase();
+
+    var animalAccelerationModifier = this.globalService.globalVar.modifiers.find(item => item.text === animalTypeName + "DefaultAccelerationModifier");
+
+    if (animalAccelerationModifier !== undefined && animalAccelerationModifier !== null)
+    baseAccelerationModifier = animalAccelerationModifier.value;
+
+    var breedLevelStatModifierValue = .02;
+    var breedLevelStatModifier = this.globalService.globalVar.modifiers.find(item => item.text === "breedLevelStatModifier");
+    if (breedLevelStatModifier !== undefined && breedLevelStatModifier !== null)
+      breedLevelStatModifierValue = breedLevelStatModifier.value;
+    breedLevelStatModifierValue = 1 + (breedLevelStatModifierValue * (animal.breedLevel - 1));
+
+    var traitModifier = this.globalService.getTraitModifier(animal, AnimalStatEnum.acceleration);
+
+    var popover = "Every stat point increases acceleration by " + this.getAccelerationModifierByAnimalType(animal.type).toFixed(3) + "m/s up to diminishing returns. \n\n" +
+    "Base: " + baseAccelerationModifier.toFixed(3) + "\n";
+
+    if (breedLevelStatModifierValue > 1)
+      popover += "Breed Modifier: *" + breedLevelStatModifierValue.toFixed(2)+ "\n";
+  
+    if (traitModifier !== 1)
+      popover += "Trait Name (Trait): *" + traitModifier.toFixed(1)+ "\n";
+
+    if (animal.incubatorStatUpgrades.accelerationModifier > 1)
+      popover += "Incubator Upgrade: *" + animal.incubatorStatUpgrades.accelerationModifier.toFixed(3)+ "\n";
+
+    return popover;
+  }
+
+  endurancePopover(animal: Animal): string {
+    var baseStaminaModifier = animal.currentStats.defaultStaminaModifier;
+    var animalTypeName = animal.getAnimalType().toLowerCase();
+
+    var animalStaminaModifier = this.globalService.globalVar.modifiers.find(item => item.text === animalTypeName + "DefaultStaminaModifier");
+
+    if (animalStaminaModifier !== undefined && animalStaminaModifier !== null)
+    baseStaminaModifier = animalStaminaModifier.value;
+
+    var breedLevelStatModifierValue = .02;
+    var breedLevelStatModifier = this.globalService.globalVar.modifiers.find(item => item.text === "breedLevelStatModifier");
+    if (breedLevelStatModifier !== undefined && breedLevelStatModifier !== null)
+      breedLevelStatModifierValue = breedLevelStatModifier.value;
+    breedLevelStatModifierValue = 1 + (breedLevelStatModifierValue * (animal.breedLevel - 1));
+
+    var traitModifier = this.globalService.getTraitModifier(animal, AnimalStatEnum.endurance);
+
+
+    var popover = "Every stat point increases stamina by " + this.getStaminaModifierByAnimalType(animal.type).toFixed(3) + " up to diminishing returns. \n\n" +
+    "Base: " + baseStaminaModifier.toFixed(3) + "\n";
+
+    if (breedLevelStatModifierValue > 1)
+      popover += "Breed Modifier: *" + breedLevelStatModifierValue.toFixed(2)+ "\n";
+  
+    if (traitModifier !== 1)
+      popover += "Trait Name (Trait): *" + traitModifier.toFixed(1)+ "\n";
+
+    if (animal.incubatorStatUpgrades.staminaModifier > 1)
+      popover += "Incubator Upgrade: *" + animal.incubatorStatUpgrades.staminaModifier.toFixed(3)+ "\n";
+
+    return popover;
+  }
+
+  powerPopover(animal: Animal): string {
+    var basePowerModifier = animal.currentStats.defaultPowerModifier;
+    var animalTypeName = animal.getAnimalType().toLowerCase();
+
+    var animalPowerModifier = this.globalService.globalVar.modifiers.find(item => item.text === animalTypeName + "DefaultPowerModifier");
+
+    if (animalPowerModifier !== undefined && animalPowerModifier !== null)
+    basePowerModifier = animalPowerModifier.value;
+
+    var breedLevelStatModifierValue = .02;
+    var breedLevelStatModifier = this.globalService.globalVar.modifiers.find(item => item.text === "breedLevelStatModifier");
+    if (breedLevelStatModifier !== undefined && breedLevelStatModifier !== null)
+      breedLevelStatModifierValue = breedLevelStatModifier.value;
+    breedLevelStatModifierValue = 1 + (breedLevelStatModifierValue * (animal.breedLevel - 1));
+
+    var traitModifier = this.globalService.getTraitModifier(animal, AnimalStatEnum.power);
+
+
+    var popover = "Every stat point increases ability efficency by " + this.getPowerModifierByAnimalType(animal.type).toFixed(3) + "% up to diminishing returns. \n\n" +
+    "Base: " + basePowerModifier.toFixed(3) + "\n";
+
+    if (breedLevelStatModifierValue > 1)
+      popover += "Breed Modifier: *" + breedLevelStatModifierValue.toFixed(2)+ "\n";
+  
+    if (traitModifier !== 1)
+      popover += "Trait Name (Trait): *" + traitModifier.toFixed(1)+ "\n";
+
+    if (animal.incubatorStatUpgrades.powerModifier > 1)
+      popover += "Incubator Upgrade: *" + animal.incubatorStatUpgrades.powerModifier.toFixed(3)+ "\n";
+
+    return popover;
+  }
+
+  focusPopover(animal: Animal): string {
+    var baseFocusModifier = animal.currentStats.defaultFocusModifier;
+    var animalTypeName = animal.getAnimalType().toLowerCase();
+
+    var animalFocusModifier = this.globalService.globalVar.modifiers.find(item => item.text === animalTypeName + "DefaultFocusModifier");
+
+    if (animalFocusModifier !== undefined && animalFocusModifier !== null)
+    baseFocusModifier = animalFocusModifier.value;
+
+    var breedLevelStatModifierValue = .02;
+    var breedLevelStatModifier = this.globalService.globalVar.modifiers.find(item => item.text === "breedLevelStatModifier");
+    if (breedLevelStatModifier !== undefined && breedLevelStatModifier !== null)
+      breedLevelStatModifierValue = breedLevelStatModifier.value;
+    breedLevelStatModifierValue = 1 + (breedLevelStatModifierValue * (animal.breedLevel - 1));
+
+    var traitModifier = this.globalService.getTraitModifier(animal, AnimalStatEnum.focus);
+
+    var popover = "Every stat point increases focus distance by " + this.getFocusModifierByAnimalType(animal.type).toFixed(3) + " meters up to diminishing returns. \n\n" +
+    "Base: " + baseFocusModifier.toFixed(3) + "\n";
+
+    if (breedLevelStatModifierValue > 1)
+      popover += "Breed Modifier: *" + breedLevelStatModifierValue.toFixed(2)+ "\n";
+  
+    if (traitModifier !== 1)
+      popover += "Trait Name (Trait): *" + traitModifier.toFixed(1)+ "\n";
+
+    if (animal.incubatorStatUpgrades.focusModifier > 1)
+      popover += "Incubator Upgrade: *" + animal.incubatorStatUpgrades.focusModifier.toFixed(3)+ "\n";
+
+    return popover;
+  }
+
+  adaptabilityPopover(animal: Animal): string {
+    var baseAdaptabilityModifier = animal.currentStats.defaultAdaptabilityModifier;
+    var animalTypeName = animal.getAnimalType().toLowerCase();
+
+    var animalAdaptabilityModifier = this.globalService.globalVar.modifiers.find(item => item.text === animalTypeName + "DefaultAdaptabilityModifier");
+
+    if (animalAdaptabilityModifier !== undefined && animalAdaptabilityModifier !== null)
+    baseAdaptabilityModifier = animalAdaptabilityModifier.value;
+
+    var breedLevelStatModifierValue = .02;
+    var breedLevelStatModifier = this.globalService.globalVar.modifiers.find(item => item.text === "breedLevelStatModifier");
+    if (breedLevelStatModifier !== undefined && breedLevelStatModifier !== null)
+      breedLevelStatModifierValue = breedLevelStatModifier.value;
+    breedLevelStatModifierValue = 1 + (breedLevelStatModifierValue * (animal.breedLevel - 1));
+
+    var traitModifier = this.globalService.getTraitModifier(animal, AnimalStatEnum.adaptability);
+
+    var popover = "Every stat point increases adaptability distance by " + this.getAdaptabilityModifierByAnimalType(animal.type).toFixed(3) + " meters up to diminishing returns. \n\n" +
+    "Base: " + baseAdaptabilityModifier.toFixed(3) + "\n";
+
+    if (breedLevelStatModifierValue > 1)
+      popover += "Breed Modifier: *" + breedLevelStatModifierValue.toFixed(2)+ "\n";
+  
+    if (traitModifier !== 1)
+      popover += "Trait Name (Trait): *" + traitModifier.toFixed(1)+ "\n";
+
+    if (animal.incubatorStatUpgrades.adaptabilityModifier > 1)
+      popover += "Incubator Upgrade: *" + animal.incubatorStatUpgrades.adaptabilityModifier.toFixed(3)+ "\n";
+
+    return popover;
   }
 
   getRandomTip() {
     var tip = "";
     var tipList = [];
 
-    if (!this.globalService.globalVar.settings.get("hideTips")) {    
+    if (!this.globalService.globalVar.settings.get("hideTips")) {
       tipList.push("After upgrading training options, reselect them to gain their benefits!");
       tipList.push("Don't forget to export your save regularly!");
       tipList.push("Have to recite the alphabet to figure out what your next circuit rank is? You're not alone, go to the settings to use numbers instead!");

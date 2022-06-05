@@ -156,6 +156,7 @@ export class AnimalStats {
 
     topSpeedPopover(modifierAmount: number): string {
         return "Every stat point increases top speed by " + modifierAmount.toFixed(3) + "m/s up to diminishing returns.";
+        //include base and all modifiers underneath
     }
 
     accelerationPopover(modifierAmount: number): string {
