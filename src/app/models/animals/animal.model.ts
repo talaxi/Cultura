@@ -42,7 +42,7 @@ export class Animal {
         this.incubatorStatUpgrades = new IncubatorStatUpgrades();
         this.breedLevel = 1;
         this.breedGaugeXp = 0;
-        this.breedGaugeMax = 0;
+        this.breedGaugeMax = 100;
         this.canTrain = true;
         this.isAvailable = false;
 

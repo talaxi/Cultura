@@ -1,32 +1,42 @@
 <div class="settingsView">
     <div class="toggles">
-        <!--<app-toggle [callbackFunction]="skipDrawRaceToggle" [label]="'Auto Skip Race Info'" [model]="skipDrawRace"
-            [popoverText]="skipDrawRacePopoverText" [id]="'skipRace'"></app-toggle>
-        <app-toggle [callbackFunction]="finishTrainingBeforeSwitchingToggle"
-            [label]="'Finish Training Before Switching'" [model]="finishTrainingBeforeSwitching"
-            [popoverText]="finishTrainingBeforeSwitchingPopoverText" [id]="'finishTraining'"></app-toggle>-->
-
-            <span [ngbPopover]="skipDrawRacePopoverText" triggers="mouseenter:mouseleave">                
-                <label class="custom-control-label" for="skipRace">Auto Skip Race Info </label>
-                <input type="checkbox" class="spaced" id="skipRace" [(ngModel)]="skipDrawRace" (input)="skipDrawRaceToggle()">
-            </span>
-            <br />
-            <span [ngbPopover]="finishTrainingBeforeSwitchingPopoverText" triggers="mouseenter:mouseleave">                
-                <label class="custom-control-label" for="finishTraining">Finish Training Before Switching </label>
-                <input type="checkbox" class="spaced" id="finishTraining" [(ngModel)]="finishTrainingBeforeSwitching" (input)="finishTrainingBeforeSwitchingToggle()">
-            </span>
-            <br />
-        <div class="btn-group" role="group" ngbRadioGroup aria-label="Race Display Info" [(ngModel)]="raceDisplayInfo" (change)="saveRaceDisplayInfo()">
-            <span [ngbPopover]="raceDisplayInfoPopoverText" triggers="mouseenter:mouseleave" class="rightSpaced">Race Info Display Mode: </span>
+        <span [ngbPopover]="skipDrawRacePopoverText" triggers="mouseenter:mouseleave">
+            <label class="custom-control-label" for="skipRace">Auto Skip Race Info </label>
+            <input type="checkbox" class="spaced" id="skipRace" [(ngModel)]="skipDrawRace"
+                (input)="skipDrawRaceToggle()">
+        </span>
+        <br />
+        <span [ngbPopover]="finishTrainingBeforeSwitchingPopoverText" triggers="mouseenter:mouseleave">
+            <label class="custom-control-label" for="finishTraining">Finish Training Before Switching </label>
+            <input type="checkbox" class="spaced" id="finishTraining" [(ngModel)]="finishTrainingBeforeSwitching"
+                (input)="finishTrainingBeforeSwitchingToggle()">
+        </span>
+        <br />
+        <span [ngbPopover]="finishTrainingBeforeSwitchingPopoverText" triggers="mouseenter:mouseleave">
+            <label class="custom-control-label" for="hideTips">Hide Tips </label>
+            <input type="checkbox" class="spaced" id="hideTips" [(ngModel)]="hideTips"
+                (input)="hideTipsToggle()">
+        </span>
+        <br />
+        <span [ngbPopover]="finishTrainingBeforeSwitchingPopoverText" triggers="mouseenter:mouseleave">
+            <label class="custom-control-label" for="useNumbersForCircuitRank">Use Numbers For Circuit Rank </label>
+            <input type="checkbox" class="spaced" id="useNumbersForCircuitRank" [(ngModel)]="useNumbersForCircuitRank"
+                (input)="useNumbersForCircuitRankToggle()">
+        </span>
+        <br />
+        <div class="btn-group" role="group" ngbRadioGroup aria-label="Race Display Info" [(ngModel)]="raceDisplayInfo"
+            (change)="saveRaceDisplayInfo()">
+            <span [ngbPopover]="raceDisplayInfoPopoverText" triggers="mouseenter:mouseleave" class="rightSpaced">Race
+                Info Display Mode: </span>
             <label ngbButtonLabel class="btn-primary">
                 <input ngbButton type="radio" class="btn-check" [value]="raceDisplayInfoEnum.draw"> Draw
-              </label>
-              <label ngbButtonLabel class="btn-primary">
+            </label>
+            <label ngbButtonLabel class="btn-primary">
                 <input ngbButton type="radio" class="btn-check" [value]="raceDisplayInfoEnum.text"> Text
-              </label>
-              <label ngbButtonLabel class="btn-primary">
+            </label>
+            <label ngbButtonLabel class="btn-primary">
                 <input ngbButton type="radio" class="btn-check" [value]="raceDisplayInfoEnum.both"> Both
-              </label>            
+            </label>
         </div>
 
     </div>

@@ -23,6 +23,9 @@ export class LocalViewComponent implements OnInit {
   areMonoRacesAvailable: boolean;
   areDuoRacesAvailable: boolean;
   areRainbowRacesAvailable: boolean;
+  monoRaceRank: string;
+  duoRaceRank: string;
+  rainbowRaceRank: string;
   @Output() raceSelected = new EventEmitter<Race>();
   freeRaceTimer = "";
   freeRacesRemaining = 10;
@@ -39,13 +42,31 @@ export class LocalViewComponent implements OnInit {
     if (nextMonoRace !== undefined)
       this.availableMonoRace = nextMonoRace;
 
-    var nextDuoRace = this.getNextAvailableSpecialRace(LocalRaceTypeEnum.Duo);    
+    var nextDuoRace = this.getNextAvailableSpecialRace(LocalRaceTypeEnum.Duo);
     if (nextDuoRace !== undefined)
       this.availableDuoRace = nextDuoRace;
 
     var nextRainbowRace = this.getNextAvailableSpecialRace(LocalRaceTypeEnum.Rainbow);
     if (nextRainbowRace !== undefined)
       this.availableRainbowRace = nextRainbowRace;
+
+
+    if (this.globalService.globalVar.settings.get("useNumbersForCircuitRank")) {
+      if (this.availableMonoRace !== null && this.availableMonoRace !== undefined)
+        this.monoRaceRank = this.utilityService.getNumericValueOfCircuitRank(this.availableMonoRace.requiredRank).toString();
+      if (this.availableDuoRace !== null && this.availableDuoRace !== undefined)
+        this.duoRaceRank = this.utilityService.getNumericValueOfCircuitRank(this.availableDuoRace.requiredRank).toString();
+      if (this.availableRainbowRace !== null && this.availableRainbowRace !== undefined)
+        this.rainbowRaceRank = this.utilityService.getNumericValueOfCircuitRank(this.availableRainbowRace.requiredRank).toString();
+    }
+    else {
+      if (this.availableMonoRace !== null && this.availableMonoRace !== undefined)
+        this.monoRaceRank = this.availableMonoRace.requiredRank;
+      if (this.availableDuoRace !== null && this.availableDuoRace !== undefined)
+        this.duoRaceRank = this.availableDuoRace.requiredRank;
+      if (this.availableRainbowRace !== null && this.availableRainbowRace !== undefined)
+        this.rainbowRaceRank = this.availableRainbowRace.requiredRank;
+    }
 
     this.availableLocalRaces.push(this.globalService.generateFreeRace());
     this.availableLocalRaces.push(this.globalService.generateFreeRace());
@@ -59,25 +80,24 @@ export class LocalViewComponent implements OnInit {
     var freeRacePerTimePeriodPair = this.globalService.globalVar.modifiers.find(item => item.text === "freeRacesPerTimePeriodModifier");
     if (freeRacePerTimePeriodPair !== undefined)
       freeRacePerTimePeriod = freeRacePerTimePeriodPair.value;
-    
+
     this.totalFreeRaces = freeRacePerTimePeriod;
 
-    var freeRaceTimePeriod = 15*60;
+    var freeRaceTimePeriod = 15 * 60;
     var freeRaceTimePeriodPair = this.globalService.globalVar.modifiers.find(item => item.text === "freeRacesTimePeriodModifier");
     if (freeRaceTimePeriodPair !== undefined)
       freeRaceTimePeriod = freeRaceTimePeriodPair.value;
 
     this.subscription = this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {
       var remainingTime = freeRaceTimePeriod - this.globalService.globalVar.freeRaceTimePeriodCounter; //in seconds
-      var minutes = Math.floor(remainingTime/60);
-      var seconds = (remainingTime - (minutes*60));
+      var minutes = Math.floor(remainingTime / 60);
+      var seconds = (remainingTime - (minutes * 60));
       var secondsDisplay = Math.floor(seconds).toString();
-      if (seconds < 10)
-      {
-        if (seconds < 1 || seconds > 59)        
-          secondsDisplay = "00";        
+      if (seconds < 10) {
+        if (seconds < 1 || seconds > 59)
+          secondsDisplay = "00";
         else
-          secondsDisplay = String(secondsDisplay).padStart(2, '0');                
+          secondsDisplay = String(secondsDisplay).padStart(2, '0');
       }
 
       this.freeRaceTimer = minutes + ":" + secondsDisplay;
@@ -87,13 +107,13 @@ export class LocalViewComponent implements OnInit {
 
   getNextAvailableSpecialRace(raceType: LocalRaceTypeEnum) {
     if (raceType === LocalRaceTypeEnum.Mono)
-      this.globalService.GenerateMonoRaces(this.globalService.globalVar.monoRank);      
+      this.globalService.GenerateMonoRaces(this.globalService.globalVar.monoRank);
     if (raceType === LocalRaceTypeEnum.Duo)
-     this.globalService.GenerateDuoRaces(this.globalService.globalVar.duoRank);
+      this.globalService.GenerateDuoRaces(this.globalService.globalVar.duoRank);
     if (raceType === LocalRaceTypeEnum.Rainbow)
-    this.globalService.GenerateRainbowRaces(this.globalService.globalVar.rainbowRank);
+      this.globalService.GenerateRainbowRaces(this.globalService.globalVar.rainbowRank);
 
-    return this.globalService.globalVar.localRaces.find(item => item.localRaceType === raceType);    
+    return this.globalService.globalVar.localRaces.find(item => item.localRaceType === raceType);
   }
 
   sortByRankRequired(a: Race, b: Race): number {
@@ -119,12 +139,11 @@ export class LocalViewComponent implements OnInit {
         canRace = false;
     });
 
-    if (isFreeRace)
-    {
+    if (isFreeRace) {
       var freeRacePerTimePeriod = 10;
       var freeRacePerTimePeriodPair = this.globalService.globalVar.modifiers.find(item => item.text === "freeRacesPerTimePeriodModifier");
       if (freeRacePerTimePeriodPair !== undefined)
-      freeRacePerTimePeriod = freeRacePerTimePeriodPair.value;
+        freeRacePerTimePeriod = freeRacePerTimePeriodPair.value;
 
       if (this.globalService.globalVar.freeRaceCounter >= freeRacePerTimePeriod)
         canRace = false;
@@ -293,7 +312,7 @@ export class LocalViewComponent implements OnInit {
     }
   }*/
 
-  ngOnDestroy() {    
+  ngOnDestroy() {
     if (this.subscription !== null && this.subscription !== undefined) {
       this.subscription.unsubscribe();
     }

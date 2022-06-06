@@ -29,5 +29,7 @@ export class NavigationComponent implements OnInit {
   {        
     this.viewChanged.emit(selectedView);
     this.selectedNavigation = selectedView;
+    
+    this.incubatorAvailable = this.lookupService.isItemUnlocked("duoRace");  
   }
 }

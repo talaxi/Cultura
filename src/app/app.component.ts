@@ -41,14 +41,14 @@ export class AppComponent {
     //PURELY for testing, should be false when deployed
     //TODO: set this up so that it won't overwrite a user's save if you forget to turn this off
     var overrideNewGame = true;
-    var devMode = true;
+    var devMode = false;
 
     if (this.newGame || overrideNewGame)
       this.globalService.initializeGlobalVariables();
 
     if (devMode) {
       this.globalService.globalVar.tutorialCompleted = true;
-      this.globalService.devModeInitialize(35);
+      this.globalService.devModeInitialize(30);
     }
 
     var subscription = this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {

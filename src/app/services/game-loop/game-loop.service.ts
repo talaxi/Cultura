@@ -28,10 +28,7 @@ export class GameLoopService {
     this.gameUpdateEvent.emit(deltaTime);
     this.globalService.globalVar.lastTimeStamp = dateNow;
     this.lastPerformanceNow = performanceNow;
-    //maybe switch this to setInterval if not working when tab isn't focused? setInterval should work fine
-    window.requestAnimationFrame(() => this.Update());
-    /*setInterval(() => {
-      this.Update()
-      }, 1000/60);*/    
+    
+    window.requestAnimationFrame(() => this.Update());    
   } 
 }

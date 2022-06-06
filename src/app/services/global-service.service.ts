@@ -598,6 +598,7 @@ export class GlobalService {
     incubatorUpgrade.name = "Incubator Upgrade";
     incubatorUpgrade.purchasePrice.push(this.getCoinsResourceValue(10000));
     incubatorUpgrade.canHaveMultiples = false;
+    incubatorUpgrade.isAvailable = false;
     incubatorUpgrade.type = ShopItemTypeEnum.Specialty;
     specialtyShopItems.push(incubatorUpgrade);
 
@@ -1018,6 +1019,14 @@ export class GlobalService {
     }
     else if (numericValue === 27) {
       this.globalVar.unlockables.set("duoRace", true);
+      //unlock incubator upgrade from shop
+      var specialtyShop = this.globalVar.shop.find(item => item.name === "Specialty");
+      if (specialtyShop !== null && specialtyShop !== undefined)
+      {
+        var incubatorUpgrade = specialtyShop.itemList.find(item => item.name === "Incubator Upgrade");
+        if (incubatorUpgrade !== null && incubatorUpgrade !== undefined)
+          incubatorUpgrade.isAvailable = true;
+      }
 
       returnVal = ["Duo Races", "A new race type has been unlocked! Race in pairs to complete this long distance race. Success here will generate more interest for your facility, this time drawing in curious researchers. Gain Research Levels that improve incubator results."];
 
@@ -1663,7 +1672,7 @@ export class GlobalService {
     var timeToComplete = 80;
 
     var baseMeters = 6500;
-    var factor = 1.175;
+    var factor = 1.1;
 
     var maxRandomFactor = 1.2;
     var minRandomFactor = 0.8;
@@ -2195,6 +2204,7 @@ export class GlobalService {
     this.globalVar.settings.set("skipDrawRace", false);
     this.globalVar.settings.set("finishTrainingBeforeSwitching", false);
     this.globalVar.settings.set("hideTips", false);
+    this.globalVar.settings.set("useNumbersForCircuitRank", false);
     this.globalVar.settings.set("raceDisplayInfo", RaceDisplayInfoEnum.both);
   }
 
@@ -2326,7 +2336,7 @@ export class GlobalService {
     }
 
     var horse = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Horse);
-    /*if (horse !== undefined) {
+    if (horse !== undefined) {
       horse.currentStats.topSpeed = 20000;
       horse.currentStats.acceleration = 20000;
       horse.currentStats.endurance = 20000;
@@ -2338,7 +2348,7 @@ export class GlobalService {
 
       //horse.breedGaugeMax = 5;
       //horse.breedGaugeXp = 5;
-    }*/
+    }
 
     var cheetah = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Cheetah);
     if (cheetah !== undefined) {

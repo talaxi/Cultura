@@ -1676,7 +1676,7 @@ export class RaceComponent implements OnInit {
     this.frameByFrameSubscription = this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {
       if (!this.racePaused)
         currentTime += deltaTime;
-      var currentFrame = Math.floor(currentTime * this.frameModifier);
+      var currentFrame = Math.round(currentTime * this.frameModifier);
 
       if (this.selectedRace.raceUI.velocityByFrame.length <= currentFrame || this.raceSkipped) {
         var lastFrameCount = this.selectedRace.raceUI.velocityByFrame.length - 1;

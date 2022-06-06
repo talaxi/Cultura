@@ -10,6 +10,7 @@ import { LookupService } from 'src/app/services/lookup.service';
 })
 export class FooterComponent implements OnInit {
   randomTip: string;
+  displayTip: boolean;
   version: string;
   totalTime: number;
   maxTipTime: number;
@@ -17,12 +18,26 @@ export class FooterComponent implements OnInit {
   constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private lookupService: LookupService) { }
 
   ngOnInit(): void {
+    if (this.globalService.globalVar.settings.get("hideTips")) {
+      this.displayTip = false;
+    }
+    else
+      this.displayTip = true;
+
+    console.log(this.displayTip);
+
     this.version = this.globalService.globalVar.version.toFixed(2);
     this.randomTip = this.lookupService.getRandomTip();
     this.totalTime = 0;
     this.maxTipTime = 60;
 
     this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {
+      if (this.globalService.globalVar.settings.get("hideTips")) {
+        this.displayTip = false;
+      }
+      else
+        this.displayTip = true;
+              
       this.totalTime += deltaTime;
 
       if (this.totalTime >= this.maxTipTime)

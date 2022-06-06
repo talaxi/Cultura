@@ -93,7 +93,7 @@ export class DrawRaceComponent implements OnInit {
 
     this.subscription = this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {
       //clear canvas
-      //var startTime = performance.now();
+      var startTime = performance.now();
       context.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
       context.lineWidth = 6;      
 
@@ -110,8 +110,9 @@ export class DrawRaceComponent implements OnInit {
         this.displayRace(context, currentTime);
       }
 
-      //var endTime = performance.now();
-      //console.log(`Call to doSomething took ${endTime - startTime} milliseconds`);
+      var endTime = performance.now();
+      //if (endTime - startTime > 16.7)
+      //  console.log(`Call to doSomething took ${endTime - startTime} milliseconds`);
     });
   }
 
@@ -294,6 +295,7 @@ export class DrawRaceComponent implements OnInit {
     this.icyPatchBackgroundLines = [];
 
     //track color
+    context.lineCap = "round";
     context.strokeStyle = "gray";
 
     this.lastPathEndingX = 0;
@@ -303,7 +305,9 @@ export class DrawRaceComponent implements OnInit {
     var yRaceModeModifier = 10;
     this.totalRaceModeXDistance = this.race.length * xRaceModeModifier;
 
-    var currentFrame = Math.floor(currentTime * this.frameModifier);
+    var currentFrame = Math.round(currentTime * this.frameModifier);
+    
+    //console.log("current frame: " + currentFrame);
     var currentDistanceTraveled = this.race.raceUI.distanceCoveredByFrame[currentFrame];
     var currentYDistanceTraveled = 0;
 
@@ -422,7 +426,8 @@ export class DrawRaceComponent implements OnInit {
     //could make currentDistanceTraveledY and have that be added to by ySteepness and checking that leg is climb for currentdistainceinleg
 
     this.visibleDistanceXLeft = xDistanceOffset;
-    this.visibleDistanceXRight = xDistanceOffset + (this.canvasWidth);
+    this.visibleDistanceXRight = xDistanceOffset + (this.canvasWidth);    
+    //console.log("Visible X Distance: " + this.visibleDistanceXLeft + " , " + this.visibleDistanceXRight);
 
     context.globalCompositeOperation = "source-over";
 
@@ -442,7 +447,7 @@ export class DrawRaceComponent implements OnInit {
 
         leg.pathData.forEach(path => {
           if (leg.courseType === RaceCourseTypeEnum.Flatland) {
-            context.lineCap = "round";
+            //context.lineCap = "round";
             if (path.routeDesign === RaceDesignEnum.Regular)
               this.drawRegularFlatlandOverview(context, path, xRaceModeModifier, yRaceModeModifier, xDistanceOffset, yDistanceOffset);
             if (path.routeDesign === RaceDesignEnum.S)
@@ -451,7 +456,7 @@ export class DrawRaceComponent implements OnInit {
               this.drawBumpsFlatlandOverview(context, path, xRaceModeModifier, yRaceModeModifier, xDistanceOffset, yDistanceOffset);
           }
           else if (leg.courseType === RaceCourseTypeEnum.Mountain) {
-            context.lineCap = "round";
+            //context.lineCap = "round";
             var goingUp = mountainLegDistance < leg.distance * this.mountainClimbPercent;
             if (path.routeDesign === RaceDesignEnum.Regular) {
               this.drawRegularMountainOverview(context, path, xRaceModeModifier, yRaceModeModifier, goingUp, xDistanceOffset, yDistanceOffset);
@@ -466,7 +471,7 @@ export class DrawRaceComponent implements OnInit {
             mountainLegDistance += path.length;
           }
           else if (leg.courseType === RaceCourseTypeEnum.Ocean) {
-            context.lineCap = "round";
+            //context.lineCap = "round";
             if (path.routeDesign === RaceDesignEnum.Regular)
               this.drawRegularWaterOverview(context, path, xRaceModeModifier, yRaceModeModifier, waterGoingUp, xDistanceOffset, yDistanceOffset);
             if (path.routeDesign === RaceDesignEnum.Waves)
@@ -477,7 +482,7 @@ export class DrawRaceComponent implements OnInit {
             waterGoingUp = !waterGoingUp;
           }
           if (leg.courseType === RaceCourseTypeEnum.Tundra) {
-            context.lineCap = "round";
+            //context.lineCap = "round";
             if (path.routeDesign === RaceDesignEnum.Regular)
               this.drawRegularTundraOverview(context, path, xRaceModeModifier, yRaceModeModifier, xDistanceOffset, yDistanceOffset);
             if (path.routeDesign === RaceDesignEnum.Cavern)
@@ -486,7 +491,7 @@ export class DrawRaceComponent implements OnInit {
               this.drawHillsTundraOverview(context, path, xRaceModeModifier, yRaceModeModifier, xDistanceOffset, yDistanceOffset);
           }
           if (leg.courseType === RaceCourseTypeEnum.Volcanic) {
-            context.lineCap = "round";
+            //context.lineCap = "round";
             this.backgroundVolcanoYStart = this.lastPathEndingY;
             if (path.routeDesign === RaceDesignEnum.Regular || path.routeDesign === RaceDesignEnum.FirstRegular || path.routeDesign === RaceDesignEnum.LastRegular)
               this.drawRegularVolcanoOverview(context, 0, pathCounter, path, leg.pathData.length, xRaceModeModifier, yRaceModeModifier, xDistanceOffset, yDistanceOffset);

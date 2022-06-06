@@ -1012,7 +1012,7 @@ export class LookupService {
         popover += "Breed Modifier: *" + breedLevelStatModifierValue.toFixed(2) + "\n";
     
       if (traitModifier !== 1)
-        popover += "Trait Name (Trait): *" + traitModifier.toFixed(1)+ "\n";
+        popover += animal.trait.traitName + " (Trait): *" + traitModifier.toFixed(1)+ "\n";
 
       if (animal.incubatorStatUpgrades.maxSpeedModifier > 1)
         popover += "Incubator Upgrade: *" + animal.incubatorStatUpgrades.maxSpeedModifier.toFixed(3)+ "\n";
@@ -1044,7 +1044,7 @@ export class LookupService {
       popover += "Breed Modifier: *" + breedLevelStatModifierValue.toFixed(2)+ "\n";
   
     if (traitModifier !== 1)
-      popover += "Trait Name (Trait): *" + traitModifier.toFixed(1)+ "\n";
+      popover += animal.trait.traitName + " (Trait): *" + traitModifier.toFixed(1)+ "\n";
 
     if (animal.incubatorStatUpgrades.accelerationModifier > 1)
       popover += "Incubator Upgrade: *" + animal.incubatorStatUpgrades.accelerationModifier.toFixed(3)+ "\n";
@@ -1077,7 +1077,7 @@ export class LookupService {
       popover += "Breed Modifier: *" + breedLevelStatModifierValue.toFixed(2)+ "\n";
   
     if (traitModifier !== 1)
-      popover += "Trait Name (Trait): *" + traitModifier.toFixed(1)+ "\n";
+      popover += animal.trait.traitName + " (Trait): *" + traitModifier.toFixed(1)+ "\n";
 
     if (animal.incubatorStatUpgrades.staminaModifier > 1)
       popover += "Incubator Upgrade: *" + animal.incubatorStatUpgrades.staminaModifier.toFixed(3)+ "\n";
@@ -1110,7 +1110,7 @@ export class LookupService {
       popover += "Breed Modifier: *" + breedLevelStatModifierValue.toFixed(2)+ "\n";
   
     if (traitModifier !== 1)
-      popover += "Trait Name (Trait): *" + traitModifier.toFixed(1)+ "\n";
+      popover += animal.trait.traitName + " (Trait): *" + traitModifier.toFixed(1)+ "\n";
 
     if (animal.incubatorStatUpgrades.powerModifier > 1)
       popover += "Incubator Upgrade: *" + animal.incubatorStatUpgrades.powerModifier.toFixed(3)+ "\n";
@@ -1142,7 +1142,7 @@ export class LookupService {
       popover += "Breed Modifier: *" + breedLevelStatModifierValue.toFixed(2)+ "\n";
   
     if (traitModifier !== 1)
-      popover += "Trait Name (Trait): *" + traitModifier.toFixed(1)+ "\n";
+      popover += animal.trait.traitName + " (Trait): *" + traitModifier.toFixed(1)+ "\n";
 
     if (animal.incubatorStatUpgrades.focusModifier > 1)
       popover += "Incubator Upgrade: *" + animal.incubatorStatUpgrades.focusModifier.toFixed(3)+ "\n";
@@ -1174,7 +1174,7 @@ export class LookupService {
       popover += "Breed Modifier: *" + breedLevelStatModifierValue.toFixed(2)+ "\n";
   
     if (traitModifier !== 1)
-      popover += "Trait Name (Trait): *" + traitModifier.toFixed(1)+ "\n";
+      popover += animal.trait.traitName + " (Trait): *" + traitModifier.toFixed(1)+ "\n";
 
     if (animal.incubatorStatUpgrades.adaptabilityModifier > 1)
       popover += "Incubator Upgrade: *" + animal.incubatorStatUpgrades.adaptabilityModifier.toFixed(3)+ "\n";

@@ -6,7 +6,7 @@
         <div id="monoRaceSection" *ngIf="areMonoRacesAvailable">
             <div (click)="selectLocalRace(availableMonoRace)" class="monoRace"
                 *ngIf="availableMonoRace !== undefined && availableMonoRace !== null">
-                <span class="s4Heading">Mono Race <strong>{{ availableMonoRace.requiredRank }}</strong> </span>
+                <span class="s4Heading">Mono Race <strong>{{ monoRaceRank }}</strong> </span>
                 <br />
                 <app-race-description [race]="availableMonoRace" [showStartText]="true"></app-race-description>
             </div>
@@ -19,7 +19,7 @@
         <div id="duoRaceSection" *ngIf="areDuoRacesAvailable">
             <div (click)="selectLocalRace(availableDuoRace)" class="duoRace"
                 *ngIf="availableDuoRace !== undefined && availableDuoRace !== null">
-                <span class="s4Heading">Duo Race <strong>{{ availableDuoRace.requiredRank }}</strong> </span>
+                <span class="s4Heading">Duo Race <strong>{{ duoRaceRank }}</strong> </span>
                 <br />
                 <app-race-description [race]="availableDuoRace" [showStartText]="true"></app-race-description>
             </div>
@@ -32,7 +32,7 @@
         <div id="rainbowRaceSection" *ngIf="areRainbowRacesAvailable">
             <div (click)="selectLocalRace(availableRainbowRace)" class="rainbowRace"
                 *ngIf="availableRainbowRace !== undefined && availableRainbowRace !== null">
-                <span class="s4Heading">Rainbow Race <strong>{{ availableRainbowRace.requiredRank }}</strong> </span>
+                <span class="s4Heading">Rainbow Race <strong>{{ rainbowRaceRank }}</strong> </span>
                 <br />
                 <app-race-description [race]="availableRainbowRace" [showStartText]="true"></app-race-description>
             </div>

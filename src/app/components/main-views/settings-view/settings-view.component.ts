@@ -16,9 +16,13 @@ export class SettingsViewComponent implements OnInit {
   importExportValue: string;
   skipDrawRace: boolean;
   finishTrainingBeforeSwitching: boolean;
+  hideTips: boolean;
+  useNumbersForCircuitRank: boolean;
   raceDisplayInfo: RaceDisplayInfoEnum;
   finishTrainingBeforeSwitchingPopoverText: string;
   skipDrawRacePopoverText: string;
+  hideTipsPopoverText: string;
+  useNumbersForCircuitRankPopoverText: string;
   raceDisplayInfoPopoverText: string;
   public raceDisplayInfoEnum = RaceDisplayInfoEnum;
 
@@ -45,6 +49,22 @@ export class SettingsViewComponent implements OnInit {
     else
       this.raceDisplayInfo = raceDisplayInfoOptions;
     this.raceDisplayInfoPopoverText = "Choose how to view races. Draw only shows the visual aspect, text only shows the textual updates, and both shows both. Both is default.";
+
+    var hideTips = this.globalService.globalVar.settings.get("hideTips");
+    if (hideTips === undefined)
+      this.hideTips = false;
+    else
+      this.hideTips = hideTips;
+    this.hideTipsPopoverText = "Stop displaying tips in the footer.";
+
+
+    var useNumbersForCircuitRank = this.globalService.globalVar.settings.get("useNumbersForCircuitRank");
+    if (useNumbersForCircuitRank === undefined)
+      this.useNumbersForCircuitRank = false;
+    else
+      this.useNumbersForCircuitRank = useNumbersForCircuitRank;
+    this.useNumbersForCircuitRankPopoverText = "Use numbers instead of letters when displaying ranks.";
+
   }
 
   public SaveGame() {
@@ -69,13 +89,23 @@ export class SettingsViewComponent implements OnInit {
     this.globalService.globalVar.settings.set("finishTrainingBeforeSwitching", this.finishTrainingBeforeSwitching);
   }
 
-  saveRaceDisplayInfo() {    
+  hideTipsToggle = () => {
+    this.hideTips = !this.hideTips;
+    this.globalService.globalVar.settings.set("hideTips", this.hideTips);
+  }
+
+  useNumbersForCircuitRankToggle = () => {
+    this.useNumbersForCircuitRank = !this.useNumbersForCircuitRank;
+    this.globalService.globalVar.settings.set("useNumbersForCircuitRank", this.useNumbersForCircuitRank);
+  }
+
+  saveRaceDisplayInfo() {
     this.globalService.globalVar.settings.set("raceDisplayInfo", this.raceDisplayInfo);
   }
 
   changeTheme(newTheme: any) {
     var theme = night;
-    
+
     if (newTheme === "White")
       theme = this.themeService.setWhiteTheme();
     if (newTheme === "Light")
@@ -85,7 +115,7 @@ export class SettingsViewComponent implements OnInit {
     if (newTheme === "Night")
       theme = this.themeService.setNightTheme();
 
-      
+
     this.globalService.globalVar.settings.set("theme", theme);
   }
 }
