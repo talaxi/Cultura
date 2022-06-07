@@ -66,13 +66,13 @@
             <div class="centered">
                 After ranking up, you receive:
                 <br />
-                <div class="s4Heading">{{ circuitIncreaseReward[0] }}</div>
+                <div class="s4Heading">{{ selectedRace.circuitIncreaseReward[0] }}</div>
             </div>
             <br />
             <br />
-            <div>{{ circuitIncreaseReward[1] }}</div>
+            <div>{{ selectedRace.circuitIncreaseReward[1] }}</div>
         </div>
-        <div>
+        <div class="buttonSpacing">
             <button type="button" (click)="modal.dismiss()">Continue</button>
         </div>
     </div>

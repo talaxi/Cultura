@@ -52,7 +52,6 @@ export class RaceComponent implements OnInit {
   frameByFrameSubscription: any;
   displayVisualRace = true;
   displayTextUpdates = true;
-  circuitIncreaseReward: any;
 
   constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private utilityService: UtilityService,
     private lookupService: LookupService, private initializeService: InitializeService, private modalService: NgbModal,
@@ -108,7 +107,8 @@ export class RaceComponent implements OnInit {
         if (raceResult.wasSuccessful) {
           this.displayResults = true;
 
-          if (this.circuitIncreaseReward !== null && this.circuitIncreaseReward !== undefined && this.circuitIncreaseReward[0] !== "")
+          if (this.selectedRace.circuitIncreaseReward !== null && this.selectedRace.circuitIncreaseReward !== undefined &&
+             this.selectedRace.circuitIncreaseReward[0] !== "")
             this.modalService.open(this.circuitRewardModal, { ariaLabelledBy: 'modal-basic-title', size: 'lg' });
         }
 

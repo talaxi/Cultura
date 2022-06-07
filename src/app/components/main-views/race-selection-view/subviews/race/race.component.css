@@ -88,3 +88,8 @@ td {
 .centered {
   text-align: center;
 }
+
+.buttonSpacing {
+  text-align: right;
+  padding: 1rem;
+}

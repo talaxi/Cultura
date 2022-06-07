@@ -18,6 +18,7 @@ export class Race {
     rewards: ResourceValue[];
     @Type(() => RaceUI)
     raceUI: RaceUI;
+    circuitIncreaseReward: [string, string];
 
     constructor(raceLegs: RaceLeg[], requiredRank: string, isCircuitRace: boolean, raceId: number, length: number, timeToComplete: number, rewards?: ResourceValue[], localRaceType?: LocalRaceTypeEnum) {
         this.raceLegs = raceLegs;
@@ -27,6 +28,7 @@ export class Race {
         this.length = length;
         this.timeToComplete = timeToComplete;
         this.raceUI = new RaceUI();
+        this.circuitIncreaseReward = ["",""];
 
         if (rewards !== undefined && rewards !== null)
             this.rewards = rewards;

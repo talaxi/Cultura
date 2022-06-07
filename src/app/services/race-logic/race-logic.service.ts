@@ -28,24 +28,12 @@ import { UtilityService } from '../utility/utility.service';
 })
 export class RaceLogicService {
   selectedRace: Race;
-  racingAnimals: Animal[];
-  incrementalRaceUpdates: string;
+  racingAnimals: Animal[];  
   displayResults: boolean;
-  rewardRows: any[][];
-  rewardCells: any[];
-  raceSkipped = false;
-  racePaused = false;
   frameModifier = 60;
   timeToComplete = 60;
-  velocityAtCurrentFrame: any;
-  maxSpeedAtCurrentFrame: any;
-  staminaAtCurrentFrame: any;
-  frameByFrameSubscription: any;
   currentLostFocusOpportunity = 0;
-  currentBurstOpportunity = 0;
-  displayVisualRace = true;
-  displayTextUpdates = true;
-  circuitIncreaseReward: any;
+  currentBurstOpportunity = 0;  
   tundraPreviousYAmount = 0;
 
   constructor(private globalService: GlobalService, private lookupService: LookupService, private utilityService: UtilityService,
@@ -54,7 +42,12 @@ export class RaceLogicService {
   runRace(race: Race): RaceResult {
     console.log("Race Info:");
     console.log(race);
+
+    this.currentBurstOpportunity = 0;
+    this.currentLostFocusOpportunity = 0;
+    this.tundraPreviousYAmount = 0;
     this.selectedRace = race;
+
     var raceResult = new RaceResult();
     var totalRaceDistance = 0;
     var distanceCovered = 0;
@@ -863,7 +856,7 @@ export class RaceLogicService {
 
       var circuitRankRaces = this.globalService.globalVar.circuitRaces.filter(item => item.requiredRank === globalCircuitRank);
       if (circuitRankRaces.every(item => item.isCompleted)) {
-        this.circuitIncreaseReward = this.globalService.IncreaseCircuitRank();
+        this.selectedRace.circuitIncreaseReward = this.globalService.IncreaseCircuitRank();
         this.selectedRace.rewards.push(this.initializeService.initializeResource("Medals", 1, ShopItemTypeEnum.Resources));
       }
     }
@@ -1192,16 +1185,20 @@ export class RaceLogicService {
     return false;
   }
 
-  didAnimalLoseFocus(racingAnimal: Animal, timeToComplete: number, raceLength: number, currentDistanceInRace: number, terrain: Terrain, statLossFromExhaustion: number, nineTailsBuffs: [string, number][], obj: { coldBloodedIncreaseMultiplier: number }): boolean {
+  didAnimalLoseFocus(racingAnimal: Animal, timeToComplete: number, raceLength: number, currentDistanceInRace: number, terrain: Terrain, statLossFromExhaustion: number, nineTailsBuffs: [string, number][], obj: { coldBloodedIncreaseMultiplier: number }): boolean {    
     if (racingAnimal.raceVariables.lostFocus)
+    {
+      console.log("Already lost focus");
       return false; //already lost focus
+    }
 
     if (racingAnimal.type === AnimalTypeEnum.Monkey && racingAnimal.ability.name === "Frenzy" && racingAnimal.raceVariables.isBursting) {
+      console.log("Frenzy");
       return false;
     }
 
     var focusBreakpoint = raceLength / timeToComplete;
-
+    
     if (this.currentLostFocusOpportunity * focusBreakpoint < currentDistanceInRace) {
       this.currentLostFocusOpportunity += 1;
 
@@ -1214,6 +1211,7 @@ export class RaceLogicService {
         focusModifier = focusModifierPair.value;
 
       var unwaveringFocus = (racingAnimal.currentStats.focusMs * terrain.focusModifier) * focusModifier * statLossFromExhaustion;
+      console.log("opportunity: " + this.currentLostFocusOpportunity + " unwavering focus: " + unwaveringFocus + " meters since: " + racingAnimal.raceVariables.metersSinceLostFocus);
 
       if (racingAnimal.type === AnimalTypeEnum.Hare && racingAnimal.ability.name === "Awareness" && racingAnimal.ability.abilityInUse) {
         unwaveringFocus *= 1.25;
@@ -1239,11 +1237,14 @@ export class RaceLogicService {
 
       var metersSinceExpectedDistraction = racingAnimal.raceVariables.metersSinceLostFocus - unwaveringFocus;
       var percentChanceOfLosingFocus = (metersSinceExpectedDistraction / racingAnimal.currentStats.focusMs) * 100;
-
+      
       var rng = this.utilityService.getRandomNumber(1, 100);
+      console.log("Unwavering Focus: " + unwaveringFocus + " rng: " + rng + " percent change of losing focus: " + percentChanceOfLosingFocus);
       if (rng <= percentChanceOfLosingFocus)
         return true;
     }
+
+    console.log("Not at breakpoint opp: " + this.currentLostFocusOpportunity + " focus BP: " + focusBreakpoint + " distance in race: " +  currentDistanceInRace)
     return false;
   }
 
