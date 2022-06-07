@@ -10,8 +10,8 @@
                         popoverClass="popoverClass">Barn Level {{ barn.barnUpgrades.barnLevel }}</span>
                     <br />
 
-                    <span [ngbPopover]="upgradeBarnContent"
-                    triggers="mouseenter:mouseleave" popoverClass="popoverClass">
+                    <span [ngbPopover]="upgradeBarnContent" triggers="mouseenter:mouseleave"
+                        popoverClass="popoverClass">
                         <button (click)="upgradeBarn()" [disabled]="!canUpgrade">{{ upgradeText }}</button>
                     </span>
                 </div>
@@ -31,15 +31,17 @@
                     <span>{{ this.associatedAnimal.getAnimalType() }}</span>
                 </div>
                 <div>
-                    <span [ngClass]="{'sizeSpacing': this.sizeValue !== 'Large' }">{{ this.sizeValue }} </span> <span *ngIf="this.sizeValue !== 'Large'" [ngbPopover]="costToBuildContent"
-                    triggers="mouseenter:mouseleave" popoverClass="popoverClass"><button
-                            (click)="upgradeBarnSize()" [disabled]="!canBuild"  class="sizeButtonSpacing">Build</button></span>
+                    <span [ngClass]="{'sizeSpacing': this.sizeValue !== 'Large' }">{{ this.sizeValue }} </span> <span
+                        *ngIf="this.sizeValue !== 'Large'" [ngbPopover]="costToBuildContent"
+                        triggers="mouseenter:mouseleave" popoverClass="popoverClass"><button (click)="upgradeBarnSize()"
+                            [disabled]="!canBuild" class="sizeButtonSpacing">Build</button></span>
                 </div>
                 <hr />
                 <div *ngIf="this.existingTraining !== null && this.existingTraining !== undefined">
-                    <span>{{ this.existingTraining.trainingName }} </span>  
-                    <br/>                  
-                    <span><em>({{ (this.existingTraining.trainingTimeRemaining / 60) | number : '1.0-0' }} min remaining)</em></span>
+                    <span>{{ this.existingTraining.trainingName }} </span>
+                    <br />
+                    <span><em>({{ (this.existingTraining.trainingTimeRemaining / 60) | number : '1.0-0' }} min
+                            remaining)</em></span>
                 </div>
                 <div *ngIf="this.existingTraining === null || this.existingTraining === undefined">
                     <span>No Training Assigned</span>
@@ -89,10 +91,13 @@
             </div>
         </div>
         <br />
-        <app-training-list *ngIf="associatedAnimal.canTrain" [availableTrainingOptions]="availableTrainings"
-            (selectedTrainingOption)="selectNewTraining($event)"></app-training-list>
-        <div *ngIf="!associatedAnimal.canTrain">
-            This animal is currently in incubation and cannot train. Check back after incubation finishes.
+        <div [ngClass]='tutorialActive ? "tutorialActive" : ""'>
+            <app-training-list *ngIf="associatedAnimal.canTrain" [availableTrainingOptions]="availableTrainings"
+                (selectedTrainingOption)="selectNewTraining($event)">
+            </app-training-list>
+            <div *ngIf="!associatedAnimal.canTrain">
+                This animal is currently in incubation and cannot train. Check back after incubation finishes.
+            </div>
         </div>
     </div>
 </div>

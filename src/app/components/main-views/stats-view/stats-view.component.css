@@ -1,0 +1,12 @@
+.statsView
+{
+    height: 100%;
+
+    background-color: var(--background-secondary);
+    border-color: var(--background-tertiary);
+    color: var(--foreground-default);     
+}
+
+.info {    
+    text-align: center;
+}

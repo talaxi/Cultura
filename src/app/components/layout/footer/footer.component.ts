@@ -24,9 +24,7 @@ export class FooterComponent implements OnInit {
     else
       this.displayTip = true;
 
-    console.log(this.displayTip);
-
-    this.version = this.globalService.globalVar.version.toFixed(2);
+    this.version = this.globalService.globalVar.currentVersion.toFixed(2);
     this.randomTip = this.lookupService.getRandomTip();
     this.totalTime = 0;
     this.maxTipTime = 60;

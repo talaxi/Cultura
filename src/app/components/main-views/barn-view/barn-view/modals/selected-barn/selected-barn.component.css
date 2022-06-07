@@ -139,3 +139,7 @@
 .sizeSpacing {
   margin-left: 4rem;
 }
+
+.tutorialActive {
+  border: red 1px solid !important;
+}

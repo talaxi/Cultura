@@ -48,7 +48,7 @@ export class AppComponent {
 
     if (devMode) {
       this.globalService.globalVar.tutorialCompleted = true;
-      this.globalService.devModeInitialize(30);
+      this.globalService.devModeInitialize(80);
     }
 
     var subscription = this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {
@@ -209,7 +209,6 @@ export class AppComponent {
       // Create a new
       const worker = new Worker(new URL('./app.worker', import.meta.url));
       worker.onmessage = ({ data }) => {
-        console.log('Data Saved');
         localStorage.setItem("gameData", data);
         worker.terminate();
       };

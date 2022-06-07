@@ -35,7 +35,7 @@ export class SelectedAnimalComponent implements OnInit {
   traitStatGainDescription: string;
   autoBreedActive: boolean;
   canAutoBreed = false;
-  assignedBarnName: string;
+  assignedBarnName: string;  
 
   ability1: Ability;
   ability2: Ability;
@@ -56,6 +56,7 @@ export class SelectedAnimalComponent implements OnInit {
     private componentCommunicationService: ComponentCommunicationService) { }
 
   ngOnInit(): void {
+    this.handleIntroTutorial();
     this.maxSpeedModifierAmount = this.lookupService.getMaxSpeedModifierByAnimalType(this.selectedAnimal.type);
     this.accelerationModifierAmount = this.lookupService.getAccelerationModifierByAnimalType(this.selectedAnimal.type);
     this.staminaModifierAmount = this.lookupService.getStaminaModifierByAnimalType(this.selectedAnimal.type);
@@ -309,6 +310,14 @@ export class SelectedAnimalComponent implements OnInit {
     description = this.globalService.getItemDescription(name);
 
     return description;
+  }
+
+  handleIntroTutorial()
+  {    
+    if (!this.globalService.globalVar.tutorialCompleted && this.globalService.globalVar.currentTutorialId === 3)
+    {      
+      this.globalService.globalVar.showTutorial = true;
+    }    
   }
 
   goToAssignedBarn() {

@@ -7,7 +7,7 @@
     <app-animal-deck></app-animal-deck>
     <hr />
     <div class="circuitRaceGrid">
-        <div class="circuitRace{{i+1}}" (click)="selectCircuitRace(race)"
+        <div [ngClass]='tutorialActive ? "tutorialActive" : ""' class="circuitRace{{i+1}}" (click)="selectCircuitRace(race)"
             *ngFor="let race of availableCircuitRaces; let i = index">
             <app-race-description [index]="i" [race]="race" [showStartText]="true"></app-race-description>
         </div>

@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Race } from 'src/app/models/races/race.model';
+import { GlobalService } from 'src/app/services/global-service.service';
 
 @Component({
   selector: 'app-race-selection-view',
@@ -11,7 +12,7 @@ export class RaceSelectionViewComponent implements OnInit {
   showRace = false;
   selectedRace: Race;
 
-  constructor() { }
+  constructor(private globalService: GlobalService) { }
 
   ngOnInit(): void {
   }

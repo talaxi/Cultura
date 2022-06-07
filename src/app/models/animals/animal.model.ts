@@ -37,12 +37,14 @@ export class Animal {
     availableAbilities: Ability[];
     trait: AnimalTraits;
     canTrain: boolean;
+    totalRacesRun: number; //for tracked stats
 
     constructor() {
         this.incubatorStatUpgrades = new IncubatorStatUpgrades();
         this.breedLevel = 1;
         this.breedGaugeXp = 0;
         this.breedGaugeMax = 100;
+        this.totalRacesRun = 0;
         this.canTrain = true;
         this.isAvailable = false;
 

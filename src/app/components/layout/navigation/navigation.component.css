@@ -10,3 +10,8 @@
     font-weight: bold;
     color: var(--foreground-secondary);
 }
+
+
+.tutorialActive {
+    border: red 1px solid !important;
+  }

@@ -12,6 +12,7 @@ import { GameLoopService } from 'src/app/services/game-loop/game-loop.service';
 import { GlobalService } from 'src/app/services/global-service.service';
 import { LookupService } from 'src/app/services/lookup.service';
 import { SpecializationService } from 'src/app/services/specialization.service';
+import { TutorialService } from 'src/app/services/tutorial-service.service';
 //import * as cloneDeep from 'lodash/cloneDeep';
 
 @Component({
@@ -45,6 +46,7 @@ export class SelectedBarnComponent implements OnInit {
   specializationDescription: string;
   inDepthSpecializationDescription: string;
   barnSpecializationsUnlocked = false;
+  tutorialActive = false;
   subscription: any;
 
   filterSpeed = false;
@@ -59,10 +61,11 @@ export class SelectedBarnComponent implements OnInit {
 
   constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private modalService: NgbModal,
     private lookupService: LookupService, private componentCommunicationService: ComponentCommunicationService,
-    private specializationService: SpecializationService) {
+    private specializationService: SpecializationService, private tutorialService: TutorialService) {
   }
 
   ngOnInit(): void {
+    this.handleTutorial();
     this.specializationOptions = this.lookupService.getAllBarnSpecializations();
     this.upgradeText = "Upgrade";
     this.barnSpecializationsUnlocked = this.lookupService.isItemUnlocked("barnSpecializations");
@@ -176,6 +179,14 @@ export class SelectedBarnComponent implements OnInit {
 
     animal.currentTraining = newTraining;
     this.existingTraining = newTraining;
+
+    if (!this.globalService.globalVar.tutorialCompleted && this.globalService.globalVar.currentTutorialId === 2)
+    {      
+      this.tutorialActive = false;
+      this.globalService.globalVar.currentTutorialId += 1;
+      this.globalService.globalVar.showTutorial = true;
+      this.componentCommunicationService.setAnimalView(NavigationEnum.animals, this.associatedAnimal);
+    }
   }
 
   GetAvailableTrainingOptions(associatedAnimal: Animal): TrainingOption[] {
@@ -556,6 +567,20 @@ export class SelectedBarnComponent implements OnInit {
 
   goToAnimal() {
     this.componentCommunicationService.setAnimalView(NavigationEnum.animals, this.associatedAnimal);
+  }
+
+  handleTutorial()
+  {    
+    if (!this.globalService.globalVar.tutorialCompleted && this.globalService.globalVar.currentTutorialId === 1)
+    {      
+      this.tutorialActive = true;
+      this.globalService.globalVar.currentTutorialId += 1;
+      this.globalService.globalVar.showTutorial = true;
+    }    
+    else if (!this.globalService.globalVar.tutorialCompleted)
+    {
+      this.tutorialActive = false;
+    }    
   }
 
   ngOnDestroy() {

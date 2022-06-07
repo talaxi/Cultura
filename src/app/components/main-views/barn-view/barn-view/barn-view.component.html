@@ -1,5 +1,5 @@
 <div class="gridContainer" id="barnViewDiv" *ngIf="selectedBarn === 0">    
-    <div class="barn1 barnDefault">
+    <div class="barn1 barnDefault" [ngClass]='tutorialActive ? "tutorialActive" : ""'>
         <app-barn [barnNumber]="1" (selectedBarn)="goToBarn($event)"></app-barn>
     </div>
 

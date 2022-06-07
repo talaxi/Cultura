@@ -5,7 +5,7 @@
     grid-template-columns: 88% 12%;
     grid-template-rows: 6% 88% 6%;
     justify-content: stretch;
-    grid-template-areas: 
+    grid-template-areas:
       "header header"
       "main  nav"
       "footer footer";
@@ -22,39 +22,41 @@
   }
 
   .navArea {
-    grid-area: nav;   
-    justify-self: stretch; 
+    grid-area: nav;
+    justify-self: stretch;
 
     background-color: var(--background-secondary);
     color: var(--foreground-default);
   }
 
   .footerArea {
-    grid-area: footer;  
-    justify-self: stretch;  
+    grid-area: footer;
+    justify-self: stretch;
 
     background-color: var(--background-tertiary);
     color: var(--foreground-quaternary);
   }
 
   .headerArea {
-    grid-area: header;   
-    justify-self: stretch; 
+    grid-area: header;
+    justify-self: stretch;
 
     background-color: var(--background-tertiary);
     color: var(--foreground-quaternary);
   }
 
   .mainView {
-      height: 100%;
+    height: 100%;
   }
-  
+
   ::ng-deep ngb-modal-backdrop {
     z-index: 1050 !important;
   }
 
-.modalClass {
+  .modalClass {
+    white-space: pre-line;
+
     background-color: var(--background-secondary);
     border-color: var(--background-tertiary);
     color: var(--foreground-default);
-}
+  }

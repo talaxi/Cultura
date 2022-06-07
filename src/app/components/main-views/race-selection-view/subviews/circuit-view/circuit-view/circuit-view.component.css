@@ -28,3 +28,7 @@
   .circuitRace3 {
     grid-area: circuitRace3;    
   }
+
+.tutorialActive {
+  border: red 1px solid !important;
+}

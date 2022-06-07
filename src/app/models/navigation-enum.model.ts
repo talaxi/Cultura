@@ -5,6 +5,9 @@ export enum NavigationEnum {
     decks,
     shop,
     incubator,
+    talents,
     resources,
+    faqs,
+    stats,
     settings
   }

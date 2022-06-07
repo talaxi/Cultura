@@ -1,8 +1,10 @@
-import { Component, OnInit, ChangeDetectorRef, Input, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, Input, ElementRef, ViewChild, SecurityContext } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AnimalTypeEnum } from 'src/app/models/animal-type-enum.model';
 import { RaceCourseTypeEnum } from 'src/app/models/race-course-type-enum.model';
 import { ComponentCommunicationService } from 'src/app/services/component-communication.service';
+import { GameLoopService } from 'src/app/services/game-loop/game-loop.service';
 import { TutorialService } from 'src/app/services/tutorial-service.service';
 import { NavigationEnum } from '../../models/navigation-enum.model';
 import { GlobalService } from '../../services/global-service.service';
@@ -15,15 +17,21 @@ import { GlobalService } from '../../services/global-service.service';
 export class MainComponent implements OnInit {
   public navigationEnum = NavigationEnum;
   activeView = NavigationEnum.barn;
-  tutorialText: string;
+  tutorialText: string | null;
   @ViewChild('tutorialContent', { static: true }) tutorialContent: ElementRef;
 
   constructor(private ref: ChangeDetectorRef, private globalService: GlobalService, private modalService: NgbModal,
-    private componentCommunicationService: ComponentCommunicationService, private tutorialService: TutorialService) {
+    private componentCommunicationService: ComponentCommunicationService, private tutorialService: TutorialService,
+    private sanitizer: DomSanitizer, private gameLoopService: GameLoopService) {
   }
 
-  ngOnInit(): void {    
+  ngOnInit(): void {
     this.openTutorialModal();
+
+    var subscription = this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {
+      if (this.globalService.globalVar.showTutorial)
+        this.openTutorialModal();
+    });
   }
 
   changeView(newView: NavigationEnum) {
@@ -31,27 +39,30 @@ export class MainComponent implements OnInit {
   }
 
   openTutorialModal() {
+    console.log(this.globalService.globalVar.currentTutorialId);
     if (!this.globalService.globalVar.tutorialCompleted) {
       var getTutorialState = this.tutorialService.getTutorialState(this.globalService.globalVar.currentTutorialId);
-      this.componentCommunicationService.setNewView(getTutorialState.associatedTab);
-      this.tutorialText = getTutorialState.tutorialText;
-      this.modalService.open(this.tutorialContent, { ariaLabelledBy: 'modal-basic-title', size: 'lg' }).result.then(
-        result => {
-          this.closeTutorialModal();
-        },
-        reason => {
-          this.closeTutorialModal();
-        }
-      );
+      //this.componentCommunicationService.setNewView(getTutorialState.associatedTab);      
+      if (this.activeView === getTutorialState.associatedTab) {
+        this.tutorialText = this.sanitizer.sanitize(SecurityContext.HTML, this.sanitizer.bypassSecurityTrustHtml(getTutorialState.tutorialText + "\n"));
+        this.globalService.globalVar.showTutorial = false;
+        this.modalService.open(this.tutorialContent, { ariaLabelledBy: 'modal-basic-title', size: 'lg' }).result.then(
+          result => {
+            this.closeTutorialModal();
+          },
+          reason => {
+            this.closeTutorialModal();
+          }
+        );
+      }
     }
   }
 
-  closeTutorialModal() {    
+  closeTutorialModal() {
     this.modalService.dismissAll();
-    this.globalService.globalVar.currentTutorialId += 1;
-    if (this.globalService.globalVar.currentTutorialId === 3)
-      this.globalService.globalVar.tutorialCompleted = true;
-
-    this.openTutorialModal();
+    
+    //if (this.globalService.globalVar.currentTutorialId === 3)
+    //  this.globalService.globalVar.tutorialCompleted = true;
+    
   }
 }

@@ -188,10 +188,6 @@ button:active:enabled {
   color: var(--foreground-secondary);
 }
 
-.tutorialArea {
-  border: red;
-}
-
 .progressBarColor {
   color: #28a745;
 }
@@ -199,6 +195,10 @@ button:active:enabled {
 .miniHr {
   width: 80%;
   opacity: .75;
+}
+
+.tutorialActive {
+  border: red 1px;
 }
 
 .flatlandColor {

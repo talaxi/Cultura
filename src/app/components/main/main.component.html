@@ -21,6 +21,15 @@
         <div id="IncubatorView" class="mainView" *ngIf="activeView === navigationEnum.incubator">
             <app-incubator-view></app-incubator-view>
         </div>
+        <div id="TalentsView" class="mainView" *ngIf="activeView === navigationEnum.talents">
+            <app-talents-view></app-talents-view>
+        </div>
+        <div id="FaqsView" class="mainView" *ngIf="activeView === navigationEnum.faqs">
+            <app-faq-view></app-faq-view>
+        </div>
+        <div id="StatsView" class="mainView" *ngIf="activeView === navigationEnum.stats">
+            <app-stats-view></app-stats-view>
+        </div>
         <div id="ResourcesView" class="mainView" *ngIf="activeView === navigationEnum.resources">
             <app-resources-view></app-resources-view>
         </div>
@@ -44,8 +53,7 @@
             <h4 class="modal-title" id="modal-basic-title">Tutorial</h4>
             <button type="button" aria-label="Close" (click)="closeTutorialModal()">X</button>
         </div>
-        <div class="modal-body">
-            {{ tutorialText }}
+        <div class="modal-body" [innerHTML]="tutorialText">            
         </div>
     </div>
 </ng-template>

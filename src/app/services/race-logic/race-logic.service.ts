@@ -102,7 +102,10 @@ export class RaceLogicService {
       }
 
       racingAnimal.raceVariables = new RaceVariables();
+      racingAnimal.totalRacesRun += 1;      
     });
+
+    this.globalService.globalVar.trackedStats.totalRaces += 1;
 
     //calculate speed of animal based on acceleration and top speed (no obstacles)
     race.raceLegs.forEach(item => {
@@ -736,7 +739,7 @@ export class RaceLogicService {
         }
       }
 
-      completedLegCount += 1;
+      completedLegCount += 1;      
     });
 
     if (!race.raceLegs.some(item => !item.legComplete)) {
@@ -750,13 +753,12 @@ export class RaceLogicService {
       raceResult.wasSuccessful = false;
       raceResult.addRaceUpdate(framesPassed, "You lost the race...");
     }
+    this.globalService.globalVar.trackedStats.totalMetersRaced += distanceCovered;
 
     if (raceResult.wasSuccessful) {
       this.raceWasSuccessfulUpdate(raceResult, buriedTreasureModifier);
     }
-    /*this.setupDisplayRewards(race);
-    this.displayRaceUpdates(raceResult);
-    this.getFrameByFrameStats();*/
+
     return raceResult;
   }
 
@@ -1367,8 +1369,7 @@ export class RaceLogicService {
         }
         if (statGain === 6)
           racingAnimal.ability.tricksterStatGain = "Power";
-
-        console.log("Loss: " + racingAnimal.ability.tricksterStatLoss + " vs Gain: " + racingAnimal.ability.tricksterStatGain);
+       
         racingAnimal.ability.remainingLength = this.lookupService.GetAbilityEffectiveAmount(racingAnimal, currentLeg.terrain.powerModifier, statLossFromExhaustion);
       }
     }
@@ -1546,8 +1547,7 @@ export class RaceLogicService {
       previousPassedBreakpoint[i] = passedBreakpoint;
 
       if (secondsIntoLeg >= timeLavaDrops && didJustPass) {
-        if (!(racingAnimal.type === AnimalTypeEnum.Salamander && racingAnimal.ability.name === "Burrow" && racingAnimal.ability.abilityInUse)) {
-          console.log("Hit Wall " + i);
+        if (!(racingAnimal.type === AnimalTypeEnum.Salamander && racingAnimal.ability.name === "Burrow" && racingAnimal.ability.abilityInUse)) {          
           raceResult.addRaceUpdate(framesPassed, "Lava spills out onto the course, forcing you to evacuate.");
           ranIntoLava = true;
         }

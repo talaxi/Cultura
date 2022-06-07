@@ -29,6 +29,7 @@ import { AnimalStatEnum } from '../models/animal-stat-enum.model';
 import { Settings } from '../models/utility/settings.model';
 import { Unlockables } from '../models/utility/unlockables.model';
 import { RaceDisplayInfoEnum } from '../models/race-display-info-enum.model';
+import { TrackedStats } from '../models/utility/tracked-stats.model';
 
 @Injectable({
   providedIn: 'root'
@@ -52,15 +53,18 @@ export class GlobalService {
     this.globalVar.settings = new Settings();
     this.globalVar.unlockables = new Unlockables();
     this.globalVar.incubator = new Incubator();
+    this.globalVar.trackedStats = new TrackedStats();
     this.globalVar.userIsRacing = false;
     this.globalVar.tutorialCompleted = false;
     this.globalVar.currentTutorialId = 1;
+    this.globalVar.showTutorial = false;
     this.globalVar.nationalRaceCountdown = 0;
     this.globalVar.autoFreeRaceCounter = 0;
     this.globalVar.freeRaceCounter = 0;
     this.globalVar.freeRaceTimePeriodCounter = 0;
     this.globalVar.lastTimeStamp = Date.now();
-    this.globalVar.version = 1.00;
+    this.globalVar.currentVersion = 1.00;
+    this.globalVar.startingVersion = 1.00;
 
     //Initialize modifiers
     this.InitializeModifiers();
@@ -1099,11 +1103,11 @@ export class GlobalService {
 
       returnVal = ["Barn Row 3", ""];
 
-      var amount = 100;
+      var amount = 250;
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(43) + amount + " Stat Increasing Food";
     }
     else if (numericValue === 43) {
-      var amount = 100;
+      var amount = 250;
       this.increaseAllFood(amount);
 
       returnVal = [amount + " Stat Increasing Food", amount + " Apples, Bananas, Oranges, Turnips, Carrots, and Strawberries"];
@@ -1167,11 +1171,90 @@ export class GlobalService {
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(55) + "Power Orb";
     }
     else if (numericValue === 55) {
-      this.globalVar.resources.push(new ResourceValue("Power Orb", 1, ShopItemTypeEnum.Progression));
+      this.globalVar.resources.push(new ResourceValue("Power Orb", 1, ShopItemTypeEnum.Equipment));
 
       returnVal = ["Power Orb", "You receive a glowing violet orb. What it does is a mystery."];
-    }
 
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(58) + "Barn Row 4";
+    }
+    else if (numericValue === 58) {
+      this.globalVar.unlockables.set("barnRow4", true);
+
+      returnVal = ["Barn Row 4", ""];
+
+      var renownAmount = 1;
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(20) + "Focus Orb";
+    }
+    else if (numericValue === 60) {
+      this.globalVar.resources.push(new ResourceValue("Power Orb", 1, ShopItemTypeEnum.Equipment));
+
+      returnVal = ["Focus Orb", "You receive a glowing blue orb. What it does is a mystery."];
+
+      var amount = 100;
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(62) + amount + " Mangoes";
+    }
+     else if (numericValue === 62) {
+      var amount = 100;
+      var resource = this.globalVar.resources.find(item => item.name === "Mangoes");
+      if (resource === null || resource === undefined)
+        this.globalVar.resources.push(new ResourceValue("Mangoes", amount));
+      else
+        resource.amount += amount;
+
+      returnVal = [amount + " Mangoes", ""];
+
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(65) + "Acceleration Orb";
+    }
+    else if (numericValue === 65) {
+      this.globalVar.resources.push(new ResourceValue("Acceleration Orb", 1, ShopItemTypeEnum.Equipment));
+
+      returnVal = ["Acceleration Orb", "You receive a glowing orange orb. What it does is a mystery."];
+
+      var amount = 25;
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(67) + amount + " Renown";
+    }
+    else if (numericValue === 67) {
+      var renownAmount = 25;
+      var renownResource = this.globalVar.resources.find(item => item.name === "Renown");
+      if (renownResource === null || renownResource === undefined)
+        this.globalVar.resources.push(new ResourceValue("Renown", renownAmount));
+      else
+        renownResource.amount += renownAmount;
+
+      returnVal = [renownAmount + " Renown", ""];
+
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(70) + "Endurance Orb";
+    }
+    else if (numericValue === 70) {
+      this.globalVar.resources.push(new ResourceValue("Endurance Orb", 1, ShopItemTypeEnum.Equipment));
+
+      returnVal = ["Endurance Orb", "You receive a glowing yellow orb. What it does is a mystery."];
+
+      var amount = 500;
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(73) + amount + " Stat Increasing Food Items";
+    }
+    else if (numericValue === 73) {
+      var amount = 500;
+      this.increaseAllFood(amount);
+
+      returnVal = [amount + " Stat Increasing Food", amount + " Apples, Bananas, Oranges, Turnips, Carrots, and Strawberries"];
+
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(75) + "Adaptability Orb";
+    }
+    else if (numericValue === 75) {
+      this.globalVar.resources.push(new ResourceValue("Adaptability Orb", 1, ShopItemTypeEnum.Equipment));
+
+      returnVal = ["Adaptability Orb", "You receive a glowing green orb. What it does is a mystery."];
+
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(78) + "Max Speed Orb";
+    }
+    else if (numericValue === 78) {
+      this.globalVar.resources.push(new ResourceValue("Max Speed Orb", 1, ShopItemTypeEnum.Equipment));
+
+      returnVal = ["Max Speed Orb", "You receive a glowing red orb. What it does is a mystery."];
+
+      this.globalVar.circuitRankUpRewardDescription = "More Coming Soon!";
+    }
 
     return returnVal;
   }
@@ -1596,7 +1679,24 @@ export class GlobalService {
 
   GenerateRainbowRaceRewards(rainbowRank: string): ResourceValue[] {
     var rewards: ResourceValue[] = [];
-    rewards.push(new ResourceValue("Facility Level", 1, ShopItemTypeEnum.Progression));
+    rewards.push(new ResourceValue("Talent Points", 1, ShopItemTypeEnum.Progression));
+
+    var numericRank = this.GetCircuitRankValue(rainbowRank);
+    var CoinsFactor = 1.01;
+    var baseCoins = 250;
+
+    var baseRenown = 1.1;
+    var renownFactor = 1.03;
+
+    var currentRenownResource = this.globalVar.resources.find(item => item.name === "Renown");
+    var currentRenown = 1;
+
+    if (currentRenownResource !== undefined)
+      currentRenown = currentRenownResource.amount;
+
+    rewards.push(new ResourceValue("Coins", Math.round(baseCoins * (CoinsFactor ** numericRank))));
+    rewards.push(new ResourceValue("Renown", parseFloat(((baseRenown * (renownFactor ** numericRank)) / 100).toFixed(3))));
+
     return rewards;
   }
 
@@ -2192,6 +2292,7 @@ export class GlobalService {
         animal.baseStats.power, animal.baseStats.focus, animal.baseStats.adaptability);
     }
     this.calculateAnimalRacingStats(animal);
+    this.globalVar.trackedStats.totalBreeds += 1;
   }
 
   InitializeResources() {

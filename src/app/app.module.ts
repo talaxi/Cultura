@@ -44,6 +44,9 @@ import { ThemeService } from './theme/theme.service';
 import { IncubatorTraitsComponent } from './components/main-views/incubator-view/subviews/incubator-traits/incubator-traits.component';
 import { TraitListComponent } from './components/main-components/trait-list/trait-list.component';
 import { TraitOptionComponent } from './components/main-components/trait-option/trait-option.component';
+import { TalentsViewComponent } from './components/main-views/talents-view/talents-view.component';
+import { FaqViewComponent } from './components/main-views/faq-view/faq-view.component';
+import { StatsViewComponent } from './components/main-views/stats-view/stats-view.component';
 
 @NgModule({
   declarations: [
@@ -55,7 +58,7 @@ import { TraitOptionComponent } from './components/main-components/trait-option/
     BarnComponent,
     BarnViewComponent,
     RaceSelectionViewComponent,    
-    SelectedBarnComponent, ProgressBarComponent, CircuitViewComponent, LocalViewComponent, RaceComponent, AnimalsViewComponent, ShopViewComponent, ResourcesViewComponent, SettingsViewComponent, AnimalComponent, AnimalListComponent, SelectedAnimalComponent, DrawRaceComponent, TrainingListComponent, TrainingOptionComponent, ShoppingListComponent, ShoppingItemComponent, AnimalDeckComponent, DecksViewComponent, RaceDescriptionComponent, ToggleComponent, IncubatorViewComponent, IncubatorTraitsComponent, TraitListComponent, TraitOptionComponent
+    SelectedBarnComponent, ProgressBarComponent, CircuitViewComponent, LocalViewComponent, RaceComponent, AnimalsViewComponent, ShopViewComponent, ResourcesViewComponent, SettingsViewComponent, AnimalComponent, AnimalListComponent, SelectedAnimalComponent, DrawRaceComponent, TrainingListComponent, TrainingOptionComponent, ShoppingListComponent, ShoppingItemComponent, AnimalDeckComponent, DecksViewComponent, RaceDescriptionComponent, ToggleComponent, IncubatorViewComponent, IncubatorTraitsComponent, TraitListComponent, TraitOptionComponent, TalentsViewComponent, FaqViewComponent, StatsViewComponent
   ],
   imports: [
     BrowserModule,

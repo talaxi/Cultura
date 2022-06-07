@@ -72,3 +72,7 @@
   .barn9 {
     grid-area: barn9;
   }
+
+  .tutorialActive {
+    border-color: red;
+  }
