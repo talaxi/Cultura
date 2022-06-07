@@ -45,6 +45,8 @@ export class MainComponent implements OnInit {
       if (this.activeView === getTutorialState.associatedTab) {
         this.tutorialText = this.sanitizer.sanitize(SecurityContext.HTML, this.sanitizer.bypassSecurityTrustHtml(getTutorialState.tutorialText + "\n"));
         this.globalService.globalVar.showTutorial = false;
+        if (getTutorialState.id === 5)
+          this.globalService.globalVar.currentTutorialId += 1;
         this.modalService.open(this.tutorialContent, { ariaLabelledBy: 'modal-basic-title', size: 'lg' }).result.then(
           result => {
             this.closeTutorialModal();
