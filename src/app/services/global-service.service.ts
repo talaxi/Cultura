@@ -2438,13 +2438,13 @@ export class GlobalService {
 
     var horse = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Horse);
     if (horse !== undefined) {
-      horse.currentStats.topSpeed = 20000;
-      horse.currentStats.acceleration = 20000;
-      horse.currentStats.endurance = 20000;
-      horse.currentStats.power = 20000;
-      horse.currentStats.focus = 20000;
-      horse.currentStats.adaptability = 20000;
-      horse.breedLevel = 20000;
+      horse.currentStats.topSpeed = 20;
+      //horse.currentStats.acceleration = 20000;
+      //horse.currentStats.endurance = 20000;
+      //horse.currentStats.power = 20000;
+      //horse.currentStats.focus = 20000;
+      //horse.currentStats.adaptability = 20000;
+      //horse.breedLevel = 20000;
       this.calculateAnimalRacingStats(horse);
 
       //horse.breedGaugeMax = 5;
@@ -2460,13 +2460,13 @@ export class GlobalService {
 
     var monkey = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Monkey);
     if (monkey !== undefined) {
-      monkey.currentStats.topSpeed = 20000;
-      monkey.currentStats.acceleration = 20000;
-      monkey.currentStats.endurance = 20000;
-      monkey.currentStats.power = 20000;
-      monkey.currentStats.focus = 20000;
-      monkey.currentStats.adaptability = 20000;
-      monkey.breedLevel = 500;
+      //monkey.currentStats.topSpeed = 20000;
+      monkey.currentStats.acceleration = 20;
+      //monkey.currentStats.endurance = 20000;
+      //monkey.currentStats.power = 20000;
+      //monkey.currentStats.focus = 20000;
+      //monkey.currentStats.adaptability = 20000;
+      //monkey.breedLevel = 500;
       this.calculateAnimalRacingStats(monkey);
 
       //monkey.breedGaugeMax = 5;

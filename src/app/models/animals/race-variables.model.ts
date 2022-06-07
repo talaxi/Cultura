@@ -1,3 +1,4 @@
+import { RelayEffect } from "../races/relay-effect.model";
 import { StumbleSeverityEnum } from "../stumble-severity-enum.model";
 import { AnimalStats } from "./animal-stats.model";
 
@@ -22,9 +23,7 @@ export class RaceVariables {
     remainingBurstMeters: number;
     burstCount: number;
 
-    hasRelayEffect: boolean;
-    remainingRelayMeters: number;
-    relayAffectedStatRatios: AnimalStats; 
+    relayEffects: RelayEffect[];
 
     icyCurrentDirectionUp: boolean;
     icyCurrentYAmount: number; //when it reaches 100 or -100, hits wall
@@ -47,6 +46,8 @@ export class RaceVariables {
         this.stumbled = false;
         this.defaultStumbledLength = 10;
         this.currentStumbledLength = this.defaultStumbledLength;
+
+        this.relayEffects = [];
 
         this.burstCount = 0;
 

@@ -39,10 +39,9 @@ export class MainComponent implements OnInit {
   }
 
   openTutorialModal() {
-    console.log(this.globalService.globalVar.currentTutorialId);
     if (!this.globalService.globalVar.tutorialCompleted) {
       var getTutorialState = this.tutorialService.getTutorialState(this.globalService.globalVar.currentTutorialId);
-      //this.componentCommunicationService.setNewView(getTutorialState.associatedTab);      
+        
       if (this.activeView === getTutorialState.associatedTab) {
         this.tutorialText = this.sanitizer.sanitize(SecurityContext.HTML, this.sanitizer.bypassSecurityTrustHtml(getTutorialState.tutorialText + "\n"));
         this.globalService.globalVar.showTutorial = false;
