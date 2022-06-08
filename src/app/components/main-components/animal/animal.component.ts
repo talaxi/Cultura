@@ -11,10 +11,18 @@ import { GlobalService } from 'src/app/services/global-service.service';
 
 export class AnimalComponent implements OnInit {
   @Input() selectedAnimal: Animal;
+  colorConditional: any;
 
-  constructor(private globalService: GlobalService) { }
+  constructor() { }
 
   ngOnInit(): void {
+    this.colorConditional = {
+      'flatlandColor': this.selectedAnimal.getRaceCourseType() === 'Flatland',
+      'mountainColor': this.selectedAnimal.getRaceCourseType() === 'Mountain',
+      'waterColor': this.selectedAnimal.getRaceCourseType() === 'Ocean',
+      'tundraColor': this.selectedAnimal.getRaceCourseType() === 'Tundra',
+      'volcanicColor': this.selectedAnimal.getRaceCourseType() === 'Volcanic'
+    };
   }
 
 }

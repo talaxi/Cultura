@@ -93,22 +93,8 @@ export class SelectedAnimalComponent implements OnInit {
       'volcanicColor': this.selectedAnimal.getRaceCourseType() === 'Volcanic'
     };
 
-    this.usableItemsList = [];
-    //add food to list
-    this.globalService.globalVar.resources.filter(item => item.itemType === ShopItemTypeEnum.Food).forEach(food => {
-      if (food !== undefined) {
-        this.usableItemsList.push(food);
-      }
-    });
-
-    this.equipmentList = [];
-    //add equipment to list
-    this.globalService.globalVar.resources.filter(item => item.itemType === ShopItemTypeEnum.Equipment).forEach(equipment => {
-      if (equipment !== undefined) {
-        var modifiedEquipment = equipment.makeCopy(equipment);
-        this.equipmentList.push(modifiedEquipment);
-      }
-    });
+    this.updateItemsList();
+    this.updateEquipmentList();
 
     //remove any equipment already in use
     this.globalService.globalVar.animals.filter(item => item.equippedItem !== null && item.equippedItem !== undefined).forEach(animal => {
@@ -161,6 +147,31 @@ export class SelectedAnimalComponent implements OnInit {
   selectAbility(ability: Ability) {
     this.selectedAnimal.ability = ability;
     this.longDescription = this.lookupService.getAnimalAbilityDescription(false, this.selectedAnimal.ability.name, this.selectedAnimal);
+  }
+
+  updateItemsList() {
+    this.usableItemsList = [];
+    //add food to list
+    this.globalService.globalVar.resources.filter(item => item.itemType === ShopItemTypeEnum.Food && item.amount > 0).forEach(food => {
+      if (food !== undefined) {
+        this.usableItemsList.push(food);
+      }
+    });
+
+    this.setupDisplayItems();
+  }
+
+  updateEquipmentList() {    
+    this.equipmentList = [];
+    //add equipment to list
+    this.globalService.globalVar.resources.filter(item => item.itemType === ShopItemTypeEnum.Equipment).forEach(equipment => {
+      if (equipment !== undefined) {
+        var modifiedEquipment = equipment.makeCopy(equipment);
+        this.equipmentList.push(modifiedEquipment);
+      }
+    });
+
+    this.setupDisplayEquipment();
   }
 
   setupDisplayItems(): void {
@@ -244,6 +255,8 @@ export class SelectedAnimalComponent implements OnInit {
         this.globalService.calculateAnimalRacingStats(this.selectedAnimal);
       }
     }
+
+    this.updateItemsList();
   }
 
   selectItem(item: ResourceValue) {
@@ -252,6 +265,7 @@ export class SelectedAnimalComponent implements OnInit {
 
   equipItem() {
     this.selectedAnimal.equippedItem = this.selectedEquipment;
+    this.updateEquipmentList();
     this.modalService.dismissAll();
   }
 

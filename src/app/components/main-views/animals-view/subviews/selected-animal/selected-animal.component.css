@@ -92,6 +92,11 @@
   float: right;
 }
 
+.ability1, .ability2, .ability3 {
+  width: 33.33%;
+  display: inline-block;
+}
+
 .spaced {
   margin-left: .5em;
 }

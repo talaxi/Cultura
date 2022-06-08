@@ -48,8 +48,8 @@
                 'mountainColor': type === 'Mountain', 'waterColor': type === 'Ocean', 'tundraColor': type === 'Tundra', 'volcanicColor': type === 'Volcanic'}" (click)="filterType(type)">
                         {{type.trim()}}
                     </span>
-
                 </div>
+                <br/>
                 <div>
                     <span *ngFor="let animal of possibleAnimalsList" class="animalOption"
                         [ngClass]="{'selectedAnimal': selectedAnimalName === animal}" (click)="selectAnimal(animal)">

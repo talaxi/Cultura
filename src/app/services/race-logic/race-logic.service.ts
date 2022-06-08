@@ -1187,13 +1187,11 @@ export class RaceLogicService {
 
   didAnimalLoseFocus(racingAnimal: Animal, timeToComplete: number, raceLength: number, currentDistanceInRace: number, terrain: Terrain, statLossFromExhaustion: number, nineTailsBuffs: [string, number][], obj: { coldBloodedIncreaseMultiplier: number }): boolean {    
     if (racingAnimal.raceVariables.lostFocus)
-    {
-      console.log("Already lost focus");
+    {      
       return false; //already lost focus
     }
 
-    if (racingAnimal.type === AnimalTypeEnum.Monkey && racingAnimal.ability.name === "Frenzy" && racingAnimal.raceVariables.isBursting) {
-      console.log("Frenzy");
+    if (racingAnimal.type === AnimalTypeEnum.Monkey && racingAnimal.ability.name === "Frenzy" && racingAnimal.raceVariables.isBursting) {      
       return false;
     }
 
@@ -1210,8 +1208,7 @@ export class RaceLogicService {
       else
         focusModifier = focusModifierPair.value;
 
-      var unwaveringFocus = (racingAnimal.currentStats.focusMs * terrain.focusModifier) * focusModifier * statLossFromExhaustion;
-      console.log("opportunity: " + this.currentLostFocusOpportunity + " unwavering focus: " + unwaveringFocus + " meters since: " + racingAnimal.raceVariables.metersSinceLostFocus);
+      var unwaveringFocus = (racingAnimal.currentStats.focusMs * terrain.focusModifier) * focusModifier * statLossFromExhaustion;     
 
       if (racingAnimal.type === AnimalTypeEnum.Hare && racingAnimal.ability.name === "Awareness" && racingAnimal.ability.abilityInUse) {
         unwaveringFocus *= 1.25;
@@ -1239,12 +1236,11 @@ export class RaceLogicService {
       var percentChanceOfLosingFocus = (metersSinceExpectedDistraction / racingAnimal.currentStats.focusMs) * 100;
       
       var rng = this.utilityService.getRandomNumber(1, 100);
-      console.log("Unwavering Focus: " + unwaveringFocus + " rng: " + rng + " percent change of losing focus: " + percentChanceOfLosingFocus);
+      
       if (rng <= percentChanceOfLosingFocus)
         return true;
     }
 
-    console.log("Not at breakpoint opp: " + this.currentLostFocusOpportunity + " focus BP: " + focusBreakpoint + " distance in race: " +  currentDistanceInRace)
     return false;
   }
 

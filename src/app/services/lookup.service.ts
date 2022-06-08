@@ -354,8 +354,7 @@ export class LookupService {
       || name === "Carrots" || name === "Mangoes") {
       return this.globalService.getItemDescription(name);
     }
-    else if (name === "Stopwatch" || name === "Stockbreeder" || name === "Course Maps" || name === "Animal Handler" ||
-      name === "Scouts" || name === "Money Mark" || name === "National Races" || name === "International Races")
+    else if (type === ShopItemTypeEnum.Specialty)
       return this.getSpecialtyItemDescription(name);
     else if (type === ShopItemTypeEnum.Equipment)
       return this.globalService.getEquipmentDescription(name);

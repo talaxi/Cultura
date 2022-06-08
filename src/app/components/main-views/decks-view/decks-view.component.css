@@ -24,6 +24,11 @@
     display: inline-block;
 }
 
+.animalOption {
+    width: 33.33%;
+    display: inline-block;
+}
+
 .selectedAnimal {
     font-weight: bold;
 }

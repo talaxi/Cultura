@@ -152,6 +152,7 @@ export class GlobalService {
 
     this.globalVar.modifiers.push(new StringNumberPair(5, "freeRacesPerTimePeriodModifier"));
     this.globalVar.modifiers.push(new StringNumberPair((5 * 60), "freeRacesTimePeriodModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair((1 * 60 * 60), "autoFreeRacesMaxIdleTimePeriodModifier"));
 
     //ability modifiers
     this.globalVar.modifiers.push(new StringNumberPair(1.5, "feedingFrenzyPositiveModifier"));
@@ -227,7 +228,41 @@ export class GlobalService {
     this.globalVar.modifiers.push(new StringNumberPair(baseFocusModifier * mediumDetriment, "sharkDefaultFocusModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(baseAdaptabilityModifier * mediumDetriment, "sharkDefaultAdaptabilityModifier"));
 
-    //TODO: don't forget the other animals
+    this.globalVar.modifiers.push(new StringNumberPair(baseMaxSpeedModifier * minorDetriment, "octopusDefaultMaxSpeedModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseAccelerationModifier * mediumDetriment, "octopusDefaultAccelerationModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseStaminaModifier, "octopusDefaultStaminaModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(basePowerModifier * majorImprovement, "octopusDefaultPowerModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseFocusModifier * minorImprovement, "octopusDefaultFocusModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseAdaptabilityModifier, "octopusDefaultAdaptabilityModifier"));
+
+    this.globalVar.modifiers.push(new StringNumberPair(baseMaxSpeedModifier * mediumDetriment, "penguinDefaultMaxSpeedModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseAccelerationModifier, "penguinDefaultAccelerationModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseStaminaModifier, "penguinDefaultStaminaModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(basePowerModifier * minorImprovement, "penguinDefaultPowerModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseFocusModifier, "penguinDefaultFocusModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseAdaptabilityModifier * mediumImprovement, "penguinDefaultAdaptabilityModifier"));
+
+    this.globalVar.modifiers.push(new StringNumberPair(baseMaxSpeedModifier * minorDetriment, "caribouDefaultMaxSpeedModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseAccelerationModifier * mediumDetriment, "caribouDefaultAccelerationModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseStaminaModifier * majorImprovement, "caribouDefaultStaminaModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(basePowerModifier * minorImprovement, "caribouDefaultPowerModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseFocusModifier * mediumImprovement, "caribouDefaultFocusModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseAdaptabilityModifier, "caribouDefaultAdaptabilityModifier"));
+
+    this.globalVar.modifiers.push(new StringNumberPair(baseMaxSpeedModifier, "salamanderDefaultMaxSpeedModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseAccelerationModifier * minorImprovement, "salamanderDefaultAccelerationModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseStaminaModifier * mediumDetriment, "salamanderDefaultStaminaModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(basePowerModifier, "salamanderDefaultPowerModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseFocusModifier * mediumImprovement, "salamanderDefaultFocusModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseAdaptabilityModifier, "salamanderDefaultAdaptabilityModifier"));
+
+    this.globalVar.modifiers.push(new StringNumberPair(baseMaxSpeedModifier * mediumImprovement, "foxDefaultMaxSpeedModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseAccelerationModifier, "foxDefaultAccelerationModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseStaminaModifier * minorDetriment, "foxDefaultStaminaModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(basePowerModifier * minorImprovement, "foxDefaultPowerModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseFocusModifier * majorDetriment, "foxDefaultFocusModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseAdaptabilityModifier * mediumImprovement, "foxDefaultAdaptabilityModifier"));
+
   }
 
   InitializeAnimals(): void {
@@ -883,7 +918,10 @@ export class GlobalService {
   }
 
   getRewardReceiveText(numericValue: number) {
-    return "Reach circuit rank " + this.utilityService.getCircuitRankFromNumericValue(numericValue) + " to receive: \n";
+    if (this.globalVar.settings.get("useNumbersForCircuitRank"))
+      return "Reach circuit rank " + numericValue + " to receive: \n";
+    else
+      return "Reach circuit rank " + this.utilityService.getCircuitRankFromNumericValue(numericValue) + " to receive: \n";
   }
 
   //TODO: Make some sort of checkup that says if circuitrank is > 3 then make sure monkey is available?
@@ -1025,8 +1063,7 @@ export class GlobalService {
       this.globalVar.unlockables.set("duoRace", true);
       //unlock incubator upgrade from shop
       var specialtyShop = this.globalVar.shop.find(item => item.name === "Specialty");
-      if (specialtyShop !== null && specialtyShop !== undefined)
-      {
+      if (specialtyShop !== null && specialtyShop !== undefined) {
         var incubatorUpgrade = specialtyShop.itemList.find(item => item.name === "Incubator Upgrade");
         if (incubatorUpgrade !== null && incubatorUpgrade !== undefined)
           incubatorUpgrade.isAvailable = true;
@@ -1193,7 +1230,7 @@ export class GlobalService {
       var amount = 100;
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(62) + amount + " Mangoes";
     }
-     else if (numericValue === 62) {
+    else if (numericValue === 62) {
       var amount = 100;
       var resource = this.globalVar.resources.find(item => item.name === "Mangoes");
       if (resource === null || resource === undefined)
@@ -2257,15 +2294,14 @@ export class GlobalService {
     animal.breedGaugeMax += breedMaxIncrease;
     //increase max total
 
-    
+
     var incubatorUpgrade = this.globalVar.resources.find(item => item.name === "Incubator Upgrade");
-    if (incubatorUpgrade !== null && incubatorUpgrade !== undefined && animal.trait !== null && animal.trait !== undefined)
-    {
+    if (incubatorUpgrade !== null && incubatorUpgrade !== undefined && animal.trait !== null && animal.trait !== undefined) {
       var incubatorUpgradeIncrease = .001;
       var incubatorUpgradeIncreaseModifier = this.globalVar.modifiers.find(item => item.text === "incubatorUpgradeIncreaseModifier");
       if (incubatorUpgradeIncreaseModifier !== null && incubatorUpgradeIncreaseModifier !== undefined)
         incubatorUpgradeIncrease = incubatorUpgradeIncreaseModifier.value;
-      
+
       var increasedAmount = animal.trait.researchLevel * incubatorUpgradeIncrease;
       if (animal.trait.positiveStatGain === AnimalStatEnum.topSpeed)
         animal.incubatorStatUpgrades.maxSpeedModifier += increasedAmount;
@@ -2425,7 +2461,7 @@ export class GlobalService {
     var Coins = this.globalVar.resources.find(item => item.name === "Coins");
     if (Coins !== undefined)
       Coins.amount = 30000;
-    this.globalVar.resources.push(this.initializeService.initializeResource("Medals", 15, ShopItemTypeEnum.Resources));
+    this.globalVar.resources.push(this.initializeService.initializeResource("Medals", 105, ShopItemTypeEnum.Resources));
     //this.globalVar.resources.push(this.initializeService.initializeResource("Facility Level", 50));
     this.globalVar.resources.push(this.initializeService.initializeResource("Research Level", 50, ShopItemTypeEnum.Progression));
 

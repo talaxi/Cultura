@@ -48,7 +48,7 @@ export class AppComponent {
 
     if (devMode) {
       this.globalService.globalVar.tutorialCompleted = true;
-      this.globalService.devModeInitialize(5);
+      this.globalService.devModeInitialize(1);
     }
 
     var subscription = this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {
@@ -75,8 +75,6 @@ export class AppComponent {
     if (this.globalService.globalVar.animals === undefined || this.globalService.globalVar.animals === null) {
       return;
     }
-
-    this.handleAutoFreeRace(deltaTime);
 
     var allTrainingAnimals = this.globalService.globalVar.animals.filter(item => item.isAvailable &&
       item.currentTraining !== undefined && item.currentTraining !== null);
@@ -150,10 +148,20 @@ export class AppComponent {
     if (freeRaceTimePeriodPair !== undefined)
       freeRaceTimePeriod = freeRaceTimePeriodPair.value;
 
-    if (this.globalService.globalVar.freeRaceTimePeriodCounter >= freeRaceTimePeriod) {
-      this.globalService.globalVar.freeRaceTimePeriodCounter = 0;
+    var autofreeRaceMaxIdleTimePeriod = 1 * 60 * 60;
+    var autofreeRaceMaxIdleTimePeriodPair = this.globalService.globalVar.modifiers.find(item => item.text === "autoFreeRacesMaxIdleTimePeriodModifier");
+    if (autofreeRaceMaxIdleTimePeriodPair !== undefined)
+      autofreeRaceMaxIdleTimePeriod = autofreeRaceMaxIdleTimePeriodPair.value;
+      
+    //make this a while but only up to a certain point
+    while (this.globalService.globalVar.freeRaceTimePeriodCounter >= freeRaceTimePeriod &&
+      autofreeRaceMaxIdleTimePeriod > 0) {
+      this.globalService.globalVar.freeRaceTimePeriodCounter -= freeRaceTimePeriod;
+      autofreeRaceMaxIdleTimePeriod -= freeRaceTimePeriod;
       this.globalService.globalVar.freeRaceCounter = 0;
       this.globalService.globalVar.autoFreeRaceCounter = 0;
+      
+      this.handleAutoFreeRace(deltaTime);
     }
   }
 

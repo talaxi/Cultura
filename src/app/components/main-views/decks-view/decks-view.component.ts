@@ -15,7 +15,7 @@ import { LookupService } from 'src/app/services/lookup.service';
 export class DecksViewComponent implements OnInit {
   //@ViewChild('editDeckModal') editDeckModal: any;
   animalDecks: AnimalDeck[];
-  raceCourseTypeList: string[];
+  raceCourseTypeList: string[] = [];
   possibleAnimalsList: string[];
   selectedDeck: AnimalDeck;
   showAutoRaceButton: boolean;
@@ -38,7 +38,14 @@ export class DecksViewComponent implements OnInit {
     this.isRaceOrderOn = false;
     this.newAnimalList = [];
     this.animalDecks = this.globalService.globalVar.animalDecks;
-    this.raceCourseTypeList = this.lookupService.getAllRaceCourseTypes();
+    //this.raceCourseTypeList = this.lookupService.getAllRaceCourseTypes();
+    this.globalService.globalVar.animals.filter(item => item.isAvailable).forEach(item => {
+      if (!this.raceCourseTypeList.some(course => course === item.getRaceCourseType()))
+      {
+        this.raceCourseTypeList.push(item.getRaceCourseType());
+      }
+    });
+
     var scouts = this.lookupService.getResourceByName("Scouts");
     if (scouts !== undefined && scouts !== null && scouts > 0) {
       this.displayRaceOrder = true;
