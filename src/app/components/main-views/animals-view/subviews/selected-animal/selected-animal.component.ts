@@ -140,8 +140,12 @@ export class SelectedAnimalComponent implements OnInit {
   }
 
   editName(): void {
-    this.selectedAnimal.name = this.newName;
-    this.editingName = false;
+    //TODO: error message?
+    if (this.newName.length <= 50 && this.newName.length >= 1)
+    {
+      this.selectedAnimal.name = this.newName;
+      this.editingName = false;
+    }
   }
 
   selectAbility(ability: Ability) {
@@ -231,8 +235,8 @@ export class SelectedAnimalComponent implements OnInit {
     globalResource.amount -= this.selectedItemQuantity;
 
     if (this.selectedItem.itemType === ShopItemTypeEnum.Food) {
-      if (this.selectedItem.name === "Mangoes") {
-        this.selectedAnimal.breedLevel += this.selectedItemQuantity;
+      if (this.selectedItem.name === "Mangoes") {        
+        this.selectedAnimal.breedLevel += +this.selectedItemQuantity;        
         this.globalService.calculateAnimalRacingStats(this.selectedAnimal);
       }
       else {
@@ -331,7 +335,12 @@ export class SelectedAnimalComponent implements OnInit {
     if (!this.globalService.globalVar.tutorialCompleted && this.globalService.globalVar.currentTutorialId === 3)
     {      
       this.globalService.globalVar.showTutorial = true;
-    }    
+    }  
+    if (!this.globalService.globalVar.tutorialCompleted && this.globalService.globalVar.currentTutorialId === 8)
+    {      
+      this.globalService.globalVar.currentTutorialId += 1;
+      this.globalService.globalVar.showTutorial = true;
+    }      
   }
 
   goToAssignedBarn() {

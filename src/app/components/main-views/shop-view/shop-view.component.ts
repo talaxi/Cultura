@@ -81,4 +81,14 @@ export class ShopViewComponent implements OnInit {
     else
       return false;
   }
+
+  ResetShopFilters() {
+    this.filterAnimals = false;
+    this.filterAbilities = false;
+    this.filterEquipment = false;
+    this.filterFood = false;
+    this.filterSpecialty = false;
+    this.filterTrainings = false;
+    this.getShopOptions();
+  }
 }

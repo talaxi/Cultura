@@ -619,13 +619,18 @@ export class DrawRaceComponent implements OnInit {
         if (leg.courseType === RaceCourseTypeEnum.Flatland)
           color = "#7d3f00";//"#8f1c14";
         if (leg.courseType === RaceCourseTypeEnum.Mountain) {
-          if (this.themeService.getActiveThemeName() === "light")
+          //if (this.themeService.getActiveThemeName() === "light")
             color = "#1b630d";
-          else
-            color = "#4d6b48";
+          //else
+            //color = "#4d6b48";
         }
         if (leg.courseType === RaceCourseTypeEnum.Ocean)
-          color = "#16148f";
+        {
+          if (this.themeService.getActiveThemeName() === "night")
+            color = "#5044ab";
+          else
+            color = "#16148f";
+        }
         if (leg.courseType === RaceCourseTypeEnum.Tundra)
           color = "#28809c";
         if (leg.courseType === RaceCourseTypeEnum.Volcanic)
@@ -644,13 +649,18 @@ export class DrawRaceComponent implements OnInit {
     if (courseType === RaceCourseTypeEnum.Flatland)
       color = "#7d3f00";
     if (courseType === RaceCourseTypeEnum.Mountain) {
-      if (this.themeService.getActiveThemeName() === "light")
+      //if (this.themeService.getActiveThemeName() === "light")
         color = "#1b630d";
-      else
-        color = "#4d6b48";
+      //else
+        //color = "#4d6b48";
     }
     if (courseType === RaceCourseTypeEnum.Ocean)
+    {
+      if (this.themeService.getActiveThemeName() === "night")
+      color = "#5044ab";
+      else
       color = "#16148f";
+    }
     if (courseType === RaceCourseTypeEnum.Tundra)
       color = "#28809c";
     if (courseType === RaceCourseTypeEnum.Volcanic)
@@ -668,13 +678,18 @@ export class DrawRaceComponent implements OnInit {
         if (leg.courseType === RaceCourseTypeEnum.Flatland)
           color = "#D16900";//"#eb3023";
         if (leg.courseType === RaceCourseTypeEnum.Mountain) {
-          if (this.themeService.getActiveThemeName() === "light")
+          //if (this.themeService.getActiveThemeName() === "light")
             color = "#279113";
-          else
-            color = "#A1DB97";
+          //else
+            //color = "#A1DB97";
         }
         if (leg.courseType === RaceCourseTypeEnum.Ocean)
+        {
+          if (this.themeService.getActiveThemeName() === "night")
+          color = "#7463f7";
+          else
           color = "#0000FF";
+        }
         if (leg.courseType === RaceCourseTypeEnum.Tundra)
           color = "#1CA1C9";
         if (leg.courseType === RaceCourseTypeEnum.Volcanic)

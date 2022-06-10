@@ -1,7 +1,7 @@
 <div class="raceDescription">
     <span *ngIf="index !== undefined && index !== null && index > -1">Race {{ index+1 }} </span>        
     <br />
-    <div [ngClass]="{'raceNotAllowed': cannotRace}" [ngbPopover]="popContent" [disablePopover]="popoverText === ''" triggers="mouseenter:mouseleave"
+    <div [ngClass]="{'raceNotAllowed': cannotRace}" class="clickableText" [ngbPopover]="popContent" [disablePopover]="popoverText === ''" triggers="mouseenter:mouseleave"
         popoverClass="popoverClass">
         <p *ngFor="let raceLeg of race.raceLegs" [ngClass]="getNoRacerClass(raceLeg)">
             {{ raceLeg.distance | number : '1.2-2' }} Meters of {{ raceLeg.getTerrainName() }}

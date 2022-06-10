@@ -15,6 +15,7 @@
   --background-default: #f4faff;
   --background-secondary: #a3b9cc;
   --background-tertiary: #5c7d99;
+  --background-quarternary: #65799E;
   --background-light: #ffffff;
 
   --primary-default: #5dfdcb;
@@ -199,6 +200,18 @@ button:active:enabled {
 
 .tutorialActive {
   border: red 1px;
+}
+
+.screenMarginLeft {
+  margin-left: 1rem;
+}
+
+.screenMarginRight {
+  margin-right: 1rem;
+}
+
+.clickableText {
+  cursor: pointer;
 }
 
 .flatlandColor {

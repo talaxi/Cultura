@@ -1,12 +1,12 @@
 <div class="incubatorView">
-    <div class="info">
+    <div class="info" *ngIf="!animalSelected">
         <h2>Incubator</h2>
         <div class="description">
             Select an animal and the desired trait to begin the incubation process. While incubating, you will not be able to train
             the selected animal. The chosen trait will remain on the animal until a new trait is selected or the trait is removed.
         </div>
+        <hr/>
     </div>
-    <hr/>
     <div *ngIf="researchLevel > 0">
         <div class="selectAnimalView" *ngIf="!animalSelected">            
             <div>

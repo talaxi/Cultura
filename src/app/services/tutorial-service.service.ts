@@ -2,13 +2,20 @@ import { Injectable } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NavigationEnum } from '../models/navigation-enum.model';
 import { TutorialState } from '../models/tutorial-state.model';
+import { GlobalService } from './global-service.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TutorialService {
 
-  constructor() { }
+  constructor(private globalService: GlobalService) { }
+
+  skipTutorial()
+  {
+    this.globalService.globalVar.tutorialCompleted = true;
+    this.globalService.globalVar.currentTutorialId = 9; //need to keep this updated or come up with better idea
+  }
 
   getTutorialState(id: number)
   {
@@ -54,6 +61,33 @@ export class TutorialService {
       tutorialState.tutorialText = "Way to go! Exciting stuff there. Looks like you've got the gist of it for now. Keep racing, make some money, and build up your facility to be as great as it can be. I'll check in with you again a little later. I look forward to seeing how far you can go!";      
       tutorialState.associatedTab = NavigationEnum.raceselection;
     }
+    if (id === 6)
+    {
+      tutorialState.tutorialText = "Nice, you've unlocked another racer! If you jump straight into a race with your untrained monkey, things probably aren't going to go well. As you race, you'll start making enough money to build more barns and train your animals simultaneously. For now, let's go back to the barn you have.\n\n" +
+      "<b>Select 'Barn 1' outlined in red.</b>";      
+      tutorialState.associatedTab = NavigationEnum.raceselection;
+    }
+    if (id === 7)
+    {
+      tutorialState.tutorialText = "From here you can unassign an animal from a barn and bring a new animal in. As you start to branch out and race in different course types, you'll want to try and keep your team well balanced. It's not going to help you if you have a prized thoroughbred torching the competition if your follow up racer can barely make it out the gate.\n\n" +
+      "Let's start training your monkey now.\n\n" +
+      "<b>Select 'Unassign' at the top of the screen and choose 'Monkey' to train.</b>";      
+      tutorialState.associatedTab = NavigationEnum.barn;
+    }
+    if (id === 8)
+    {
+      tutorialState.tutorialText = "Nicely done. One last thing to talk about before I let you do whatever you want. Click your animal's name to take a shortcut to the animal page and let's talk about breeding. If you haven't named your animal, its type is its name (so for example, Monkey's name is Monkey).\n\n" +
+      "<b>Select your animal's type or name to jump to its page.</b>";      
+      tutorialState.associatedTab = NavigationEnum.barn;
+    }
+    if (id === 9)
+    {
+      tutorialState.tutorialText = "Here you can see how close your animal is to being able to breed. Training and racing both contribute to this. Once you're ready, you can breed your animal and start racing the offspring. There's a strategic element to this. After breeding, your animal will have its stats set back to their starting points, but the amount that the base stats contribute to the racing stats will increase. To keep up with the competition, you'll need to keep breeding and getting faster animals. But don't breed right before a big race or you might find yourself in trouble!\n\n" +
+      "That's all I have for you. Good luck and have fun!";
+      tutorialState.associatedTab = NavigationEnum.animals;
+      this.globalService.globalVar.tutorialCompleted = true;
+    }
+    
 
     return tutorialState;
   }

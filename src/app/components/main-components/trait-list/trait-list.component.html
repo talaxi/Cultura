@@ -3,7 +3,7 @@
         <table>
             <tr *ngFor="let cells of traitsRows;">
                 <td *ngFor="let c of cells;" class="cell">
-                    <div [ngClass]="{'activeTrait': c.isSelected}" (click)="selectTrait(c)">
+                    <div [ngClass]="{'activeTrait': c.isSelected}" (click)="selectTrait(c)" class="clickableText">
                         <app-trait-option [trait]="c"> </app-trait-option>
                     </div>
                 </td>

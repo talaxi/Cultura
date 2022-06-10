@@ -136,7 +136,7 @@ export class Horse extends Animal {
         this.availableAbilities.push(this.ability);
 
         var ability2 = new Ability();
-        ability2.efficiency = 40;
+        ability2.efficiency = 50;
         ability2.oneTimeEffect = true;
         ability2.name = "Inspiration";
         ability2.description = "Inspiration";
@@ -215,7 +215,7 @@ export class Hare extends Animal {
 
         var ability2 = new Ability();
         ability2.cooldown = 8;
-        ability2.efficiency = 55;
+        ability2.efficiency = 60;
         ability2.oneTimeEffect = false;
         ability2.name = "Awareness";
         ability2.description = "Awareness";
@@ -224,7 +224,7 @@ export class Hare extends Animal {
         this.availableAbilities.push(ability2);
 
         var ability3 = new Ability();
-        ability3.efficiency = 70;
+        ability3.efficiency = 130;
         ability3.oneTimeEffect = true;
         ability3.name = "Nap";
         ability3.description = "Nap";
@@ -261,11 +261,12 @@ export class Monkey extends Animal {
 
         var ability3 = new Ability();
         ability3.efficiency = 70;
+        ability3.cooldown = 0;
         ability3.oneTimeEffect = true;
         ability3.name = "Leap";
         ability3.isAbilityPurchased = false;
         ability3.purchasePrice = 1000;
-        ability3.totalFrames = 15;
+        ability3.totalFrames = 30;
         this.availableAbilities.push(ability3);        
     }
 }
@@ -334,7 +335,7 @@ export class Gecko extends Animal {
         this.availableAbilities.push(ability2);
 
         var ability3 = new Ability();
-        ability3.efficiency = 50;
+        ability3.efficiency = 40;
         ability3.oneTimeEffect = true;
         ability3.name = "Camouflage";
         ability3.isAbilityPurchased = false;
@@ -372,7 +373,7 @@ export class Dolphin extends Animal {
         this.availableAbilities.push(ability2);
 
         var ability3 = new Ability();
-        ability3.efficiency = 40;
+        ability3.efficiency = 50;
         ability3.oneTimeEffect = true;
         ability3.name = "Flowing Current";
         ability3.isAbilityPurchased = false;

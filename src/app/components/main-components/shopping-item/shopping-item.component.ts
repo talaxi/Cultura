@@ -178,7 +178,15 @@ export class ShoppingItemComponent implements OnInit {
     if (this.selectedItem.quantityMultiplier !== null && this.selectedItem.quantityMultiplier !== undefined && this.selectedItem.quantityMultiplier > 0)
     {
       this.selectedItem.purchasePrice.forEach(price => {
-        price.amount *= this.selectedItem.quantityMultiplier;
+        //var basePrice = this.selectedItem.basePurchasePrice.find(item => item.name === price.name);
+        //if (basePrice !== undefined && basePrice !== null)
+          //price.amount = basePrice?.amount * (this.selectedItem.quantityMultiplier * this.selectedItem.amountPurchased);
+        //else
+
+        if (this.selectedItem.quantityAdditive !== undefined && this.selectedItem.quantityAdditive !== null && this.selectedItem.quantityAdditive > 0)
+          price.amount += this.selectedItem.quantityAdditive;
+        else
+          price.amount *= this.selectedItem.quantityMultiplier;
       });
     }
   }

@@ -6,11 +6,13 @@ export class ShopItem {
     shortDescription: string;
     longDescription: string;
     purchasePrice: ResourceValue[];
+    basePurchasePrice: ResourceValue[];
     amountPurchased: number;
     canHaveMultiples: boolean;
     totalShopQuantity: number;
     infiniteAmount: boolean;
     quantityMultiplier: number; //each additional item has this multiplier
+    quantityAdditive: number; //each additional item has this additive
     type: ShopItemTypeEnum;
     additionalIdentifier: string; //totally useless except for abilities, contains abilityName
     isAvailable: boolean;
@@ -21,5 +23,6 @@ export class ShopItem {
         this.totalShopQuantity = 1;
         this.quantityMultiplier = 1;
         this.purchasePrice = [];
+        this.basePurchasePrice = [];
     }
 }

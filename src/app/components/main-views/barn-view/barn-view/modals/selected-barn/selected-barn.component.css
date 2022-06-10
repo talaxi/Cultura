@@ -95,19 +95,23 @@
     grid-template-rows: auto;
     justify-content: stretch;
     grid-template-areas: 
-      "facilitySizeFilter changeTrainingHeader statFilter";
+      "facilitySizeFilter resetFiltersHeader statFilter";
 }
 
 .facilitySizeFilter {
   grid-area: facilitySizeFilter;
 }
 
-.changeTrainingHeader {
-  grid-area: changeTrainingHeader;
+.resetFiltersHeader {
+  grid-area: resetFiltersHeader;
 }
 
 .statFilter {
   grid-area: statFilter;
+}
+
+.changeTrainingHeader {
+  text-align: center;
 }
 
 .popoverClass {
@@ -142,4 +146,9 @@
 
 .tutorialActive {
   border: red 1px solid !important;
+}
+
+.activeTrainingOption {
+  font-weight: bold;
+  color: var(--foreground-secondary);  
 }

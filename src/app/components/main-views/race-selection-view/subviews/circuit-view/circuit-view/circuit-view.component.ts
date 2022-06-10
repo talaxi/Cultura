@@ -1,4 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { AnimalTypeEnum } from 'src/app/models/animal-type-enum.model';
 import { Race } from 'src/app/models/races/race.model';
 import { GlobalService } from 'src/app/services/global-service.service';
 import { UtilityService } from 'src/app/services/utility/utility.service';
@@ -70,7 +71,13 @@ export class CircuitViewComponent implements OnInit {
     }
 
     if (!this.globalService.globalVar.tutorialCompleted && this.globalService.globalVar.currentTutorialId === 5) {
-      this.globalService.globalVar.showTutorial = true;
+      this.globalService.globalVar.showTutorial = true;      
+    }
+
+    if (!this.globalService.globalVar.tutorialCompleted && this.globalService.globalVar.currentTutorialId === 6 &&
+      this.globalService.globalVar.animals.find(item => item.type === AnimalTypeEnum.Monkey)?.isAvailable)
+    {
+      this.globalService.globalVar.showTutorial = true;  
     }
   }
 }

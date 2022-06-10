@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { LocalRaceTypeEnum } from 'src/app/models/local-race-type-enum.model';
 import { RaceCourseTypeEnum } from 'src/app/models/race-course-type-enum.model';
 import { RaceLeg } from 'src/app/models/races/race-leg.model';
 import { Race } from 'src/app/models/races/race.model';
@@ -38,7 +39,10 @@ export class RaceDescriptionComponent implements OnInit {
     });
 
     if (!this.cannotRace && this.race.isCompleted)
-      this.cannotRace = true;      
+      this.cannotRace = true;
+
+    if (this.race.localRaceType === LocalRaceTypeEnum.Free && this.lookupService.getRemainingFreeRacesPerPeriod() <= 0)
+      this.cannotRace = true;
 
     if (this.cannotRace)
       this.popoverText = this.getErrorPopoverText();
@@ -89,6 +93,9 @@ export class RaceDescriptionComponent implements OnInit {
 
     if (this.race.isCompleted)
       popoverText += "-You've already completed this race.";
+
+    if (this.race.localRaceType === LocalRaceTypeEnum.Free && this.lookupService.getRemainingFreeRacesPerPeriod() <= 0)
+      popoverText += "-You've met your limit of free races. More will be available soon."
 
     return popoverText;
   }

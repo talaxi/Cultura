@@ -2,7 +2,7 @@
     <div class="bothDisplayValues" *ngIf="displayVisualRace && displayTextUpdates">
         <div class="headerInfo">
             <div><button (click)="skipRaceAnimation()">Skip</button></div>
-            <div>Velocity: {{ velocityAtCurrentFrame }} / {{ maxSpeedAtCurrentFrame }}m/s </div>
+            <div>Velocity: {{ velocityAtCurrentFrame }} / {{ maxSpeedAtCurrentFrame }}m/s <span *ngIf="racerEffectAtCurrentFrame === burstEffect">BURST!</span></div>
             <div>Stamina: {{ staminaAtCurrentFrame }}%</div>
             <div><button (click)="pauseRaceAnimation()">Pause</button></div>
         </div>

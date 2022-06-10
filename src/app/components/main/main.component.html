@@ -55,5 +55,13 @@
         </div>
         <div class="modal-body" [innerHTML]="tutorialText">            
         </div>
+        <div class="modal-footer spaceBetween">            
+            <span>
+                <button type="button" class="spaced" (click)="skipTutorial()">Skip Tutorial</button>
+            </span>
+            <span>
+                <button type="button" class="spaced" (click)="continueTutorial()">Continue</button>
+            </span>        
+        </div>
     </div>
 </ng-template>

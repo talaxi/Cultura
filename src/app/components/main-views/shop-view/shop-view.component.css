@@ -7,7 +7,7 @@
     color: var(--foreground-default);    
 }
 
-.filterActive{
+.filterActive {
     font-weight: bold;
     color: var(--foreground-secondary);    
 }
@@ -16,15 +16,22 @@
     text-align: center;
 }
 
+.centered {
+  text-align: center;
+}
+
 .filters {
     height: 100%;
     display: grid;
-    grid-template-columns: auto;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
     grid-template-rows: auto;
     justify-content: stretch;
     grid-template-areas: 
-      "animalsFilter trainingsFilter facilityFilter"
-      "foodFilter specialtyFilter enhancerFilter";
+      "title animalsFilter trainingsFilter facilityFilter foodFilter specialtyFilter enhancerFilter";
+  }
+
+  #title {
+    grid-area: title;
   }
 
   #animalsFilter {

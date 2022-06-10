@@ -107,7 +107,8 @@ export class DecksViewComponent implements OnInit {
   saveDeck() {
     var deckToEdit = this.globalService.globalVar.animalDecks.find(item => item.deckNumber === this.selectedDeck.deckNumber);
     if (deckToEdit !== undefined && deckToEdit !== null) {
-      deckToEdit.name = this.editDeckForm.get("deckName")?.value;
+      if (this.editDeckForm.get("deckName")?.value.length <= 50 && this.editDeckForm.get("deckName")?.value.length >= 1)
+        deckToEdit.name = this.editDeckForm.get("deckName")?.value;
       deckToEdit.selectedAnimals = [];
       this.newAnimalList.forEach(item => {
         deckToEdit?.selectedAnimals.push(item);

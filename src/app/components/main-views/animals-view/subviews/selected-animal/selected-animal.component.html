@@ -27,7 +27,7 @@
                         <span><button class="editName" (click)="editingName = !editingName">Edit</button></span>
                     </div>
                     <div *ngIf="editingName">
-                        <span><input id="newName" name="newName" [(ngModel)]="newName"></span>
+                        <span><input id="newName" name="newName" maxlength="50" [(ngModel)]="newName"></span>
                         <span><button (click)="editName()">Save</button></span>
                         <span><button (click)="editingName = !editingName">Cancel</button></span>
                     </div>
@@ -40,6 +40,14 @@
                     </span>
                 </div>
                 <div *ngIf="selectedAnimal.name === selectedAnimal.getAnimalType()">
+                    <div *ngIf="!editingName">                        
+                        <span><button (click)="editingName = !editingName">Edit Name</button></span>
+                    </div>
+                    <div *ngIf="editingName">
+                        <span><input id="newName" name="newName" minlength="1" maxlength="50" [(ngModel)]="newName"></span>
+                        <span><button (click)="editName()">Save</button></span>
+                        <span><button (click)="editingName = !editingName">Cancel</button></span>
+                    </div>
                     <span class="keyword">
                         <span class="defaultTextColor" ngbPopover="{{ traitStatGainDescription }}"
                         triggers="mouseenter:mouseleave" popoverClass="popoverClass" *ngIf="selectedAnimal.trait !== undefined && selectedAnimal.trait !== null">
@@ -67,7 +75,7 @@
             <app-toggle *ngIf="canAutoBreed" [callbackFunction]="toggleAutoBreed" [label]="'Auto Breed'"
                 [model]="autoBreedActive"></app-toggle>
         </div>
-        <div class="back" (click)="returnToAnimalView()">
+        <div class="back clickableText" (click)="returnToAnimalView()">
             <span>Back</span>
         </div>
     </div>
@@ -76,7 +84,7 @@
     <br />
     <div class="gridContainer">
         <div class="trainableStats">
-            <span>Base Stats</span>
+            <span class="s4Heading">Base Stats</span>
             <br />
             <br />
             <span [ngbPopover]="topSpeedPopoverContent"
@@ -115,7 +123,7 @@
             </span>
         </div>
         <div class="racingStats">
-            <span>Racing Stats</span>
+            <span class="s4Heading">Racing Stats</span>
             <br />
             <br />
             <span ngbPopover="{{ selectedAnimal.currentStats.maxSpeedMsPopover() }}" triggers="mouseenter:mouseleave"
@@ -161,13 +169,13 @@
     </div>
     <br />
     <div class="abilities">
-        <p>Abilities</p>
+        <p class="s4Heading">Abilities</p>
         <div>
-            <span class="ability1" (click)="selectAbility(ability1)"
+            <span class="ability1 clickableText" (click)="selectAbility(ability1)"
                 [class.filterActive]="selectedAnimal.ability.name === ability1.name">{{ ability1.name }} </span>
-            <span *ngIf="ability2.isAbilityPurchased" class="ability2" (click)="selectAbility(ability2)"
+            <span *ngIf="ability2.isAbilityPurchased" class="ability2 clickableText" (click)="selectAbility(ability2)"
                 [class.filterActive]="selectedAnimal.ability.name === ability2.name">{{ ability2.name }} </span>
-            <span *ngIf="ability3.isAbilityPurchased" class="ability3" (click)="selectAbility(ability3)"
+            <span *ngIf="ability3.isAbilityPurchased" class="ability3 clickableText" (click)="selectAbility(ability3)"
                 [class.filterActive]="selectedAnimal.ability.name === ability3.name">{{ ability3.name }} </span>
             <p>
                 {{ longDescription }}

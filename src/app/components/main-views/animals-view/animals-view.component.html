@@ -1,4 +1,11 @@
 <div class="animalsView">
+    <div class="info" *ngIf="!animalSelected">
+        <h2>Animals</h2>
+        <div class="description">
+            Select an animal to view its stats, change abilities, and more.
+        </div>
+        <hr/>
+    </div>
     <div class="listView" *ngIf="!animalSelected">
     <app-animal-list [availableAnimals]="availableAnimals" (selectedAnimal)="selectedAnimal($event)"></app-animal-list>
 </div>

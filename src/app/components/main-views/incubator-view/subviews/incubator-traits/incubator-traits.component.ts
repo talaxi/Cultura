@@ -22,21 +22,26 @@ export class IncubatorTraitsComponent implements OnInit {
   availableTraits: AnimalTraits[];
   subscription: any;
 
+  filterSpeed = false;
+  filterAcceleration = false;
+  filterEndurance = false;
+  filterPower = false;
+  filterFocus = false;
+  filterAdaptability = false;
+
   constructor(private globalService: GlobalService, private gameLoopService: GameLoopService,
     private lookupService: LookupService) { }
 
   ngOnInit(): void {
-    this.availableTraits = this.GetAvailableTraits();      
+    this.availableTraits = this.GetAvailableTraits();
 
     var incubator = this.globalService.globalVar.incubator;
     if (incubator.assignedAnimal !== null && incubator.assignedAnimal !== undefined &&
-      incubator.assignedTrait !== null && incubator.assignedTrait !== undefined)
-    {
-      this.existingTrait = incubator.assignedTrait;      
+      incubator.assignedTrait !== null && incubator.assignedTrait !== undefined) {
+      this.existingTrait = incubator.assignedTrait;
     }
 
-    if (this.existingTrait !== undefined && this.existingTrait !== null)
-    {
+    if (this.existingTrait !== undefined && this.existingTrait !== null) {
       var selectedTraining = this.availableTraits.find(item => this.existingTrait?.traitName === item.traitName);
       if (selectedTraining !== null && selectedTraining !== undefined)
         selectedTraining.isSelected = true;
@@ -55,7 +60,7 @@ export class IncubatorTraitsComponent implements OnInit {
 
         return;
       }
-      
+
       this.trainingProgressBarPercent = ((incubator.timeTrained / incubator.timeToComplete) * 100);
     });
   }
@@ -86,36 +91,73 @@ export class IncubatorTraitsComponent implements OnInit {
     traits.push(new AnimalTraits("Stoic", 5, researchLevel, AnimalStatEnum.endurance, AnimalStatEnum.adaptability));
 
     traits.push(new AnimalTraits("Smart", 5, researchLevel, AnimalStatEnum.focus, AnimalStatEnum.power));
-    traits.push(new AnimalTraits("Careful", 7, researchLevel, AnimalStatEnum.adaptability, AnimalStatEnum.acceleration));    
+    traits.push(new AnimalTraits("Careful", 7, researchLevel, AnimalStatEnum.adaptability, AnimalStatEnum.acceleration));
     traits.push(new AnimalTraits("Attentive", 7, researchLevel, AnimalStatEnum.power, AnimalStatEnum.endurance));
     traits.push(new AnimalTraits("Keen", 9, researchLevel, AnimalStatEnum.acceleration, AnimalStatEnum.topSpeed));
     traits.push(new AnimalTraits("Quick", 9, researchLevel, AnimalStatEnum.topSpeed, AnimalStatEnum.adaptability));
     traits.push(new AnimalTraits("Tough", 11, researchLevel, AnimalStatEnum.endurance, AnimalStatEnum.focus));
 
     traits.push(new AnimalTraits("Solitary", 11, researchLevel, AnimalStatEnum.focus, AnimalStatEnum.acceleration));
-    traits.push(new AnimalTraits("Cautious", 13, researchLevel, AnimalStatEnum.adaptability, AnimalStatEnum.topSpeed));    
+    traits.push(new AnimalTraits("Cautious", 13, researchLevel, AnimalStatEnum.adaptability, AnimalStatEnum.topSpeed));
     traits.push(new AnimalTraits("Wild", 13, researchLevel, AnimalStatEnum.power, AnimalStatEnum.focus));
     traits.push(new AnimalTraits("Clumsy", 15, researchLevel, AnimalStatEnum.acceleration, AnimalStatEnum.adaptability));
     traits.push(new AnimalTraits("Natural", 15, researchLevel, AnimalStatEnum.topSpeed, AnimalStatEnum.endurance));
     traits.push(new AnimalTraits("Resilient", 17, researchLevel, AnimalStatEnum.endurance, AnimalStatEnum.power));
 
     traits.push(new AnimalTraits("Anxious", 17, researchLevel, AnimalStatEnum.focus, AnimalStatEnum.topSpeed));
-    traits.push(new AnimalTraits("Lucky", 19, researchLevel, AnimalStatEnum.adaptability, AnimalStatEnum.focus));    
+    traits.push(new AnimalTraits("Lucky", 19, researchLevel, AnimalStatEnum.adaptability, AnimalStatEnum.focus));
     traits.push(new AnimalTraits("Rugged", 19, researchLevel, AnimalStatEnum.power, AnimalStatEnum.adaptability));
     traits.push(new AnimalTraits("Naive", 21, researchLevel, AnimalStatEnum.acceleration, AnimalStatEnum.endurance));
     traits.push(new AnimalTraits("Sprightly", 21, researchLevel, AnimalStatEnum.topSpeed, AnimalStatEnum.power));
     traits.push(new AnimalTraits("Stout", 23, researchLevel, AnimalStatEnum.endurance, AnimalStatEnum.acceleration));
 
     traits.push(new AnimalTraits("Pensive", 23, researchLevel, AnimalStatEnum.focus, AnimalStatEnum.adaptability));
-    traits.push(new AnimalTraits("Languid", 25, researchLevel, AnimalStatEnum.adaptability, AnimalStatEnum.endurance));    
+    traits.push(new AnimalTraits("Languid", 25, researchLevel, AnimalStatEnum.adaptability, AnimalStatEnum.endurance));
     traits.push(new AnimalTraits("Mighty", 25, researchLevel, AnimalStatEnum.power, AnimalStatEnum.acceleration));
     traits.push(new AnimalTraits("Nimble", 27, researchLevel, AnimalStatEnum.acceleration, AnimalStatEnum.power));
     traits.push(new AnimalTraits("Small", 27, researchLevel, AnimalStatEnum.topSpeed, AnimalStatEnum.focus));
     traits.push(new AnimalTraits("Resolute", 29, researchLevel, AnimalStatEnum.endurance, AnimalStatEnum.topSpeed));
 
     traits = traits.filter(item => researchLevel >= item.requiredLevel);
-    
+
+    traits = traits.filter(item => (!this.filterAcceleration && !this.filterAdaptability && !this.filterFocus &&
+      !this.filterSpeed && !this.filterPower && !this.filterEndurance) ||
+      (this.filterSpeed && item.positiveStatGain === AnimalStatEnum.topSpeed) ||
+      (this.filterAcceleration && item.positiveStatGain === AnimalStatEnum.acceleration) ||
+      (this.filterEndurance && item.positiveStatGain === AnimalStatEnum.endurance) ||
+      (this.filterPower && item.positiveStatGain === AnimalStatEnum.power) ||
+      (this.filterFocus && item.positiveStatGain === AnimalStatEnum.focus) ||
+      (this.filterAdaptability && item.positiveStatGain === AnimalStatEnum.adaptability))
+
     return traits;
+  }
+
+  resetFilters() {
+    this.filterSpeed = false;
+    this.filterAcceleration = false;
+    this.filterEndurance = false;
+    this.filterFocus = false;
+    this.filterPower = false;
+    this.filterAdaptability = false;
+
+    this.availableTraits = this.GetAvailableTraits();
+  }
+
+  toggleStatFilter(stat: string): void {
+    if (stat === "Speed")
+      this.filterSpeed = !this.filterSpeed;
+    if (stat === "Acceleration")
+      this.filterAcceleration = !this.filterAcceleration;
+    if (stat === "Focus")
+      this.filterFocus = !this.filterFocus;
+    if (stat === "Power")
+      this.filterPower = !this.filterPower;
+    if (stat === "Endurance")
+      this.filterEndurance = !this.filterEndurance;
+    if (stat === "Adaptability")
+      this.filterAdaptability = !this.filterAdaptability;
+
+    this.availableTraits = this.GetAvailableTraits();
   }
 
   returnToAnimalView(): void {

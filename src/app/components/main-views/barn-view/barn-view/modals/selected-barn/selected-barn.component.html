@@ -2,7 +2,7 @@
     <div class="infoText">
         <div class="infoGridContainer">
             <div class="unassign">
-                <span (click)="unassignAnimal()">Unassign</span>
+                <span  class="clickableText" (click)="unassignAnimal()">Unassign</span>
                 <br />
                 <br />
                 <div *ngIf="barnSpecializationsUnlocked">
@@ -38,7 +38,7 @@
                 </div>
                 <hr />
                 <div *ngIf="this.existingTraining !== null && this.existingTraining !== undefined">
-                    <span>{{ this.existingTraining.trainingName }} </span>
+                    <span class="activeTrainingOption">{{ this.existingTraining.trainingName }} </span>
                     <br />
                     <span><em>({{ (this.existingTraining.trainingTimeRemaining / 60) | number : '1.0-0' }} min
                             remaining)</em></span>
@@ -47,7 +47,7 @@
                     <span>No Training Assigned</span>
                 </div>
             </div>
-            <div class="back" (click)="returnToBarnView()">
+            <div class="back clickableText" (click)="returnToBarnView()">
                 <span>Back</span>
             </div>
         </div>
@@ -63,8 +63,11 @@
         </div>
         <br />
         <br />
+        <div class="changeTrainingHeader">
+            <span class="s4Heading" (click)="resetFilters()">Change Training</span>
+        </div>
         <div class="filterGridContainer">
-            <div class="facilitySizeFilter">
+            <div class="facilitySizeFilter clickableText">
                 <span (click)="toggleFacilityFilter('Small')" id="smallFilter" [class.filterActive]="filterSmall">Small
                 </span>
                 <span (click)="toggleFacilityFilter('Medium')" id="mediumFilter"
@@ -72,10 +75,10 @@
                 <span (click)="toggleFacilityFilter('Large')" id="largeFilter" [class.filterActive]="filterLarge">Large
                 </span>
             </div>
-            <div class="changeTrainingHeader">
-                <span (click)="resetFilters()">Change Training</span>
+            <div class="resetFiltersHeader clickableText">
+                <span (click)="resetFilters()">Reset Filters</span>
             </div>
-            <div class="statFilter">
+            <div class="statFilter clickableText">
                 <span (click)="toggleStatFilter('Speed')" id="speedFilter" [class.filterActive]="filterSpeed">SPD
                 </span>
                 <span (click)="toggleStatFilter('Acceleration')" id="accelerationFilter"
@@ -110,7 +113,7 @@
                 <br />
                 <span>Unassigned</span>
             </div>
-            <div class="back" (click)="returnToBarnView()">
+            <div class="back clickableText" (click)="returnToBarnView()">
                 <span>Back</span>
             </div>
         </div>
@@ -131,7 +134,7 @@
                 <br />
                 <span>Locked</span>
             </div>
-            <div class="back" (click)="returnToBarnView()">
+            <div class="back clickableText" (click)="returnToBarnView()">
                 <span>Back</span>
             </div>
         </div>

@@ -5,6 +5,7 @@ import { plainToInstance } from 'class-transformer';
 import { ThemeService } from 'src/app/theme/theme.service';
 import { RaceDisplayInfoEnum } from 'src/app/models/race-display-info-enum.model';
 import { night, Theme } from 'src/app/theme/theme';
+import { UtilityService } from 'src/app/services/utility/utility.service';
 declare var LZString: any;
 
 @Component({
@@ -18,17 +19,21 @@ export class SettingsViewComponent implements OnInit {
   finishTrainingBeforeSwitching: boolean;
   hideTips: boolean;
   useNumbersForCircuitRank: boolean;
-  raceDisplayInfo: RaceDisplayInfoEnum;
+  raceDisplayInfo: string;
   finishTrainingBeforeSwitchingPopoverText: string;
   skipDrawRacePopoverText: string;
   hideTipsPopoverText: string;
   useNumbersForCircuitRankPopoverText: string;
   raceDisplayInfoPopoverText: string;
+  enteredRedemptionCode: string;
+  currentTheme: string;
   public raceDisplayInfoEnum = RaceDisplayInfoEnum;
 
-  constructor(private globalService: GlobalService, private themeService: ThemeService) { }
+  constructor(private globalService: GlobalService, private themeService: ThemeService, private utilityService: UtilityService) { }
 
   ngOnInit(): void {
+    this.currentTheme = this.themeService.getActiveTheme().name.charAt(0).toUpperCase() + this.themeService.getActiveTheme().name.slice(1);
+
     var globalSkipDrawRace = this.globalService.globalVar.settings.get("skipDrawRace");
     if (globalSkipDrawRace === undefined)
       this.skipDrawRace = false;
@@ -45,9 +50,9 @@ export class SettingsViewComponent implements OnInit {
 
     var raceDisplayInfoOptions = this.globalService.globalVar.settings.get("raceDisplayInfo");
     if (raceDisplayInfoOptions === undefined)
-      this.raceDisplayInfo = RaceDisplayInfoEnum.both;
+      this.raceDisplayInfo = this.getRaceDisplayInfoName(RaceDisplayInfoEnum.both);
     else
-      this.raceDisplayInfo = raceDisplayInfoOptions;
+      this.raceDisplayInfo = this.getRaceDisplayInfoName(raceDisplayInfoOptions);
     this.raceDisplayInfoPopoverText = "Choose how to view races. Draw only shows the visual aspect, text only shows the textual updates, and both shows both. Both is default.";
 
     var hideTips = this.globalService.globalVar.settings.get("hideTips");
@@ -73,10 +78,11 @@ export class SettingsViewComponent implements OnInit {
     this.importExportValue = compressedData;
   }
 
+  //TODO: add alert to this to verify they want to overwrite save
   public LoadGame() {
     var decompressedData = LZString.decompressFromBase64(this.importExportValue);
     var loadDataJson = <GlobalVariables>JSON.parse(decompressedData);
-    this.globalService.globalVar = plainToInstance(GlobalVariables, loadDataJson);
+    this.globalService.globalVar = plainToInstance(GlobalVariables, loadDataJson);    
   }
 
   skipDrawRaceToggle = () => {
@@ -103,6 +109,11 @@ export class SettingsViewComponent implements OnInit {
     this.globalService.globalVar.settings.set("raceDisplayInfo", this.raceDisplayInfo);
   }
 
+  changeRaceDisplayInfo(raceDisplayInfo: RaceDisplayInfoEnum) {
+    this.globalService.globalVar.settings.set("raceDisplayInfo", raceDisplayInfo);
+    this.raceDisplayInfo = this.getRaceDisplayInfoName(raceDisplayInfo);    
+  }
+
   changeTheme(newTheme: any) {
     var theme = night;
 
@@ -117,5 +128,25 @@ export class SettingsViewComponent implements OnInit {
 
 
     this.globalService.globalVar.settings.set("theme", theme);
+    this.getThemeName();
+  }
+
+  getThemeName() {
+    this.currentTheme = this.themeService.getActiveTheme().name.charAt(0).toUpperCase() + this.themeService.getActiveTheme().name.slice(1);
+  }
+
+  getRaceDisplayInfoName(raceDisplayInfoEnum: RaceDisplayInfoEnum) {
+    if (raceDisplayInfoEnum === RaceDisplayInfoEnum.both)
+      return "Both";
+    else if (raceDisplayInfoEnum === RaceDisplayInfoEnum.text)
+      return "Text";
+    else if (raceDisplayInfoEnum === RaceDisplayInfoEnum.draw)
+      return "Draw";
+
+    return "";
+  }
+
+  enterRedemptionCode() {
+
   }
 }

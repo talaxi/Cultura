@@ -149,7 +149,7 @@ export class LookupService {
         breedModifier = breedLevelStatModifier.value;
 
       breedModifier = 1 + (breedModifier * (animal.breedLevel - 1));
-
+      
       var modifierPair = this.globalService.globalVar.modifiers.find(item => item.text === AnimalTypeEnum[type].toLowerCase() + "DefaultMaxSpeedModifier");
       if (modifierPair !== null && modifierPair !== undefined)
         defaultModifier = modifierPair.value;
@@ -330,7 +330,7 @@ export class LookupService {
     if (modifierPair !== null && modifierPair !== undefined)
       breedLevelModifier = modifierPair.value;
 
-    return "Increase racing stat gain from base stats by " + ((breedLevelModifier * (breedLevel - 1)) * 100) + "%";
+    return "Increase racing stat gain from base stats by " + ((breedLevelModifier * (breedLevel - 1)) * 100).toFixed(0) + "%";
   }
 
   getResourcePopover(name: string, type: ShopItemTypeEnum) {
@@ -647,7 +647,7 @@ export class LookupService {
           return "Increase burst distance by " + effectiveAmountDisplay + " meters. You do not stumble or lose focus while bursting. Passive.";
         }
         if (abilityName === "Leap") {
-          return "When you are " + effectiveAmountDisplay + " meters from the finish line, leap straight to the end over .25 seconds. Passive.";
+          return "When you are " + effectiveAmountDisplay + " meters from the finish line, leap straight to the end over .5 seconds. Passive.";
         }
         if (abilityName === "Sure-footed") {
           return "When you make it through a special path without stumbling, increase your adaptability by " + effectiveAmountDisplay + "%. Passive.";
@@ -741,6 +741,11 @@ export class LookupService {
     var Coins = new ResourceValue("Coins", 100);
     Coins.amount *= (currentLevel + 1);
     allResourcesRequired.push(Coins);
+    if (currentLevel % 10 === 9)
+    {
+      var medal = new ResourceValue("Medals", 1);
+      allResourcesRequired.push(medal);
+    }
     return allResourcesRequired;
   }
 
@@ -1196,5 +1201,14 @@ export class LookupService {
     }
 
     return tip;
+  }
+
+  getRemainingFreeRacesPerPeriod() {
+    var freeRacePerTimePeriod = 10;
+    var freeRacePerTimePeriodPair = this.globalService.globalVar.modifiers.find(item => item.text === "freeRacesPerTimePeriodModifier");
+    if (freeRacePerTimePeriodPair !== undefined)
+      freeRacePerTimePeriod = freeRacePerTimePeriodPair.value;
+
+    return freeRacePerTimePeriod - this.globalService.globalVar.freeRaceCounter;
   }
 }

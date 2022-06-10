@@ -167,10 +167,11 @@ export class SpecializationService {
     return randomizedList;
   }
 
-  handleAttractionRevenue(deltaTime: number) {    
-    if (!this.globalService.globalVar.barns.some(item => item.barnUpgrades.specialization === BarnSpecializationEnum.Attraction))
+  handleAttractionRevenue(deltaTime: number, trainingAnimal: Animal) {
+    var assignedBarn = this.globalService.globalVar.barns.find(item => item.barnNumber === trainingAnimal.associatedBarnNumber);
+    if (assignedBarn === undefined || assignedBarn === null ||
+      assignedBarn.barnUpgrades.specialization !== BarnSpecializationEnum.Attraction)
       return;
-    var attractions = this.globalService.globalVar.barns.filter(item => item.barnUpgrades.specialization === BarnSpecializationEnum.Attraction);
 
     var timeToCollect = 60;
     var timeToCollectPair = this.globalService.globalVar.modifiers.find(item => item.text === "attractionTimeToCollectModifier");
@@ -183,17 +184,17 @@ export class SpecializationService {
 
     if (amountEarnedPair !== undefined && amountEarnedPair !== null)
       amountEarned = amountEarnedPair.value;
-        
-    attractions.forEach(attraction => {
-      attraction.barnUpgrades.currentDeltaTime += deltaTime;
-      while (attraction.barnUpgrades.currentDeltaTime >= timeToCollect) {
-        attraction.barnUpgrades.currentDeltaTime -= timeToCollect;
 
-        amountEarned *= attraction.barnUpgrades.specializationLevel;
-        var resource = this.globalService.globalVar.resources.find(item => item.name === "Coins");
-        if (resource !== undefined)
-          resource.amount += amountEarned;
-      }
-    });
+    assignedBarn.barnUpgrades.currentDeltaTime += deltaTime;
+    while (assignedBarn.barnUpgrades.currentDeltaTime >= timeToCollect) {
+
+      assignedBarn.barnUpgrades.currentDeltaTime -= timeToCollect;
+
+      amountEarned *= assignedBarn.barnUpgrades.specializationLevel;
+      var resource = this.globalService.globalVar.resources.find(item => item.name === "Coins");
+      if (resource !== undefined)
+        resource.amount += amountEarned;
+    }
+    //});
   }
 }

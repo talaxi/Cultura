@@ -92,21 +92,26 @@
       grid-template-rows: auto;
       justify-content: stretch;
       grid-template-areas: 
-        "facilitySizeFilter changeTrainingHeader statFilter";
+        "ResetFiler changeTraitHeader statFilter";
   }
   
-  .facilitySizeFilter {
-    grid-area: facilitySizeFilter;
-  }
-  
-  .changeTrainingHeader {
-    grid-area: changeTrainingHeader;
+  .changeTraitHeader {
+    grid-area: changeTraitHeader;
   }
   
   .statFilter {
     grid-area: statFilter;
   }
   
+  .resetFilter {
+    grid-area: resetFilter;
+  }
+
   .popoverClass {
     white-space: pre-line;
   }
+
+  .activeTrait {
+    font-weight: bold;
+    color: var(--foreground-secondary);  
+}

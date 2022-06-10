@@ -3,7 +3,7 @@
         <table>
             <tr *ngFor="let cells of animalRows;">
                 <td *ngFor="let c of cells;">
-                    <div (click)="selectAnimal(c)">
+                    <div (click)="selectAnimal(c)" class="clickableText">
                         <app-animal [selectedAnimal]="c"> </app-animal>
                     </div>
                 </td>

@@ -1,12 +1,26 @@
 <div class="decksView">
-    <div *ngFor="let deck of animalDecks; let i = index">
-        <div class="gridContainer">
-            <app-animal-deck [deckNumber]="(i+1)" class="deck"></app-animal-deck>
-            <button (click)="editDeck(content, deck)" class="edit">Edit</button>
-            <button (click)="setAsPrimary(deck)" class="primary">Set as Primary</button>
-            <button *ngIf="showAutoRaceButton" (click)="setAsAutoRunFreeRace(deck)" class="autoRunFreeRace">Auto Run Free Race</button>
+    <div class="marginGrid">
+        <div class="view">
+            <div class="info">
+                <h2>Decks</h2>
+                <div class="description">
+                    Decks are groups of animals that run together in a race. Each deck consists of one animal from
+                    each course type.
+                    Your primary deck is the one that will run the races you select.
+                </div>
+                <hr />
+            </div>
+            <div *ngFor="let deck of animalDecks; let i = index">
+                <div class="gridContainer">
+                    <app-animal-deck [deckNumber]="(i+1)" class="deck"></app-animal-deck>
+                    <button (click)="editDeck(content, deck)" class="edit">Edit</button>
+                    <button (click)="setAsPrimary(deck)" class="primary">Set as Primary</button>
+                    <button *ngIf="showAutoRaceButton" (click)="setAsAutoRunFreeRace(deck)" class="autoRunFreeRace">Auto
+                        Run Free Race</button>
+                </div>
+                <hr />
+            </div>
         </div>
-        <hr />
     </div>
 </div>
 
@@ -20,26 +34,27 @@
             <div class="modal-body">
                 <div class="mb-3">
                     <label for="deck-name">Deck Name: </label>
-                    <input id="deck-name" type="text" class="spaced" formControlName="deckName">
+                    <input id="deck-name" type="text" class="spaced" maxlength="50" formControlName="deckName">
                 </div>
-                <div *ngIf="displayRaceOrder" class="raceOrder">                                        
-                    <input type="checkbox" class="spaced" id="finishTraining" [checked]="isRaceOrderOn" (input)="toggleRaceOrder()">
+                <div *ngIf="displayRaceOrder" class="raceOrder">
+                    <input type="checkbox" class="spaced" id="finishTraining" [checked]="isRaceOrderOn"
+                        (input)="toggleRaceOrder()">
                     <label class="spaced" (click)="toggleRaceOrder()">Race Order: </label>
-                    <span><span id="raceOrder1" draggable="true" [ngClass]="getColorClass(selectedDeckOrder[0])" class="draggable"
-                        (dragstart)="dragStart($event)" (dragover)="allowDrop($event)"
-                        (drop)="dropCourseType($event)">{{selectedDeckOrder[0]}}</span>
-                    / <span id="raceOrder2" draggable="true" [ngClass]="getColorClass(selectedDeckOrder[1])" class="draggable"
-                        (dragstart)="dragStart($event)" (dragover)="allowDrop($event)"
-                        (drop)="dropCourseType($event)">{{selectedDeckOrder[1]}}</span>
-                    / <span id="raceOrder3" draggable="true" [ngClass]="getColorClass(selectedDeckOrder[2])" class="draggable"
-                        (dragstart)="dragStart($event)" (dragover)="allowDrop($event)"
-                        (drop)="dropCourseType($event)">{{selectedDeckOrder[2]}}</span>
-                    / <span id="raceOrder4" draggable="true" [ngClass]="getColorClass(selectedDeckOrder[3])" class="draggable"
-                        (dragstart)="dragStart($event)" (dragover)="allowDrop($event)"
-                        (drop)="dropCourseType($event)">{{selectedDeckOrder[3]}}</span>
-                    / <span id="raceOrder5" draggable="true" [ngClass]="getColorClass(selectedDeckOrder[4])" class="draggable"
-                        (dragstart)="dragStart($event)" (dragover)="allowDrop($event)"
-                        (drop)="dropCourseType($event)">{{selectedDeckOrder[4]}}</span></span>
+                    <span><span id="raceOrder1" draggable="true" [ngClass]="getColorClass(selectedDeckOrder[0])"
+                            class="draggable" (dragstart)="dragStart($event)" (dragover)="allowDrop($event)"
+                            (drop)="dropCourseType($event)">{{selectedDeckOrder[0]}}</span>
+                        / <span id="raceOrder2" draggable="true" [ngClass]="getColorClass(selectedDeckOrder[1])"
+                            class="draggable" (dragstart)="dragStart($event)" (dragover)="allowDrop($event)"
+                            (drop)="dropCourseType($event)">{{selectedDeckOrder[1]}}</span>
+                        / <span id="raceOrder3" draggable="true" [ngClass]="getColorClass(selectedDeckOrder[2])"
+                            class="draggable" (dragstart)="dragStart($event)" (dragover)="allowDrop($event)"
+                            (drop)="dropCourseType($event)">{{selectedDeckOrder[2]}}</span>
+                        / <span id="raceOrder4" draggable="true" [ngClass]="getColorClass(selectedDeckOrder[3])"
+                            class="draggable" (dragstart)="dragStart($event)" (dragover)="allowDrop($event)"
+                            (drop)="dropCourseType($event)">{{selectedDeckOrder[3]}}</span>
+                        / <span id="raceOrder5" draggable="true" [ngClass]="getColorClass(selectedDeckOrder[4])"
+                            class="draggable" (dragstart)="dragStart($event)" (dragover)="allowDrop($event)"
+                            (drop)="dropCourseType($event)">{{selectedDeckOrder[4]}}</span></span>
                 </div>
                 <br />
                 <div class="typeContainer">
@@ -49,7 +64,7 @@
                         {{type.trim()}}
                     </span>
                 </div>
-                <br/>
+                <br />
                 <div>
                     <span *ngFor="let animal of possibleAnimalsList" class="animalOption"
                         [ngClass]="{'selectedAnimal': selectedAnimalName === animal}" (click)="selectAnimal(animal)">

@@ -60,10 +60,15 @@ export class MainComponent implements OnInit {
   }
 
   closeTutorialModal() {
-    this.modalService.dismissAll();
-    
-    //if (this.globalService.globalVar.currentTutorialId === 3)
-    //  this.globalService.globalVar.tutorialCompleted = true;
-    
+    this.modalService.dismissAll();   
+  }
+
+  skipTutorial() {
+    this.tutorialService.skipTutorial();
+    this.closeTutorialModal();
+  }
+
+  continueTutorial() {
+    this.closeTutorialModal();
   }
 }

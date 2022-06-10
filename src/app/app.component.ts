@@ -48,7 +48,7 @@ export class AppComponent {
 
     if (devMode) {
       this.globalService.globalVar.tutorialCompleted = true;
-      this.globalService.devModeInitialize(1);
+      this.globalService.devModeInitialize(27);
     }
 
     var subscription = this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {
@@ -83,7 +83,7 @@ export class AppComponent {
       allTrainingAnimals.forEach(animal => {
         if (animal.currentTraining !== null && animal.currentTraining !== undefined) {
           animal.currentTraining.timeTrained += deltaTime;
-          this.specializationService.handleAttractionRevenue(deltaTime);
+          this.specializationService.handleAttractionRevenue(deltaTime, animal);
 
           while (animal.currentTraining !== null && animal.currentTraining.timeTrained >= animal.currentTraining.timeToComplete) {
             var associatedBarn = this.globalService.globalVar.barns.find(item => item.barnNumber === animal.associatedBarnNumber);
@@ -172,7 +172,7 @@ export class AppComponent {
 
     //don't run while user is racing, can cause issues
     if (teamManager === 0 || !this.globalService.globalVar.animalDecks.some(item => item.autoRunFreeRace) ||
-      this.globalService.globalVar.userIsRacing) {
+      this.globalService.globalVar.userIsRacing) { //TODO: is racing check skipping race check
       return;
     }
 

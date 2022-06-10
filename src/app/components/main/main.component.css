@@ -60,3 +60,15 @@
     border-color: var(--background-tertiary);
     color: var(--foreground-default);
   }
+
+  .rightAlign {
+    float: right;
+  }
+  
+  .spaced {
+    margin-left: .5em;
+  }
+
+  .spaceBetween {
+    justify-content: space-between !important;
+  }

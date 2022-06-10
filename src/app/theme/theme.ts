@@ -15,6 +15,7 @@ export interface Theme {
       "--background-default": "#FCFCFC",
       "--background-secondary": "#FFFFFF",
       "--background-tertiary": "#C4C4C4",
+      "--background-quarternary": "#ACAFB4",
       "--background-light": "#FFFFFF",
   
       "--primary-default": "#5DFDCB",
@@ -44,6 +45,7 @@ export interface Theme {
       "--background-default": "#F4FAFF",
       "--background-secondary": "#A3B9CC",
       "--background-tertiary": "#5C7D99",
+      "--background-quarternary": "#65799E",
       "--background-light": "#FFFFFF",
   
       "--primary-default": "#5DFDCB",
@@ -54,8 +56,6 @@ export interface Theme {
       "--error-dark": "#800600",
       "--error-light": "#FFCECC",
 
-      "--mountainColor": "#279113",
-      "--mountainSubcolor": "#1b630d",  
       "--waterColor": "#0000ff",
       "--waterSubcolor": "#16148f",
       "--tundraColor": "#1a83b0",
@@ -76,6 +76,7 @@ export interface Theme {
       "--background-default": "#5D0274",
       "--background-secondary": "#210129",
       "--background-tertiary": "#14001A",
+      "--background-quarternary": "#4F223C",
       "--background-light": "#72028D",
   
       "--primary-default": "#5DFDCB",
@@ -105,6 +106,7 @@ export interface Theme {
       "--background-default": "#797C80",
       "--background-secondary": "#41474D",
       "--background-tertiary": "#08090A",
+      "--background-quarternary": "##2A2C31",
       "--background-light": "#41474D",
   
       "--primary-default": "#5DFDCB",
@@ -115,8 +117,8 @@ export interface Theme {
       "--error-dark": "#800600",
       "--error-light": "#FFCECC",
 
-      "--waterColor": "#4d4dff",
-      "--waterSubcolor": "#2c2c91",
+      "--waterColor": "#7463f7",
+      "--waterSubcolor": "#5044ab",
       "--tundraColor": "#1ca1c9",
   
       "--background-tertiary-shadow": "0 1px 3px 0 rgba(8, 9, 10, 0.5)"

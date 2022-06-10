@@ -7,6 +7,19 @@
     color: var(--foreground-default);     
 }
 
+.sectionHeaderBackgroundColor
+{
+  background-color: var(--background-tertiary);
+  border: 2px solid;
+  border-color: var(--foreground-default);
+  text-align: center;
+}
+
+.sectionHeaderText
+{
+  color: var(--foreground-quaternary);
+}
+
 table {
     table-layout: fixed;
     width: 100%;

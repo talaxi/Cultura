@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Output, OnInit } from '@angular/core';
+import { AnimalTypeEnum } from 'src/app/models/animal-type-enum.model';
 import { ComponentCommunicationService } from 'src/app/services/component-communication.service';
 import { GameLoopService } from 'src/app/services/game-loop/game-loop.service';
 import { GlobalService } from 'src/app/services/global-service.service';
@@ -17,7 +18,8 @@ export class NavigationComponent implements OnInit {
   incubatorAvailable: boolean;
   talentsAvailable: boolean;
   tutorialSubscription: any;
-  tutorialActive = false;
+  tutorial3Active = false;
+  tutorial6Active = false;
 
   constructor(private componentCommunicationService: ComponentCommunicationService, private lookupService: LookupService,
     private globalService: GlobalService, private gameLoopService: GameLoopService) { }
@@ -33,10 +35,17 @@ export class NavigationComponent implements OnInit {
 
     this.tutorialSubscription = this.gameLoopService.gameUpdateEvent.subscribe((value) => {
       if (!this.globalService.globalVar.tutorialCompleted && this.globalService.globalVar.currentTutorialId === 3) {
-        this.tutorialActive = true;
+        this.tutorial3Active = true;
       }
       else
-        this.tutorialActive = false;
+        this.tutorial3Active = false;
+
+        if (!this.globalService.globalVar.tutorialCompleted && this.globalService.globalVar.currentTutorialId === 6 && 
+          this.globalService.globalVar.animals.find(item => item.type === AnimalTypeEnum.Monkey)?.isAvailable) {
+          this.tutorial6Active = true;
+        }
+        else
+          this.tutorial6Active = false;
 
       if (this.globalService.globalVar.tutorialCompleted)
         this.tutorialSubscription.unsubscribe();
@@ -48,7 +57,7 @@ export class NavigationComponent implements OnInit {
     this.selectedNavigation = selectedView;
 
     this.incubatorAvailable = this.lookupService.isItemUnlocked("duoRace");
-    this.incubatorAvailable = this.lookupService.isItemUnlocked("rainbowRace");
+    this.talentsAvailable = this.lookupService.isItemUnlocked("rainbowRace");
   }
 
   handleIntroTutorial() {

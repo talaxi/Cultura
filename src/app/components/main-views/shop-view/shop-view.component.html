@@ -7,19 +7,23 @@
         </div>        
         <div class="filters">
             <!--css grid-->
-            <p (click)="toggleShopFilter('Animals')" id="animalsFilter" [class.filterActive]="filterAnimals">Animals</p>
-            <p (click)="toggleShopFilter('Trainings')" id="trainingsFilter" [class.filterActive]="filterTrainings">
+            <p id="title">Filters:</p>
+            <p (click)="toggleShopFilter('Animals')" id="animalsFilter" class="clickableText" [class.filterActive]="filterAnimals">Animals</p>
+            <p (click)="toggleShopFilter('Trainings')" id="trainingsFilter" class="clickableText" [class.filterActive]="filterTrainings">
                 Trainings</p>
-            <p (click)="toggleShopFilter('Equipment')" id="equipmentFilter" [class.filterActive]="filterEquipment">Equipment
+            <p (click)="toggleShopFilter('Equipment')" id="equipmentFilter" class="clickableText" [class.filterActive]="filterEquipment">Equipment
             </p>
-            <p (click)="toggleShopFilter('Food')" id="foodFilter" [class.filterActive]="filterFood">Food</p>
-            <p (click)="toggleShopFilter('Specialty')" id="specialtyFilter" [class.filterActive]="filterSpecialty">
+            <p (click)="toggleShopFilter('Food')" id="foodFilter" class="clickableText" [class.filterActive]="filterFood">Food</p>
+            <p (click)="toggleShopFilter('Specialty')" id="specialtyFilter" class="clickableText" [class.filterActive]="filterSpecialty">
                 Specialty</p>
-            <p (click)="toggleShopFilter('Abilities')" id="abilitiesFilter" [class.filterActive]="filterAbilities">
+            <p (click)="toggleShopFilter('Abilities')" id="abilitiesFilter" class="clickableText" [class.filterActive]="filterAbilities">
                 Abilities</p>
         </div>
+        <div (click)="ResetShopFilters()" class="centered clickableText">
+            Reset Filters
+        </div>
     </div>
-    <hr />
+    <br/>
     <div class="shopSection" *ngFor="let section of sections;">
         <app-shopping-list [section]="section"></app-shopping-list>
     </div>

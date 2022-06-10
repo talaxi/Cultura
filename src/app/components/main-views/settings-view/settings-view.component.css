@@ -1,21 +1,81 @@
-.settingsView
-{
-    height: 100%;
+.settingsView {
+  height: 100%;
 
-    background-color: var(--background-secondary);
-    border-color: var(--background-tertiary);
-    color: var(--foreground-default);    
+  background-color: var(--background-secondary);
+  border-color: var(--background-tertiary);
+  color: var(--foreground-default);
 }
 
-#importExport
-{
-    width: 100%;
+.info {
+  text-align: center;
+}
+
+.dropdown {
+  color: var(--foreground-default);
+  background-color: var(--background-secondary);
+}
+
+#raceDisplayInfoDropdown, #themeDropdown {
+  border: 1px solid;
+  border-color: var(--background-tertiary);
+}
+
+.bottomAligned {
+  vertical-align: bottom;
+}
+
+.settingsGrid {
+  display: grid;
+  grid-template-columns: 1% 1fr 1fr 1%;
+  grid-template-rows: auto;
+  justify-content: stretch;
+  grid-template-areas: 
+    ". options saveLoad .";
+}
+
+.options {
+  grid-area: options;
+}
+
+.saveLoad {
+  grid-area: saveLoad;
+}
+
+#importExport {
+  width: 100%;
 }
 
 .spaced {
-    margin-left: .5em;
-  }
+  margin-left: .5em;
+}
 
-  .rightSpaced {
-    margin-right: .5em;
-  }
+.rightSpaced {
+  margin-right: .5em;
+}
+
+.checkboxOption label {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.checkboxOption input {
+  vertical-align: middle;
+}
+
+.checkboxOption label span {
+  vertical-align: middle;
+}
+
+.importExportButtons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.codeRedemption {
+  display:flex;
+  justify-content: flex-start;
+}
+
+.codeRedemptionInput {
+  flex: 1;
+}

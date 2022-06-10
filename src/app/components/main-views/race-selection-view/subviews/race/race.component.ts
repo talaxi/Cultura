@@ -49,9 +49,11 @@ export class RaceComponent implements OnInit {
   velocityAtCurrentFrame: any;
   maxSpeedAtCurrentFrame: any;
   staminaAtCurrentFrame: any;
+  racerEffectAtCurrentFrame: any;
   frameByFrameSubscription: any;
   displayVisualRace = true;
   displayTextUpdates = true;
+  burstEffect = RacerEffectEnum.Burst;
 
   constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private utilityService: UtilityService,
     private lookupService: LookupService, private initializeService: InitializeService, private modalService: NgbModal,
@@ -168,11 +170,13 @@ export class RaceComponent implements OnInit {
         this.velocityAtCurrentFrame = (this.selectedRace.raceUI.velocityByFrame[lastFrameCount] * this.frameModifier).toFixed(2); //needs to be m/s
         this.staminaAtCurrentFrame = (this.selectedRace.raceUI.staminaPercentByFrame[lastFrameCount] * 100).toFixed(2);
         this.maxSpeedAtCurrentFrame = this.selectedRace.raceUI.maxSpeedByFrame[lastFrameCount].toFixed(2);
+        this.racerEffectAtCurrentFrame = this.selectedRace.raceUI.racerEffectByFrame[lastFrameCount];
       }
       else {
         this.velocityAtCurrentFrame = (this.selectedRace.raceUI.velocityByFrame[currentFrame] * this.frameModifier).toFixed(2);
         this.staminaAtCurrentFrame = (this.selectedRace.raceUI.staminaPercentByFrame[currentFrame] * 100).toFixed(2);
         this.maxSpeedAtCurrentFrame = this.selectedRace.raceUI.maxSpeedByFrame[currentFrame].toFixed(2);
+        this.racerEffectAtCurrentFrame = this.selectedRace.raceUI.racerEffectByFrame[currentFrame];
       }
     });
   }

@@ -13,7 +13,7 @@
                 </div>      
                 <span>Current Trait: {{ this.selectedAnimal.getTraitName() }}</span>          
                 <hr />
-                <span *ngIf="this.existingTrait !== null && this.existingTrait !== undefined">{{
+                <span class="activeTrait" *ngIf="this.existingTrait !== null && this.existingTrait !== undefined">{{
                     this.existingTrait.traitName }} </span>
                 <span *ngIf="this.existingTrait === null || this.existingTrait === undefined">No Trait
                     Assigned</span>
@@ -35,18 +35,13 @@
         <br />
         <br />
         <div class="filterGridContainer">
-            <!--<div class="facilitySizeFilter">
-                <span (click)="toggleFacilityFilter('Small')" id="smallFilter" [class.filterActive]="filterSmall">Small
-                </span>
-                <span (click)="toggleFacilityFilter('Medium')" id="mediumFilter"
-                    [class.filterActive]="filterMedium">Medium </span>
-                <span (click)="toggleFacilityFilter('Large')" id="largeFilter" [class.filterActive]="filterLarge">Large
-                </span>
-            </div>-->
+            <div class="resetFiltersHeader clickableText">
+                <span (click)="resetFilters()">Reset Filters</span>
+            </div>
             <div class="changeTrainingHeader">
                 <span>Choose New Trait</span>
             </div>
-            <!--<div class="statFilter">
+            <div class="statFilter clickableText">
                 <span (click)="toggleStatFilter('Speed')" id="speedFilter" [class.filterActive]="filterSpeed">SPD
                 </span>
                 <span (click)="toggleStatFilter('Acceleration')" id="accelerationFilter"
@@ -59,7 +54,7 @@
                 </span>
                 <span (click)="toggleStatFilter('Adaptability')" id="adaptabilityFilter"
                     [class.filterActive]="filterAdaptability">ADP</span>
-            </div>-->
+            </div>
         </div>
         <br />
         <app-trait-list [availableTraits]="availableTraits"

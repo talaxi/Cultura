@@ -1,11 +1,14 @@
 import { Component, Input, OnInit, Output, EventEmitter, ViewEncapsulation, ViewChild, ElementRef } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { AnimalTypeEnum } from 'src/app/models/animal-type-enum.model';
 import { Animal } from 'src/app/models/animals/animal.model';
 import { BarnSpecializationEnum } from 'src/app/models/barn-specialization-enum.model';
 import { Barn } from 'src/app/models/barns/barn.model';
 import { FacilitySizeEnum } from 'src/app/models/facility-size-enum.model';
 import { NavigationEnum } from 'src/app/models/navigation-enum.model';
+import { RaceCourseTypeEnum } from 'src/app/models/race-course-type-enum.model';
 import { ResourceValue } from 'src/app/models/resources/resource-value.model';
+import { TrainingOptionsEnum } from 'src/app/models/training-options-enum.model';
 import { TrainingOption } from 'src/app/models/training/training-option.model';
 import { ComponentCommunicationService } from 'src/app/services/component-communication.service';
 import { GameLoopService } from 'src/app/services/game-loop/game-loop.service';
@@ -180,8 +183,7 @@ export class SelectedBarnComponent implements OnInit {
     animal.currentTraining = newTraining;
     this.existingTraining = newTraining;
 
-    if (!this.globalService.globalVar.tutorialCompleted && this.globalService.globalVar.currentTutorialId === 2)
-    {      
+    if (!this.globalService.globalVar.tutorialCompleted && this.globalService.globalVar.currentTutorialId === 2) {
       this.tutorialActive = false;
       this.globalService.globalVar.currentTutorialId += 1;
       this.globalService.globalVar.showTutorial = true;
@@ -215,6 +217,31 @@ export class SelectedBarnComponent implements OnInit {
 
       modifiedOption.timeToComplete *= 1 - (stopwatch * .05 + trainingTimeReduction);
       modifiedOption.timeToComplete = Math.round((modifiedOption.timeToComplete + Number.EPSILON) * 100) / 100;
+
+      if (associatedAnimal.raceCourseType === RaceCourseTypeEnum.Mountain) {
+        if (modifiedOption.trainingType === TrainingOptionsEnum.ShortTrackRunning)
+          modifiedOption.trainingName = "Short Track Climbing";
+        if (modifiedOption.trainingType === TrainingOptionsEnum.TrailRunning)
+          modifiedOption.trainingName = "Trail Climbing";
+        if (modifiedOption.trainingType === TrainingOptionsEnum.LongTrackRunning)
+          modifiedOption.trainingName = "Long Track Climbing";
+      }
+      if (associatedAnimal.raceCourseType === RaceCourseTypeEnum.Ocean) {
+        if (modifiedOption.trainingType === TrainingOptionsEnum.ShortTrackRunning)
+          modifiedOption.trainingName = "Short Track Swimming";
+        if (modifiedOption.trainingType === TrainingOptionsEnum.TrailRunning)
+          modifiedOption.trainingName = "Lane Swimming";
+        if (modifiedOption.trainingType === TrainingOptionsEnum.SmallWagonTow)
+          modifiedOption.trainingName = "Small Canoe Tow";
+        if (modifiedOption.trainingType === TrainingOptionsEnum.UphillRun)
+          modifiedOption.trainingName = "Upstream Swim";
+        if (modifiedOption.trainingType === TrainingOptionsEnum.LongTrackRunning)
+          modifiedOption.trainingName = "Long Track Swimming";
+        if (modifiedOption.trainingType === TrainingOptionsEnum.VehicleTow)
+          modifiedOption.trainingName = "Boat Tow";
+        if (modifiedOption.trainingType === TrainingOptionsEnum.GreenwayHike)
+          modifiedOption.trainingName = "Canal Adventure";
+      }
 
       modifiedOption.affectedStatRatios.topSpeed *= this.barn.barnUpgrades.upgradedStatGain.topSpeed;
       modifiedOption.affectedStatRatios.acceleration *= this.barn.barnUpgrades.upgradedStatGain.acceleration;
@@ -296,6 +323,12 @@ export class SelectedBarnComponent implements OnInit {
       globalAnimal.associatedBarnNumber = this.selectedBarnNumber;
       this.associatedAnimal = globalAnimal;
     }
+
+    if (!this.globalService.globalVar.tutorialCompleted && this.globalService.globalVar.currentTutorialId === 7 &&
+      this.associatedAnimal.type === AnimalTypeEnum.Monkey) {
+      this.globalService.globalVar.currentTutorialId += 1;
+      this.globalService.globalVar.showTutorial = true;
+    }
   }
 
   returnToBarnView(): void {
@@ -370,36 +403,30 @@ export class SelectedBarnComponent implements OnInit {
     if (CoinsAmount >= this.barn.facilityUpgradePrice) {
       this.lookupService.spendCoins(this.barn.facilityUpgradePrice);
 
-      if (this.barn.size === FacilitySizeEnum.Small)
-      {
+      if (this.barn.size === FacilitySizeEnum.Small) {
         this.barn.size = FacilitySizeEnum.Medium;
         this.barn.facilityUpgradePrice = 4000;
         var trainingShop = this.globalService.globalVar.shop.find(item => item.name === "Trainings");
-        if (trainingShop !== null && trainingShop !== undefined)
-        {
-          trainingShop.itemList.filter(item => item.additionalIdentifier === FacilitySizeEnum.Medium.toString()).forEach(item => 
-          {
+        if (trainingShop !== null && trainingShop !== undefined) {
+          trainingShop.itemList.filter(item => item.additionalIdentifier === FacilitySizeEnum.Medium.toString()).forEach(item => {
             item.isAvailable = true;
           });
         }
       }
-      else if (this.barn.size === FacilitySizeEnum.Medium)
-      {
+      else if (this.barn.size === FacilitySizeEnum.Medium) {
         this.barn.size = FacilitySizeEnum.Large;
 
         var trainingShop = this.globalService.globalVar.shop.find(item => item.name === "Trainings");
-        if (trainingShop !== null && trainingShop !== undefined)
-        {
-          trainingShop.itemList.filter(item => item.additionalIdentifier === FacilitySizeEnum.Large.toString()).forEach(item => 
-          {
+        if (trainingShop !== null && trainingShop !== undefined) {
+          trainingShop.itemList.filter(item => item.additionalIdentifier === FacilitySizeEnum.Large.toString()).forEach(item => {
             item.isAvailable = true;
           });
         }
       }
 
       this.getSizeValue();
-      this.availableTrainings = this.GetAvailableTrainingOptions(this.associatedAnimal);     
-      this.buildBiggerBarnPopover = this.getBuildLargerBarnPopover(); 
+      this.availableTrainings = this.GetAvailableTrainingOptions(this.associatedAnimal);
+      this.buildBiggerBarnPopover = this.getBuildLargerBarnPopover();
     }
   }
 
@@ -408,7 +435,6 @@ export class SelectedBarnComponent implements OnInit {
     var requiredResources = this.lookupService.getResourcesForBarnUpgrade(this.barn.barnUpgrades.barnLevel);
     var canBuy = this.canUpgradeBarn(requiredResources);
 
-    //console.log("Mod: " + this.barn.barnUpgrades.barnLevel % 10);
     if (!canBuy)
       return; //TODO: Add Error
 
@@ -521,7 +547,10 @@ export class SelectedBarnComponent implements OnInit {
     var requiredResources = this.lookupService.getResourcesForBarnUpgrade(this.barn.barnUpgrades.barnLevel);
 
     requiredResources.forEach(resource => {
-      popover += resource.amount + " " + resource.name + "\n";
+      var name = resource.name;
+      if (name === "Medals" && resource.amount === 1)
+        name = "Medal";
+      popover += resource.amount + " " + name + "\n";
     });
 
     return popover;
@@ -569,18 +598,21 @@ export class SelectedBarnComponent implements OnInit {
     this.componentCommunicationService.setAnimalView(NavigationEnum.animals, this.associatedAnimal);
   }
 
-  handleTutorial()
-  {    
-    if (!this.globalService.globalVar.tutorialCompleted && this.globalService.globalVar.currentTutorialId === 1)
-    {      
+  handleTutorial() {
+    var monkey = this.globalService.globalVar.animals.find(item => item.type === AnimalTypeEnum.Monkey);
+    if (!this.globalService.globalVar.tutorialCompleted && this.globalService.globalVar.currentTutorialId === 1) {
       this.tutorialActive = true;
       this.globalService.globalVar.currentTutorialId += 1;
       this.globalService.globalVar.showTutorial = true;
-    }    
-    else if (!this.globalService.globalVar.tutorialCompleted)
-    {
+    }
+    else if (!this.globalService.globalVar.tutorialCompleted && this.globalService.globalVar.currentTutorialId === 6 &&
+      monkey?.isAvailable) {
+      this.globalService.globalVar.currentTutorialId += 1;
+      this.globalService.globalVar.showTutorial = true;
+    }
+    else if (!this.globalService.globalVar.tutorialCompleted) {
       this.tutorialActive = false;
-    }    
+    }
   }
 
   ngOnDestroy() {
