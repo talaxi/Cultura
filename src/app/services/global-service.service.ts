@@ -127,7 +127,7 @@ export class GlobalService {
     this.globalVar.modifiers.push(new StringNumberPair(1.25, "moneyMarkRewardModifier"));
 
     this.globalVar.modifiers.push(new StringNumberPair(.05, "breedingGroundsSpecializationModifier"));
-    this.globalVar.modifiers.push(new StringNumberPair((5 * 1), "attractionTimeToCollectModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair((5 * 60), "attractionTimeToCollectModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(10, "attractionAmountModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(.05, "researchCenterIncrementsModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(.45, "researchCenterTrainingAnimalModifier"));
