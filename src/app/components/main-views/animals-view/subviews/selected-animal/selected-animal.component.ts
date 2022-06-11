@@ -31,6 +31,8 @@ export class SelectedAnimalComponent implements OnInit {
   colorConditional: any;
   editingName: boolean;
   newName: string;
+  selectedAbility: Ability;
+  abilityLevelMaxedOut: boolean;
   longDescription: string;
   traitStatGainDescription: string;
   autoBreedActive: boolean;
@@ -64,7 +66,7 @@ export class SelectedAnimalComponent implements OnInit {
     this.focusModifierAmount = this.lookupService.getFocusModifierByAnimalType(this.selectedAnimal.type);
     this.adaptabilityModifierAmount = this.lookupService.getAdaptabilityModifierByAnimalType(this.selectedAnimal.type);
     this.diminishingReturnsAmount = this.globalService.GetAnimalDiminishingReturns(this.selectedAnimal);
-    this.breedLevelPopover = this.lookupService.getBreedLevelPopover(this.selectedAnimal.breedLevel);
+    this.breedLevelPopover = this.lookupService.getBreedLevelPopover(this.selectedAnimal.breedLevel);    
 
     var stockbreeder = this.lookupService.getStockbreeder();
 
@@ -80,6 +82,8 @@ export class SelectedAnimalComponent implements OnInit {
     if (this.selectedAnimal.availableAbilities.length > 2)
       this.ability3 = this.selectedAnimal.availableAbilities[2];
 
+    this.selectedAbility = this.selectedAnimal.ability;    
+    this.abilityLevelMaxedOut = this.isAbilityLevelMaxedOut();
     this.longDescription = this.lookupService.getAnimalAbilityDescription(false, this.selectedAnimal.ability.name, this.selectedAnimal);
 
     if (this.selectedAnimal.trait !== undefined && this.selectedAnimal.trait !== null)
@@ -125,6 +129,19 @@ export class SelectedAnimalComponent implements OnInit {
     this.returnEmitter.emit(false);
   }
 
+  isAbilityLevelMaxedOut() {
+    var abilityLevelCap = 25;
+    var abilityLevelCapModifier = this.globalService.globalVar.modifiers.find(item => item.text === "abilityLevelCapModifier");
+    if (abilityLevelCapModifier !== null && abilityLevelCapModifier !== undefined)
+    abilityLevelCap = abilityLevelCapModifier.value;
+
+    if (this.selectedAbility !== null && this.selectedAbility !== undefined && 
+      this.selectedAbility.abilityLevel > this.selectedAnimal.breedLevel + abilityLevelCap)
+      return true;
+    else 
+      return false;
+  }
+
   breed(): void {
     this.globalService.BreedAnimal(this.selectedAnimal);
 
@@ -137,6 +154,7 @@ export class SelectedAnimalComponent implements OnInit {
     this.diminishingReturnsAmount = this.globalService.GetAnimalDiminishingReturns(this.selectedAnimal);
 
     this.breedLevelPopover = this.lookupService.getBreedLevelPopover(this.selectedAnimal.breedLevel);
+    this.abilityLevelMaxedOut = this.isAbilityLevelMaxedOut();
   }
 
   editName(): void {
@@ -150,6 +168,8 @@ export class SelectedAnimalComponent implements OnInit {
 
   selectAbility(ability: Ability) {
     this.selectedAnimal.ability = ability;
+    this.selectedAbility = this.selectedAnimal.ability;
+    this.abilityLevelMaxedOut = this.isAbilityLevelMaxedOut();
     this.longDescription = this.lookupService.getAnimalAbilityDescription(false, this.selectedAnimal.ability.name, this.selectedAnimal);
   }
 
@@ -308,6 +328,14 @@ export class SelectedAnimalComponent implements OnInit {
 
   getAdaptabilityPopover() {
     return this.lookupService.adaptabilityPopover(this.selectedAnimal);
+  }
+
+  getAbilityLevelPopover() {
+    return this.lookupService.abilityLevelPopover(this.selectedAnimal);
+  }
+
+  getAbilityPopover() {
+    return this.lookupService.abilityPopover();
   }
 
   getDiminishingReturnsPopover() {

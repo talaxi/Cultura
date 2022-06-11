@@ -80,9 +80,11 @@ export class SettingsViewComponent implements OnInit {
 
   //TODO: add alert to this to verify they want to overwrite save
   public LoadGame() {
-    var decompressedData = LZString.decompressFromBase64(this.importExportValue);
-    var loadDataJson = <GlobalVariables>JSON.parse(decompressedData);
-    this.globalService.globalVar = plainToInstance(GlobalVariables, loadDataJson);    
+    if (confirm("This will overwrite your existing game data. Continue?")) {
+      var decompressedData = LZString.decompressFromBase64(this.importExportValue);
+      var loadDataJson = <GlobalVariables>JSON.parse(decompressedData);
+      this.globalService.globalVar = plainToInstance(GlobalVariables, loadDataJson);
+    }
   }
 
   skipDrawRaceToggle = () => {
@@ -111,7 +113,7 @@ export class SettingsViewComponent implements OnInit {
 
   changeRaceDisplayInfo(raceDisplayInfo: RaceDisplayInfoEnum) {
     this.globalService.globalVar.settings.set("raceDisplayInfo", raceDisplayInfo);
-    this.raceDisplayInfo = this.getRaceDisplayInfoName(raceDisplayInfo);    
+    this.raceDisplayInfo = this.getRaceDisplayInfoName(raceDisplayInfo);
   }
 
   changeTheme(newTheme: any) {

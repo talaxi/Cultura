@@ -319,8 +319,8 @@ export class Gecko extends Animal {
         this.raceCourseType = RaceCourseTypeEnum.Mountain;
 
         this.ability = new Ability();
-        this.ability.cooldown = 55;
-        this.ability.efficiency = 5;        
+        this.ability.cooldown = 5;
+        this.ability.efficiency = 55;        
         this.ability.oneTimeEffect = false;
         this.ability.name = "Sticky";        
         this.ability.isAbilityPurchased = true;
@@ -356,7 +356,7 @@ export class Dolphin extends Animal {
 
         this.ability = new Ability();
         this.ability.cooldown = 5;
-        this.ability.efficiency = 20;
+        this.ability.efficiency = 17;
         this.ability.totalFrames = 15;
         this.ability.oneTimeEffect = false;
         this.ability.name = "Breach";        

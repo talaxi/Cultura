@@ -136,7 +136,7 @@ export class AppComponent {
         incubator.assignedTrait = null;
       }
     }
-
+    
     this.handleFreeRaceTimer(deltaTime);
   }
 

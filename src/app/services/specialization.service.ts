@@ -186,15 +186,31 @@ export class SpecializationService {
       amountEarned = amountEarnedPair.value;
 
     assignedBarn.barnUpgrades.currentDeltaTime += deltaTime;
-    while (assignedBarn.barnUpgrades.currentDeltaTime >= timeToCollect) {
+    var collectedAmount = 0;
+    var originalDeltaTime = assignedBarn.barnUpgrades.currentDeltaTime; 
 
+    if (trainingAnimal.currentTraining !== null && 
+      assignedBarn.barnUpgrades.currentDeltaTime >= trainingAnimal.currentTraining.trainingTimeRemaining)
+    {
+      assignedBarn.barnUpgrades.currentDeltaTime = trainingAnimal.currentTraining.trainingTimeRemaining;
+    }
+
+    while (assignedBarn.barnUpgrades.currentDeltaTime >= timeToCollect) {
+      console.log("Success Delta Time: " + assignedBarn.barnUpgrades.currentDeltaTime);
       assignedBarn.barnUpgrades.currentDeltaTime -= timeToCollect;
 
       amountEarned *= assignedBarn.barnUpgrades.specializationLevel;
       var resource = this.globalService.globalVar.resources.find(item => item.name === "Coins");
       if (resource !== undefined)
         resource.amount += amountEarned;
+
+      collectedAmount += amountEarned;      
+    }    
+
+    if (collectedAmount > 0)
+    {
+      console.log("Collected Amount: " + collectedAmount);
+      console.log("Original Delta Time: " + originalDeltaTime);
     }
-    //});
   }
 }

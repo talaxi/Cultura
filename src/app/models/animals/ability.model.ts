@@ -31,5 +31,13 @@ export class Ability {
 
     increaseAbilityXp() {
         this.abilityXp += 1;
+        
+        //needs to consider breed lvl
+        if (this.abilityXp >= this.abilityMaxXp)
+        {
+            this.abilityXp = 0;
+            this.abilityLevel += 1;
+            this.abilityMaxXp += 5;
+        }    
     }
 }

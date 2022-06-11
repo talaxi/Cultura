@@ -443,33 +443,9 @@ export class LookupService {
     }
 
     var modifiedPower = (animal.currentStats.powerMs * powerAbilityModifier * terrainModifier * statLossFromExhaustion) / 100;
+    var modifiedEfficiency = animal.ability.efficiency + (animal.ability.efficiency * ((animal.ability.abilityLevel - 1) * .01));
 
-    if (animal.ability.name === "Second Wind") {
-      return (animal.ability.efficiency * (1 + modifiedPower));
-    }
-    if (animal.ability.name === "Inspiration") {
-      return animal.ability.efficiency * (1 + modifiedPower);
-    }
-    if (animal.ability.name === "Pacemaker") {
-      return animal.ability.efficiency * (1 + modifiedPower);
-    }
-    if (animal.ability.name === "Landslide") {
-      return animal.ability.efficiency * (1 + modifiedPower);
-    }
-    if (animal.ability.name === "Leap") {
-      return animal.ability.efficiency * (1 + modifiedPower);
-    }
-    if (animal.ability.name === "On The Hunt") { //this one is percent based
-      return (animal.ability.efficiency * (1 + modifiedPower));
-    }
-    if (animal.ability.name === "Sure-footed") { //this one is percent based
-      return (animal.ability.efficiency * (1 + modifiedPower));
-    }
-    if (animal.ability.name === "Deep Breathing") { //this one is percent based
-      return (animal.ability.efficiency * (1 + modifiedPower));
-    }
-    else
-      return animal.ability.efficiency * (1 + modifiedPower);
+      return modifiedEfficiency * (1 + modifiedPower);
   }
 
   getAnimalAbilityDescription(shortDescription: boolean, abilityName: string, animal?: Animal) {
@@ -499,7 +475,7 @@ export class LookupService {
         return "Start in extended burst mode";
       }
       if (abilityName === "Nap") {
-        return "Delay leg start, increase acceleration and focus";
+        return "Delay leg start, increase max speed and focus";
       }
       if (abilityName === "Landslide") {
         return "Delay competitors";
@@ -638,7 +614,7 @@ export class LookupService {
           return "Starts its leg in burst mode that continues for an additional " + effectiveAmountDisplay + " meters. Passive.";
         }
         if (abilityName === "Nap") {
-          return "Sleep until the competition is " + effectiveAmountDisplay + " meters from the end of your leg. Acceleration and focus are then doubled. Passive.";
+          return "Sleep until the competition has traveled a distance equal to " + effectiveAmountDisplay + " meters from the end of your leg. Acceleration and focus are then doubled. Passive.";
         }
         if (abilityName === "Landslide") {
           return "Drop rocks on competitors, delaying them " + effectiveAmountDisplay + " meters. " + cooldownDisplay + " second cooldown.";
@@ -1182,6 +1158,26 @@ export class LookupService {
 
     if (animal.incubatorStatUpgrades.adaptabilityModifier > 1)
       popover += "Incubator Upgrade: *" + animal.incubatorStatUpgrades.adaptabilityModifier.toFixed(3)+ "\n";
+
+    return popover;
+  }
+
+  abilityPopover() {
+    var abilityLevelCap = 25;
+    var abilityLevelCapModifier = this.globalService.globalVar.modifiers.find(item => item.text === "abilityLevelCapModifier");
+    if (abilityLevelCapModifier !== null && abilityLevelCapModifier !== undefined)
+    abilityLevelCap = abilityLevelCapModifier.value;
+
+    var popover = "Select from up to three different abilities by clicking on their names here. Using your ability during a race will award your ability XP which increases its effectiveness. Ability level cannot exceed your animal's breed level " + abilityLevelCap + ".";
+
+    return popover;
+  }
+
+  abilityLevelPopover(animal: Animal) {
+    var popover = "Base Efficency: " + animal.ability.efficiency + "\n";
+    
+    if (animal.ability.abilityLevel > 1)
+      popover += "Level Efficency Modifier: " + ((animal.ability.abilityLevel - 1) * .01);      
 
     return popover;
   }
