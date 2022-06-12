@@ -2380,7 +2380,8 @@ export class GlobalService {
     if (animal.ability.abilityXp >= animal.ability.abilityMaxXp) {
       animal.ability.abilityXp = 0;
       animal.ability.abilityLevel += 1;
-      animal.ability.abilityMaxXp += 5;
+      if (animal.ability.abilityLevel % 10 === 0)
+        animal.ability.abilityMaxXp += 5;
     }
   }
 

@@ -984,7 +984,7 @@ export class RaceLogicService {
     else if (distanceCovered >= expectedDistance * 1.5)
       timingUpdateMessage = animalName + " <strong>CANNOT be caught!!</strong>";
     else if (distanceCovered >= expectedDistance * 1.25)
-      timingUpdateMessage = animalName + " is <strong>WAY ahead the pack!</strong>";
+      timingUpdateMessage = animalName + " is <strong>WAY ahead of the pack!</strong>";
     else if (distanceCovered >= expectedDistance * 1.1)
       timingUpdateMessage = animalName + " is <strong>barely leading the pack!</strong>";
 
@@ -1153,6 +1153,7 @@ export class RaceLogicService {
       return false;
 
     if (racingAnimal.type === AnimalTypeEnum.Gecko && racingAnimal.ability.name === "Sticky" && racingAnimal.ability.abilityInUse) {
+      console.log("Sticky test");
       return false;
     }
 
@@ -1340,6 +1341,14 @@ export class RaceLogicService {
       if (racingAnimal.ability.name === "Leap") {
         racingAnimal.ability.abilityInUse = true;
         racingAnimal.ability.remainingFrames = racingAnimal.ability.totalFrames;
+        this.globalService.increaseAbilityXp(racingAnimal);
+      }
+    }
+
+    if (racingAnimal.type === AnimalTypeEnum.Gecko) {
+      if (racingAnimal.ability.name === "Sticky") {
+        racingAnimal.ability.abilityInUse = true;
+        racingAnimal.ability.remainingLength = this.lookupService.GetAbilityEffectiveAmount(racingAnimal, currentLeg.terrain.powerModifier, statLossFromExhaustion);
         this.globalService.increaseAbilityXp(racingAnimal);
       }
     }

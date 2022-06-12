@@ -136,32 +136,43 @@ export class AppComponent {
         incubator.assignedTrait = null;
       }
     }
-    
+
     this.handleFreeRaceTimer(deltaTime);
   }
 
   handleFreeRaceTimer(deltaTime: number) {
     this.globalService.globalVar.freeRaceTimePeriodCounter += deltaTime;
 
-    var freeRaceTimePeriod = 15 * 60;
-    var freeRaceTimePeriodPair = this.globalService.globalVar.modifiers.find(item => item.text === "freeRacesTimePeriodModifier");
-    if (freeRaceTimePeriodPair !== undefined)
-      freeRaceTimePeriod = freeRaceTimePeriodPair.value;
+    //delay if user is racing to prevent lag
+    if (!this.globalService.globalVar.userIsRacing) {
+      var freeRaceTimePeriod = 5 * 60;
+      var freeRaceTimePeriodPair = this.globalService.globalVar.modifiers.find(item => item.text === "freeRacesTimePeriodModifier");
+      if (freeRaceTimePeriodPair !== undefined)
+        freeRaceTimePeriod = freeRaceTimePeriodPair.value;
 
-    var autofreeRaceMaxIdleTimePeriod = 1 * 60 * 60;
-    var autofreeRaceMaxIdleTimePeriodPair = this.globalService.globalVar.modifiers.find(item => item.text === "autoFreeRacesMaxIdleTimePeriodModifier");
-    if (autofreeRaceMaxIdleTimePeriodPair !== undefined)
-      autofreeRaceMaxIdleTimePeriod = autofreeRaceMaxIdleTimePeriodPair.value;
-      
-    //make this a while but only up to a certain point
-    while (this.globalService.globalVar.freeRaceTimePeriodCounter >= freeRaceTimePeriod &&
-      autofreeRaceMaxIdleTimePeriod > 0) {
-      this.globalService.globalVar.freeRaceTimePeriodCounter -= freeRaceTimePeriod;
-      autofreeRaceMaxIdleTimePeriod -= freeRaceTimePeriod;
-      this.globalService.globalVar.freeRaceCounter = 0;
-      this.globalService.globalVar.autoFreeRaceCounter = 0;
-      
-      this.handleAutoFreeRace(deltaTime);
+      var autofreeRaceMaxIdleTimePeriod = 1 * 60 * 60;
+      var autofreeRaceMaxIdleTimePeriodPair = this.globalService.globalVar.modifiers.find(item => item.text === "autoFreeRacesMaxIdleTimePeriodModifier");
+      if (autofreeRaceMaxIdleTimePeriodPair !== undefined)
+        autofreeRaceMaxIdleTimePeriod = autofreeRaceMaxIdleTimePeriodPair.value;
+
+      var whileRunning = false;
+      if (this.globalService.globalVar.freeRaceTimePeriodCounter >= freeRaceTimePeriod &&
+        autofreeRaceMaxIdleTimePeriod > 0) {
+        whileRunning = true;
+        console.log("Coins Before Free Race While: " + this.lookupService.getCoins());
+      }
+      while (this.globalService.globalVar.freeRaceTimePeriodCounter >= freeRaceTimePeriod &&
+        autofreeRaceMaxIdleTimePeriod > 0) {
+        this.globalService.globalVar.freeRaceTimePeriodCounter -= freeRaceTimePeriod;
+        autofreeRaceMaxIdleTimePeriod -= freeRaceTimePeriod;
+        this.globalService.globalVar.freeRaceCounter = 0;
+        this.globalService.globalVar.autoFreeRaceCounter = 0;
+
+        this.handleAutoFreeRace(deltaTime);
+      }
+
+      if (whileRunning)
+        console.log("Coins After Free Race While: " + this.lookupService.getCoins());
     }
   }
 
@@ -170,9 +181,7 @@ export class AppComponent {
     if (teamManager === undefined || teamManager === null)
       teamManager = 0;
 
-    //don't run while user is racing, can cause issues
-    if (teamManager === 0 || !this.globalService.globalVar.animalDecks.some(item => item.autoRunFreeRace) ||
-      this.globalService.globalVar.userIsRacing) { //TODO: is racing check skipping race check
+    if (teamManager === 0 || !this.globalService.globalVar.animalDecks.some(item => item.autoRunFreeRace)) {
       return;
     }
 
@@ -203,12 +212,12 @@ export class AppComponent {
           canRun = false;
       });
 
-      if (!canRun)
-      {
+      if (!canRun) {
         continue;
       }
 
       var raceResult = this.raceLogicService.runRace(freeRace);
+      console.log("Ran free race");
     }
   }
 
