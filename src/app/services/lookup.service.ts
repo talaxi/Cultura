@@ -486,11 +486,11 @@ export class LookupService {
       if (abilityName === "Leap") {
         return "Jump to the finish line";
       }
-      if (abilityName === "Breach") {
-        return "Jump a short distance";
-      }
       if (abilityName === "Echolocation") {
         return "Increase adaptability, ignore negative terrain effects for a short period";
+      }      
+      if (abilityName === "Navigator") {
+        return "Increase previous and next racer's adaptability";
       }
       if (abilityName === "Flowing Current") {
         return "Increase next racer's acceleration on relay";
@@ -505,19 +505,19 @@ export class LookupService {
         return "Increase max speed when ahead of competitors";
       }
       if (abilityName === "Propulsion") {
-        return "Gain acceleration at regular intervals";
+        return "Dash a short distance";
       }
       if (abilityName === "Buried Treasure") {
         return "Delay your start, increase coin gain for winning race";
       }
       if (abilityName === "Big Brain") {
-        return "Increase power of other racers after bursting 8 times";
+        return "Increase power of other racers after bursting a certain number of times";
       }
       if (abilityName === "Sure-footed") {
         return "Increase adaptability after not stumbling through path";
       }
       if (abilityName === "Deep Breathing") {
-        return "Regain stamina after burst, permanently increase endurance";
+        return "Regain stamina after burst, increase other racers' stamina";
       }
       if (abilityName === "In The Rhythm") {
         return "Increase burst speed bonus";
@@ -529,7 +529,7 @@ export class LookupService {
         return "Increase max speed by keeping focused";
       }
       if (abilityName === "Camouflage") {
-        return "Increase previous and next racer's adaptability";
+        return "Transfer velocity to next racer on relay";
       }
       if (abilityName === "Herd Mentality") {
         return "Grant next racer portion of your stamina, they start in burst mode";
@@ -629,7 +629,7 @@ export class LookupService {
           return "When you make it through a special path without stumbling, increase your adaptability by " + effectiveAmountDisplay + "%. Passive.";
         }
         if (abilityName === "Deep Breathing") {
-          return "Every time you burst, regain " + effectiveAmountDisplay + "% of your stamina, up to 100%. If this brings you to your max stamina, permanently gain an endurance stat point. Passive.";
+          return "Every time you burst, regain " + effectiveAmountDisplay + "% of your stamina, up to 100%. If this amount exceeds 100% of your stamina, increase all other racers' stamina by the amount exceeded. Passive.";
         }
         if (abilityName === "In The Rhythm") {
           return "Increase your max speed bonus while bursting by " + effectiveAmountDisplay + "%. Passive.";
@@ -638,16 +638,16 @@ export class LookupService {
           return "Cannot stumble for " + effectiveAmountDisplay + " meters. " + cooldownDisplay + " second cooldown.";
         }
         if (abilityName === "Night Vision") {
-          return "Increase Max Speed by " + effectiveAmountDisplay + "% for every percent of the total leg distance you complete without losing focus. If you lose focus, reset this bonus back to 0%. Passive.";
+          return "Increase Max Speed by " + effectiveAmountDisplay + "% for every path you complete without losing focus. If you lose focus, reset this bonus back to 0%. Passive.";
         }
         if (abilityName === "Camouflage") {
-          return "Assist the previous racer and next racer, boosting their adaptability by 25% of your max for the last and first " + effectiveAmountDisplay + " meters of their legs respectively. Passive.";
-        }
-        if (abilityName === "Breach") {
-          return "Jump " + effectiveAmountDisplay + " meters over .25 seconds. " + cooldownDisplay + " second cooldown.";
+          return "The speed you finish your leg at is given to your following racer on Relay. Decrease this amount to 0 evenly over " + effectiveAmountDisplay + " meters. The following racer can break their max speed by up to 50% while this is active. Passive.";
         }
         if (abilityName === "Echolocation") {
           return "Increase your adaptability by 50% for " + effectiveAmountDisplay + " meters and ignore any negative effects from the terrain. " + cooldownDisplay + " second cooldown.";
+        }
+        if (abilityName === "Navigator") {
+          return "Assist the previous racer and next racer, boosting their adaptability by 25% of your max for the last and first " + effectiveAmountDisplay + " meters of their legs respectively. Passive.";
         }
         if (abilityName === "Flowing Current") {
           return "When relaying, increase the acceleration of your next racer by 25% of your acceleration for " + effectiveAmountDisplay + " meters. Passive.";
@@ -662,19 +662,19 @@ export class LookupService {
           return "While you are ahead of the average pace, increase max speed by " + effectiveAmountDisplay + "%. Passive.";
         }
         if (abilityName === "Propulsion") {
-          return "Every 8% of your leg you complete, gain " + effectiveAmountDisplay + "% acceleration for the remainder of the leg. Passive.";
+          return "Dash " + effectiveAmountDisplay + " meters over .25 seconds. " + cooldownDisplay + " second cooldown.";
         }
         if (abilityName === "Buried Treasure") {
           return "Delay your start by 8 seconds. If you still win the race, increase your Coin reward by " + effectiveAmountDisplay + "%. Passive.";
         }
         if (abilityName === "Big Brain") {
-          return "After Bursting 8 times, increase Power of all remaining racers by " + effectiveAmountDisplay + "%. Passive.";
+          return "After Bursting through one third of your race paths, increase Power of all remaining racers by " + effectiveAmountDisplay + "%. Passive.";
         }
         if (abilityName === "Herd Mentality") {
           return "After completing your leg, " + effectiveAmountDisplay + "% of your remaining stamina is given to the next racer and they start their leg in burst mode. This does not occur if you run out of stamina during your leg. Passive.";
         }
         if (abilityName === "Great Migration") {
-          return "Reduce stamina by 10%. For " + effectiveAmountDisplay + " meters, acceleration is increased by the amount of stamina lost. " + cooldownDisplay + " second cooldown.";
+          return "Reduce stamina by 10%. For " + effectiveAmountDisplay + " meters, acceleration is increased by 25% of the amount of stamina lost. " + cooldownDisplay + " second cooldown.";
         }
         if (abilityName === "Special Delivery") {
           return "Increase all remaining racers’ burst max speed bonus by " + effectiveAmountDisplay + "% of your remaining stamina percentage after completing your leg. This does not occur if you run out of stamina during your leg. Passive.";
@@ -683,7 +683,7 @@ export class LookupService {
           return "Increase adaptability by 40% for " + effectiveAmountDisplay + " meters. " + cooldownDisplay + " second cooldown.";
         }
         if (abilityName === "Wild Toboggan") {
-          return "Double the maximum amount of drift per path. Increase acceleration by " + effectiveAmountDisplay + "% based on how much you drift. Passive.";
+          return "Double the maximum amount of drift per path. Increase acceleration by up to " + effectiveAmountDisplay + "% based on how much you drift. Passive.";
         }
         if (abilityName === "Quick Toboggan") {
           return "Every time you make it through a path without drifting, gain " + effectiveAmountDisplay + "% max speed. Passive.";
@@ -704,7 +704,7 @@ export class LookupService {
           return "Increase Max Speed by " + effectiveAmountDisplay + "%. Decrease this bonus by 2% for every percent of the leg you complete. Passive.";
         }
         if (abilityName === "Nine Tails") {
-          return "At the start of each path, increase either Acceleration, Max Speed, Focus, or Adaptability by 10% for " + effectiveAmountDisplay + " meters. This effect can stack. " + cooldownDisplay + " second cooldown.";
+          return "At the start of each path, increase either Acceleration, Max Speed, Focus, or Adaptability by 10% for " + effectiveAmountDisplay + " meters. This effect can stack. Passive.";
         }
       }
     }

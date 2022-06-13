@@ -42,7 +42,7 @@ export class DrawRaceComponent implements OnInit {
   volcanoYOffset = 0;
   volcanoRadiusXModifier = 6;
   backgroundVolcanoYStart = 0;
-  volcanoYEndPosition = 0;
+  //volcanoYEndPosition = 0;
 
   lastPathEndingX = 0;
   lastPathEndingY = 0;
@@ -1474,7 +1474,7 @@ export class DrawRaceComponent implements OnInit {
       context.lineTo(this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY + volcanicYOffset + yDistanceOffset);
       context.stroke();
 
-      this.volcanoYEndPosition = startingY;
+      //this.volcanoYEndPosition = startingY;
     }
 
     var endingAngle = this.volcanoStartingAngle - anglePerPath;

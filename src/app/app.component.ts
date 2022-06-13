@@ -48,7 +48,7 @@ export class AppComponent {
 
     if (devMode) {
       this.globalService.globalVar.tutorialCompleted = true;
-      this.globalService.devModeInitialize(27);
+      this.globalService.devModeInitialize(45);
     }
 
     var subscription = this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {
@@ -70,7 +70,7 @@ export class AppComponent {
     this.gameLoopService.Update();
   }
 
-  public gameCheckup(deltaTime: number): void {
+  public gameCheckup(deltaTime: number): void {    
     //update training time
     if (this.globalService.globalVar.animals === undefined || this.globalService.globalVar.animals === null) {
       return;
@@ -136,11 +136,12 @@ export class AppComponent {
         incubator.assignedTrait = null;
       }
     }
-
+    
     this.handleFreeRaceTimer(deltaTime);
   }
 
   handleFreeRaceTimer(deltaTime: number) {
+    //console.log("Handle Free Races: " + deltaTime);
     this.globalService.globalVar.freeRaceTimePeriodCounter += deltaTime;
 
     //delay if user is racing to prevent lag
@@ -155,14 +156,17 @@ export class AppComponent {
       if (autofreeRaceMaxIdleTimePeriodPair !== undefined)
         autofreeRaceMaxIdleTimePeriod = autofreeRaceMaxIdleTimePeriodPair.value;
 
-      var whileRunning = false;
+      /*var whileRunning = false;
       if (this.globalService.globalVar.freeRaceTimePeriodCounter >= freeRaceTimePeriod &&
         autofreeRaceMaxIdleTimePeriod > 0) {
         whileRunning = true;
-        console.log("Coins Before Free Race While: " + this.lookupService.getCoins());
-      }
+        //console.log("Coins Before Free Race While: " + this.lookupService.getCoins());
+      }*/
       while (this.globalService.globalVar.freeRaceTimePeriodCounter >= freeRaceTimePeriod &&
         autofreeRaceMaxIdleTimePeriod > 0) {
+        if (this.globalService.globalVar.freeRaceTimePeriodCounter > autofreeRaceMaxIdleTimePeriod)
+          this.globalService.globalVar.freeRaceTimePeriodCounter = autofreeRaceMaxIdleTimePeriod;
+
         this.globalService.globalVar.freeRaceTimePeriodCounter -= freeRaceTimePeriod;
         autofreeRaceMaxIdleTimePeriod -= freeRaceTimePeriod;
         this.globalService.globalVar.freeRaceCounter = 0;
@@ -171,8 +175,8 @@ export class AppComponent {
         this.handleAutoFreeRace(deltaTime);
       }
 
-      if (whileRunning)
-        console.log("Coins After Free Race While: " + this.lookupService.getCoins());
+      //if (whileRunning)
+        //console.log("Coins After Free Race While: " + this.lookupService.getCoins());
     }
   }
 
@@ -217,7 +221,7 @@ export class AppComponent {
       }
 
       var raceResult = this.raceLogicService.runRace(freeRace);
-      console.log("Ran free race");
+      //console.log("Ran free race");
     }
   }
 

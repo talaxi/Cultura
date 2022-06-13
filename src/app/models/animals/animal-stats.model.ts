@@ -18,7 +18,7 @@ export class AnimalStats {
     burstChance: number;
     burstDistance: number;
 
-    defaultStaminaModifier = 7.5;
+    defaultStaminaModifier = 5;
     defaultMaxSpeedModifier = .3;
     defaultAccelerationModifier = .1;
     defaultPowerModifier = 1;
@@ -49,7 +49,7 @@ export class AnimalStats {
 
         if (diminishingReturnsValue === null || diminishingReturnsValue === undefined)
             diminishingReturnsValue = this.diminishingReturnsDefaultStatThreshold;
-        
+
         if (this.endurance <= diminishingReturnsValue)
             return this.endurance * animalDefaultModifier;
         else {
@@ -63,7 +63,7 @@ export class AnimalStats {
         if (animalDefaultModifier === null || animalDefaultModifier === undefined)
             animalDefaultModifier = this.defaultMaxSpeedModifier;
 
-            if (diminishingReturnsValue === null || diminishingReturnsValue === undefined)
+        if (diminishingReturnsValue === null || diminishingReturnsValue === undefined)
             diminishingReturnsValue = this.diminishingReturnsDefaultStatThreshold;
 
         if (this.topSpeed <= diminishingReturnsValue)
@@ -79,7 +79,7 @@ export class AnimalStats {
         if (animalDefaultModifier === null || animalDefaultModifier === undefined)
             animalDefaultModifier = this.defaultAccelerationModifier;
 
-            if (diminishingReturnsValue === null || diminishingReturnsValue === undefined)
+        if (diminishingReturnsValue === null || diminishingReturnsValue === undefined)
             diminishingReturnsValue = this.diminishingReturnsDefaultStatThreshold;
 
         if (this.acceleration <= diminishingReturnsValue)
@@ -95,7 +95,7 @@ export class AnimalStats {
         if (animalDefaultModifier === null || animalDefaultModifier === undefined)
             animalDefaultModifier = this.defaultPowerModifier;
 
-            if (diminishingReturnsValue === null || diminishingReturnsValue === undefined)
+        if (diminishingReturnsValue === null || diminishingReturnsValue === undefined)
             diminishingReturnsValue = this.diminishingReturnsDefaultStatThreshold;
 
         if (this.power <= diminishingReturnsValue)
@@ -109,9 +109,9 @@ export class AnimalStats {
 
     calculateTrueFocus(animalDefaultModifier?: number, diminishingReturnsValue?: number): number {
         if (animalDefaultModifier === null || animalDefaultModifier === undefined)
-            animalDefaultModifier = this.defaultFocusModifier;  
+            animalDefaultModifier = this.defaultFocusModifier;
 
-            if (diminishingReturnsValue === null || diminishingReturnsValue === undefined)
+        if (diminishingReturnsValue === null || diminishingReturnsValue === undefined)
             diminishingReturnsValue = this.diminishingReturnsDefaultStatThreshold;
 
         if (this.focus <= diminishingReturnsValue)
@@ -127,7 +127,7 @@ export class AnimalStats {
         if (animalDefaultModifier === null || animalDefaultModifier === undefined)
             animalDefaultModifier = this.defaultAdaptabilityModifier;
 
-            if (diminishingReturnsValue === null || diminishingReturnsValue === undefined)
+        if (diminishingReturnsValue === null || diminishingReturnsValue === undefined)
             diminishingReturnsValue = this.diminishingReturnsDefaultStatThreshold;
 
         if (this.adaptability <= diminishingReturnsValue)
@@ -139,18 +139,22 @@ export class AnimalStats {
         }
     }
 
-    calculateBurstChance(): number {
+    calculateBurstChance(modifiedFocusMs?: number, modifiedAdaptabilityMs?: number): number {
         var statTotal = this.adaptability + this.focus;
+        if (modifiedFocusMs !== null && modifiedFocusMs !== undefined &&
+            modifiedAdaptabilityMs !== null && modifiedAdaptabilityMs !== undefined)
+            statTotal = modifiedAdaptabilityMs + modifiedFocusMs;
+
         var offset = 1000;
-        
-        //this is set up to prevent getting above 100, need to fix that
-        return (statTotal/(offset) * 100); 
+
+
+        return (statTotal / (offset) * 100);
     }
 
     calculateBurstDistance(animalDefaultModifier?: number): number {
         if (animalDefaultModifier === null || animalDefaultModifier === undefined)
             animalDefaultModifier = this.defaultBurstDistanceModifier;
-        
+
         return this.power * animalDefaultModifier;
     }
 
@@ -212,7 +216,7 @@ export class AnimalStats {
     }
 
     calculateDiminishingReturns(statValue: number): number {
-        var diminishingReturnsExp = .6;        
+        var diminishingReturnsExp = .6;
         return 1 / statValue ** diminishingReturnsExp;
     }
 

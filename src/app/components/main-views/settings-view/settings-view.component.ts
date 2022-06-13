@@ -78,7 +78,6 @@ export class SettingsViewComponent implements OnInit {
     this.importExportValue = compressedData;
   }
 
-  //TODO: add alert to this to verify they want to overwrite save
   public LoadGame() {
     if (confirm("This will overwrite your existing game data. Continue?")) {
       var decompressedData = LZString.decompressFromBase64(this.importExportValue);

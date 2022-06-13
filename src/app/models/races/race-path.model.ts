@@ -11,6 +11,7 @@ export class RacePath {
     legStartingDistance: number;
     isSpecialPath: boolean;
     didAnimalStumble = false;
+    didAnimalLoseFocus = false;
     checkedForBurst = false;
     checkedForNineTails = false; //used for Fox Ability -- Nine Tails
     frequencyOfDrift: number; //used for tundra
@@ -80,6 +81,7 @@ export class RacePath {
         }
         if (this.routeDesign === RaceDesignEnum.Hills) {
             this.isSpecialPath = true;
+            this.stumbleSeverity = StumbleSeverityEnum.High;
             this.frequencyOfStumble = 120;
             this.stumbleOpportunities = 3;
             this.frequencyOfDrift = 250;
