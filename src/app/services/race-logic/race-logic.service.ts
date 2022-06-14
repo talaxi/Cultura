@@ -452,8 +452,7 @@ export class RaceLogicService {
           if (racingAnimal.type === AnimalTypeEnum.Fox && racingAnimal.ability.name === "Nine Tails") {
             modifiedAccelerationMs *= 1 + (this.getNineTailsBuffCount("Acceleration", nineTailsBuffs) * .1);
           }
-
-          console.log("Accel: " + modifiedAccelerationMs + " Use Count: " + racingAnimal.ability.totalUseCount);
+          
           velocity += modifiedAccelerationMs / this.frameModifier;
         }
 
@@ -887,7 +886,7 @@ export class RaceLogicService {
 
   doesRacerBurst(animal: Animal, currentPath: RacePath, timeToComplete: number, raceLength: number, currentDistanceInRace: number, modifiedAdaptabilityMs: number, modifiedFocusMs: number): boolean {
     var distanceModifier = 1000 / this.selectedRace.length; //TODO: should this be leg or total distance?
-    var modifiedBurstChance = animal.currentStats.calculateBurstChance(modifiedFocusMs, modifiedAdaptabilityMs) * distanceModifier;
+    var modifiedBurstChance = animal.currentStats.calculateBurstChance(modifiedFocusMs, modifiedAdaptabilityMs) * distanceModifier;    
 
     if (currentPath.checkedForBurst)
       return false;
@@ -922,7 +921,6 @@ export class RaceLogicService {
 
     if (rng <= (modifiedBurstChance + 1))
       return true;
-    //}
     return false;
   }
 
@@ -1451,8 +1449,7 @@ export class RaceLogicService {
         this.globalService.increaseAbilityXp(racingAnimal);
       }
 
-      if (racingAnimal.ability.name === "Heat Up") {
-        console.log("Heating up");
+      if (racingAnimal.ability.name === "Heat Up") {        
         racingAnimal.ability.abilityInUse = true;
         racingAnimal.ability.totalUseCount += 1;
         racingAnimal.ability.remainingLength = this.lookupService.GetAbilityEffectiveAmount(racingAnimal, currentLeg.terrain.powerModifier, statLossFromExhaustion);

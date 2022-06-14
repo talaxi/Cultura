@@ -141,9 +141,10 @@ export class AnimalStats {
 
     calculateBurstChance(modifiedFocusMs?: number, modifiedAdaptabilityMs?: number): number {
         var statTotal = this.adaptability + this.focus;
-        if (modifiedFocusMs !== null && modifiedFocusMs !== undefined &&
+        /*if (modifiedFocusMs !== null && modifiedFocusMs !== undefined &&
             modifiedAdaptabilityMs !== null && modifiedAdaptabilityMs !== undefined)
             statTotal = modifiedAdaptabilityMs + modifiedFocusMs;
+*/
 
         var offset = 1000;
 
@@ -208,7 +209,7 @@ export class AnimalStats {
     }
 
     burstChancePopover(): string {
-        return "This is your chance per second over 1000 meters that you will enter burst mode. Increase by improving Focus and Adaptability.";
+        return "Every time you enter a path, you have the chance to enter burst mode. This is your chance per 1000 meters that you will burst. Increase by improving Focus and Adaptability.";
     }
 
     burstDistancePopover(): string {
