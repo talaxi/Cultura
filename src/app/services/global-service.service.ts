@@ -2120,18 +2120,20 @@ export class GlobalService {
   }
 
   GenerateRaceLegPaths(leg: RaceLeg, totalDistance: number): RacePath[] {
+    var totalRacePaths = 20;
     var paths: RacePath[] = [];
     var totalLegLengthRemaining = leg.distance;
-    var pathLength = totalDistance / 20;
-    var totalRoutes = Math.round(totalLegLengthRemaining / pathLength);
+    var pathLength = totalDistance / totalRacePaths;
+    var totalRoutes = Math.round(totalLegLengthRemaining / pathLength); 
     var lastRouteSpecial = false;
     var lastPathRoute = RaceDesignEnum.Regular;
-
+    
+    var truePathLength = totalLegLengthRemaining / totalRoutes;
     for (var i = 0; i < totalRoutes; i++) {
       var path = new RacePath();
 
       if (i === 0) {
-        path.length = pathLength;
+        path.length = truePathLength;
         if (leg.courseType === RaceCourseTypeEnum.Volcanic)
           path.routeDesign = RaceDesignEnum.FirstRegular;
         else
@@ -2155,8 +2157,8 @@ export class GlobalService {
         continue;
       }
 
-      if (totalLegLengthRemaining > pathLength)
-        path.length = pathLength;
+      if (totalLegLengthRemaining > truePathLength)
+        path.length = truePathLength;
       else
         path.length = totalLegLengthRemaining;
 
