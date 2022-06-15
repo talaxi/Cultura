@@ -196,9 +196,6 @@ export class SpecializationService {
       assignedBarn.barnUpgrades.currentDeltaTime = trainingAnimal.currentTraining.trainingTimeRemaining;
     }
 
-    if (assignedBarn.barnUpgrades.currentDeltaTime >= timeToCollect)
-      console.log("Coins Before Attraction While: " + this.lookupService.getCoins());
-
     while (assignedBarn.barnUpgrades.currentDeltaTime >= timeToCollect) {
       //console.log("Success Delta Time: " + assignedBarn.barnUpgrades.currentDeltaTime);
       assignedBarn.barnUpgrades.currentDeltaTime -= timeToCollect;
@@ -210,12 +207,5 @@ export class SpecializationService {
 
       collectedAmount += amountEarned;      
     }    
-
-    if (collectedAmount > 0)
-    {
-      console.log("Collected Amount: " + collectedAmount);
-      console.log("Original Delta Time: " + originalDeltaTime);      
-      console.log("Coins After Attraction While: " + this.lookupService.getCoins());
-    }
   }
 }

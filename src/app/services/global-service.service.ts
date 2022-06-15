@@ -1855,7 +1855,7 @@ export class GlobalService {
     var availableCourses: RaceCourseTypeEnum[] = [];
     if (i == 1) {
       availableCourses.push(RaceCourseTypeEnum.Flatland);
-      availableCourses.push(RaceCourseTypeEnum.Tundra);
+      availableCourses.push(RaceCourseTypeEnum.Mountain);
     }
     else if (i < 15) {
       availableCourses.push(RaceCourseTypeEnum.Flatland);
@@ -1976,7 +1976,10 @@ export class GlobalService {
     var legLengthCutoff = timeToComplete / 4; //a leg cannot be any shorter than this as a percentage
 
     var baseMeters = 90;
-    var factor = 1.1225;
+    var factor = 1.125;
+    var additiveAmount = 40 * numericalRank;
+    if (numericalRank >= 11)
+      additiveAmount = 70 * numericalRank;
 
     var maxRandomFactor = 1.05;
     var minRandomFactor = 0.8;
@@ -1990,7 +1993,7 @@ export class GlobalService {
       var leg = new RaceLeg();
       leg.courseType = RaceCourseTypeEnum.Flatland;
       leg.terrain = this.getRandomTerrain(leg.courseType);
-      leg.distance = Math.round(baseMeters * (factor ** numericalRank) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor));
+      leg.distance = Math.round((baseMeters * (factor ** numericalRank) + additiveAmount) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor));
       raceLegs.push(leg);
     }
     else if (numericalRank <= 10) {
@@ -2018,7 +2021,7 @@ export class GlobalService {
       if (leg1Normalized > 0) {
         var leg1 = new RaceLeg();
         leg1.courseType = randomizedCourseList[0];
-        leg1.distance = (Math.round(baseMeters * (factor ** numericalRank) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor)) * (leg1Normalized / timeToComplete));
+        leg1.distance = (Math.round((baseMeters * (factor ** numericalRank) + additiveAmount) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor)) * (leg1Normalized / timeToComplete));
         leg1.terrain = this.getRandomTerrain(leg1.courseType);
         raceLegs.push(leg1);
       }
@@ -2026,7 +2029,7 @@ export class GlobalService {
       if (leg2Normalized > 0) {
         var leg2 = new RaceLeg();
         leg2.courseType = randomizedCourseList[1];
-        leg2.distance = (Math.round(baseMeters * (factor ** numericalRank) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor)) * (leg2Normalized / timeToComplete));
+        leg2.distance = (Math.round((baseMeters * (factor ** numericalRank) + additiveAmount) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor)) * (leg2Normalized / timeToComplete));
         leg2.terrain = this.getRandomTerrain(leg2.courseType);
         raceLegs.push(leg2);
       }
@@ -2078,7 +2081,7 @@ export class GlobalService {
       if (leg1Normalized > 0) {
         var leg1 = new RaceLeg();
         leg1.courseType = randomizedCourseList[0];
-        leg1.distance = (Math.round(baseMeters * (factor ** numericalRank) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor)) * (leg1Normalized / timeToComplete));
+        leg1.distance = (Math.round((baseMeters * (factor ** numericalRank) + additiveAmount) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor)) * (leg1Normalized / timeToComplete));
         leg1.terrain = this.getRandomTerrain(leg1.courseType);
         raceLegs.push(leg1);
       }
@@ -2086,7 +2089,7 @@ export class GlobalService {
       if (leg2Normalized > 0) {
         var leg2 = new RaceLeg();
         leg2.courseType = randomizedCourseList[1];
-        leg2.distance = (Math.round(baseMeters * (factor ** numericalRank) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor)) * (leg2Normalized / timeToComplete));
+        leg2.distance = (Math.round((baseMeters * (factor ** numericalRank) + additiveAmount) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor)) * (leg2Normalized / timeToComplete));
         leg2.terrain = this.getRandomTerrain(leg2.courseType);
         raceLegs.push(leg2);
       }
@@ -2094,7 +2097,7 @@ export class GlobalService {
       if (leg3Normalized > 0) {
         var leg3 = new RaceLeg();
         leg3.courseType = randomizedCourseList[2];
-        leg3.distance = (Math.round(baseMeters * (factor ** numericalRank) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor)) * (leg3Normalized / timeToComplete));
+        leg3.distance = (Math.round((baseMeters * (factor ** numericalRank) + additiveAmount) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor)) * (leg3Normalized / timeToComplete));
         leg3.terrain = this.getRandomTerrain(leg3.courseType);
         raceLegs.push(leg3);
       }

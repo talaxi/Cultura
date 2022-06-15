@@ -127,8 +127,8 @@ export class Horse extends Animal {
         this.raceCourseType = RaceCourseTypeEnum.Flatland;
 
         this.ability = new Ability();
-        this.ability.cooldown = 10;
-        this.ability.efficiency = 60;
+        this.ability.cooldown = 7;
+        this.ability.efficiency = 45;
         this.ability.oneTimeEffect = false;
         this.ability.name = "Second Wind";
         this.ability.description = "Second Wind";
@@ -136,7 +136,7 @@ export class Horse extends Animal {
         this.availableAbilities.push(this.ability);
 
         var ability2 = new Ability();
-        ability2.efficiency = 50;
+        ability2.efficiency = 60;
         ability2.oneTimeEffect = true;
         ability2.name = "Inspiration";
         ability2.description = "Inspiration";
@@ -145,8 +145,8 @@ export class Horse extends Animal {
         this.availableAbilities.push(ability2);
 
         var ability3 = new Ability();
-        ability3.cooldown = 12;
-        ability3.efficiency = 65;
+        ability3.cooldown = 5;
+        ability3.efficiency = 27;
         ability3.oneTimeEffect = false;
         ability3.name = "Pacemaker";
         ability3.description = "Pacemaker";
@@ -167,8 +167,8 @@ export class Cheetah extends Animal {
         this.raceCourseType = RaceCourseTypeEnum.Flatland;
 
         this.ability = new Ability();
-        this.ability.cooldown = 10;
-        this.ability.efficiency = 50;
+        this.ability.cooldown = 6;
+        this.ability.efficiency = 30;
         this.ability.oneTimeEffect = false;
         this.ability.name = "Sprint";
         this.ability.description = "Sprint";
@@ -214,8 +214,8 @@ export class Hare extends Animal {
         this.availableAbilities.push(this.ability);
 
         var ability2 = new Ability();
-        ability2.cooldown = 8;
-        ability2.efficiency = 60;
+        ability2.cooldown = 5;
+        ability2.efficiency = 40;
         ability2.oneTimeEffect = false;
         ability2.name = "Awareness";
         ability2.description = "Awareness";
@@ -245,8 +245,8 @@ export class Monkey extends Animal {
         this.raceCourseType = RaceCourseTypeEnum.Mountain;
 
         this.ability = new Ability();
-        this.ability.cooldown = 16;
-        this.ability.efficiency = 17;        
+        this.ability.cooldown = 11;
+        this.ability.efficiency = 6;        
         this.ability.name = "Landslide";
         this.ability.isAbilityPurchased = true;
         this.availableAbilities.push(this.ability);
@@ -335,7 +335,7 @@ export class Gecko extends Animal {
         this.availableAbilities.push(ability2);
 
         var ability3 = new Ability();
-        ability3.efficiency = 40;
+        ability3.efficiency = 38;
         ability3.oneTimeEffect = true;
         ability3.name = "Camouflage";
         ability3.isAbilityPurchased = false;
@@ -355,8 +355,8 @@ export class Dolphin extends Animal {
         this.raceCourseType = RaceCourseTypeEnum.Ocean;
 
         this.ability = new Ability();
-        this.ability.cooldown = 9;
-        this.ability.efficiency = 75;
+        this.ability.cooldown = 6;
+        this.ability.efficiency = 84;
         this.ability.oneTimeEffect = false;
         this.ability.name = "Echolocation";    
         this.ability.isAbilityPurchased = true;
@@ -463,8 +463,8 @@ export class Penguin extends Animal {
         this.raceCourseType = RaceCourseTypeEnum.Tundra;
 
         this.ability = new Ability();
-        this.ability.efficiency = 70;
-        this.ability.cooldown = 10;
+        this.ability.efficiency = 65;
+        this.ability.cooldown = 8;
         this.ability.oneTimeEffect = false;
         this.ability.name = "Careful Toboggan";        
         this.ability.isAbilityPurchased = true;
@@ -552,8 +552,8 @@ export class Salamander extends Animal {
         this.availableAbilities.push(ability2);
 
         var ability3 = new Ability();
-        ability3.efficiency = 30;
-        ability3.cooldown = 12;
+        ability3.cooldown = 10;
+        ability3.efficiency = 25;        
         ability3.oneTimeEffect = false;
         ability3.name = "Heat Up";
         ability3.isAbilityPurchased = false;

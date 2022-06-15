@@ -6,6 +6,7 @@ import { ThemeService } from 'src/app/theme/theme.service';
 import { RaceDisplayInfoEnum } from 'src/app/models/race-display-info-enum.model';
 import { night, Theme } from 'src/app/theme/theme';
 import { UtilityService } from 'src/app/services/utility/utility.service';
+import { CodeRedemptionService } from 'src/app/services/settings/code-redemption.service';
 declare var LZString: any;
 
 @Component({
@@ -29,7 +30,8 @@ export class SettingsViewComponent implements OnInit {
   currentTheme: string;
   public raceDisplayInfoEnum = RaceDisplayInfoEnum;
 
-  constructor(private globalService: GlobalService, private themeService: ThemeService, private utilityService: UtilityService) { }
+  constructor(private globalService: GlobalService, private themeService: ThemeService, private utilityService: UtilityService,
+    private codeRedemptionService: CodeRedemptionService) { }
 
   ngOnInit(): void {
     this.currentTheme = this.themeService.getActiveTheme().name.charAt(0).toUpperCase() + this.themeService.getActiveTheme().name.slice(1);
@@ -148,6 +150,6 @@ export class SettingsViewComponent implements OnInit {
   }
 
   enterRedemptionCode() {
-
+    this.codeRedemptionService.testCode();
   }
 }
