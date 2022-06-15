@@ -1617,9 +1617,9 @@ export class DrawRaceComponent implements OnInit {
     var rightSideXEndingPoint = volcanoBezier2X3 + (volcanoXLength * .075);
     var rightSideYEndingPoint = volcanoBezier2Y3 + volcanoYRadius/2;
     var lavaFallXBezier1 = leftSideXEndingPoint + (1.7 * (rightSideXEndingPoint - leftSideXEndingPoint) / 5);
-    var lavaFallYBezier1 = leftSideYEndingPoint + 1.5*volcanoYRadius;
+    var lavaFallYBezier1 = leftSideYEndingPoint + .5 * volcanoYRadius;
     var lavaFallXBezier2 = leftSideXEndingPoint + (1.4 * (rightSideXEndingPoint - leftSideXEndingPoint) / 5);
-    var lavaFallYBezier2 = leftSideYEndingPoint - volcanoYRadius/2;
+    var lavaFallYBezier2 = leftSideYEndingPoint + volcanoYRadius / 2;
     var xEndPointBezier1 = leftSideXEndingPoint + (2.5 * (rightSideXEndingPoint - leftSideXEndingPoint) / 5);
     var yEndPointBezier1 = leftSideYEndingPoint;
     var lavaFallXBezier3 = leftSideXEndingPoint + (3.6 * (rightSideXEndingPoint - leftSideXEndingPoint) / 5);

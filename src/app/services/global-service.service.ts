@@ -1029,7 +1029,7 @@ export class GlobalService {
         }
       }
 
-      returnVal = ["Dolphin", "The Dolphin is a graceful Ocean swimming animal capable of jumping short distances and ignoring detrimental terrain effects."];
+      returnVal = ["Dolphin", "The Dolphin is a graceful Ocean swimming animal capable of ignoring detrimental terrain effects and supporting teammates on relay."];
 
       var amount = 10;
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(12) + amount + " Stat Increasing Food";
@@ -1855,7 +1855,7 @@ export class GlobalService {
     var availableCourses: RaceCourseTypeEnum[] = [];
     if (i == 1) {
       availableCourses.push(RaceCourseTypeEnum.Flatland);
-      availableCourses.push(RaceCourseTypeEnum.Mountain);
+      availableCourses.push(RaceCourseTypeEnum.Tundra);
     }
     else if (i < 15) {
       availableCourses.push(RaceCourseTypeEnum.Flatland);
@@ -2368,17 +2368,21 @@ export class GlobalService {
     this.globalVar.trackedStats.totalBreeds += 1;
   }
 
-  increaseAbilityXp(animal: Animal) {
+  increaseAbilityXp(animal: Animal, xpAmount?: number) {
     var abilityLevelCap = 25;
     var abilityLevelCapModifier = this.globalVar.modifiers.find(item => item.text === "abilityLevelCapModifier");
     if (abilityLevelCapModifier !== null && abilityLevelCapModifier !== undefined)
-    abilityLevelCap = abilityLevelCapModifier.value;
+      abilityLevelCap = abilityLevelCapModifier.value;
 
     if (animal.ability.abilityLevel > animal.breedLevel + abilityLevelCap)
       return;
 
-    animal.ability.abilityXp += 1;
-    
+    var xpGain = 1;
+    if (xpAmount !== null && xpAmount !== undefined && xpAmount > 1)
+      xpGain = xpAmount;
+
+    animal.ability.abilityXp += xpGain;
+
     if (animal.ability.abilityXp >= animal.ability.abilityMaxXp) {
       animal.ability.abilityXp = 0;
       animal.ability.abilityLevel += 1;
@@ -2395,7 +2399,7 @@ export class GlobalService {
   InitializeSettings() {
     this.globalVar.settings.set("theme", this.themeService.getActiveTheme());
     this.globalVar.settings.set("skipDrawRace", false);
-    this.globalVar.settings.set("finishTrainingBeforeSwitching", false);
+    this.globalVar.settings.set("finishTrainingBeforeSwitching", true);
     this.globalVar.settings.set("hideTips", false);
     this.globalVar.settings.set("useNumbersForCircuitRank", false);
     this.globalVar.settings.set("raceDisplayInfo", RaceDisplayInfoEnum.both);
@@ -2517,7 +2521,24 @@ export class GlobalService {
     var Coins = this.globalVar.resources.find(item => item.name === "Coins");
     if (Coins !== undefined)
       Coins.amount = 10000;
-    this.globalVar.resources.push(this.initializeService.initializeResource("Medals", circuitRankNumeric, ShopItemTypeEnum.Resources));
+    if (this.globalVar.resources.some(item => item.name === "Medals"))
+    {
+      var medals = this.globalVar.resources.find(item => item.name === "Medals");
+      if (medals !== undefined)
+        medals.amount += circuitRankNumeric;
+    }
+    else
+      this.globalVar.resources.push(this.initializeService.initializeResource("Medals", circuitRankNumeric, ShopItemTypeEnum.Resources));
+
+      if (this.globalVar.resources.some(item => item.name === "Renown"))
+      {
+        var renown = this.globalVar.resources.find(item => item.name === "Renown");
+        if (renown !== undefined)
+          renown.amount += 200;
+      }
+      else
+        this.globalVar.resources.push(this.initializeService.initializeResource("Renown", 200, ShopItemTypeEnum.Resources));
+
     this.globalVar.resources.push(this.initializeService.initializeResource("Facility Level", circuitRankNumeric, ShopItemTypeEnum.Progression));
     //this.globalVar.resources.push(this.initializeService.initializeResource("Research Level", 50, ShopItemTypeEnum.Progression));
 
@@ -2664,7 +2685,7 @@ export class GlobalService {
       caribou.currentStats.adaptability = 200;
       caribou.breedLevel = 200;
       this.calculateAnimalRacingStats(caribou);
-    }    
+    }
 
     var salamander = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Salamander);
     if (salamander !== undefined) {

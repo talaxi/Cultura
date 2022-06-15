@@ -11,10 +11,13 @@ import { LookupService } from 'src/app/services/lookup.service';
 export class HeaderComponent implements OnInit {
   coinCount: number;
   medalCount: number;
+  version: string;
 
   constructor(private lookupService: LookupService, private gameLoopService: GameLoopService, private globalService: GlobalService) { }
 
   ngOnInit(): void {
+    this.version = this.globalService.globalVar.currentVersion.toFixed(2);
+    
     this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {
       if (!this.globalService.globalVar.userIsRacing) {
         this.coinCount = this.lookupService.getCoins();

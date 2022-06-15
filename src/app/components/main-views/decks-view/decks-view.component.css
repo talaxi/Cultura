@@ -78,14 +78,29 @@
 
   .edit {
     grid-area: edit;
+    text-align: center;
+}
+
+.editButton {
+    width: 80%;
 }
 
 .primary {
     grid-area: primary;
+    text-align: center;
+}
+
+.primaryButton {
+    width: 80%;
 }
 
 .autoRunFreeRace {
     grid-area: freeRace;
+    text-align: center;
+}
+
+.autoRunFreeRaceButton {
+    width: 80%;
 }
 
 .spaced {

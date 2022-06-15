@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AnimalStatEnum } from '../models/animal-stat-enum.model';
 import { AnimalTypeEnum } from '../models/animal-type-enum.model';
+import { Ability } from '../models/animals/ability.model';
 import { AnimalDeck } from '../models/animals/animal-deck.model';
 import { AnimalTraits } from '../models/animals/animal-traits.model';
 import { Animal } from '../models/animals/animal.model';
@@ -340,7 +341,7 @@ export class LookupService {
       return "Rare currency gained from improving your circuit rank and winning certain special races.";
     else if (name === "Renown") {
       var currentRenown = this.getRenown();
-      return "Increases Coins gained from races by " + currentRenown + "%";
+      return "Increases Coins gained from races by " + currentRenown + "%. Increase total number of local races available per reset period by 1 for every 100 renown for a total of " + this.getTotalFreeRacesPerPeriod() + ". Complete circuit or local races to get your name out there and raise your renown.";
     }
     else if (name === "Facility Level") {
       var diminishingReturnsThreshold = this.getDiminishingReturnsThreshold();
@@ -423,7 +424,7 @@ export class LookupService {
     return itemList;
   }
 
-  GetAbilityEffectiveAmount(animal: Animal, terrainModifier?: number, statLossFromExhaustion?: number) {
+  GetAbilityEffectiveAmount(animal: Animal, terrainModifier?: number, statLossFromExhaustion?: number, ability?: Ability) {
     if (animal.ability === undefined || animal.ability === null ||
       animal.ability.name === undefined || animal.ability.name === null)
       return -1;
@@ -442,8 +443,12 @@ export class LookupService {
       powerAbilityModifier *= 1.4;
     }
 
+    var usedAbility = animal.ability;
+    if (ability !== undefined && ability !== null)
+      usedAbility = ability;
+
     var modifiedPower = (animal.currentStats.powerMs * powerAbilityModifier * terrainModifier * statLossFromExhaustion) / 100;
-    var modifiedEfficiency = animal.ability.efficiency + (animal.ability.efficiency * ((animal.ability.abilityLevel - 1) * .01));
+    var modifiedEfficiency = usedAbility.efficiency + (usedAbility.efficiency * ((usedAbility.abilityLevel - 1) * .01));
 
       return modifiedEfficiency * (1 + modifiedPower);
   }
@@ -570,12 +575,14 @@ export class LookupService {
     }
     else {
       var cooldownDisplay = "";
+      var selectedAbility = undefined;
       if (animal === undefined || animal === null) {
         this.globalService.globalVar.animals.forEach(possibleAnimal => {
           possibleAnimal.availableAbilities.forEach(ability => {
 
             if (ability.name === abilityName) {
               animal = possibleAnimal;
+              selectedAbility = ability;
               if (ability.cooldown !== undefined && ability.cooldown !== null)
                 cooldownDisplay = ability.cooldown.toString();
             }
@@ -584,7 +591,7 @@ export class LookupService {
       }
 
       if (animal !== undefined && animal !== null) {
-        var effectiveAmountDisplay = this.GetAbilityEffectiveAmount(animal).toFixed(2);
+        var effectiveAmountDisplay = this.GetAbilityEffectiveAmount(animal, undefined, undefined, selectedAbility).toFixed(2);
 
         if (cooldownDisplay === "" && animal.ability.cooldown !== undefined && animal.ability.cooldown !== null)
           cooldownDisplay = animal.ability.cooldown.toString();
@@ -1083,7 +1090,7 @@ export class LookupService {
     var traitModifier = this.globalService.getTraitModifier(animal, AnimalStatEnum.power);
 
 
-    var popover = "Every stat point increases ability efficency by " + this.getPowerModifierByAnimalType(animal.type).toFixed(3) + "% up to diminishing returns. \n\n" +
+    var popover = "Every stat point increases ability efficiency by " + this.getPowerModifierByAnimalType(animal.type).toFixed(3) + "% up to diminishing returns. \n\n" +
     "Base: " + basePowerModifier.toFixed(3) + "\n";
 
     if (breedLevelStatModifierValue > 1)
@@ -1168,16 +1175,16 @@ export class LookupService {
     if (abilityLevelCapModifier !== null && abilityLevelCapModifier !== undefined)
     abilityLevelCap = abilityLevelCapModifier.value;
 
-    var popover = "Select from up to three different abilities by clicking on their names here. Using your ability during a race will award your ability XP which increases its effectiveness. Ability level cannot exceed your animal's breed level " + abilityLevelCap + ".";
+    var popover = "Select from up to three different abilities by clicking on their names here. Using your ability during a race will award your ability XP which increases its effectiveness. Ability level cannot exceed your animal's breed level + " + abilityLevelCap + ".";
 
     return popover;
   }
 
   abilityLevelPopover(animal: Animal) {
-    var popover = "Base Efficency: " + animal.ability.efficiency + "\n";
+    var popover = "Base Efficiency: " + animal.ability.efficiency + "\n";
     
     if (animal.ability.abilityLevel > 1)
-      popover += "Level Efficency Modifier: " + ((animal.ability.abilityLevel - 1) * .01);      
+      popover += "Level Efficiency Multiplier: " + (1 + (animal.ability.abilityLevel - 1) * .01);      
 
     return popover;
   }
@@ -1199,12 +1206,19 @@ export class LookupService {
     return tip;
   }
 
-  getRemainingFreeRacesPerPeriod() {
+  getTotalFreeRacesPerPeriod() {
     var freeRacePerTimePeriod = 10;
     var freeRacePerTimePeriodPair = this.globalService.globalVar.modifiers.find(item => item.text === "freeRacesPerTimePeriodModifier");
     if (freeRacePerTimePeriodPair !== undefined)
       freeRacePerTimePeriod = freeRacePerTimePeriodPair.value;
 
-    return freeRacePerTimePeriod - this.globalService.globalVar.freeRaceCounter;
+    var renown = this.getRenown();
+    var renownBonusRaces = Math.floor(renown / 100);
+
+    return freeRacePerTimePeriod + renownBonusRaces;
+  }
+
+  getRemainingFreeRacesPerPeriod() {
+    return this.getTotalFreeRacesPerPeriod() - this.globalService.globalVar.freeRaceCounter;
   }
 }

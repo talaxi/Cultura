@@ -26,7 +26,7 @@ export class Ability {
     constructor() {
         this.abilityLevel = 1;
         this.abilityXp = 0;
-        this.abilityMaxXp = 100;
+        this.abilityMaxXp = 50;
     }
 
     increaseAbilityXp() {

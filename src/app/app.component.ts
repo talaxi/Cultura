@@ -40,15 +40,15 @@ export class AppComponent {
 
     //PURELY for testing, should be false when deployed
     //TODO: set this up so that it won't overwrite a user's save if you forget to turn this off
-    var overrideNewGame = false;
-    var devMode = false;
+    var overrideNewGame = true;
+    var devMode = true;
 
     if (this.newGame || overrideNewGame)
       this.globalService.initializeGlobalVariables();
 
     if (devMode) {
       this.globalService.globalVar.tutorialCompleted = true;
-      this.globalService.devModeInitialize(27);
+      this.globalService.devModeInitialize(60);
     }
 
     var subscription = this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {
@@ -156,12 +156,6 @@ export class AppComponent {
       if (autofreeRaceMaxIdleTimePeriodPair !== undefined)
         autofreeRaceMaxIdleTimePeriod = autofreeRaceMaxIdleTimePeriodPair.value;
 
-      /*var whileRunning = false;
-      if (this.globalService.globalVar.freeRaceTimePeriodCounter >= freeRaceTimePeriod &&
-        autofreeRaceMaxIdleTimePeriod > 0) {
-        whileRunning = true;
-        //console.log("Coins Before Free Race While: " + this.lookupService.getCoins());
-      }*/
       while (this.globalService.globalVar.freeRaceTimePeriodCounter >= freeRaceTimePeriod &&
         autofreeRaceMaxIdleTimePeriod > 0) {
         if (this.globalService.globalVar.freeRaceTimePeriodCounter > autofreeRaceMaxIdleTimePeriod)
@@ -174,9 +168,6 @@ export class AppComponent {
 
         this.handleAutoFreeRace(deltaTime);
       }
-
-      //if (whileRunning)
-        //console.log("Coins After Free Race While: " + this.lookupService.getCoins());
     }
   }
 
@@ -196,10 +187,11 @@ export class AppComponent {
 
     var remainingFreeRuns = teamManager - this.globalService.globalVar.autoFreeRaceCounter;
 
-    var freeRacePerTimePeriod = 10;
-    var freeRacePerTimePeriodPair = this.globalService.globalVar.modifiers.find(item => item.text === "freeRacesPerTimePeriodModifier");
+    var freeRacePerTimePeriod = this.lookupService.getTotalFreeRacesPerPeriod();
+    /*var freeRacePerTimePeriodPair = this.globalService.globalVar.modifiers.find(item => item.text === "freeRacesPerTimePeriodModifier");
     if (freeRacePerTimePeriodPair !== undefined)
       freeRacePerTimePeriod = freeRacePerTimePeriodPair.value;
+    */
 
     for (var i = 0; i < remainingFreeRuns; i++) {
       if (this.globalService.globalVar.freeRaceCounter >= freeRacePerTimePeriod) {

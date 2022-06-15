@@ -2,20 +2,24 @@
     display: grid;
     width: 100%;
     height: 100%;
-    grid-template-columns: 1fr 1fr 10%;
+    grid-template-columns: 1% 1fr 1fr 10% 1%;
     grid-template-rows: 50%;
     justify-content: stretch;
     grid-template-areas: 
-      "name . coins"
-      "name . medals";
+      ". name . coins ."
+      ". name . medals .";
   }
 
-  .name {
+  .nameArea {
     grid-area: name;   
     justify-self: stretch; 
 
     /*background-color: var(--background-tertiary);
     color: var(--foreground-quaternary);*/
+  }
+
+  .name {    
+    font-size: 2rem;
   }
 
   .coins {

@@ -173,7 +173,7 @@ export class AnimalStats {
     }
 
     powerPopover(modifierAmount: number): string {
-        return "Every stat point increases ability efficency by " + modifierAmount.toFixed(3) + "% up to diminishing returns.";
+        return "Every stat point increases ability efficiency by " + modifierAmount.toFixed(3) + "% up to diminishing returns.";
     }
 
     focusPopover(modifierAmount: number): string {

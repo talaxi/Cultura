@@ -2,12 +2,16 @@
     display: grid;
     width: 100%;
     height: 100%;
-    grid-template-columns: 0% 1fr 20%;
+    grid-template-columns: 1% 0% 1fr 20% 1%;
     grid-template-rows: 50%;
     justify-content: stretch;
     grid-template-areas: 
-      "area1 area2 area3"
-      "area1 area2 area3";
+      ". area1 area2 area3 ."
+      ". area1 area2 area4 .";
+  }
+
+  a {
+    color: var(--foreground-quaternary);
   }
 
   .area1 {
@@ -32,6 +36,11 @@
 
     /*background-color: var(--background-tertiary);
     color: var(--foreground-quaternary);*/
+  }
+
+  .area4 {
+    grid-area: area4;
+    justify-self: stretch;
   }
 
   .rightAlign {

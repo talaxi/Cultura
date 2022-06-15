@@ -76,12 +76,13 @@ export class LocalViewComponent implements OnInit {
     this.areDuoRacesAvailable = this.lookupService.isItemUnlocked("duoRace");
     this.areRainbowRacesAvailable = this.lookupService.isItemUnlocked("rainbowRace");
 
-    var freeRacePerTimePeriod = 10;
+    /*var freeRacePerTimePeriod = 10;
     var freeRacePerTimePeriodPair = this.globalService.globalVar.modifiers.find(item => item.text === "freeRacesPerTimePeriodModifier");
     if (freeRacePerTimePeriodPair !== undefined)
       freeRacePerTimePeriod = freeRacePerTimePeriodPair.value;
+*/
 
-    this.totalFreeRaces = freeRacePerTimePeriod;
+    this.totalFreeRaces = this.lookupService.getTotalFreeRacesPerPeriod();
 
     var freeRaceTimePeriod = 15 * 60;
     var freeRaceTimePeriodPair = this.globalService.globalVar.modifiers.find(item => item.text === "freeRacesTimePeriodModifier");
@@ -101,7 +102,7 @@ export class LocalViewComponent implements OnInit {
       }
 
       this.freeRaceTimer = minutes + ":" + secondsDisplay;
-      this.freeRacesRemaining = freeRacePerTimePeriod - this.globalService.globalVar.freeRaceCounter;
+      this.freeRacesRemaining = this.lookupService.getRemainingFreeRacesPerPeriod();//freeRacePerTimePeriod - this.globalService.globalVar.freeRaceCounter;
     });
   }
 
@@ -140,12 +141,13 @@ export class LocalViewComponent implements OnInit {
     });
 
     if (isFreeRace) {
-      var freeRacePerTimePeriod = 10;
+      /*var freeRacePerTimePeriod = 10;
       var freeRacePerTimePeriodPair = this.globalService.globalVar.modifiers.find(item => item.text === "freeRacesPerTimePeriodModifier");
       if (freeRacePerTimePeriodPair !== undefined)
         freeRacePerTimePeriod = freeRacePerTimePeriodPair.value;
 
-      if (this.globalService.globalVar.freeRaceCounter >= freeRacePerTimePeriod)
+      if (this.globalService.globalVar.freeRaceCounter >= freeRacePerTimePeriod)*/
+      if (this.lookupService.getRemainingFreeRacesPerPeriod() <= 0)
         canRace = false;
     }
 

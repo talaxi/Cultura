@@ -13,10 +13,17 @@
             <div *ngFor="let deck of animalDecks; let i = index">
                 <div class="gridContainer">
                     <app-animal-deck [deckNumber]="(i+1)" class="deck"></app-animal-deck>
-                    <button (click)="editDeck(content, deck)" class="edit">Edit</button>
-                    <button (click)="setAsPrimary(deck)" class="primary">Set as Primary</button>
-                    <button *ngIf="showAutoRaceButton" (click)="setAsAutoRunFreeRace(deck)" class="autoRunFreeRace">Auto
-                        Run Free Race</button>
+                    <div class="edit">
+                        <button (click)="editDeck(content, deck)" class="editButton">Edit</button>
+                    </div>
+                    <div class="primary">
+                        <button (click)="setAsPrimary(deck)" class="primaryButton">Set as Primary</button>
+                    </div>
+                    <div class="autoRunFreeRace">
+                        <button *ngIf="showAutoRaceButton" (click)="setAsAutoRunFreeRace(deck)"
+                            class="autoRunFreeRaceButton">Auto
+                            Run Free Race</button>
+                    </div>
                 </div>
                 <hr />
             </div>
@@ -58,7 +65,7 @@
                 </div>
                 <br />
                 <div class="typeContainer">
-                    <span *ngFor="let type of raceCourseTypeList" class="raceType subHeading"
+                    <span *ngFor="let type of raceCourseTypeList" class="raceType subHeading clickableText"
                         [ngClass]="{'selectedCourseType': selectedCourseType === type, 'flatlandColor': type === 'Flatland',
                 'mountainColor': type === 'Mountain', 'waterColor': type === 'Ocean', 'tundraColor': type === 'Tundra', 'volcanicColor': type === 'Volcanic'}" (click)="filterType(type)">
                         {{type.trim()}}
@@ -66,7 +73,7 @@
                 </div>
                 <br />
                 <div>
-                    <span *ngFor="let animal of possibleAnimalsList" class="animalOption"
+                    <span *ngFor="let animal of possibleAnimalsList" class="animalOption clickableText"
                         [ngClass]="{'selectedAnimal': selectedAnimalName === animal}" (click)="selectAnimal(animal)">
                         {{animal.trim()}}
                     </span>

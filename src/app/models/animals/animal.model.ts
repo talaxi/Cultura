@@ -355,7 +355,7 @@ export class Dolphin extends Animal {
         this.raceCourseType = RaceCourseTypeEnum.Ocean;
 
         this.ability = new Ability();
-        this.ability.cooldown = 12;
+        this.ability.cooldown = 9;
         this.ability.efficiency = 75;
         this.ability.oneTimeEffect = false;
         this.ability.name = "Echolocation";    

@@ -164,6 +164,15 @@ export class ShoppingItemComponent implements OnInit {
       }
     }
 
+    if (this.selectedItem.name === "Team Manager" && this.selectedItem.amountPurchased === 1)
+    {
+      var primaryDeck = this.globalService.globalVar.animalDecks.find(item => item.isPrimaryDeck);
+      if (primaryDeck !== null && primaryDeck !== undefined)
+      {
+        primaryDeck.autoRunFreeRace = true;
+      }
+    }
+
     if (this.globalService.globalVar.resources !== undefined && this.globalService.globalVar.resources !== null) {
       if (this.globalService.globalVar.resources.some(x => x.name === this.selectedItem.name)) {
         var globalResource = this.globalService.globalVar.resources.find(x => x.name === this.selectedItem.name);

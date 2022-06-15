@@ -4,6 +4,7 @@ import { Animal } from "../animals/animal.model";
 import { Barn } from "../barns/barn.model";
 import { Incubator } from "../incubator.model";
 import { RaceCourseTypeEnum } from "../race-course-type-enum.model";
+import { Pinnacle } from "../races/pinnacle.model";
 import { Race } from "../races/race.model";
 import { ResourceValue } from "../resources/resource-value.model";
 import { ShopSection } from "../shop/shop-section.model";
@@ -29,7 +30,9 @@ export class GlobalVariables {
     localRaces: Race[];
     monoRank: string;
     duoRank: string;
-    rainbowRank: string;    
+    rainbowRank: string;
+    @Type(() => Pinnacle) 
+    pinnacle: Pinnacle;   
     @Type(() => ResourceValue)
     resources: ResourceValue[];
     @Type(() => StringNumberPair)
@@ -74,6 +77,7 @@ export class GlobalVariables {
             this.animalDecks = existingVariables.animalDecks;
             this.incubator = existingVariables.incubator;
             this.trackedStats = existingVariables.trackedStats;
+            this.pinnacle = existingVariables.pinnacle;
             this.nationalRaceCountdown = 0;
             this.autoFreeRaceCounter = 0;
             this.freeRaceCounter = 0;
