@@ -6,7 +6,7 @@ const targetPath = './src/environments/environment.ts';
 
 const envConfigFile = `export const environment = {
     production: false,
-   codeRedemptionSecret: '${process.env.codeRedemptionSecret}'    
+    CODEREDEMPTIONSECRET: '${process.env.CODEREDEMPTIONSECRET}'    
 };
 `;
 
