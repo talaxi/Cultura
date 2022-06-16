@@ -5,18 +5,21 @@ import { Injectable } from '@angular/core';
 })
 export class DeploymentService {
   devModeActive = false;
-  startNewGame = false;
+  forceStartNewGame = false;
+  codeCreationMode = false;
 
   constructor() { }
 
   setProductionMode()
   {
     this.devModeActive = false;
-    this.startNewGame = false;
+    this.forceStartNewGame = false;
+    this.codeCreationMode = false;
   }
 
   setDevMode() {
     this.devModeActive = true;
-    this.startNewGame = true;
+    this.forceStartNewGame = true;
+    this.codeCreationMode = true;
   }
 }

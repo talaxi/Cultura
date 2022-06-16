@@ -10,6 +10,7 @@ import { SpecializationService } from './services/specialization.service';
 import { ThemeService } from './theme/theme.service';
 import { RaceLogicService } from './services/race-logic/race-logic.service';
 import { DeploymentService } from './services/utility/deployment.service';
+import { environment } from 'src/environments/environment';
 declare var LZString: any;
 
 @Component({
@@ -42,15 +43,20 @@ export class AppComponent {
 
     //PURELY for testing, should be false when deployed
     //TODO: set this up so that it won't overwrite a user's save if you forget to turn this off
-    var overrideNewGame = false;
-    var devMode = false;
+    if (environment.devEnvironment)
+      this.deploymentService.setDevMode();
+    else
+      this.deploymentService.setProductionMode();
+    
+    var overrideNewGame = this.deploymentService.forceStartNewGame;
+    var devMode = this.deploymentService.devModeActive;
 
     if (this.newGame || overrideNewGame)
       this.globalService.initializeGlobalVariables();
 
     if (devMode) {
       this.globalService.globalVar.tutorialCompleted = true;
-      this.globalService.devModeInitialize(27);
+      this.globalService.devModeInitialize(3);
     }
 
     var subscription = this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {

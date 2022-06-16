@@ -4,6 +4,7 @@
 
 export const environment = {
   production: false,
+  devEnvironment: false,
   CODEREDEMPTIONSECRET: 'testsecret' 
 };
 

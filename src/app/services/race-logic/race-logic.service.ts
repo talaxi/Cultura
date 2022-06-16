@@ -1314,7 +1314,7 @@ export class RaceLogicService {
       animal.type === AnimalTypeEnum.Octopus && animal.ability.name === "Buried Treasure" ||
       animal.type === AnimalTypeEnum.Penguin && animal.ability.name === "Wild Toboggan" ||
       animal.type === AnimalTypeEnum.Fox && animal.ability.name === "Fleeting Speed")
-      this.globalService.increaseAbilityXp(animal, 5);
+      this.globalService.increaseAbilityXp(animal, 3);
   }
 
   //only use abilities when they are actually useful/able to be used

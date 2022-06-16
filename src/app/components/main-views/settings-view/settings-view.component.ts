@@ -7,6 +7,8 @@ import { RaceDisplayInfoEnum } from 'src/app/models/race-display-info-enum.model
 import { night, Theme } from 'src/app/theme/theme';
 import { UtilityService } from 'src/app/services/utility/utility.service';
 import { CodeRedemptionService } from 'src/app/services/settings/code-redemption.service';
+import { CodeCreationService } from 'src/app/services/settings/code-creation.service';
+import { DeploymentService } from 'src/app/services/utility/deployment.service';
 declare var LZString: any;
 
 @Component({
@@ -31,10 +33,12 @@ export class SettingsViewComponent implements OnInit {
   public raceDisplayInfoEnum = RaceDisplayInfoEnum;
 
   constructor(private globalService: GlobalService, private themeService: ThemeService, private utilityService: UtilityService,
-    private codeRedemptionService: CodeRedemptionService) { }
+    private codeRedemptionService: CodeRedemptionService, private codeCreationService: CodeCreationService, private deploymentService: DeploymentService) { }
 
   ngOnInit(): void {
-    console.log(this.codeRedemptionService.createCode());
+    if (this.deploymentService.codeCreationMode)
+      console.log(this.codeCreationService.createCode());
+    
     this.currentTheme = this.themeService.getActiveTheme().name.charAt(0).toUpperCase() + this.themeService.getActiveTheme().name.slice(1);
 
     var globalSkipDrawRace = this.globalService.globalVar.settings.get("skipDrawRace");
