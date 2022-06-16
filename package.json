@@ -3,9 +3,10 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
+    "testconfig": "ts-node ./test-config.index.ts",
     "config": "ts-node ./config.index.ts",
     "start": "ng serve",
-    "build": "npm run config && ng build",
+    "build": "npm run testconfig && ng build",
     "deploy": "npm run config && ng build --base-href=/Cultura/",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
