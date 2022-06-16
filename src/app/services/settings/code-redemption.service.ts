@@ -20,7 +20,7 @@ export class CodeRedemptionService {
     var key = environment.CODEREDEMPTIONSECRET;
     var rewardString = JSON.stringify(this.rewards);
     var encrypted = CryptoJS.AES.encrypt(rewardString, key);    
-    return encrypted;
+    return encrypted.toString();
   }
 
   redeemCode(encryptedVal: string) {
