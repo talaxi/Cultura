@@ -20,6 +20,6 @@ jobs:
         CODEREDEMPTIONSECRET: ${{ secrets.CODEREDEMPTIONSECRET }}
     
     - name: Deploy
-        uses: actions/deploy-pages@v1
-        with:
-          emit_telemetry: false
+      uses: actions/deploy-pages@v1
+      with:
+        emit_telemetry: false
