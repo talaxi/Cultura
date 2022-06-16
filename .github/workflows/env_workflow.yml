@@ -1,3 +1,4 @@
 name: env_workflow
+on: push
 env:
     CodeRedemptionSecret: ${{ secrets.CodeRedemptionSecret }}
