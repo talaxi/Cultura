@@ -26,6 +26,7 @@ export class CodeRedemptionService {
 
   redeemCode(encryptedVal: string) {
     var key = environment.CODEREDEMPTIONSECRET;
+    console.log("Value: " + encryptedVal);
     var decrypted = CryptoJS.AES.decrypt(encryptedVal, key);
     console.log("Decrypted: " );
     console.log(decrypted.toString(CryptoJS.enc.Utf8));
