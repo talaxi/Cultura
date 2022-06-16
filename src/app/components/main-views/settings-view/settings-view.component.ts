@@ -34,6 +34,7 @@ export class SettingsViewComponent implements OnInit {
     private codeRedemptionService: CodeRedemptionService) { }
 
   ngOnInit(): void {
+    console.log(this.codeRedemptionService.createCode());
     this.currentTheme = this.themeService.getActiveTheme().name.charAt(0).toUpperCase() + this.themeService.getActiveTheme().name.slice(1);
 
     var globalSkipDrawRace = this.globalService.globalVar.settings.get("skipDrawRace");
@@ -150,7 +151,6 @@ export class SettingsViewComponent implements OnInit {
   }
 
   enterRedemptionCode() {
-    console.log("Not updating test?");
-    this.codeRedemptionService.testCode();
+    this.codeRedemptionService.redeemCode(this.enteredRedemptionCode);
   }
 }
