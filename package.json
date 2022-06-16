@@ -7,7 +7,7 @@
     "config": "ts-node ./config.index.ts",
     "start": "ng serve",
     "build": "npm run testconfig && ng build",
-    "deploy": "npm run config && ng build --base-href=/Cultura/",
+    "deploy": "ng build --base-href=/Cultura/",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
