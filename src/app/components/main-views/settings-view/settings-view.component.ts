@@ -150,6 +150,7 @@ export class SettingsViewComponent implements OnInit {
   }
 
   enterRedemptionCode() {
+    console.log("Not updating test?");
     this.codeRedemptionService.testCode();
   }
 }
