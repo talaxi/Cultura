@@ -1734,6 +1734,7 @@ export class RaceLogicService {
 
     this.selectedRace.raceUI.lavaFallPercentByFrame.push(percentOfLavaDropPerFrame);
 
+    //test change
     return ranIntoLava;
   }
 }
