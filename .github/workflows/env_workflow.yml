@@ -23,7 +23,3 @@ jobs:
         uses: actions/deploy-pages@v1
         with:
           emit_telemetry: false
-          token: ***
-          timeout: 600000
-          error_count: 10
-          reporting_interval: 5000
