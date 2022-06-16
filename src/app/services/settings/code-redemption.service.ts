@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ResourceValue } from 'src/app/models/resources/resource-value.model';
 import { ShopItemTypeEnum } from 'src/app/models/shop-item-type-enum.model';
 import { environment } from '../../../environments/environment';
-//import { CryptoJS } from 'crypto-js';
+import * as CryptoJS from 'crypto-js';
 
 @Injectable({
   providedIn: 'root'
