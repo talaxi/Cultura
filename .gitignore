@@ -38,8 +38,6 @@ testem.log
 /typings
 
 test-config.index.ts
-/src/app/services/settings/code-creation.service.ts
-/src/app/services/settings/code-creation.service.spec.ts
 
 # System files
 .DS_Store
