@@ -21,6 +21,12 @@ jobs:
       env:
         CODEREDEMPTIONSECRET: ${{ secrets.CODEREDEMPTIONSECRET }}
     
+    - name: Upload Artifact
+      uses: actions/upload-pages-artifact@v0
+      with:
+        path: ./docs/_site
+        retention-days: 1
+
     - name: Deploy
       uses: actions/deploy-pages@v1
       with:
