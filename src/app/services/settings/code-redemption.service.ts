@@ -9,6 +9,7 @@ export class CodeRedemptionService {
   constructor() { }
 
   testCode() {
+    console.log(environment.production);
     console.log(environment.CODEREDEMPTIONSECRET);
   }
 }
