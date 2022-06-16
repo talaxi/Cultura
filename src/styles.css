@@ -4,6 +4,10 @@
 @import url("https://fonts.googleapis.com/css?family=Inconsolata:400,700");
 @import "~bootstrap/dist/css/bootstrap.css";
 
+.progress-bar {
+  transition: none !important;
+}
+
 :root {
   /* Colors */
   --foreground-default: #08090a;
