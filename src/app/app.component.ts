@@ -40,8 +40,8 @@ export class AppComponent {
 
     //PURELY for testing, should be false when deployed
     //TODO: set this up so that it won't overwrite a user's save if you forget to turn this off
-    var overrideNewGame = true;
-    var devMode = true;
+    var overrideNewGame = false;
+    var devMode = false;
 
     if (this.newGame || overrideNewGame)
       this.globalService.initializeGlobalVariables();
