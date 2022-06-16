@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  CODEREDEMPTIONSECRET: 'undefined' 
+  CODEREDEMPTIONSECRET: 'testsecret' 
 };
 
 /*

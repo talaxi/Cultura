@@ -3,10 +3,10 @@ import {writeFile} from 'fs';
 import {name, version} from './package.json';
 
 const targetPath = 'src/environments/environment.prod.ts';
-
+//TODO: GitIgnore this and replace with the secret value
 const envConfigFile = `export const environment = {
     production: true,
-    CODEREDEMPTIONSECRET: '${process.env.CODEREDEMPTIONSECRET}'  
+    CODEREDEMPTIONSECRET: 'DevTest'  
 };
 `;
 
