@@ -1,0 +1,117 @@
+.incubatorTraitsModal {    
+    height: 100%;
+    background-color: var(--background-secondary);    
+    color: var(--foreground-default);
+  }
+
+
+  ::ng-deep ngb-modal-backdrop {
+    z-index: 1050 !important;
+  }
+  
+  .infoText
+  {
+      text-align: center;
+  }
+  
+  .customLabel
+  {      
+      font-weight: 700;
+      text-align: center;
+      width: 100%; /* needs to match the size of the main grid */
+  }
+  
+  .progressBarContainer
+  {
+      height: 2rem;
+  }
+  
+  .progressBar
+  {
+      height: 2rem;
+  }
+  
+  .progressBar > div, .progress-bar, .progressBar div {
+    -webkit-transition: initial !important;
+    -o-transition: initial !important;
+    transition: initial !important;
+  }
+  
+  .gridContainer
+  {
+      height: 100%;
+      display: grid;
+      grid-template-columns: auto;
+      grid-template-rows: auto;
+      justify-content: stretch;
+      grid-template-areas: 
+        "trainingName trainingStats trainingTimeToComplete";
+  }
+  
+  .trainingName {
+      grid-area: trainingName;
+    }
+  
+    .trainingStats {
+      grid-area: trainingStats;
+    }
+  
+    .trainingTimeToComplete {
+      grid-area: trainingTimeToComplete;
+    }
+  
+    .infoGridContainer
+  {
+      height: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-rows: auto;
+      justify-content: stretch;
+      grid-template-areas: 
+        ". info back";
+  }
+  
+  .info {
+    grid-area: info;
+  }
+  
+  .back {
+    grid-area: back;
+  }
+  
+  .filterActive {
+    font-weight: bold;
+  }
+  
+  
+  .filterGridContainer
+  {
+      height: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-rows: auto;
+      justify-content: stretch;
+      grid-template-areas: 
+        "ResetFiler changeTraitHeader statFilter";
+  }
+  
+  .changeTraitHeader {
+    grid-area: changeTraitHeader;
+  }
+  
+  .statFilter {
+    grid-area: statFilter;
+  }
+  
+  .resetFilter {
+    grid-area: resetFilter;
+  }
+
+  .popoverClass {
+    white-space: pre-line;
+  }
+
+  .activeTrait {
+    font-weight: bold;
+    color: var(--foreground-secondary);  
+}

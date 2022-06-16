@@ -1,0 +1,12 @@
+<div class="raceSelectionDiv" *ngIf="!showRace">
+        <div class="raceGridContainer">
+                <span class="circuit s5Heading clickableText" (click)="toggleCircuitRace(true)" [ngClass]='displayCircuitView ? "filterActive" : ""'>Circuit Race</span>
+                <span class="local s5Heading clickableText" (click)="toggleCircuitRace(false)" [ngClass]='!displayCircuitView ? "filterActive" : ""'>Local Race</span>
+        </div>
+        <hr />
+        <app-circuit-view *ngIf="displayCircuitView" (raceSelected)="raceSelected($event)"></app-circuit-view>
+        <app-local-view *ngIf="!displayCircuitView" (raceSelected)="raceSelected($event)"></app-local-view>
+</div>
+<div class="raceDiv" *ngIf="showRace">
+        <app-race [selectedRace]="selectedRace" (raceFinished)="showRace = false"></app-race>
+</div>

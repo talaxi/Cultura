@@ -1,0 +1,13 @@
+<div [ngClass]="colorConditional" class="keyword animal">
+    <div *ngIf="selectedAnimal.name !== selectedAnimal.getAnimalType()">
+        <span *ngIf="selectedAnimal.name !== selectedAnimal.getAnimalType()">{{ selectedAnimal.name }}</span>
+        <br />
+        <span>{{ selectedAnimal.getAnimalType() }}</span>
+    </div>
+    <div *ngIf="selectedAnimal.name === selectedAnimal.getAnimalType()">
+        <span>{{ selectedAnimal.getAnimalType() }}</span>
+    </div>
+    <br />
+    <br />
+    <span>{{ selectedAnimal.getRaceCourseType() }}</span>
+</div>

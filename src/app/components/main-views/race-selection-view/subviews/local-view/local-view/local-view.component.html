@@ -1,0 +1,59 @@
+<div class="localViewDiv">
+    <div class="localRaceHeader"></div>
+    <app-animal-deck></app-animal-deck>
+    <hr />
+    <div class="allLocalRaces">
+        <div id="monoRaceSection" *ngIf="areMonoRacesAvailable">
+            <div (click)="selectLocalRace(availableMonoRace)" class="monoRace"
+                *ngIf="availableMonoRace !== undefined && availableMonoRace !== null">
+                <span class="s4Heading">Mono Race <strong>{{ monoRaceRank }}</strong> </span>
+                <br />
+                <app-race-description [race]="availableMonoRace" [showStartText]="true"></app-race-description>
+            </div>
+            <div class="monoRace" *ngIf="availableMonoRace === undefined || availableMonoRace == null">
+                Next Mono Race Available After Circuit Rank Up
+            </div>
+            <hr />
+        </div>
+
+        <div id="duoRaceSection" *ngIf="areDuoRacesAvailable">
+            <div (click)="selectLocalRace(availableDuoRace)" class="duoRace"
+                *ngIf="availableDuoRace !== undefined && availableDuoRace !== null">
+                <span class="s4Heading">Duo Race <strong>{{ duoRaceRank }}</strong> </span>
+                <br />
+                <app-race-description [race]="availableDuoRace" [showStartText]="true"></app-race-description>
+            </div>
+            <div class="duoRace" *ngIf="availableDuoRace === undefined || availableDuoRace == null">
+                Next Duo Race Available After Circuit Rank Up
+            </div>
+            <hr />
+        </div>
+
+        <div id="rainbowRaceSection" *ngIf="areRainbowRacesAvailable">
+            <div (click)="selectLocalRace(availableRainbowRace)" class="rainbowRace"
+                *ngIf="availableRainbowRace !== undefined && availableRainbowRace !== null">
+                <span class="s4Heading">Rainbow Race <strong>{{ rainbowRaceRank }}</strong> </span>
+                <br />
+                <app-race-description [race]="availableRainbowRace" [showStartText]="true"></app-race-description>
+            </div>
+            <div class="rainbowRace" *ngIf="availableRainbowRace === undefined || availableRainbowRace == null">
+                Next Rainbow Race Available After Circuit Rank Up
+            </div>
+            <hr />
+        </div>
+
+        <div id="localRaceSection">
+            <span class="s4Heading">Free Races</span>
+            <br/>
+            <em> {{freeRacesRemaining}} of {{totalFreeRaces}} remaining -- resets in {{ freeRaceTimer }}</em>                        
+            <br />
+            <br />
+            <div class="localRaceGrid">
+                <div class="localRace{{i+1}}" (click)="selectLocalRace(race)"
+                    *ngFor="let race of availableLocalRaces; let i = index">
+                    <app-race-description [index]="i" [race]="race" [showStartText]="true"></app-race-description>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

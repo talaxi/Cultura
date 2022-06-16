@@ -1,0 +1,165 @@
+.selectedAnimalView
+{
+    height: 100%;
+
+    background-color: var(--background-secondary);
+    border-color: var(--background-tertiary);
+    color: var(--foreground-default);     
+}
+
+.animalInfo 
+{
+    text-align: center;
+    grid-area: animalInfo;
+}
+
+.back
+{
+    text-align: center;
+    grid-area: back;
+}
+
+.equippable
+{
+  grid-area: equippable;
+}
+
+.marginGrid {
+  /*height: 100%;*/
+  display: grid;
+  grid-template-columns: 1% 1fr 1%;
+  grid-template-rows: auto;
+  justify-content: stretch;
+  grid-template-areas: 
+    ". view .";
+}
+
+.view {
+  grid-area: view;
+}
+
+
+.filterActive {
+  font-weight: bold;
+  color: var(--foreground-secondary);
+}
+
+.info {    
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto;
+    justify-content: stretch;    
+    grid-template-areas: 
+      "equippable animalInfo back";
+  }
+  
+
+.gridContainer {
+   /* height: 100%;*/
+    display: grid;
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+    justify-content: stretch;    
+    grid-template-areas: 
+      "trainingStats racingStats";
+  }
+  .trainingStats {
+    grid-area: trainingStats;    
+  }
+
+  .racingStats {
+    grid-area: racingStats;    
+  }
+
+  ::ng-deep ngb-modal-backdrop {
+    z-index: 1050 !important;
+  }
+
+.modalClass {
+    background-color: var(--background-secondary);
+    border-color: var(--background-tertiary);
+    color: var(--foreground-default);
+}
+
+.editName {
+  width: 4rem;
+}
+
+.name {
+  margin-left: 4rem;
+}
+
+.selectedItemSpan
+{
+  width: 100%;
+}
+
+.selectedEquipmentSpan
+{
+  width: 100%;
+}
+
+.popoverClass {
+  white-space: pre-line;
+}
+
+.rightAlign {
+  float: right;
+}
+
+.ability1, .ability2, .ability3 {
+  width: 33.33%;
+  display: inline-block;
+}
+
+.spaced {
+  margin-left: .5em;
+}
+
+table {
+  table-layout: fixed;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+}
+
+td {
+  width: 25%;
+  border: 1px solid rgba(0,0,0,.1) /*var(--foreground-default)*/;
+}
+
+/** This assumes 2 total columns on mobile and 4 total columns otherwise **/
+@media (max-width: 650px) {
+  table:last-child {
+      border-bottom: none;
+    }
+  
+    table:nth-child(-n+2) {
+      border-top: none;
+    }
+    
+    table:nth-child(2n) { 
+      border-right: none;
+    }
+  
+    table:nth-child(2n-1) { 
+      border-left: none;
+    }
+}
+
+
+table tr td:last-child, table tr td:nth-last-child(2), table tr td:nth-last-child(3), table tr td:nth-last-child(4) {
+  border-bottom: none;
+}
+
+table tr:nth-child(1) td:nth-child(-n+4) {
+  border-top: none;
+}
+
+table tr td:nth-child(4n) { 
+  border-right: none;
+}
+
+table tr td:nth-child(4n-3) { 
+  border-left: none;
+}

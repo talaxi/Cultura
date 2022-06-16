@@ -1,0 +1,110 @@
+<div class="settingsView">
+    <div class="info">
+        <h2>Settings</h2>
+    </div>
+    <div class="settingsGrid">
+        <div class="options">
+            <span class="s4Heading">Options</span>
+            <br />
+            <div class="toggles">
+                <span [ngbPopover]="skipDrawRacePopoverText" class="checkboxOption" triggers="mouseenter:mouseleave">
+                    <label>
+                    <input type="checkbox" class="rightSpaced" id="skipRace" [(ngModel)]="skipDrawRace"
+                        (input)="skipDrawRaceToggle()">
+                        <span>Auto Skip Race Info</span>
+                        </label>
+                </span>
+                <br />
+                <span [ngbPopover]="finishTrainingBeforeSwitchingPopoverText" class="checkboxOption" triggers="mouseenter:mouseleave">
+                    <label>
+                    <input type="checkbox" class="rightSpaced" id="finishTraining"
+                        [(ngModel)]="finishTrainingBeforeSwitching" (input)="finishTrainingBeforeSwitchingToggle()">
+                        <span>Finish Training Before Switching </span>
+                    </label>
+                </span>
+                <br />
+                <span [ngbPopover]="finishTrainingBeforeSwitchingPopoverText" class="checkboxOption" triggers="mouseenter:mouseleave">
+                    <label>
+                    <input type="checkbox" class="rightSpaced" id="hideTips" [(ngModel)]="hideTips"
+                        (input)="hideTipsToggle()">
+                        <span>Hide Tips</span>
+                    </label>
+                </span>
+                <br />
+                <span [ngbPopover]="finishTrainingBeforeSwitchingPopoverText" class="checkboxOption" triggers="mouseenter:mouseleave">
+                    <label>
+                    <input type="checkbox" class="rightSpaced" id="useNumbersForCircuitRank"
+                        [(ngModel)]="useNumbersForCircuitRank" (input)="useNumbersForCircuitRankToggle()">
+                        <span>Use Numbers For Circuit Rank</span>                    
+                    </label>
+                </span>
+                <br />
+                <!--<div class="btn-group" role="group" ngbRadioGroup aria-label="Race Display Info"
+                    [(ngModel)]="raceDisplayInfo" (change)="saveRaceDisplayInfo()">
+                    <span [ngbPopover]="raceDisplayInfoPopoverText" triggers="mouseenter:mouseleave"
+                        class="rightSpaced">Race
+                        Info Display Mode: </span>
+                    <label ngbButtonLabel class="btn-primary">
+                        <input ngbButton type="radio" class="btn-check" [value]="raceDisplayInfoEnum.draw"> Draw
+                    </label>
+                    <label ngbButtonLabel class="btn-primary">
+                        <input ngbButton type="radio" class="btn-check" [value]="raceDisplayInfoEnum.text"> Text
+                    </label>
+                    <label ngbButtonLabel class="btn-primary">
+                        <input ngbButton type="radio" class="btn-check" [value]="raceDisplayInfoEnum.both"> Both
+                    </label>
+                </div>-->
+
+            </div>
+            <div [ngbPopover]="raceDisplayInfoPopoverText" triggers="mouseenter:mouseleave" ngbDropdown class="d-inline-block">
+                <label class="bottomAligned">Race Display Info:</label>
+                <button type="button" class="btn dropdown spaced" id="raceDisplayInfoDropdown" ngbDropdownToggle>{{raceDisplayInfo}}</button>
+                <div ngbDropdownMenu aria-labelledby="raceDisplayInfoDropdown">
+                    <button (click)="changeRaceDisplayInfo(raceDisplayInfoEnum.draw)" ngbDropdownItem>Draw</button>
+                    <button (click)="changeRaceDisplayInfo(raceDisplayInfoEnum.text)" ngbDropdownItem>Text</button>
+                    <button (click)="changeRaceDisplayInfo(raceDisplayInfoEnum.both)" ngbDropdownItem>Both</button>
+                </div>
+            </div>
+            <br/>
+            <div ngbDropdown class="d-inline-block">
+                <label class="bottomAligned">Theme:</label>
+                <button type="button" class="btn dropdown spaced" id="themeDropdown" ngbDropdownToggle>{{currentTheme}}</button>
+                <div ngbDropdownMenu aria-labelledby="themeDropdown">
+                    <button (click)="changeTheme('White')" ngbDropdownItem>White</button>
+                    <button (click)="changeTheme('Light')" ngbDropdownItem>Light</button>
+                    <button (click)="changeTheme('Twilight')" ngbDropdownItem>Twilight</button>
+                    <button (click)="changeTheme('Night')" ngbDropdownItem>Night</button>
+                </div>
+            </div>
+        </div>
+        <div class="saveLoad">
+            <span class="s4Heading">Save/Load</span>
+            <br />
+            <div class="importExportDiv">
+                <textarea id="importExport" name="importExport" rows="10" [(ngModel)]="importExportValue"></textarea>
+                <div class="importExportButtons">
+                    <button (click)="LoadGame()">
+                        Import
+                    </button>
+                    <button (click)="SaveGame()">
+                        Export
+                    </button>
+                </div>
+            </div>
+            <br />
+            <br />
+            <div>
+                <span class="s4Heading">Code Redemption</span>
+                <br />
+                <br />
+                <div class="codeRedemption">
+                    <label for="codeRedemptionText">Code: </label>
+                    <input id="codeRedemptionText" type="text" class="spaced codeRedemptionInput" [(ngModel)]="enteredRedemptionCode">
+                    <button class="screenMarginLeft" (click)="enterRedemptionCode()">
+                        Enter
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

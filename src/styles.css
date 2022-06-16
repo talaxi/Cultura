@@ -1,0 +1,256 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import url("https://fonts.googleapis.com/css?family=PT+Sans:400,700");
+@import url("https://fonts.googleapis.com/css?family=Inconsolata:400,700");
+@import "~bootstrap/dist/css/bootstrap.css";
+
+:root {
+  /* Colors */
+  --foreground-default: #08090a;
+  --foreground-secondary: #41474d;
+  --foreground-tertiary: #797c80;
+  --foreground-quaternary: #f4faff;
+  --foreground-light: #41474d;
+
+  --background-default: #f4faff;
+  --background-secondary: #a3b9cc;
+  --background-tertiary: #5c7d99;
+  --background-quarternary: #65799E;
+  --background-light: #ffffff;
+
+  --primary-default: #5dfdcb;
+  --primary-dark: #24b286;
+  --primary-light: #b2ffe7;
+
+  --error-default: #ef3e36;
+  --error-dark: #800600;
+  --error-light: #ffcecc;
+
+  --grayedOut-Text: #797c80;
+
+  /* Shadows */
+  --background-tertiary-shadow: 0 1px 3px 0 rgba(92, 125, 153, 0.5);
+
+  /* Fonts */
+  --h1-size: 20vh;
+  --h1-weight: 400;
+  --h1-spacing: -1.5px;
+
+  --h2-size: 3.75rem;
+  --h2-weight: 400;
+  --h2-spacing: -0.5px;
+
+  --h3-size: 3rem;
+  --h3-weight: 400;
+  --h3-spacing: -0px;
+
+  --h4-size: 2.125rem;
+  --h4-weight: 400;
+  --h4-spacing: -0.25px;
+
+  --h5-size: 1.5rem;
+  --h5-weight: 400;
+  --h5-spacing: -0px;
+
+  --h6-size: 1.25rem;
+  --h6-weight: 700;
+  --h6-spacing: -0.15px;
+
+  --b1-size: 1rem;
+  --b1-weight: 400;
+  --b1-spacing: 0.5px;
+
+  --b2-size: 0.875rem;
+  --b2-weight: 400;
+  --b2-spacing: 0.25px;
+
+  --button-size: 0.875rem;
+  --button-weight: 700;
+  --button-spacing: 1.25px;
+
+  --caption-size: 0.75rem;
+  --caption-weight: 400;
+  --caption-spacing: 0.4px;
+
+  --overline-size: 0.625rem;
+  --overline-weight: 400;
+  --overline-spacing: 1.5px;
+
+  --animal-list-max-columns: 4;
+
+  --c1-size: 1.25rem;
+  --c1-weight: 400;
+  --c1-spacing: 0.15px;
+
+  --c2-size: 0.875rem;
+  --c2-weight: 700;
+  --c2-spacing: 0.1px;
+
+  --s1-size: 2rem;
+  --s1-weight: 600;
+  --s1-spacing: 0.15px;
+
+  --s2-size: 1.75rem;
+  --s2-weight: 500;
+  --s2-spacing: 0.1px;
+
+  --s3-size: 1.25rem;
+  --s3-weight: 550;
+  --s3-spacing: 0.15px;
+
+  --s4-size: 1.25rem;
+  --s4-weight: 400;
+  --s4-spacing: 0.1px;
+
+  --s5-size: 1.15rem;
+  --s5-weight: 100;
+  --s5-spacing: 0.1px;
+
+  --flatlandColor: #d16900;
+  --mountainColor: #279113;
+  --waterColor: #0000ff;
+  --tundraColor: #1ca1c9;
+  --volcanicColor: #d92525;
+
+  --flatlandSubcolor: #7d3f00;
+  --mountainSubcolor: #1b630d;
+  --waterSubcolor: #16148f;
+  --tundraSubcolor: #28809c;
+  --volanicSubcolor: #8f1a1a;
+}
+
+body {
+  background: var(--background-default);
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "PT Sans", sans-serif;
+  font-size: 2vmin;
+  cursor: default;
+}
+
+h1 {
+  font-size: var(--h1-size);
+}
+
+.subHeading {
+  font-size: var(--c1-size);
+  font-weight: var(--c1-weight);
+}
+
+.s1Heading {
+  font-size: var(--s1-size);
+  font-weight: var(--s1-weight);
+}
+
+.s2Heading {
+  font-size: var(--s2-size);
+  font-weight: var(--s2-weight);
+}
+
+.s3Heading {
+  font-size: var(--s3-size);
+  font-weight: var(--s3-weight);
+}
+
+.s4Heading {
+  font-size: var(--s4-size);
+  font-weight: var(--s4-weight);
+}
+
+.s5Heading {
+  font-size: var(--s5-size);
+  font-weight: var(--s5-weight);
+}
+
+.keyword {
+  font-weight: 550;
+}
+
+.coloredText {
+  font-weight: 550;
+}
+
+button:active:enabled {
+  transform: scale(0.98);
+  /* Scaling button to 0.98 to its original size */
+  box-shadow: 3px 2px 22px 1px rgba(0, 0, 0, 0.24);
+  /* Lowering the shadow */
+}
+
+.defaultTextColor {
+  color: var(--foreground-default);
+}
+
+.selectedTextColor {
+  color: var(--foreground-secondary);
+}
+
+.progressBarColor {
+  color: #28a745;
+}
+
+.miniHr {
+  width: 80%;
+  opacity: .75;
+}
+
+.tutorialActive {
+  border: red 1px;
+}
+
+.screenMarginLeft {
+  margin-left: 1rem;
+}
+
+.screenMarginRight {
+  margin-right: 1rem;
+}
+
+.clickableText {
+  cursor: pointer;
+}
+
+.flatlandColor {
+  color: var(--flatlandColor);
+  /*#eb3023;   */
+}
+
+.mountainColor {
+  color: var(--mountainColor);
+}
+
+.waterColor {
+  color: var(--waterColor);
+}
+
+.tundraColor {
+  color: var(--tundraColor);
+}
+
+.volcanicColor {
+  color: var(--volcanicColor);
+}
+
+.flatlandSubcolor {
+  color: var(--flatlandSubcolor);  
+}
+
+.mountainSubcolor {
+  color: var(--mountainSubcolor);
+}
+
+.waterSubcolor {
+  color: var(--waterSubcolor);
+}
+
+.tundraSubcolor {
+  color: var(--tundraSubcolor);
+}
+
+.volanicSubcolor {
+  color: var(--volcanicSubcolor);
+}

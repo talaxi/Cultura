@@ -1,0 +1,59 @@
+.shopView
+{
+    height: 100%;
+
+    background-color: var(--background-secondary);
+    border-color: var(--background-tertiary);
+    color: var(--foreground-default);    
+}
+
+.filterActive {
+    font-weight: bold;
+    color: var(--foreground-secondary);    
+}
+
+.infoText {
+    text-align: center;
+}
+
+.centered {
+  text-align: center;
+}
+
+.filters {
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: auto;
+    justify-content: stretch;
+    grid-template-areas: 
+      "title animalsFilter trainingsFilter facilityFilter foodFilter specialtyFilter enhancerFilter";
+  }
+
+  #title {
+    grid-area: title;
+  }
+
+  #animalsFilter {
+    grid-area: animalsFilter;
+  }
+  
+  #trainingsFilter {
+    grid-area: trainingsFilter;
+  }
+
+  #facilityFilter {
+    grid-area: facilityFilter;
+  }
+  
+  #foodFilter {
+    grid-area: foodFilter;
+  }
+  
+  #specialtyFilter {
+    grid-area: specialtyFilter;
+  }
+  
+  #enhancerFilter {
+    grid-area: enhancerFilter;
+  }

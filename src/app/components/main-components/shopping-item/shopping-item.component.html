@@ -1,0 +1,12 @@
+<div class="item" ngbPopover="{{ longDescription }}"
+triggers="mouseenter:mouseleave" popoverClass="popoverClass">
+    {{ selectedItem.name }} <em *ngIf="selectedItem.totalShopQuantity > 1">({{ selectedItem.totalShopQuantity - selectedItem.amountPurchased }} left)</em>
+    <br />
+    <br />
+    {{ shortDescription }}
+    <br />
+    <br />
+    {{ purchaseResourcesRequired }}
+    <br/>
+    <button (click)="BuyItem()" [disabled]="!canAffordItem">Buy</button>
+</div>

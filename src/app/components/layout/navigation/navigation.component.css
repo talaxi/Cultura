@@ -1,0 +1,18 @@
+.navigation
+{
+    height: 100%;
+    border-left: 1px solid rgba(0,0,0,.1);
+    padding-left: 1rem;
+    padding-top: 1rem;
+}
+
+.active
+{
+    font-weight: bold;
+    color: var(--foreground-secondary);
+}
+
+
+.tutorialActive {
+    border: red 1px solid !important;
+  }

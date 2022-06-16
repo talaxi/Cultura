@@ -1,0 +1,41 @@
+<div class="gridContainer" id="barnViewDiv" *ngIf="selectedBarn === 0">    
+    <div class="barn1 barnDefault" [ngClass]='tutorialActive ? "tutorialActive" : ""'>
+        <app-barn [barnNumber]="1" (selectedBarn)="goToBarn($event)"></app-barn>
+    </div>
+
+    <div class="barn2 barnDefault">
+        <app-barn [barnNumber]="2" (selectedBarn)="goToBarn($event)"></app-barn>
+    </div>
+
+    <div class="barn3 barnDefault">
+        <app-barn [barnNumber]="3" (selectedBarn)="goToBarn($event)"></app-barn>
+    </div>
+
+    <div class="barn4 barnDefault" *ngIf="barnRow2IsUnlocked">
+        <app-barn [barnNumber]="4" (selectedBarn)="goToBarn($event)"></app-barn>
+    </div>
+
+    <div class="barn5 barnDefault" *ngIf="barnRow2IsUnlocked">
+        <app-barn [barnNumber]="5" (selectedBarn)="goToBarn($event)"></app-barn>
+    </div>
+
+    <div class="barn6 barnDefault" *ngIf="barnRow2IsUnlocked">
+        <app-barn [barnNumber]="6" (selectedBarn)="goToBarn($event)"></app-barn>
+    </div>
+
+    <div class="barn7 barnDefault" *ngIf="barnRow3IsUnlocked">
+        <app-barn [barnNumber]="7" (selectedBarn)="goToBarn($event)"></app-barn>
+    </div>
+
+    <div class="barn8 barnDefault" *ngIf="barnRow3IsUnlocked">
+        <app-barn [barnNumber]="8" (selectedBarn)="goToBarn($event)"></app-barn>
+    </div>
+
+    <div class="barn9 barnDefault" *ngIf="barnRow3IsUnlocked">
+        <app-barn [barnNumber]="9" (selectedBarn)="goToBarn($event)"></app-barn>
+    </div>
+</div>
+
+<div class="selectedBarnDiv" *ngIf="selectedBarn > 0">    
+    <app-selected-barn [selectedBarnNumber]="this.selectedBarn" (returnToBarnEmitter)="goToBarn(0)"></app-selected-barn>
+</div>

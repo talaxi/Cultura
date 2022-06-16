@@ -1,0 +1,202 @@
+<div class="selectedBarnModal" *ngIf="animalAssigned && !barn.isLocked">
+    <div class="infoText">
+        <div class="infoGridContainer">
+            <div class="unassign">
+                <span  class="clickableText" (click)="unassignAnimal()">Unassign</span>
+                <br />
+                <br />
+                <div *ngIf="barnSpecializationsUnlocked">
+                    <span [ngbPopover]="totalBarnStatsContent" triggers="mouseenter:mouseleave"
+                        popoverClass="popoverClass">Barn Level {{ barn.barnUpgrades.barnLevel }}</span>
+                    <br />
+
+                    <span [ngbPopover]="upgradeBarnContent" triggers="mouseenter:mouseleave"
+                        popoverClass="popoverClass">
+                        <button (click)="upgradeBarn()" [disabled]="!canUpgrade">{{ upgradeText }}</button>
+                    </span>
+                </div>
+            </div>
+            <div class="info">
+                <span> {{ this.barnName }}</span>
+                <br />
+                <div *ngIf="this.associatedAnimal.name !== this.associatedAnimal.getAnimalType()"
+                    (click)="goToAnimal()">
+                    <span *ngIf="this.associatedAnimal.name !== this.associatedAnimal.getAnimalType()">{{
+                        this.associatedAnimal.name }}</span>
+                    <br />
+                    <span>{{ this.associatedAnimal.getAnimalType() }}</span>
+                </div>
+                <div *ngIf="this.associatedAnimal.name === this.associatedAnimal.getAnimalType()"
+                    (click)="goToAnimal()">
+                    <span>{{ this.associatedAnimal.getAnimalType() }}</span>
+                </div>
+                <div>
+                    <span [ngClass]="{'sizeSpacing': this.sizeValue !== 'Large' }">{{ this.sizeValue }} </span> <span
+                        *ngIf="this.sizeValue !== 'Large'" [ngbPopover]="costToBuildContent"
+                        triggers="mouseenter:mouseleave" popoverClass="popoverClass"><button (click)="upgradeBarnSize()"
+                            [disabled]="!canBuild" class="sizeButtonSpacing">Build</button></span>
+                </div>
+                <hr />
+                <div *ngIf="this.existingTraining !== null && this.existingTraining !== undefined">
+                    <span class="activeTrainingOption">{{ this.existingTraining.trainingName }} </span>
+                    <br />
+                    <span><em>({{ (this.existingTraining.trainingTimeRemaining / 60) | number : '1.0-0' }} min
+                            remaining)</em></span>
+                </div>
+                <div *ngIf="this.existingTraining === null || this.existingTraining === undefined">
+                    <span>No Training Assigned</span>
+                </div>
+            </div>
+            <div class="back clickableText" (click)="returnToBarnView()">
+                <span>Back</span>
+            </div>
+        </div>
+        <hr />
+        <div *ngIf="this.existingTraining !== null && this.existingTraining !== undefined">
+            <br />
+            <p class="progressBarContainer">
+                <ngb-progressbar type="success" [value]="this.trainingProgressBarPercent" class="progressBar">
+                </ngb-progressbar>
+                <span class="customLabel">{{ this.trainingProgressBarPercent | number : '1.2-2' }}%</span>
+            </p>
+            <br />
+        </div>
+        <br />
+        <br />
+        <div class="changeTrainingHeader">
+            <span class="s4Heading" (click)="resetFilters()">Change Training</span>
+        </div>
+        <div class="filterGridContainer">
+            <div class="facilitySizeFilter clickableText">
+                <span (click)="toggleFacilityFilter('Small')" id="smallFilter" [class.filterActive]="filterSmall">Small
+                </span>
+                <span (click)="toggleFacilityFilter('Medium')" id="mediumFilter"
+                    [class.filterActive]="filterMedium">Medium </span>
+                <span (click)="toggleFacilityFilter('Large')" id="largeFilter" [class.filterActive]="filterLarge">Large
+                </span>
+            </div>
+            <div class="resetFiltersHeader clickableText">
+                <span (click)="resetFilters()">Reset Filters</span>
+            </div>
+            <div class="statFilter clickableText">
+                <span (click)="toggleStatFilter('Speed')" id="speedFilter" [class.filterActive]="filterSpeed">SPD
+                </span>
+                <span (click)="toggleStatFilter('Acceleration')" id="accelerationFilter"
+                    [class.filterActive]="filterAcceleration">ACC </span>
+                <span (click)="toggleStatFilter('Endurance')" id="enduranceFilter"
+                    [class.filterActive]="filterEndurance">END </span>
+                <span (click)="toggleStatFilter('Power')" id="powerFilter" [class.filterActive]="filterPower">PWR
+                </span>
+                <span (click)="toggleStatFilter('Focus')" id="focusFilter" [class.filterActive]="filterFocus">FCS
+                </span>
+                <span (click)="toggleStatFilter('Adaptability')" id="adaptabilityFilter"
+                    [class.filterActive]="filterAdaptability">ADP</span>
+            </div>
+        </div>
+        <br />
+        <div [ngClass]='tutorialActive ? "tutorialActive" : ""'>
+            <app-training-list *ngIf="associatedAnimal.canTrain" [availableTrainingOptions]="availableTrainings"
+                (selectedTrainingOption)="selectNewTraining($event)">
+            </app-training-list>
+            <div *ngIf="!associatedAnimal.canTrain">
+                This animal is currently in incubation and cannot train. Check back after incubation finishes.
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="selectedBarnModal" *ngIf="!animalAssigned && !barn.isLocked">
+    <div class="infoText">
+        <div class="infoGridContainer">
+            <div class="info">
+                <span>Barn {{ this.selectedBarnNumber }}</span>
+                <br />
+                <span>Unassigned</span>
+            </div>
+            <div class="back clickableText" (click)="returnToBarnView()">
+                <span>Back</span>
+            </div>
+        </div>
+        <hr />
+        <br />
+        <br />
+        <span>Assign Animal</span>
+        <app-animal-list [availableAnimals]="availableAnimals" (selectedAnimal)="assignAnimal($event)">
+        </app-animal-list>
+    </div>
+</div>
+
+<div class="selectedBarnModal" *ngIf="barn.isLocked">
+    <div class="infoText">
+        <div class="infoGridContainer">
+            <div class="info">
+                <span>Barn {{ this.selectedBarnNumber }}</span>
+                <br />
+                <span>Locked</span>
+            </div>
+            <div class="back clickableText" (click)="returnToBarnView()">
+                <span>Back</span>
+            </div>
+        </div>
+        <hr />
+        <br />
+        <br />
+        <div class="purchaseBarn">
+            <span>Purchase Barn</span>
+            <br />
+            <br />
+            <span class="price">{{ barn.purchasePrice }} Coins</span>
+            <br />
+            <button id="purchaseButton" [disabled]="!canPurchaseBarn()" (click)="purchaseBarn()">Buy</button>
+        </div>
+    </div>
+</div>
+
+<ng-template #totalBarnStatsContent>
+    <div class="popoverClass" *ngIf="totalBarnStatsPopover !== ''">
+        {{ totalBarnStatsPopover }}
+    </div>
+</ng-template>
+
+<ng-template #upgradeBarnContent>
+    <div class="popoverClass" *ngIf="upgradeBarnPopover !== ''">
+        {{ upgradeBarnPopover }}
+    </div>
+</ng-template>
+
+<ng-template #costToBuildContent>
+    <div class="popoverClass" *ngIf="buildBiggerBarnPopover !== ''">
+        {{ buildBiggerBarnPopover }}
+    </div>
+</ng-template>
+
+
+<ng-template #specializationModal let-modal>
+    <div class="modalClass">
+        <form>
+            <div class="modal-header">
+                <h4 class="modal-title" id="modal-basic-title">Choose Barn Specialization</h4>
+                <button type="button" aria-label="Close" (click)="modal.dismiss()">X</button>
+            </div>
+            <div class="modal-body">
+                <div class="typeContainer" *ngIf="specializationOptions.length > 0">
+                    <span *ngFor="let specialization of specializationOptions" class="specializationType subHeading"
+                        [ngClass]="{'selectedSpecialization': selectedSpecialization === specialization}"
+                        (click)="filterSpecialization(specialization)">
+                        {{specialization.trim()}}
+                    </span>
+                    <hr />
+                    <div *ngIf="specializationDescription !== '' && specializationDescription !== undefined">
+                        {{ specializationDescription }}
+                        <br />
+                        <br />
+                        <strong> {{ inDepthSpecializationDescription }} </strong>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" (click)="selectSpecialization()">Select</button>
+            </div>
+        </form>
+    </div>
+</ng-template>

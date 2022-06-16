@@ -1,0 +1,79 @@
+<div id="raceInfo">
+    <div class="bothDisplayValues" *ngIf="displayVisualRace && displayTextUpdates">
+        <div class="headerInfo">
+            <div><button (click)="skipRaceAnimation()">Skip</button></div>
+            <div>Velocity: {{ velocityAtCurrentFrame }} / {{ maxSpeedAtCurrentFrame }}m/s <span *ngIf="racerEffectAtCurrentFrame === burstEffect">BURST!</span></div>
+            <div>Stamina: {{ staminaAtCurrentFrame }}%</div>
+            <div><button (click)="pauseRaceAnimation()">Pause</button></div>
+        </div>
+        <div class="updates">
+            <div class="drawRaces">
+                <app-draw-race [race]="selectedRace" [skip]="skipRace.asObservable()"
+                    [pause]="pauseRace.asObservable()">
+                </app-draw-race>
+            </div>
+            <div class="raceUpdates" #scrollMe [scrollTop]="scrollMe.scrollHeight" [innerHTML]="incrementalRaceUpdates.trim()">
+            </div>
+        </div>
+    </div>
+    <div *ngIf="!displayVisualRace && displayTextUpdates">
+        <!--Text Only-->
+        <div class="individualItemHeaderInfo">
+            <div><button (click)="skipRaceAnimation()">Skip</button></div>
+            <div><button (click)="pauseRaceAnimation()">Pause</button></div>
+        </div>
+        <div class="raceUpdates onlyText" #scrollMe [scrollTop]="scrollMe.scrollHeight" [innerHTML]="incrementalRaceUpdates.trim()">
+        </div>
+    </div>
+    <div class="oneDisplayValue" *ngIf="displayVisualRace && !displayTextUpdates">
+        <!--Draw Only-->
+        <div class="individualItemHeaderInfo">
+            <div><button (click)="skipRaceAnimation()">Skip</button></div>
+            <div>Velocity: {{ velocityAtCurrentFrame }} / {{ maxSpeedAtCurrentFrame }}m/s </div>
+            <div>Stamina: {{ staminaAtCurrentFrame }}%</div>
+            <div><button (click)="pauseRaceAnimation()">Pause</button></div>
+        </div>
+        <div class="drawRace onlyDraw">
+            <app-draw-race [race]="selectedRace" [skip]="skipRace.asObservable()" [pause]="pauseRace.asObservable()">
+            </app-draw-race>
+        </div>
+    </div>
+    <br />
+    <div class="results" *ngIf="displayResults">
+        <br />
+        <span class="s4Heading">Rewards</span>
+        <div class="rewards">
+            <table>
+                <tr *ngFor="let cells of rewardRows;">
+                    <td *ngFor="let c of cells;"><span class="keyword">{{c.name}}</span>: {{c.amount}}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <br />
+    <div class="back">
+        <button (click)="goToRaceSelection()">Back</button>
+    </div>
+</div>
+
+<ng-template #circuitRewardModal let-modal>
+    <div class="modalClass">
+        <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">Circuit Rank Reward!</h4>
+            <button type="button" aria-label="Close" (click)="modal.dismiss()">X</button>
+        </div>
+        <div class="modal-body">
+            <div class="centered">
+                After ranking up, you receive:
+                <br />
+                <div class="s4Heading">{{ selectedRace.circuitIncreaseReward[0] }}</div>
+            </div>
+            <br />
+            <br />
+            <div>{{ selectedRace.circuitIncreaseReward[1] }}</div>
+        </div>
+        <div class="buttonSpacing">
+            <button type="button" (click)="modal.dismiss()">Continue</button>
+        </div>
+    </div>
+</ng-template>

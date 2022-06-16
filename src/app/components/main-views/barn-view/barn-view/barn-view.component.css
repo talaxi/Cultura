@@ -1,0 +1,80 @@
+#barnViewDiv {
+  height: 100%;
+  background-color: var(--background-secondary);
+  border-color: var(--background-tertiary);
+  color: var(--foreground-default);
+}
+
+.gridContainer {
+    height: 100%;
+    display: grid;
+    grid-template-columns: 33.333%;
+    grid-template-rows: 33.333%;
+    justify-content: stretch;
+    grid-template-areas: 
+      "barn1 barn2 barn3"
+      "barn4 barn5 barn6"
+      "barn7 barn8 barn9";
+  }
+
+  .selectedBarnDiv {
+    height: 100%;
+  }
+
+  .barnDefault {
+    justify-self: stretch;
+    display: grid;
+    align-items: center;
+
+    background-color: var(--background-secondary);
+    border-color: var(--background-tertiary);
+    color: var(--foreground-default);
+
+    border: 1px solid rgba(0,0,0,.1);
+    border-right: none;
+  }
+
+  .lockedBarnRow {
+    border: none !important;
+  }
+
+  .barn1 {
+    grid-area: barn1;
+  }
+
+  .barn2 {
+    grid-area: barn2;
+  }
+
+  .barn3 {
+    grid-area: barn3;
+  }
+
+  .barn4 {
+    grid-area: barn4;
+  }
+
+  .barn5 {
+    grid-area: barn5;
+  }
+
+  .barn6 {
+    grid-area: barn6;
+  }
+
+  .barn7 {
+    grid-area: barn7;
+  }
+
+  .barn8 {
+    grid-area: barn8;
+  }
+
+  .barn9 {
+    grid-area: barn9;
+  }
+
+  .tutorialActive {
+    border: 1px solid rgba(0,0,0,.1);
+    border-color: red;
+  }

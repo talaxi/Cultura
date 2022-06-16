@@ -1,0 +1,48 @@
+.gridContainer {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    grid-template-columns: 1% 0% 1fr 20% 1%;
+    grid-template-rows: 50%;
+    justify-content: stretch;
+    grid-template-areas: 
+      ". area1 area2 area3 ."
+      ". area1 area2 area4 .";
+  }
+
+  a {
+    color: var(--foreground-quaternary);
+  }
+
+  .area1 {
+    grid-area: area1;   
+    justify-self: stretch; 
+
+    /*background-color: var(--background-tertiary);
+    color: var(--foreground-quaternary);*/
+  }
+
+  .area2 {
+    grid-area: area2;   
+    justify-self: stretch; 
+
+    /*background-color: var(--background-tertiary);
+    color: var(--foreground-quaternary);*/
+  }
+
+  .area3 {
+    grid-area: area3;   
+    justify-self: stretch; 
+
+    /*background-color: var(--background-tertiary);
+    color: var(--foreground-quaternary);*/
+  }
+
+  .area4 {
+    grid-area: area4;
+    justify-self: stretch;
+  }
+
+  .rightAlign {
+      text-align: right;
+  }

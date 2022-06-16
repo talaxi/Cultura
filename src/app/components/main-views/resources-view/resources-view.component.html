@@ -1,0 +1,46 @@
+<div class="resourcesView gridContainer">
+    <div class="resources">
+        <div class="s4Heading centered">Resources</div>        
+        <br />
+        <p *ngFor="let resource of resources;">
+            <span ngbPopover="{{ this.getPopover(resource.name, resource.itemType) }}"
+            triggers="mouseenter:mouseleave" popoverClass="popoverClass" class="screenMarginLeft">
+            {{ resource.name }} <span class="rightAligned">x {{ resource.amount }}</span>
+            <hr class="miniHr" />
+        </span>
+        </p>
+    </div>
+    <div class="progression">
+        <div class="s4Heading centered">Progression</div>        
+        <br />
+        <p *ngFor="let progression of progressionResources;">
+            <span ngbPopover="{{ this.getPopover(progression.name, progression.itemType) }}"
+            triggers="mouseenter:mouseleave" popoverClass="popoverClass" class="screenMarginLeft">
+            {{ progression.name }} <span class="rightAligned">x {{ progression.amount }}</span>
+            <hr class="miniHr" />
+        </span>
+        </p>
+    </div>
+    <div class="specialty">
+        <div class="s4Heading centered">Specialty</div>        
+        <br />
+        <p *ngFor="let specialty of specialtyItems;">            
+            <span ngbPopover="{{ this.getPopover(specialty.name, specialty.itemType) }}"
+            triggers="mouseenter:mouseleave" popoverClass="popoverClass" class="screenMarginLeft">
+            {{ specialty.name }} <span class="rightAligned">x {{ specialty.amount }}</span>
+            <hr class="miniHr" />
+        </span>
+        </p>
+    </div>
+    <div class="equipment">
+        <div class="s4Heading centered">Equipment</div>        
+        <br />
+        <p *ngFor="let item of equipment;">
+            <span ngbPopover="{{ this.getPopover(item.name, item.itemType) }}"
+            triggers="mouseenter:mouseleave" popoverClass="popoverClass" class="screenMarginLeft">
+            {{ item.name }} <span class="rightAligned">x {{ item.amount }}</span>
+            <hr class="miniHr" />
+        </span>
+        </p>
+    </div>
+</div>

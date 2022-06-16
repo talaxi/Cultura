@@ -1,0 +1,41 @@
+.raceGridContainer {
+    width: 100%;
+    display: grid;
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+    justify-content: stretch;
+    gap: 1rem;
+    grid-template-areas: 
+      "circuit local";
+  }
+
+  .raceSelectionDiv {
+    height: 100%;
+
+    background-color: var(--background-secondary);
+    border-color: var(--background-tertiary);
+    color: var(--foreground-default);     
+  }
+
+  .circuit {
+    grid-area: circuit;
+    text-align: center;    
+  }
+
+  .local {
+    grid-area: local;
+    text-align: center;    
+  }
+
+  .raceDiv {
+    height: 100%;
+
+    background-color: var(--background-secondary);
+    border-color: var(--background-tertiary);
+    color: var(--foreground-default);     
+  }
+
+  .filterActive {
+    font-weight: bold;
+    color: var(--foreground-secondary);
+  }

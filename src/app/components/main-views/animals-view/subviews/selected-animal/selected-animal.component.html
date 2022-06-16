@@ -1,0 +1,331 @@
+<div class="selectedAnimalView">
+    <div class="marginGrid">
+        <div class="view">
+            <div class="info">
+                <div class="equippable">
+                    <div>
+                        <div *ngIf="selectedAnimal.equippedItem !== undefined && selectedAnimal.equippedItem !== null"
+                            [ngbPopover]="getEquipmentShortDescription(selectedAnimal.equippedItem.name)"
+                            triggers="mouseenter:mouseleave" popoverClass="popoverClass">Equipped: {{
+                            selectedAnimal.equippedItem.name
+                            }}
+                            <br />
+                            <br />
+                            {{getEquipmentShortDescription(selectedAnimal.equippedItem.name)}}
+                        </div>
+                        <div *ngIf="selectedAnimal.equippedItem === undefined || selectedAnimal.equippedItem === null">
+                            Equipped: None
+                        </div>
+                        <br />
+
+                        <button
+                            *ngIf="selectedAnimal.equippedItem !== undefined && selectedAnimal.equippedItem !== null"
+                            (click)="unequipItem()">Unequip Item</button>
+                        <button (click)="openEquipmentModal(equipment)">Equip New Item</button>
+                    </div>
+                </div>
+                <div class="animalInfo">
+                    <div [ngClass]="colorConditional">
+                        <div *ngIf="selectedAnimal.name !== selectedAnimal.getAnimalType()">
+                            <div *ngIf="!editingName">
+                                <span class="name keyword">{{ selectedAnimal.name }} </span>
+                                <span><button class="editName" (click)="editingName = !editingName">Edit</button></span>
+                            </div>
+                            <div *ngIf="editingName">
+                                <span><input id="newName" name="newName" maxlength="50" [(ngModel)]="newName"></span>
+                                <span><button (click)="editName()">Save</button></span>
+                                <span><button (click)="editingName = !editingName">Cancel</button></span>
+                            </div>
+                            <span class="keyword">
+                                <span class="defaultTextColor" ngbPopover="{{ traitStatGainDescription }}"
+                                    triggers="mouseenter:mouseleave" popoverClass="popoverClass"
+                                    *ngIf="selectedAnimal.trait !== undefined && selectedAnimal.trait !== null">
+                                    {{ selectedAnimal.trait.traitName }}
+                                </span>
+                                {{ selectedAnimal.getAnimalType() }}
+                            </span>
+                        </div>
+                        <div *ngIf="selectedAnimal.name === selectedAnimal.getAnimalType()">
+                            <div *ngIf="!editingName">
+                                <span><button (click)="editingName = !editingName">Edit Name</button></span>
+                            </div>
+                            <div *ngIf="editingName">
+                                <span><input id="newName" name="newName" minlength="1" maxlength="50"
+                                        [(ngModel)]="newName"></span>
+                                <span><button (click)="editName()">Save</button></span>
+                                <span><button (click)="editingName = !editingName">Cancel</button></span>
+                            </div>
+                            <span class="keyword">
+                                <span class="defaultTextColor" ngbPopover="{{ traitStatGainDescription }}"
+                                    triggers="mouseenter:mouseleave" popoverClass="popoverClass"
+                                    *ngIf="selectedAnimal.trait !== undefined && selectedAnimal.trait !== null">
+                                    {{ selectedAnimal.trait.traitName }}
+                                </span>
+                                {{ selectedAnimal.getAnimalType() }}
+                            </span>
+                        </div>
+                        <span class="keyword">{{ selectedAnimal.getRaceCourseType() }}</span>
+                        <br />
+                    </div>
+                    <span (click)="goToAssignedBarn()">{{ this.assignedBarnName }}</span>
+                    <br />
+                    <span ngbPopover="{{ breedLevelPopover }}" triggers="mouseenter:mouseleave"
+                        popoverClass="popoverClass">Breed Level {{selectedAnimal.breedLevel}}</span>
+                    <br />
+                    <span [ngbPopover]="breedDescriptionPopover" triggers="mouseenter:mouseleave"
+                        popoverClass="popoverClass">Breed XP: {{selectedAnimal.breedGaugeXp | number :
+                        '1.2-2'}}/{{selectedAnimal.breedGaugeMax}}
+                        <button (click)="breed()">Breed</button>
+                    </span>
+                    <!--TODO: Move this to one of the sides of dead space-->
+                    <br />
+                    <button (click)="openItemModal(content)">Use Item</button>
+                    <br />
+                    <app-toggle *ngIf="canAutoBreed" [callbackFunction]="toggleAutoBreed" [label]="'Auto Breed'"
+                        [model]="autoBreedActive"></app-toggle>
+                </div>
+                <div class="back clickableText" (click)="returnToAnimalView()">
+                    <span>Back</span>
+                </div>
+            </div>
+            <hr />
+            <div class="gridContainer">
+                <div class="trainableStats">
+                    <span class="s4Heading">Base Stats</span>
+                    <br />
+                    <br />
+                    <span [ngbPopover]="topSpeedPopoverContent" triggers="mouseenter:mouseleave"
+                        popoverClass="popoverClass">
+                        Speed: {{ selectedAnimal.currentStats.topSpeed | number : '1.2-2' }}
+                    </span>
+                    <br />
+                    <span [ngbPopover]="accelerationPopoverContent" triggers="mouseenter:mouseleave"
+                        popoverClass="popoverClass">
+                        Acceleration: {{ selectedAnimal.currentStats.acceleration | number : '1.2-2' }}
+                    </span>
+                    <br />
+                    <span [ngbPopover]="endurancePopoverContent" triggers="mouseenter:mouseleave"
+                        popoverClass="popoverClass">
+                        Endurance: {{ selectedAnimal.currentStats.endurance | number : '1.2-2' }}
+                    </span>
+                    <br />
+                    <span [ngbPopover]="powerPopoverContent" triggers="mouseenter:mouseleave"
+                        popoverClass="popoverClass">
+                        Power: {{ selectedAnimal.currentStats.power | number : '1.2-2' }}
+                    </span>
+                    <br />
+                    <span [ngbPopover]="focusPopoverContent" triggers="mouseenter:mouseleave"
+                        popoverClass="popoverClass">
+                        Focus: {{ selectedAnimal.currentStats.focus | number : '1.2-2' }}
+                    </span>
+                    <br />
+                    <span [ngbPopover]="adaptabilityPopoverContent" triggers="mouseenter:mouseleave"
+                        popoverClass="popoverClass">
+                        Adaptability: {{ selectedAnimal.currentStats.adaptability | number : '1.2-2' }}
+                    </span>
+                    <br />
+                    <span ngbPopover="{{ getDiminishingReturnsPopover() }}" triggers="mouseenter:mouseleave"
+                        popoverClass="popoverClass">
+                        Diminishing Returns: {{ diminishingReturnsAmount | number : '1.0-0' }}
+                    </span>
+                </div>
+                <div class="racingStats">
+                    <span class="s4Heading">Racing Stats</span>
+                    <br />
+                    <br />
+                    <span ngbPopover="{{ selectedAnimal.currentStats.maxSpeedMsPopover() }}"
+                        triggers="mouseenter:mouseleave" popoverClass="popoverClass">
+                        Max Speed: {{ selectedAnimal.currentStats.maxSpeedMs | number : '1.2-2' }} m/s
+                    </span>
+                    <br />
+                    <span ngbPopover="{{ selectedAnimal.currentStats.accelerationMsPopover() }}"
+                        triggers="mouseenter:mouseleave" popoverClass="popoverClass">
+                        Acceleration Rate: {{ selectedAnimal.currentStats.accelerationMs | number : '1.2-2' }} m/s
+                    </span>
+                    <br />
+                    <span ngbPopover="{{ selectedAnimal.currentStats.staminaPopover() }}"
+                        triggers="mouseenter:mouseleave" popoverClass="popoverClass">
+                        Stamina: {{ selectedAnimal.currentStats.stamina | number : '1.2-2' }}
+                    </span>
+                    <br />
+                    <span ngbPopover="{{ selectedAnimal.currentStats.powerMsPopover() }}"
+                        triggers="mouseenter:mouseleave" popoverClass="popoverClass">
+                        Power Efficiency: {{ selectedAnimal.currentStats.powerMs | number : '1.2-2' }}%
+                    </span>
+                    <br />
+                    <span ngbPopover="{{ selectedAnimal.currentStats.focusMsPopover() }}"
+                        triggers="mouseenter:mouseleave" popoverClass="popoverClass">
+                        Focus Distance: ~{{ selectedAnimal.currentStats.focusMs | number : '1.2-2' }} m
+                    </span>
+                    <br />
+                    <span ngbPopover="{{ selectedAnimal.currentStats.adaptabilityMsPopover() }}"
+                        triggers="mouseenter:mouseleave" popoverClass="popoverClass">
+                        Adaptability Distance: ~{{ selectedAnimal.currentStats.adaptabilityMs | number : '1.2-2' }} m
+                    </span>
+                    <br />
+                    <span ngbPopover="{{ selectedAnimal.currentStats.burstChancePopover() }}"
+                        triggers="mouseenter:mouseleave" popoverClass="popoverClass">
+                        Burst Chance: {{ selectedAnimal.currentStats.burstChance | number : '1.2-2' }}%
+                    </span>
+                    <br />
+                    <span ngbPopover="{{ selectedAnimal.currentStats.burstDistancePopover() }}"
+                        triggers="mouseenter:mouseleave" popoverClass="popoverClass">
+                        Burst Distance: {{ selectedAnimal.currentStats.burstDistance | number : '1.2-2' }} m
+                    </span>
+                </div>
+            </div>
+            <br />
+            <div class="abilities">
+                <p class="s4Heading"><span [ngbPopover]="getAbilityPopover()" triggers="mouseenter:mouseleave"
+                        popoverClass="popoverClass">Abilities</span></p>
+                <div>
+                    <span class="ability1 clickableText" (click)="selectAbility(ability1)"
+                        [class.filterActive]="selectedAnimal.ability.name === ability1.name">{{ ability1.name }} </span>
+                    <span *ngIf="ability2.isAbilityPurchased" class="ability2 clickableText"
+                        (click)="selectAbility(ability2)"
+                        [class.filterActive]="selectedAnimal.ability.name === ability2.name">{{ ability2.name }} </span>
+                    <span *ngIf="ability3.isAbilityPurchased" class="ability3 clickableText"
+                        (click)="selectAbility(ability3)"
+                        [class.filterActive]="selectedAnimal.ability.name === ability3.name">{{ ability3.name }} </span>
+                    <br />
+                    <br />
+                    <p>
+                        <span [ngbPopover]="abilityLevelPopoverContent" triggers="mouseenter:mouseleave"
+                            popoverClass="popoverClass">Level {{ selectedAbility.abilityLevel }} <span
+                                *ngIf="!abilityLevelMaxedOut">{{selectedAbility.abilityXp}} /
+                                {{selectedAbility.abilityMaxXp}} XP</span> <span
+                                *ngIf="abilityLevelMaxedOut">MAX</span></span>
+                        <br />
+                        {{ longDescription }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #topSpeedPopoverContent>
+    <div class="popoverClass">
+        {{ getTopSpeedPopover() }}
+    </div>
+</ng-template>
+
+<ng-template #accelerationPopoverContent>
+    <div class="popoverClass">
+        {{ getAccelerationPopover() }}
+    </div>
+</ng-template>
+
+<ng-template #endurancePopoverContent>
+    <div class="popoverClass">
+        {{ getEndurancePopover() }}
+    </div>
+</ng-template>
+
+<ng-template #powerPopoverContent>
+    <div class="popoverClass">
+        {{ getPowerPopover() }}
+    </div>
+</ng-template>
+
+<ng-template #focusPopoverContent>
+    <div class="popoverClass">
+        {{ getFocusPopover() }}
+    </div>
+</ng-template>
+
+<ng-template #adaptabilityPopoverContent>
+    <div class="popoverClass">
+        {{ getAdaptabilityPopover() }}
+    </div>
+</ng-template>
+
+<ng-template #abilityLevelPopoverContent>
+    <div class="popoverClass">
+        {{ getAbilityLevelPopover() }}
+    </div>
+</ng-template>
+
+<ng-template #content let-modal>
+    <div class="modalClass">
+        <form>
+            <div class="modal-header">
+                <h4 class="modal-title" id="modal-basic-title">Use Item</h4>
+                <button type="button" aria-label="Close" (click)="modal.dismiss()">X</button>
+            </div>
+            <div *ngIf="usableItemsList.length > 0">
+                <div class="modal-body">
+                    <div class="itemContainer">
+                        <table>
+                            <tr *ngFor="let cells of itemsRows;">
+                                <td *ngFor="let c of cells;" class="cell">
+                                    <div (click)="selectItem(c)">
+                                        {{ c.name }} ({{ c.amount }})
+                                        <br />
+                                        {{ this.getItemShortDescription(c.name) }}
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div *ngIf="selectedItem !== undefined && selectedItem !== null" class="modal-footer">
+
+                    <span class="selectedItemSpan">
+                        <span>{{selectedItem.name}} - {{ this.getItemShortDescription(selectedItem.name) }} </span>
+
+                        <span class="rightAlign">
+                            <label for="deck-name">Amount: </label>
+                            <input id="deck-name" class="spaced" type="text" [(ngModel)]="selectedItemQuantity">
+                            <button type="button" class="spaced" (click)="useItem()">Use</button>
+                        </span>
+                    </span>
+                </div>
+            </div>
+            <div *ngIf="usableItemsList.length == 0">
+                No items available.
+            </div>
+        </form>
+    </div>
+</ng-template>
+
+<ng-template #equipment let-modal>
+    <div class="modalClass">
+        <form>
+            <div class="modal-header">
+                <h4 class="modal-title" id="modal-basic-title">Change Equipment</h4>
+                <button type="button" aria-label="Close" (click)="modal.dismiss()">X</button>
+            </div>
+            <div>
+                <div class="modal-body">
+                    <div class="equipmentContainer">
+                        <table>
+                            <tr *ngFor="let cells of equipmentRows;">
+                                <td *ngFor="let c of cells;" class="cell">
+                                    <div (click)="selectEquipment(c)">
+                                        {{ c.name }} ({{ c.amount }})
+                                        <br />
+                                        {{ this.getEquipmentShortDescription(c.name) }}
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div *ngIf="selectedEquipment !== undefined && selectedEquipment !== null" class="modal-footer">
+                    <span class="selectedEquipmentSpan">
+                        <span>{{selectedEquipment.name}} - {{ this.getEquipmentShortDescription(selectedEquipment.name)
+                            }} </span>
+
+                        <span class="rightAlign">
+                            <button type="button" class="spaced" (click)="equipItem()">Equip</button>
+                        </span>
+                    </span>
+                </div>
+            </div>
+            <div *ngIf="equipmentList.length == 0">
+                No equipment available.
+            </div>
+        </form>
+    </div>
+</ng-template>

@@ -1,0 +1,154 @@
+::ng-deep ngb-modal-backdrop {
+  z-index: 1050 !important;
+}
+
+.selectedBarnModal {    
+    height: 100%;
+    background-color: var(--background-secondary);    
+    color: var(--foreground-default);
+  }
+
+.infoText
+{
+    text-align: center;
+}
+
+.customLabel
+{    
+    font-weight: 700;
+    text-align: center;
+    width: 100%; /* needs to match the size of the main grid */
+}
+
+.progressBarContainer
+{
+    height: 2rem;
+}
+
+.progressBar
+{
+    height: 2rem;
+}
+
+.progressBar > div, .progress-bar, .progressBar div {
+  -webkit-transition: initial !important;
+  -o-transition: initial !important;
+  transition: initial !important;
+}
+
+.gridContainer
+{
+    height: 100%;
+    display: grid;
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+    justify-content: stretch;
+    grid-template-areas: 
+      "trainingName trainingStats trainingTimeToComplete";
+}
+
+.trainingName {
+    grid-area: trainingName;
+  }
+
+  .trainingStats {
+    grid-area: trainingStats;
+  }
+
+  .trainingTimeToComplete {
+    grid-area: trainingTimeToComplete;
+  }
+
+  .infoGridContainer
+{
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto;
+    justify-content: stretch;
+    grid-template-areas: 
+      "unassign info back";
+}
+
+.unassign {
+  grid-area: unassign;
+}
+
+.info {
+  grid-area: info;
+}
+
+.back {
+  grid-area: back;
+}
+
+.filterActive {
+  font-weight: bold;
+  color: var(--foreground-secondary);
+}
+
+.filterGridContainer
+{
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto;
+    justify-content: stretch;
+    grid-template-areas: 
+      "facilitySizeFilter resetFiltersHeader statFilter";
+}
+
+.facilitySizeFilter {
+  grid-area: facilitySizeFilter;
+}
+
+.resetFiltersHeader {
+  grid-area: resetFiltersHeader;
+}
+
+.statFilter {
+  grid-area: statFilter;
+}
+
+.changeTrainingHeader {
+  text-align: center;
+}
+
+.popoverClass {
+  white-space: pre-line;
+}
+
+.modalClass {
+  background-color: var(--background-secondary);
+  border-color: var(--background-tertiary);
+  color: var(--foreground-default);
+}
+
+.specializationType {
+  width: 25%;
+  text-decoration: underline solid transparent;
+  transition: text-decoration .3s ease;
+  display: inline-block;
+}
+
+.selectedSpecialization {
+  font-weight: bold;
+  text-decoration: underline solid Currentcolor;
+}
+
+.sizeButtonSpacing {
+  width: 4rem;
+}
+
+.sizeSpacing {
+  margin-left: 4rem;
+}
+
+.tutorialActive {
+  border: red 1px solid !important;
+}
+
+.activeTrainingOption {
+  font-weight: bold;
+  color: var(--foreground-secondary);  
+}

@@ -1,0 +1,34 @@
+.circuitRaceHeader {
+    text-align: center;
+}
+
+.popoverClass {
+  white-space: pre-line;
+}
+
+.circuitRaceGrid {
+    height: 100%;
+    display: grid;
+    text-align: center;
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+    justify-content: stretch;    
+    grid-template-areas: 
+      "circuitRace1 circuitRace2 circuitRace3";
+  }
+
+  .circuitRace1 {
+    grid-area: circuitRace1;    
+  }
+
+  .circuitRace2 {
+    grid-area: circuitRace2;    
+  }
+
+  .circuitRace3 {
+    grid-area: circuitRace3;    
+  }
+
+.tutorialActive {
+  border: red 1px solid !important;
+}

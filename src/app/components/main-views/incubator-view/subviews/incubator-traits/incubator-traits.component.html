@@ -1,0 +1,63 @@
+<div class="incubatorTraitsModal">
+    <div class="infoText">
+        <div class="infoGridContainer">            
+            <div class="info">                
+                <div *ngIf="this.selectedAnimal.name !== this.selectedAnimal.getAnimalType()">
+                    <span *ngIf="this.selectedAnimal.name !== this.selectedAnimal.getAnimalType()">{{
+                        this.selectedAnimal.name }}</span>
+                    <br />
+                    <span>{{ this.selectedAnimal.getAnimalType() }}</span>
+                </div>
+                <div *ngIf="this.selectedAnimal.name === this.selectedAnimal.getAnimalType()">
+                    <span>{{ this.selectedAnimal.getAnimalType() }}</span>
+                </div>      
+                <span>Current Trait: {{ this.selectedAnimal.getTraitName() }}</span>          
+                <hr />
+                <span class="activeTrait" *ngIf="this.existingTrait !== null && this.existingTrait !== undefined">{{
+                    this.existingTrait.traitName }} </span>
+                <span *ngIf="this.existingTrait === null || this.existingTrait === undefined">No Trait
+                    Assigned</span>
+            </div>
+            <div class="back" (click)="returnToAnimalView()">
+                <span>Back</span>
+            </div>
+        </div>
+        <hr />
+        <div *ngIf="this.existingTrait !== null && this.existingTrait !== undefined">
+            <br />
+            <p class="progressBarContainer">
+                <ngb-progressbar type="success" [value]="this.trainingProgressBarPercent" class="progressBar">
+                </ngb-progressbar>
+                <span class="customLabel">{{ this.trainingProgressBarPercent | number : '1.2-2' }}%</span>
+            </p>
+            <br />
+        </div>
+        <br />
+        <br />
+        <div class="filterGridContainer">
+            <div class="resetFiltersHeader clickableText">
+                <span (click)="resetFilters()">Reset Filters</span>
+            </div>
+            <div class="changeTrainingHeader">
+                <span>Choose New Trait</span>
+            </div>
+            <div class="statFilter clickableText">
+                <span (click)="toggleStatFilter('Speed')" id="speedFilter" [class.filterActive]="filterSpeed">SPD
+                </span>
+                <span (click)="toggleStatFilter('Acceleration')" id="accelerationFilter"
+                    [class.filterActive]="filterAcceleration">ACC </span>
+                <span (click)="toggleStatFilter('Endurance')" id="enduranceFilter"
+                    [class.filterActive]="filterEndurance">END </span>
+                <span (click)="toggleStatFilter('Power')" id="powerFilter" [class.filterActive]="filterPower">PWR
+                </span>
+                <span (click)="toggleStatFilter('Focus')" id="focusFilter" [class.filterActive]="filterFocus">FCS
+                </span>
+                <span (click)="toggleStatFilter('Adaptability')" id="adaptabilityFilter"
+                    [class.filterActive]="filterAdaptability">ADP</span>
+            </div>
+        </div>
+        <br />
+        <app-trait-list [availableTraits]="availableTraits"
+            (selectedTrait)="selectNewTrait($event)"></app-trait-list>
+    </div>
+</div>

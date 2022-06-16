@@ -1,0 +1,117 @@
+.decksView
+{
+    height: 100%;
+     
+    background-color: var(--background-secondary);
+    border-color: var(--background-tertiary);
+    color: var(--foreground-default);
+}
+
+.marginGrid {
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1% 1fr 1%;
+    grid-template-rows: auto;
+    justify-content: stretch;
+    grid-template-areas: 
+      ". view .";
+}
+
+.view {
+    grid-area: view;
+}
+
+.info {
+    text-align: center;
+}
+
+
+::ng-deep ngb-modal-backdrop {
+    z-index: 1050 !important;
+  }
+
+.modalClass {
+    background-color: var(--background-secondary);
+    border-color: var(--background-tertiary);
+    color: var(--foreground-default);
+}
+
+.raceType {
+    width: 20%;
+    text-decoration: underline solid transparent;
+    transition: text-decoration .3s ease;
+    display: inline-block;
+}
+
+.animalOption {
+    width: 33.33%;
+    display: inline-block;
+}
+
+.selectedAnimal {
+    font-weight: bold;
+}
+
+.selectedCourseType {
+    font-weight: bold;
+    text-decoration: underline solid Currentcolor;
+}
+
+.typeContainer {
+    width: 100%;
+}
+
+.gridContainer {
+    height: 100%;
+    display: grid;
+    grid-template-columns: 70% 15% 15%;
+    grid-template-rows: auto;
+    justify-content: stretch;
+    grid-template-areas: 
+      "deck . freeRace"
+      "deck edit primary";
+  }
+
+  .deck {
+      grid-area: deck;
+  }
+
+  .edit {
+    grid-area: edit;
+    text-align: center;
+}
+
+.editButton {
+    width: 80%;
+}
+
+.primary {
+    grid-area: primary;
+    text-align: center;
+}
+
+.primaryButton {
+    width: 80%;
+}
+
+.autoRunFreeRace {
+    grid-area: freeRace;
+    text-align: center;
+}
+
+.autoRunFreeRaceButton {
+    width: 80%;
+}
+
+.spaced {
+    margin-left: .5em;
+}
+
+.draggable {
+    cursor: move;
+    margin: 1em;
+}
+
+.raceOrder {
+    display: inline-block;
+}

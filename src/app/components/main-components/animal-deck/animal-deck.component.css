@@ -1,0 +1,20 @@
+.primaryText {
+    /*font-weight: bold;
+font-size-adjust: 0.75;*/
+
+    background-color: var(--background-tertiary);
+    border: 2px solid;
+    border-color: var(--foreground-default);
+    text-align: center;
+    color: var(--foreground-quaternary);
+    padding-left: .5rem;
+    padding-right: .5rem;
+}
+
+.defaultColor {
+    color: var(--foreground-default);
+}
+
+.rightSpaced {
+    margin-right: 1rem;
+}

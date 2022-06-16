@@ -1,0 +1,67 @@
+<div class="gridContainer">
+    <div class="headerArea">
+        <app-header></app-header>
+    </div>
+    <div class="mainArea">
+        <div id="BarnView" class="mainView" *ngIf="activeView === navigationEnum.barn">
+            <app-barn-view></app-barn-view>
+        </div>
+        <div id="RaceSelectionView" class="mainView" *ngIf="activeView === navigationEnum.raceselection">
+            <app-race-selection-view></app-race-selection-view>
+        </div>
+        <div id="AnimalsView" class="mainView" *ngIf="activeView === navigationEnum.animals">
+            <app-animals-view></app-animals-view>
+        </div>
+        <div id="DecksView" class="mainView" *ngIf="activeView === navigationEnum.decks">
+            <app-decks-view></app-decks-view>
+        </div>
+        <div id="ShopView" class="mainView" *ngIf="activeView === navigationEnum.shop">
+            <app-shop-view></app-shop-view>
+        </div>
+        <div id="IncubatorView" class="mainView" *ngIf="activeView === navigationEnum.incubator">
+            <app-incubator-view></app-incubator-view>
+        </div>
+        <div id="TalentsView" class="mainView" *ngIf="activeView === navigationEnum.talents">
+            <app-talents-view></app-talents-view>
+        </div>
+        <div id="FaqsView" class="mainView" *ngIf="activeView === navigationEnum.faqs">
+            <app-faq-view></app-faq-view>
+        </div>
+        <div id="StatsView" class="mainView" *ngIf="activeView === navigationEnum.stats">
+            <app-stats-view></app-stats-view>
+        </div>
+        <div id="ResourcesView" class="mainView" *ngIf="activeView === navigationEnum.resources">
+            <app-resources-view></app-resources-view>
+        </div>
+        <div id="SettingsView" class="mainView" *ngIf="activeView === navigationEnum.settings">
+            <app-settings-view></app-settings-view>
+        </div>
+    </div>
+    <div class="navArea">
+        <app-navigation (viewChanged)="changeView($event)"></app-navigation>
+    </div>
+    <div class="footerArea">
+        <app-footer></app-footer>
+    </div>
+</div>
+
+
+
+<ng-template #tutorialContent let-modal>
+    <div class="modalClass">
+        <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">Tutorial</h4>
+            <button type="button" aria-label="Close" (click)="closeTutorialModal()">X</button>
+        </div>
+        <div class="modal-body" [innerHTML]="tutorialText">            
+        </div>
+        <div class="modal-footer spaceBetween">            
+            <span>
+                <button type="button" class="spaced" (click)="skipTutorial()">Skip Tutorial</button>
+            </span>
+            <span>
+                <button type="button" class="spaced" (click)="continueTutorial()">Continue</button>
+            </span>        
+        </div>
+    </div>
+</ng-template>

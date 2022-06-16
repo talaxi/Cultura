@@ -1,0 +1,17 @@
+.incubatorView
+{
+    height: 100%;
+    text-align: center;
+
+    background-color: var(--background-secondary);
+    border-color: var(--background-tertiary);
+    color: var(--foreground-default);     
+}
+
+.info {
+    text-align: center;
+}
+
+.description {
+    margin: 1rem;
+}
