@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "testconfig": "ts-node ./test-config.index.ts",
-    "config": "ts-node ./config.index.ts",
+    "config": "ts-node ./condfig.index.ts",
     "start": "ng serve",
     "build": "npm run testconfig && ng build",
     "deploy": "npm run config && ng build --base-href=/Cultura/",
