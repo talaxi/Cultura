@@ -9,6 +9,7 @@ import { BarnSpecializationEnum } from './models/barn-specialization-enum.model'
 import { SpecializationService } from './services/specialization.service';
 import { ThemeService } from './theme/theme.service';
 import { RaceLogicService } from './services/race-logic/race-logic.service';
+import { DeploymentService } from './services/utility/deployment.service';
 declare var LZString: any;
 
 @Component({
@@ -24,7 +25,8 @@ export class AppComponent {
   racingSaveFrequency = 120; // in seconds
 
   constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private lookupService: LookupService,
-    private specializationService: SpecializationService, private themeService: ThemeService, private raceLogicService: RaceLogicService) {
+    private specializationService: SpecializationService, private themeService: ThemeService, private raceLogicService: RaceLogicService,
+    private deploymentService: DeploymentService) {
 
   }
 
