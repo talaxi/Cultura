@@ -1,6 +1,6 @@
 import {writeFile} from 'fs';
 
-import {name, version} from '../package.json';
+import {name, version} from './package.json';
 
 const targetPath = './src/environments/environment.ts';
 
