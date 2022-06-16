@@ -1,7 +1,7 @@
 <div class="navigation">
-    <p (click)="switchView(navigationEnum.barn)" class="clickableText" [ngClass]="{'active': selectedNavigation === navigationEnum.barn, 'tutorialActive' : tutorial6Active }">Deploy not working</p>
+    <p (click)="switchView(navigationEnum.barn)" class="clickableText" [ngClass]="{'active': selectedNavigation === navigationEnum.barn, 'tutorialActive' : tutorial6Active }">Barns</p>
     <hr />
-    <p (click)="switchView(navigationEnum.raceselection)" class="clickableText" [ngClass]="{'active': selectedNavigation === navigationEnum.raceselection, 'tutorialActive' : tutorial3Active }">Race</p>
+    <p (click)="switchView(navigationEnum.raceselection)" class="clickableText" [ngClass]="{'active': selectedNavigation === navigationEnum.raceselection, 'tutorialActive' : tutorial3Active }">Races</p>
     <hr />
     <p (click)="switchView(navigationEnum.animals)" class="clickableText" [ngClass]="selectedNavigation === navigationEnum.animals ? 'active' : ''">Animals</p>
     <hr />
@@ -13,10 +13,10 @@
         <p (click)="switchView(navigationEnum.incubator)" class="clickableText" [ngClass]="selectedNavigation === navigationEnum.incubator ? 'active' : ''">Incubator</p>
         <hr />
     </div>
-    <div *ngIf="talentsAvailable">
+    <!--<div *ngIf="talentsAvailable">
         <p (click)="switchView(navigationEnum.talents)" class="clickableText" [ngClass]="selectedNavigation === navigationEnum.talents ? 'active' : ''">Talents</p>
         <hr />
-    </div>    
+    </div>-->    
     <p (click)="switchView(navigationEnum.resources)" class="clickableText" [ngClass]="selectedNavigation === navigationEnum.resources ? 'active' : ''">Resources</p>
     <hr />
     <p (click)="switchView(navigationEnum.settings)" class="clickableText" [ngClass]="selectedNavigation === navigationEnum.settings ? 'active' : ''">Settings</p>
