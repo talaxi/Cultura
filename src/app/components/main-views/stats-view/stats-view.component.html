@@ -1,13 +1,28 @@
 <div class="statsView">
-    <h2 class="info">Stats</h2>
-    <br/>
-    <br/>
-    Total Races: {{ trackedStats.totalRaces }}
-    <br/>
-    Total Meters Covered: {{ trackedStats.totalMetersRaced.toFixed(0) }}
-    <br/>
-    Total Breeds: {{ trackedStats.totalBreeds }}
-    <br/>
-    Most Used Animal: {{ mostUsedAnimal }} ({{mostUsedAnimalCount}})
-    <br/>
+    <div class="marginGrid">
+        <div class="view">
+            <h2 class="info">Stats</h2>
+            <br />
+            <br />
+            Total Races: {{ trackedStats.totalRaces | number:'1.0':'en-US' }}
+            <br />
+            Total Meters Covered: {{ trackedStats.totalMetersRaced.toFixed(0) | number:'1.0':'en-US' }}
+            <br />
+            Total Breeds: {{ trackedStats.totalBreeds | number:'1.0':'en-US' }}
+            <br />
+            Most Used Animal: {{ mostUsedAnimal }} ({{mostUsedAnimalCount | number:'1.0':'en-US'}})
+            <br />
+            Highest Max Speed: {{ trackedStats.highestMaxSpeed }}
+            <br />
+            Highest Acceleration Rate: {{ trackedStats.highestAccelerationRate }}
+            <br />
+            Highest Stamina: {{ trackedStats.highestStamina }}
+            <br />
+            Highest Power Efficiency: {{ trackedStats.highestPowerEfficiency }}
+            <br />
+            Highest Focus Distance: {{ trackedStats.highestFocusDistance }}
+            <br />
+            Highest Adaptability Distance: {{ trackedStats.highestAdaptabilityDistance }}
+        </div>
+    </div>
 </div>

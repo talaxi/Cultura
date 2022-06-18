@@ -1,9 +1,41 @@
 .faqView
 {
     height: 100%;
-    text-align: center;
 
     background-color: var(--background-secondary);
     border-color: var(--background-tertiary);
     color: var(--foreground-default);     
+}
+
+.marginGrid {
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1% 1fr 1%;
+    grid-template-rows: auto;
+    justify-content: stretch;
+    grid-template-areas: 
+      ". view .";
+}
+
+.view {
+    grid-area: view;
+}
+
+.info {
+    text-align: center;
+}
+
+.faqQuestion {
+    display: inline-block;
+    width: 95%;
+    font-weight: bold;
+}
+
+.hide {    
+    display: none;
+}
+
+.expanderMargin {
+    display: inline-block;
+    width: 5%;
 }

@@ -37,3 +37,7 @@
     /*background-color: var(--background-tertiary);
     color: var(--foreground-quaternary);*/
   }
+
+  .versionMargin {
+    margin-left: .5rem;
+  }

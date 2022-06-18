@@ -42,7 +42,6 @@ export class AppComponent {
     }
 
     //PURELY for testing, should be false when deployed
-    //TODO: set this up so that it won't overwrite a user's save if you forget to turn this off
     if (environment.devEnvironment)
       this.deploymentService.setDevMode();
     else

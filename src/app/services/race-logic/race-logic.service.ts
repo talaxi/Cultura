@@ -457,6 +457,9 @@ export class RaceLogicService {
           velocity += modifiedAccelerationMs / this.frameModifier;
         }
 
+        if (velocity < 0)
+          velocity = 0;
+
         var modifiedMaxSpeed = racingAnimal.currentStats.maxSpeedMs;
         modifiedMaxSpeed *= item.terrain.maxSpeedModifier;
         modifiedMaxSpeed *= statLossFromExhaustion;
@@ -886,7 +889,7 @@ export class RaceLogicService {
   }
 
   doesRacerBurst(animal: Animal, currentPath: RacePath, timeToComplete: number, raceLength: number, currentDistanceInRace: number, modifiedAdaptabilityMs: number, modifiedFocusMs: number): boolean {
-    var distanceModifier = 1000 / this.selectedRace.length; //TODO: should this be leg or total distance?
+    var distanceModifier = 1000 / this.selectedRace.length;
     var modifiedBurstChance = animal.currentStats.calculateBurstChance(modifiedFocusMs, modifiedAdaptabilityMs) * distanceModifier;
 
     if (currentPath.checkedForBurst)

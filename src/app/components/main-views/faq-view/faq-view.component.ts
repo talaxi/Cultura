@@ -12,4 +12,11 @@ export class FaqViewComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  expandAnswer(id: string) {
+    var element = document.getElementById(id);
+    if (element !== null && element !== undefined)
+    {
+      element.classList.toggle("hide");
+    } 
+  }
 }

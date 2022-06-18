@@ -400,7 +400,7 @@ export class GlobalService {
 
     var gecko = new ShopItem();
     gecko.name = "Gecko";
-    gecko.shortDescription = "The Gecko is a Mountain climbing animal that can increase speed based on focus and can increase other racers' adaptability.";
+    gecko.shortDescription = "The Gecko is a Mountain climbing animal that can increase speed based on focus and can increase other racers' velocity.";
     gecko.purchasePrice.push(new ResourceValue("Coins", mountainAnimalPrice));
     gecko.canHaveMultiples = false;
     gecko.type = ShopItemTypeEnum.Animal;
@@ -844,7 +844,7 @@ export class GlobalService {
         var newBarn = new Barn();
         newBarn.barnNumber = i;
         newBarn.isLocked = true;
-        newBarn.purchasePrice = 500 * i;
+        newBarn.purchasePrice = 500 * (i-1);
         newBarn.facilityUpgradePrice = facilityUpgradePrice;
         newBarn.size = FacilitySizeEnum.Small;
 
@@ -2287,6 +2287,8 @@ export class GlobalService {
     animal.currentStats.adaptabilityMs = animal.currentStats.calculateTrueAdaptability(totalAdaptabilityModifier * breedLevelStatModifierValue * traitAdaptabilityModifier * animal.incubatorStatUpgrades.adaptabilityModifier, diminishingReturnsThreshold);
     animal.currentStats.burstChance = animal.currentStats.calculateBurstChance();
     animal.currentStats.burstDistance = animal.currentStats.calculateBurstDistance();
+
+    this.updateTrackedMaxStats(animal);
   }
 
   getTraitModifier(animal: Animal, stat: AnimalStatEnum) {
@@ -2394,6 +2396,8 @@ export class GlobalService {
       if (animal.ability.abilityLevel % 10 === 0)
         animal.ability.abilityMaxXp += 5;
     }
+
+    console.log(animal.name + " " + animal.ability.name + " " + animal.ability.abilityLevel + " " + animal.ability.abilityXp);
   }
 
   InitializeResources() {
@@ -2522,6 +2526,66 @@ export class GlobalService {
     return description;
   }
 
+  updateTrackedMaxStats(animal: Animal)
+  {
+    if (!animal.isAvailable)
+      return;
+
+    if (this.globalVar.trackedStats.highestMaxSpeed === "")
+      this.globalVar.trackedStats.highestMaxSpeed = animal.currentStats.maxSpeedMs.toLocaleString("en-US") + " m/s (" + animal.name + ")";
+    else
+    {
+      var highestMaxSpeedValue = parseFloat(this.globalVar.trackedStats.highestMaxSpeed.substring(0, this.globalVar.trackedStats.highestMaxSpeed.indexOf(' ')));
+      if (animal.currentStats.maxSpeedMs > highestMaxSpeedValue)
+        this.globalVar.trackedStats.highestMaxSpeed = animal.currentStats.maxSpeedMs.toLocaleString("en-US") + " m/s (" + animal.name + ")";
+    }
+
+    if (this.globalVar.trackedStats.highestAccelerationRate === "")
+      this.globalVar.trackedStats.highestAccelerationRate = animal.currentStats.accelerationMs.toLocaleString("en-US") + " m/s (" + animal.name + ")";
+    else
+    {
+      var highestAccelerationRateValue = parseFloat(this.globalVar.trackedStats.highestAccelerationRate.substring(0, this.globalVar.trackedStats.highestAccelerationRate.indexOf(' ')));
+      if (animal.currentStats.accelerationMs > highestAccelerationRateValue)
+        this.globalVar.trackedStats.highestAccelerationRate = animal.currentStats.accelerationMs.toLocaleString("en-US") + " m/s (" + animal.name + ")";
+    }
+
+    if (this.globalVar.trackedStats.highestStamina === "")
+      this.globalVar.trackedStats.highestStamina = animal.currentStats.stamina.toLocaleString("en-US") + " (" + animal.name + ")";
+    else
+    {
+      var highestStaminaValue = parseFloat(this.globalVar.trackedStats.highestStamina.substring(0, this.globalVar.trackedStats.highestStamina.indexOf(' ')));
+      if (animal.currentStats.stamina > highestStaminaValue)
+        this.globalVar.trackedStats.highestStamina = animal.currentStats.stamina.toLocaleString("en-US") + " (" + animal.name + ")";
+    }
+
+    if (this.globalVar.trackedStats.highestPowerEfficiency === "")
+      this.globalVar.trackedStats.highestPowerEfficiency = animal.currentStats.powerMs.toLocaleString("en-US") + "% (" + animal.name + ")";
+    else
+    {
+      var highestPowerEfficiencyValue = parseFloat(this.globalVar.trackedStats.highestPowerEfficiency.substring(0, this.globalVar.trackedStats.highestPowerEfficiency.indexOf(' ')));
+      if (animal.currentStats.powerMs > highestPowerEfficiencyValue)
+        this.globalVar.trackedStats.highestPowerEfficiency = animal.currentStats.powerMs.toLocaleString("en-US") + "% (" + animal.name + ")";
+    }
+
+    if (this.globalVar.trackedStats.highestFocusDistance === "")
+      this.globalVar.trackedStats.highestFocusDistance = animal.currentStats.focusMs.toLocaleString("en-US") + " m (" + animal.name + ")";
+    else
+    {
+      var highestFocusDistanceValue = parseFloat(this.globalVar.trackedStats.highestFocusDistance.substring(0, this.globalVar.trackedStats.highestFocusDistance.indexOf(' ')));
+      if (animal.currentStats.focusMs > highestFocusDistanceValue)
+        this.globalVar.trackedStats.highestFocusDistance = animal.currentStats.focusMs.toLocaleString("en-US") + " m (" + animal.name + ")";
+    }
+
+    if (this.globalVar.trackedStats.highestAdaptabilityDistance === "")
+      this.globalVar.trackedStats.highestAdaptabilityDistance = animal.currentStats.adaptabilityMs.toLocaleString("en-US") + " m (" + animal.name + ")";
+    else
+    {
+      var highestAdaptabilityDistanceValue = parseFloat(this.globalVar.trackedStats.highestAdaptabilityDistance.substring(0, this.globalVar.trackedStats.highestAdaptabilityDistance.indexOf(' ')));
+      if (animal.currentStats.focusMs > highestAdaptabilityDistanceValue)
+        this.globalVar.trackedStats.highestAdaptabilityDistance = animal.currentStats.adaptabilityMs.toLocaleString("en-US") + " m (" + animal.name + ")";
+    }
+  }
+
   devModeInitialize(circuitRankNumeric: number) {
     var Coins = this.globalVar.resources.find(item => item.name === "Coins");
     if (Coins !== undefined)
@@ -2560,9 +2624,9 @@ export class GlobalService {
       horse.currentStats.acceleration = 200;
       horse.currentStats.endurance = 200;
       horse.currentStats.power = 200;
-      horse.currentStats.focus = 200;
-      horse.currentStats.adaptability = 200;
-      horse.breedLevel = 70;
+      horse.currentStats.focus = 1;
+      horse.currentStats.adaptability = 1;
+      horse.breedLevel = 7;
       this.calculateAnimalRacingStats(horse);
 
       //horse.breedGaugeMax = 5;

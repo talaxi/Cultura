@@ -19,7 +19,7 @@
             <div class="info">
                 <span> {{ this.barnName }}</span>
                 <br />
-                <div *ngIf="this.associatedAnimal.name !== this.associatedAnimal.getAnimalType()"
+                <div *ngIf="this.associatedAnimal.name !== this.associatedAnimal.getAnimalType()" class="clickableText"
                     (click)="goToAnimal()">
                     <span *ngIf="this.associatedAnimal.name !== this.associatedAnimal.getAnimalType()">{{
                         this.associatedAnimal.name }}</span>
@@ -27,7 +27,7 @@
                     <span>{{ this.associatedAnimal.getAnimalType() }}</span>
                 </div>
                 <div *ngIf="this.associatedAnimal.name === this.associatedAnimal.getAnimalType()"
-                    (click)="goToAnimal()">
+                    (click)="goToAnimal()" class="clickableText">
                     <span>{{ this.associatedAnimal.getAnimalType() }}</span>
                 </div>
                 <div>

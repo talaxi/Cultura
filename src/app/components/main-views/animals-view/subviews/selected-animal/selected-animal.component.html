@@ -67,7 +67,7 @@
                         <span class="keyword">{{ selectedAnimal.getRaceCourseType() }}</span>
                         <br />
                     </div>
-                    <span (click)="goToAssignedBarn()">{{ this.assignedBarnName }}</span>
+                    <span class="clickableText" (click)="goToAssignedBarn()">{{ this.assignedBarnName }}</span>
                     <br />
                     <span ngbPopover="{{ breedLevelPopover }}" triggers="mouseenter:mouseleave"
                         popoverClass="popoverClass">Breed Level {{selectedAnimal.breedLevel}}</span>

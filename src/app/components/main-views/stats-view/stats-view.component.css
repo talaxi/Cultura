@@ -10,3 +10,17 @@
 .info {    
     text-align: center;
 }
+
+.marginGrid {
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1% 1fr 1%;
+    grid-template-rows: auto;
+    justify-content: stretch;
+    grid-template-areas: 
+      ". view .";
+}
+
+.view {
+    grid-area: view;
+}
