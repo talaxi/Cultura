@@ -1856,10 +1856,6 @@ export class GlobalService {
     if (i == 1) {
       availableCourses.push(RaceCourseTypeEnum.Flatland);
       availableCourses.push(RaceCourseTypeEnum.Mountain);
-    }
-    else if (i < 15) {
-      availableCourses.push(RaceCourseTypeEnum.Flatland);
-      availableCourses.push(RaceCourseTypeEnum.Mountain);
       availableCourses.push(RaceCourseTypeEnum.Ocean);
     }
     else if (i < 20) {
@@ -1876,7 +1872,7 @@ export class GlobalService {
       availableCourses.push(RaceCourseTypeEnum.Volcanic);
     }
 
-    var randomizedCourseList = this.getCourseTypeInRandomOrderSeeded(availableCourses, 'duoseed' + duoRank + i);
+    var randomizedCourseList = this.getCourseTypeInRandomOrderSeeded(availableCourses, 'duooseed' + duoRank + i);
 
     var randomFactor = this.utilityService.getRandomSeededNumber(minRandomFactor, maxRandomFactor);
     var leg1 = new RaceLeg();
@@ -2624,9 +2620,9 @@ export class GlobalService {
       horse.currentStats.acceleration = 200;
       horse.currentStats.endurance = 200;
       horse.currentStats.power = 200;
-      horse.currentStats.focus = 1;
-      horse.currentStats.adaptability = 1;
-      horse.breedLevel = 7;
+      horse.currentStats.focus = 100;
+      horse.currentStats.adaptability = 100;
+      horse.breedLevel = 27;
       this.calculateAnimalRacingStats(horse);
 
       //horse.breedGaugeMax = 5;

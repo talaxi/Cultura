@@ -55,7 +55,7 @@ export class AppComponent {
 
     if (devMode) {
       this.globalService.globalVar.tutorialCompleted = true;
-      this.globalService.devModeInitialize(3);
+      this.globalService.devModeInitialize(13);
     }
 
     var subscription = this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {
@@ -165,6 +165,7 @@ export class AppComponent {
 
       while (this.globalService.globalVar.freeRaceTimePeriodCounter >= freeRaceTimePeriod &&
         autofreeRaceMaxIdleTimePeriod > 0) {
+          console.log("Free Race Time Period Counter: " + this.globalService.globalVar.freeRaceTimePeriodCounter);
         if (this.globalService.globalVar.freeRaceTimePeriodCounter > autofreeRaceMaxIdleTimePeriod)
           this.globalService.globalVar.freeRaceTimePeriodCounter = autofreeRaceMaxIdleTimePeriod;
 
@@ -220,7 +221,7 @@ export class AppComponent {
       }
 
       var raceResult = this.raceLogicService.runRace(freeRace);
-      //console.log("Ran free race");
+      console.log("Ran free race");
     }
   }
 
