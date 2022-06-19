@@ -14,6 +14,7 @@ export class GameLoopService {
   constructor(private globalService: GlobalService, private lookupService: LookupService) { }
 
   public Update(): void {
+    //console.log("Last timestamp: " + this.globalService.globalVar.lastTimeStamp);
     var dateNow = Date.now();    
     const deltaTime = (dateNow - this.globalService.globalVar.lastTimeStamp) / 1000;
     //console.log(deltaTime);
@@ -25,8 +26,9 @@ export class GameLoopService {
     //if (performanceNow - this.lastPerformanceNow > 20)
       //console.log(`Call to doSomething took ${performanceNow - this.lastPerformanceNow} milliseconds.`);
 
-    this.gameUpdateEvent.emit(deltaTime);
     this.globalService.globalVar.lastTimeStamp = dateNow;
+    this.gameUpdateEvent.emit(deltaTime);
+    //console.log("Last timestamp updated: " + this.globalService.globalVar.lastTimeStamp);
     this.lastPerformanceNow = performanceNow;
     
     window.requestAnimationFrame(() => this.Update());    

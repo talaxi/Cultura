@@ -1853,12 +1853,12 @@ export class GlobalService {
     var raceLegs: RaceLeg[] = [];
 
     var availableCourses: RaceCourseTypeEnum[] = [];
-    if (i == 1) {
+    if (i <= 10) {
       availableCourses.push(RaceCourseTypeEnum.Flatland);
       availableCourses.push(RaceCourseTypeEnum.Mountain);
       availableCourses.push(RaceCourseTypeEnum.Ocean);
     }
-    else if (i < 20) {
+    else if (i <= 20) {
       availableCourses.push(RaceCourseTypeEnum.Flatland);
       availableCourses.push(RaceCourseTypeEnum.Mountain);
       availableCourses.push(RaceCourseTypeEnum.Ocean);

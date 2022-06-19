@@ -59,7 +59,8 @@ export class AppComponent {
     }
 
     var subscription = this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {
-      //console.log("GameCheckup: " + deltaTime);
+      if (deltaTime > 1)
+        console.log("GameCheckup: " + deltaTime);
       this.gameCheckup(deltaTime);
       this.saveTime += deltaTime;
 
@@ -165,7 +166,7 @@ export class AppComponent {
 
       while (this.globalService.globalVar.freeRaceTimePeriodCounter >= freeRaceTimePeriod &&
         autofreeRaceMaxIdleTimePeriod > 0) {
-          console.log("Free Race Time Period Counter: " + this.globalService.globalVar.freeRaceTimePeriodCounter);
+          //console.log("Free Race Time Period Counter: " + this.globalService.globalVar.freeRaceTimePeriodCounter);
         if (this.globalService.globalVar.freeRaceTimePeriodCounter > autofreeRaceMaxIdleTimePeriod)
           this.globalService.globalVar.freeRaceTimePeriodCounter = autofreeRaceMaxIdleTimePeriod;
 
@@ -221,15 +222,17 @@ export class AppComponent {
       }
 
       var raceResult = this.raceLogicService.runRace(freeRace);
-      console.log("Ran free race");
+      //console.log("Ran free race");
     }
   }
 
   public saveGame() {
+    console.log("Saving game");
     if (typeof Worker !== 'undefined') {
       // Create a new
       const worker = new Worker(new URL('./app.worker', import.meta.url));
       worker.onmessage = ({ data }) => {
+        console.log("Setting game data");
         localStorage.setItem("gameData", data);
         worker.terminate();
       };
