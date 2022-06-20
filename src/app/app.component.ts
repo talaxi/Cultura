@@ -59,8 +59,8 @@ export class AppComponent {
     }
 
     var subscription = this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {
-      if (deltaTime > 1)
-        console.log("GameCheckup: " + deltaTime);
+      //if (deltaTime > 1)
+      //  console.log("GameCheckup: " + deltaTime);
       this.gameCheckup(deltaTime);
       this.saveTime += deltaTime;
 
@@ -227,12 +227,10 @@ export class AppComponent {
   }
 
   public saveGame() {
-    console.log("Saving game");
     if (typeof Worker !== 'undefined') {
       // Create a new
       const worker = new Worker(new URL('./app.worker', import.meta.url));
       worker.onmessage = ({ data }) => {
-        console.log("Setting game data");
         localStorage.setItem("gameData", data);
         worker.terminate();
       };

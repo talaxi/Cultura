@@ -2236,6 +2236,7 @@ export class GlobalService {
     var totalFocusModifier = animal.currentStats.defaultFocusModifier;
     var totalAdaptabilityModifier = animal.currentStats.defaultAdaptabilityModifier;
     var breedLevelStatModifierValue = .02;
+    
     var animalTypeName = animal.getAnimalType().toLowerCase();
 
     //get modifiers, replace original variables if they are found
@@ -2393,7 +2394,13 @@ export class GlobalService {
         animal.ability.abilityMaxXp += 5;
     }
 
-    console.log(animal.name + " " + animal.ability.name + " " + animal.ability.abilityLevel + " " + animal.ability.abilityXp);
+    var availableAbilityItem = animal.availableAbilities.find(item => item.name === animal.ability.name);
+    if (availableAbilityItem !== null && availableAbilityItem !== undefined)
+    {
+      availableAbilityItem.abilityXp = animal.ability.abilityXp;
+      availableAbilityItem.abilityLevel = animal.ability.abilityLevel;
+      availableAbilityItem.abilityMaxXp = animal.ability.abilityMaxXp;
+    }
   }
 
   InitializeResources() {

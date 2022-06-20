@@ -197,7 +197,7 @@ export class SpecializationService {
     }
 
     while (assignedBarn.barnUpgrades.currentDeltaTime >= timeToCollect) {
-      console.log("Success Delta Time: " + assignedBarn.barnUpgrades.currentDeltaTime);
+      //console.log("Success Delta Time: " + assignedBarn.barnUpgrades.currentDeltaTime);
       assignedBarn.barnUpgrades.currentDeltaTime -= timeToCollect;
 
       amountEarned *= assignedBarn.barnUpgrades.specializationLevel;
@@ -206,7 +206,7 @@ export class SpecializationService {
         resource.amount += amountEarned;
 
       collectedAmount += amountEarned;     
-      console.log("Attraction: " + amountEarned); 
+      //console.log("Attraction: " + amountEarned); 
     }    
   }
 }
