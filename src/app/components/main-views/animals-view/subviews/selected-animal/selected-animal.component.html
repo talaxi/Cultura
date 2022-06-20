@@ -196,7 +196,8 @@
                                 {{selectedAbility.abilityMaxXp}} XP</span> <span
                                 *ngIf="abilityLevelMaxedOut">MAX</span></span>
                         <br />
-                        {{ longDescription }}
+                        <span [innerHTML] = "longDescription"></span>
+                        <!--{{ longDescription }}-->
                     </p>
                 </div>
             </div>

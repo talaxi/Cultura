@@ -576,7 +576,7 @@ export class DrawRaceComponent implements OnInit {
 
       var inverseMoneyMarkPace = (1 - defaultMoneyMarkPace) + 1;
 
-      var moneyMarkDistanceScaled = (averageDistance * this.canvasXDistanceScale * xRaceModeModifier) * inverseMoneyMarkPace;
+      var moneyMarkDistanceScaled = averageDistanceScaled * inverseMoneyMarkPace;
       this.drawRacer(context, moneyMarkDistanceScaled, "gold");
     }
     this.drawBreakpoints(context, xRaceModeModifier);

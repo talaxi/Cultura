@@ -1,4 +1,4 @@
-<div class="item" ngbPopover="{{ longDescription }}"
+<div class="item" *ngIf="longDescription !== '' && longDescription !== undefined && longDescription !== null" [ngbPopover]="longDescriptionContent"
 triggers="mouseenter:mouseleave" popoverClass="popoverClass">
     {{ selectedItem.name }} <em *ngIf="selectedItem.totalShopQuantity > 1">({{ selectedItem.totalShopQuantity - selectedItem.amountPurchased }} left)</em>
     <br />
@@ -10,3 +10,21 @@ triggers="mouseenter:mouseleave" popoverClass="popoverClass">
     <br/>
     <button (click)="BuyItem()" [disabled]="!canAffordItem">Buy</button>
 </div>
+
+<div class="item" *ngIf="longDescription === '' || longDescription === undefined || longDescription === null">
+    {{ selectedItem.name }} <em *ngIf="selectedItem.totalShopQuantity > 1">({{ selectedItem.totalShopQuantity - selectedItem.amountPurchased }} left)</em>
+    <br />
+    <br />
+    {{ shortDescription }}
+    <br />
+    <br />
+    {{ purchaseResourcesRequired }}
+    <br/>
+    <button (click)="BuyItem()" [disabled]="!canAffordItem">Buy</button>
+</div>
+
+<ng-template #longDescriptionContent>
+    <div class="popoverClass">
+        <span [innerHTML]="longDescription"></span>
+    </div>
+</ng-template>

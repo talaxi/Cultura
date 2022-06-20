@@ -1033,6 +1033,7 @@ export class RaceLogicService {
 
     var totalRaceTime = this.timeToComplete * this.frameModifier;
 
+    console.log("Frames Passed: " + result.totalFramesPassed + " Race Time: " + totalRaceTime + " MM Value: " + moneyMarkPace.value);
     if (result.totalFramesPassed <= totalRaceTime * moneyMarkPace.value) {
       beatMoneyMark = true;
     }
