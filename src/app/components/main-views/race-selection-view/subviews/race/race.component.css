@@ -1,6 +1,22 @@
+
+/*.marginGrid {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1% 1fr 1%;
+  grid-template-rows: auto;
+  justify-content: stretch;
+  grid-template-areas: 
+    ". view .";
+}
+
+.view {
+  grid-area: view;
+}*/
+
 #raceInfo {
   height: 100%;
-
+  margin-left: .5rem;
+  margin-right: .5rem;
   background-color: var(--background-secondary);
   border-color: var(--background-tertiary);
   color: var(--foreground-default);
@@ -92,4 +108,26 @@ td {
 .buttonSpacing {
   text-align: right;
   padding: 1rem;
+}
+
+.results, .back {
+  margin-top: 1rem;
+}
+
+@media (max-width: 800px) {
+  .updates {    
+    grid-template-columns: auto;
+    grid-template-rows: 50% 50%;
+    grid-template-areas:
+    "drawRace"
+    "raceUpdates";
+  }
+
+  .headerInfo {
+    width: 100%;
+  }
+
+  .raceUpdates {    
+      text-align: center;  
+  }
 }

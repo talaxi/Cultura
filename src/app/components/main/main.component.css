@@ -24,6 +24,10 @@
         "main  main"
         "footer footer";
     }
+
+    .navArea {
+      display: none;
+    }
   }
 
   .mainArea {

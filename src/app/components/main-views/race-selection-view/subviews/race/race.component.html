@@ -2,7 +2,8 @@
     <div class="bothDisplayValues" *ngIf="displayVisualRace && displayTextUpdates">
         <div class="headerInfo">
             <div><button (click)="skipRaceAnimation()">Skip</button></div>
-            <div>Velocity: {{ velocityAtCurrentFrame }} / {{ maxSpeedAtCurrentFrame }}m/s <span *ngIf="racerEffectAtCurrentFrame === burstEffect">BURST!</span></div>
+            <div>Velocity: {{ velocityAtCurrentFrame }} / {{ maxSpeedAtCurrentFrame }}m/s <span
+                    *ngIf="racerEffectAtCurrentFrame === burstEffect">BURST!</span></div>
             <div>Stamina: {{ staminaAtCurrentFrame }}%</div>
             <div><button (click)="pauseRaceAnimation()">Pause</button></div>
         </div>
@@ -12,7 +13,8 @@
                     [pause]="pauseRace.asObservable()">
                 </app-draw-race>
             </div>
-            <div class="raceUpdates" #scrollMe [scrollTop]="scrollMe.scrollHeight" [innerHTML]="incrementalRaceUpdates.trim()">
+            <div class="raceUpdates" #scrollMe [scrollTop]="scrollMe.scrollHeight"
+                [innerHTML]="incrementalRaceUpdates.trim()">
             </div>
         </div>
     </div>
@@ -22,7 +24,8 @@
             <div><button (click)="skipRaceAnimation()">Skip</button></div>
             <div><button (click)="pauseRaceAnimation()">Pause</button></div>
         </div>
-        <div class="raceUpdates onlyText" #scrollMe [scrollTop]="scrollMe.scrollHeight" [innerHTML]="incrementalRaceUpdates.trim()">
+        <div class="raceUpdates onlyText" #scrollMe [scrollTop]="scrollMe.scrollHeight"
+            [innerHTML]="incrementalRaceUpdates.trim()">
         </div>
     </div>
     <div class="oneDisplayValue" *ngIf="displayVisualRace && !displayTextUpdates">
@@ -38,9 +41,7 @@
             </app-draw-race>
         </div>
     </div>
-    <br />
     <div class="results" *ngIf="displayResults">
-        <br />
         <span class="s4Heading">Rewards</span>
         <div class="rewards">
             <table>
@@ -50,7 +51,6 @@
             </table>
         </div>
     </div>
-    <br />
     <div class="back">
         <button (click)="goToRaceSelection()">Back</button>
     </div>
