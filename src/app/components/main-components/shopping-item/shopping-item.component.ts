@@ -49,8 +49,6 @@ export class ShoppingItemComponent implements OnInit {
     {            
       this.purchaseResourcesRequired = this.purchaseResourcesRequired.substring(0, this.purchaseResourcesRequired.length - 2);
     }
-
-    console.log(this.longDescription);
   }
 
   BuyItem(): void {

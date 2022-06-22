@@ -29,7 +29,7 @@ export class HeaderComponent implements OnInit {
     });
   }
 
-  changeView(newView: NavigationEnum) {
+  changeView(newView: NavigationEnum) {    
     this.componentCommunicationService.setNewView(newView);
   }
 }

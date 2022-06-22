@@ -50,7 +50,7 @@ export class TrainingOption {
         var statGainDescription = "";
 
         if (this.affectedStatRatios.topSpeed > 0)
-            statGainDescription += "+" + this.statGain * this.affectedStatRatios.topSpeed + " Top Speed\n";
+            statGainDescription += "+" + this.statGain * this.affectedStatRatios.topSpeed + " Speed\n";
         if (this.affectedStatRatios.acceleration > 0)
             statGainDescription += "+" + this.statGain * this.affectedStatRatios.acceleration + " Acceleration\n";
         if (this.affectedStatRatios.endurance > 0)

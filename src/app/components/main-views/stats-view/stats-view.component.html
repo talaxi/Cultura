@@ -10,19 +10,19 @@
             <br />
             Total Breeds: {{ trackedStats.totalBreeds | number:'1.0':'en-US' }}
             <br />
-            Most Used Animal: {{ mostUsedAnimal }} ({{mostUsedAnimalCount | number:'1.0':'en-US'}})
+            <span class="coloredText" [ngClass]="getColorClass(mostUsedAnimal)">Most Used Animal: {{ mostUsedAnimal }} ({{mostUsedAnimalCount | number:'1.0':'en-US'}})</span>
             <br />
-            Highest Max Speed: {{ trackedStats.highestMaxSpeed }}
+            <span class="coloredText" [ngClass]="getColorClass(trackedStats.highestMaxSpeed)">Highest Max Speed: {{ trackedStats.highestMaxSpeed }}</span>
             <br />
-            Highest Acceleration Rate: {{ trackedStats.highestAccelerationRate }}
+            <span class="coloredText" [ngClass]="getColorClass(trackedStats.highestAccelerationRate)">Highest Acceleration Rate: {{ trackedStats.highestAccelerationRate }}</span>
             <br />
-            Highest Stamina: {{ trackedStats.highestStamina }}
+            <span class="coloredText" [ngClass]="getColorClass(trackedStats.highestStamina)">Highest Stamina: {{ trackedStats.highestStamina }}</span>
             <br />
-            Highest Power Efficiency: {{ trackedStats.highestPowerEfficiency }}
+            <span class="coloredText" [ngClass]="getColorClass(trackedStats.highestPowerEfficiency)">Highest Power Efficiency: {{ trackedStats.highestPowerEfficiency }}</span>
             <br />
-            Highest Focus Distance: {{ trackedStats.highestFocusDistance }}
+            <span class="coloredText" [ngClass]="getColorClass(trackedStats.highestFocusDistance)">Highest Focus Distance: {{ trackedStats.highestFocusDistance }}</span>
             <br />
-            Highest Adaptability Distance: {{ trackedStats.highestAdaptabilityDistance }}
+            <span class="coloredText" [ngClass]="getColorClass(trackedStats.highestAdaptabilityDistance)">Highest Adaptability Distance: {{ trackedStats.highestAdaptabilityDistance }}</span>
         </div>
     </div>
 </div>

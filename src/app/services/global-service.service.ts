@@ -462,7 +462,7 @@ export class GlobalService {
 
     var banana = new ShopItem();
     banana.name = "Bananas";
-    banana.shortDescription = "+1 Top Speed to a single animal";
+    banana.shortDescription = "+1 Speed to a single animal";
     banana.purchasePrice.push(new ResourceValue("Coins", baseFoodPrice));
     banana.canHaveMultiples = true;
     banana.type = ShopItemTypeEnum.Food;
@@ -647,8 +647,8 @@ export class GlobalService {
 
     var incubatorUpgrade = new ShopItem();
     incubatorUpgrade.name = "Incubator Upgrade";
-    incubatorUpgrade.purchasePrice.push(this.getCoinsResourceValue(10000));
-    incubatorUpgrade.basePurchasePrice.push(this.getCoinsResourceValue(10000));
+    incubatorUpgrade.purchasePrice.push(this.getCoinsResourceValue(5000));
+    incubatorUpgrade.basePurchasePrice.push(this.getCoinsResourceValue(5000));
     incubatorUpgrade.canHaveMultiples = false;
     incubatorUpgrade.isAvailable = false;
     incubatorUpgrade.type = ShopItemTypeEnum.Specialty;
@@ -844,7 +844,7 @@ export class GlobalService {
         var newBarn = new Barn();
         newBarn.barnNumber = i;
         newBarn.isLocked = true;
-        newBarn.purchasePrice = 500 * (i-1);
+        newBarn.purchasePrice = 500 * (i - 1);
         newBarn.facilityUpgradePrice = facilityUpgradePrice;
         newBarn.size = FacilitySizeEnum.Small;
 
@@ -1128,7 +1128,7 @@ export class GlobalService {
       var amount = 20;
       var resource = this.globalVar.resources.find(item => item.name === "Mangoes");
       if (resource === null || resource === undefined)
-        this.globalVar.resources.push(new ResourceValue("Mangoes", amount));
+        this.globalVar.resources.push(new ResourceValue("Mangoes", amount, ShopItemTypeEnum.Food));
       else
         resource.amount += amount;
 
@@ -1271,7 +1271,7 @@ export class GlobalService {
       var amount = 100;
       var resource = this.globalVar.resources.find(item => item.name === "Mangoes");
       if (resource === null || resource === undefined)
-        this.globalVar.resources.push(new ResourceValue("Mangoes", amount));
+        this.globalVar.resources.push(new ResourceValue("Mangoes", amount, ShopItemTypeEnum.Food));
       else
         resource.amount += amount;
 
@@ -2129,10 +2129,10 @@ export class GlobalService {
     var paths: RacePath[] = [];
     var totalLegLengthRemaining = leg.distance;
     var pathLength = totalDistance / totalRacePaths;
-    var totalRoutes = Math.round(totalLegLengthRemaining / pathLength); 
+    var totalRoutes = Math.round(totalLegLengthRemaining / pathLength);
     var lastRouteSpecial = false;
     var lastPathRoute = RaceDesignEnum.Regular;
-    
+
     var truePathLength = totalLegLengthRemaining / totalRoutes;
     for (var i = 0; i < totalRoutes; i++) {
       var path = new RacePath();
@@ -2242,7 +2242,7 @@ export class GlobalService {
     var totalFocusModifier = animal.currentStats.defaultFocusModifier;
     var totalAdaptabilityModifier = animal.currentStats.defaultAdaptabilityModifier;
     var breedLevelStatModifierValue = .02;
-    
+
     var animalTypeName = animal.getAnimalType().toLowerCase();
 
     //get modifiers, replace original variables if they are found
@@ -2401,8 +2401,7 @@ export class GlobalService {
     }
 
     var availableAbilityItem = animal.availableAbilities.find(item => item.name === animal.ability.name);
-    if (availableAbilityItem !== null && availableAbilityItem !== undefined)
-    {
+    if (availableAbilityItem !== null && availableAbilityItem !== undefined) {
       availableAbilityItem.abilityXp = animal.ability.abilityXp;
       availableAbilityItem.abilityLevel = animal.ability.abilityLevel;
       availableAbilityItem.abilityMaxXp = animal.ability.abilityMaxXp;
@@ -2482,7 +2481,7 @@ export class GlobalService {
     if (name === "Quick Snack")
       returnVal = "Gain 100% of Stamina back after running out";
     if (name === "Red Baton")
-      returnVal = "Increase next racer's Top Speed by 10% on Relay";
+      returnVal = "Increase next racer's Speed by 10% on Relay";
     if (name === "Blue Baton")
       returnVal = "Increase next racer's Focus by 10% on Relay";
     if (name === "Violet Baton")
@@ -2501,7 +2500,7 @@ export class GlobalService {
     if (name === "Apples")
       return "+1 Acceleration to a single animal";
     if (name === "Bananas")
-      return "+1 Top Speed to a single animal";
+      return "+1 Speed to a single animal";
     if (name === "Strawberries")
       return "+1 Endurance to a single animal";
     if (name === "Carrots")
@@ -2535,61 +2534,55 @@ export class GlobalService {
     return description;
   }
 
-  updateTrackedMaxStats(animal: Animal)
-  {
+  updateTrackedMaxStats(animal: Animal) {
     if (!animal.isAvailable)
       return;
 
     if (this.globalVar.trackedStats.highestMaxSpeed === "")
       this.globalVar.trackedStats.highestMaxSpeed = animal.currentStats.maxSpeedMs.toLocaleString("en-US") + " m/s (" + animal.name + ")";
-    else
-    {
-      var highestMaxSpeedValue = parseFloat(this.globalVar.trackedStats.highestMaxSpeed.substring(0, this.globalVar.trackedStats.highestMaxSpeed.indexOf(' ')));
+    else {
+      var highestMaxSpeedValue = parseFloat(this.globalVar.trackedStats.highestMaxSpeed.replaceAll(",","").substring(0, this.globalVar.trackedStats.highestMaxSpeed.replaceAll(",","").indexOf(' ')));
       if (animal.currentStats.maxSpeedMs > highestMaxSpeedValue)
         this.globalVar.trackedStats.highestMaxSpeed = animal.currentStats.maxSpeedMs.toLocaleString("en-US") + " m/s (" + animal.name + ")";
     }
 
     if (this.globalVar.trackedStats.highestAccelerationRate === "")
       this.globalVar.trackedStats.highestAccelerationRate = animal.currentStats.accelerationMs.toLocaleString("en-US") + " m/s (" + animal.name + ")";
-    else
-    {
-      var highestAccelerationRateValue = parseFloat(this.globalVar.trackedStats.highestAccelerationRate.substring(0, this.globalVar.trackedStats.highestAccelerationRate.indexOf(' ')));
+    else {
+      var highestAccelerationRateValue = parseFloat(this.globalVar.trackedStats.highestAccelerationRate.replaceAll(",","").substring(0, this.globalVar.trackedStats.highestAccelerationRate.replaceAll(",","").indexOf(' ')));
       if (animal.currentStats.accelerationMs > highestAccelerationRateValue)
         this.globalVar.trackedStats.highestAccelerationRate = animal.currentStats.accelerationMs.toLocaleString("en-US") + " m/s (" + animal.name + ")";
     }
 
-    if (this.globalVar.trackedStats.highestStamina === "")
+    if (this.globalVar.trackedStats.highestStamina === "") {      
       this.globalVar.trackedStats.highestStamina = animal.currentStats.stamina.toLocaleString("en-US") + " (" + animal.name + ")";
-    else
-    {
-      var highestStaminaValue = parseFloat(this.globalVar.trackedStats.highestStamina.substring(0, this.globalVar.trackedStats.highestStamina.indexOf(' ')));
+    }
+    else {
+      var highestStaminaValue = parseFloat(this.globalVar.trackedStats.highestStamina.replaceAll(",","").substring(0, this.globalVar.trackedStats.highestStamina.replaceAll(",","").indexOf(' ')));      
       if (animal.currentStats.stamina > highestStaminaValue)
         this.globalVar.trackedStats.highestStamina = animal.currentStats.stamina.toLocaleString("en-US") + " (" + animal.name + ")";
     }
 
     if (this.globalVar.trackedStats.highestPowerEfficiency === "")
       this.globalVar.trackedStats.highestPowerEfficiency = animal.currentStats.powerMs.toLocaleString("en-US") + "% (" + animal.name + ")";
-    else
-    {
-      var highestPowerEfficiencyValue = parseFloat(this.globalVar.trackedStats.highestPowerEfficiency.substring(0, this.globalVar.trackedStats.highestPowerEfficiency.indexOf(' ')));
+    else {
+      var highestPowerEfficiencyValue = parseFloat(this.globalVar.trackedStats.highestPowerEfficiency.replaceAll(",","").substring(0, this.globalVar.trackedStats.highestPowerEfficiency.replaceAll(",","").indexOf(' ')));
       if (animal.currentStats.powerMs > highestPowerEfficiencyValue)
         this.globalVar.trackedStats.highestPowerEfficiency = animal.currentStats.powerMs.toLocaleString("en-US") + "% (" + animal.name + ")";
     }
 
     if (this.globalVar.trackedStats.highestFocusDistance === "")
       this.globalVar.trackedStats.highestFocusDistance = animal.currentStats.focusMs.toLocaleString("en-US") + " m (" + animal.name + ")";
-    else
-    {
-      var highestFocusDistanceValue = parseFloat(this.globalVar.trackedStats.highestFocusDistance.substring(0, this.globalVar.trackedStats.highestFocusDistance.indexOf(' ')));
+    else {
+      var highestFocusDistanceValue = parseFloat(this.globalVar.trackedStats.highestFocusDistance.replaceAll(",","").substring(0, this.globalVar.trackedStats.highestFocusDistance.replaceAll(",","").indexOf(' ')));
       if (animal.currentStats.focusMs > highestFocusDistanceValue)
         this.globalVar.trackedStats.highestFocusDistance = animal.currentStats.focusMs.toLocaleString("en-US") + " m (" + animal.name + ")";
     }
 
     if (this.globalVar.trackedStats.highestAdaptabilityDistance === "")
       this.globalVar.trackedStats.highestAdaptabilityDistance = animal.currentStats.adaptabilityMs.toLocaleString("en-US") + " m (" + animal.name + ")";
-    else
-    {
-      var highestAdaptabilityDistanceValue = parseFloat(this.globalVar.trackedStats.highestAdaptabilityDistance.substring(0, this.globalVar.trackedStats.highestAdaptabilityDistance.indexOf(' ')));
+    else {
+      var highestAdaptabilityDistanceValue = parseFloat(this.globalVar.trackedStats.highestAdaptabilityDistance.replaceAll(",","").substring(0, this.globalVar.trackedStats.highestAdaptabilityDistance.replaceAll(",","").indexOf(' ')));
       if (animal.currentStats.focusMs > highestAdaptabilityDistanceValue)
         this.globalVar.trackedStats.highestAdaptabilityDistance = animal.currentStats.adaptabilityMs.toLocaleString("en-US") + " m (" + animal.name + ")";
     }
@@ -2599,8 +2592,7 @@ export class GlobalService {
     var Coins = this.globalVar.resources.find(item => item.name === "Coins");
     if (Coins !== undefined)
       Coins.amount = 10000;
-    if (this.globalVar.resources.some(item => item.name === "Medals"))
-    {
+    if (this.globalVar.resources.some(item => item.name === "Medals")) {
       var medals = this.globalVar.resources.find(item => item.name === "Medals");
       if (medals !== undefined)
         medals.amount += circuitRankNumeric;
@@ -2608,14 +2600,13 @@ export class GlobalService {
     else
       this.globalVar.resources.push(this.initializeService.initializeResource("Medals", circuitRankNumeric, ShopItemTypeEnum.Resources));
 
-      if (this.globalVar.resources.some(item => item.name === "Renown"))
-      {
-        var renown = this.globalVar.resources.find(item => item.name === "Renown");
-        if (renown !== undefined)
-          renown.amount += 200;
-      }
-      else
-        this.globalVar.resources.push(this.initializeService.initializeResource("Renown", 200, ShopItemTypeEnum.Resources));
+    if (this.globalVar.resources.some(item => item.name === "Renown")) {
+      var renown = this.globalVar.resources.find(item => item.name === "Renown");
+      if (renown !== undefined)
+        renown.amount += 200;
+    }
+    else
+      this.globalVar.resources.push(this.initializeService.initializeResource("Renown", 200, ShopItemTypeEnum.Resources));
 
     this.globalVar.resources.push(this.initializeService.initializeResource("Facility Level", circuitRankNumeric, ShopItemTypeEnum.Progression));
     //this.globalVar.resources.push(this.initializeService.initializeResource("Research Level", 50, ShopItemTypeEnum.Progression));

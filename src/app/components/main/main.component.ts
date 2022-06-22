@@ -21,7 +21,7 @@ export class MainComponent implements OnInit {
   @ViewChild('tutorialContent', { static: true }) tutorialContent: ElementRef;
 
   constructor(private ref: ChangeDetectorRef, private globalService: GlobalService, private modalService: NgbModal,
-    private componentCommunicationService: ComponentCommunicationService, private tutorialService: TutorialService,
+    private tutorialService: TutorialService,
     private sanitizer: DomSanitizer, private gameLoopService: GameLoopService) {
   }
 

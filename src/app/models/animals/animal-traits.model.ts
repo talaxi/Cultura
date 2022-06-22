@@ -38,7 +38,7 @@ export class AnimalTraits {
         if (this.positiveStatGain === AnimalStatEnum.power)
             positiveStat = "Power";
         if (this.positiveStatGain === AnimalStatEnum.topSpeed)
-            positiveStat = "Top Speed";
+            positiveStat = "Speed";
 
         if (this.negativeStatGain === AnimalStatEnum.acceleration)
             negativeStat = "Acceleration";
@@ -51,7 +51,7 @@ export class AnimalTraits {
         if (this.negativeStatGain === AnimalStatEnum.power)
             negativeStat = "Power";
         if (this.negativeStatGain === AnimalStatEnum.topSpeed)
-            negativeStat = "Top Speed";
+            negativeStat = "Speed";
 
         return "+" + this.researchLevel + "% " + positiveStat + ", -" + this.researchLevel + "% " + negativeStat;
     }

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Ability } from 'src/app/models/animals/ability.model';
 import { AnimalStats } from 'src/app/models/animals/animal-stats.model';
@@ -37,7 +37,7 @@ export class SelectedAnimalComponent implements OnInit {
   traitStatGainDescription: string;
   autoBreedActive: boolean;
   canAutoBreed = false;
-  assignedBarnName: string;  
+  assignedBarnName: string;
 
   ability1: Ability;
   ability2: Ability;
@@ -54,6 +54,32 @@ export class SelectedAnimalComponent implements OnInit {
   equipmentCells: ResourceValue[]; //for display purposes
   selectedEquipment: ResourceValue;
 
+  @HostListener('window:keyup', ['$event'])
+  keyEvent(event: KeyboardEvent) {
+    var availableAnimals = this.globalService.globalVar.animals.filter(item => item.isAvailable);
+    var indexOfCurrentAnimal = availableAnimals.findIndex(item => this.selectedAnimal === item);
+    if (indexOfCurrentAnimal > -1) {
+      if (event.key === "ArrowLeft") {
+        var indexOfNewAnimal = indexOfCurrentAnimal - 1;
+        if (indexOfNewAnimal < 0)
+          indexOfNewAnimal = availableAnimals.length - 1;
+
+        var newAnimal = availableAnimals[indexOfNewAnimal];
+        this.componentCommunicationService.setAnimalView(NavigationEnum.animals, newAnimal);
+        this.resetSelectedAnimalInfo(newAnimal);
+      }
+      else if (event.key === "ArrowRight") {
+        var indexOfNewAnimal = indexOfCurrentAnimal + 1;
+        if (indexOfNewAnimal === availableAnimals.length)
+          indexOfNewAnimal = 0;
+
+        var newAnimal = availableAnimals[indexOfNewAnimal];
+        this.componentCommunicationService.setAnimalView(NavigationEnum.animals, newAnimal);
+        this.resetSelectedAnimalInfo(newAnimal);
+      }
+    }
+  }
+
   constructor(private lookupService: LookupService, private modalService: NgbModal, private globalService: GlobalService,
     private componentCommunicationService: ComponentCommunicationService) { }
 
@@ -66,7 +92,7 @@ export class SelectedAnimalComponent implements OnInit {
     this.focusModifierAmount = this.lookupService.getFocusModifierByAnimalType(this.selectedAnimal.type);
     this.adaptabilityModifierAmount = this.lookupService.getAdaptabilityModifierByAnimalType(this.selectedAnimal.type);
     this.diminishingReturnsAmount = this.globalService.GetAnimalDiminishingReturns(this.selectedAnimal);
-    this.breedLevelPopover = this.lookupService.getBreedLevelPopover(this.selectedAnimal.breedLevel);    
+    this.breedLevelPopover = this.lookupService.getBreedLevelPopover(this.selectedAnimal.breedLevel);
 
     var stockbreeder = this.lookupService.getStockbreeder();
 
@@ -82,7 +108,7 @@ export class SelectedAnimalComponent implements OnInit {
     if (this.selectedAnimal.availableAbilities.length > 2)
       this.ability3 = this.selectedAnimal.availableAbilities[2];
 
-    this.selectedAbility = this.selectedAnimal.ability;    
+    this.selectedAbility = this.selectedAnimal.ability;
     this.abilityLevelMaxedOut = this.isAbilityLevelMaxedOut();
     this.longDescription = this.lookupService.getAnimalAbilityDescription(false, this.selectedAnimal.ability.name, this.selectedAnimal);
 
@@ -133,12 +159,12 @@ export class SelectedAnimalComponent implements OnInit {
     var abilityLevelCap = 25;
     var abilityLevelCapModifier = this.globalService.globalVar.modifiers.find(item => item.text === "abilityLevelCapModifier");
     if (abilityLevelCapModifier !== null && abilityLevelCapModifier !== undefined)
-    abilityLevelCap = abilityLevelCapModifier.value;
+      abilityLevelCap = abilityLevelCapModifier.value;
 
-    if (this.selectedAbility !== null && this.selectedAbility !== undefined && 
+    if (this.selectedAbility !== null && this.selectedAbility !== undefined &&
       this.selectedAbility.abilityLevel > this.selectedAnimal.breedLevel + abilityLevelCap)
       return true;
-    else 
+    else
       return false;
   }
 
@@ -159,8 +185,7 @@ export class SelectedAnimalComponent implements OnInit {
 
   editName(): void {
     //TODO: error message?
-    if (this.newName.length <= 50 && this.newName.length >= 1)
-    {
+    if (this.newName.length <= 50 && this.newName.length >= 1) {
       this.selectedAnimal.name = this.newName;
       this.editingName = false;
     }
@@ -185,7 +210,7 @@ export class SelectedAnimalComponent implements OnInit {
     this.setupDisplayItems();
   }
 
-  updateEquipmentList() {    
+  updateEquipmentList() {
     this.equipmentList = [];
     //add equipment to list
     this.globalService.globalVar.resources.filter(item => item.itemType === ShopItemTypeEnum.Equipment).forEach(equipment => {
@@ -255,8 +280,8 @@ export class SelectedAnimalComponent implements OnInit {
     globalResource.amount -= this.selectedItemQuantity;
 
     if (this.selectedItem.itemType === ShopItemTypeEnum.Food) {
-      if (this.selectedItem.name === "Mangoes") {        
-        this.selectedAnimal.breedLevel += +this.selectedItemQuantity;        
+      if (this.selectedItem.name === "Mangoes") {
+        this.selectedAnimal.breedLevel += +this.selectedItemQuantity;
         this.globalService.calculateAnimalRacingStats(this.selectedAnimal);
       }
       else {
@@ -358,22 +383,86 @@ export class SelectedAnimalComponent implements OnInit {
     return description;
   }
 
-  handleIntroTutorial()
-  {    
-    if (!this.globalService.globalVar.tutorialCompleted && this.globalService.globalVar.currentTutorialId === 3)
-    {      
+  handleIntroTutorial() {
+    if (!this.globalService.globalVar.tutorialCompleted && this.globalService.globalVar.currentTutorialId === 3) {
       this.globalService.globalVar.showTutorial = true;
-    }  
-    if (!this.globalService.globalVar.tutorialCompleted && this.globalService.globalVar.currentTutorialId === 8)
-    {      
+    }
+    if (!this.globalService.globalVar.tutorialCompleted && this.globalService.globalVar.currentTutorialId === 8) {
       this.globalService.globalVar.currentTutorialId += 1;
       this.globalService.globalVar.showTutorial = true;
-    }      
+    }
   }
 
   goToAssignedBarn() {
     var assignedBarn = this.globalService.globalVar.barns.find(item => item.barnNumber === this.selectedAnimal.associatedBarnNumber);
     if (assignedBarn !== null && assignedBarn !== undefined)
       this.componentCommunicationService.setBarnView(NavigationEnum.barn, assignedBarn.barnNumber);
+  }
+
+  resetSelectedAnimalInfo(newAnimal: Animal) {
+    this.selectedAnimal = newAnimal;
+
+    this.maxSpeedModifierAmount = this.lookupService.getMaxSpeedModifierByAnimalType(this.selectedAnimal.type);
+    this.accelerationModifierAmount = this.lookupService.getAccelerationModifierByAnimalType(this.selectedAnimal.type);
+    this.staminaModifierAmount = this.lookupService.getStaminaModifierByAnimalType(this.selectedAnimal.type);
+    this.powerModifierAmount = this.lookupService.getPowerModifierByAnimalType(this.selectedAnimal.type);
+    this.focusModifierAmount = this.lookupService.getFocusModifierByAnimalType(this.selectedAnimal.type);
+    this.adaptabilityModifierAmount = this.lookupService.getAdaptabilityModifierByAnimalType(this.selectedAnimal.type);
+    this.diminishingReturnsAmount = this.globalService.GetAnimalDiminishingReturns(this.selectedAnimal);
+    this.breedLevelPopover = this.lookupService.getBreedLevelPopover(this.selectedAnimal.breedLevel);
+
+    var stockbreeder = this.lookupService.getStockbreeder();
+
+    if (stockbreeder !== null && stockbreeder !== undefined && stockbreeder > 0)
+      this.canAutoBreed = true;
+
+    if (this.canAutoBreed)
+      this.autoBreedActive = this.selectedAnimal.autoBreedActive;
+
+    this.ability1 = this.selectedAnimal.availableAbilities[0];
+    if (this.selectedAnimal.availableAbilities.length > 1)
+      this.ability2 = this.selectedAnimal.availableAbilities[1];
+    if (this.selectedAnimal.availableAbilities.length > 2)
+      this.ability3 = this.selectedAnimal.availableAbilities[2];
+
+    this.selectedAbility = this.selectedAnimal.ability;
+    this.abilityLevelMaxedOut = this.isAbilityLevelMaxedOut();
+    this.longDescription = this.lookupService.getAnimalAbilityDescription(false, this.selectedAnimal.ability.name, this.selectedAnimal);
+
+    if (this.selectedAnimal.trait !== undefined && this.selectedAnimal.trait !== null)
+      this.traitStatGainDescription = this.lookupService.getTraitStatGainDescription(this.selectedAnimal.trait);
+
+    this.colorConditional = {
+      'flatlandColor': this.selectedAnimal.getRaceCourseType() === 'Flatland',
+      'mountainColor': this.selectedAnimal.getRaceCourseType() === 'Mountain',
+      'waterColor': this.selectedAnimal.getRaceCourseType() === 'Ocean',
+      'tundraColor': this.selectedAnimal.getRaceCourseType() === 'Tundra',
+      'volcanicColor': this.selectedAnimal.getRaceCourseType() === 'Volcanic'
+    };
+
+    this.updateItemsList();
+    this.updateEquipmentList();
+
+    //remove any equipment already in use
+    this.globalService.globalVar.animals.filter(item => item.equippedItem !== null && item.equippedItem !== undefined).forEach(animal => {
+      var listItem = this.equipmentList.find(item => item.name === animal.equippedItem?.name);
+      if (listItem !== null && listItem !== undefined) {
+        if (listItem.amount > 0) {
+          listItem.amount -= 1;
+        }
+
+        if (listItem.amount <= 0) {
+          this.equipmentList = this.equipmentList.filter(item => item.name !== listItem?.name);
+        }
+      }
+    });
+
+    this.componentCommunicationService.setAnimalView(NavigationEnum.animals, new Animal());
+
+    var assignedBarn = this.globalService.globalVar.barns.find(item => item.barnNumber === this.selectedAnimal.associatedBarnNumber);
+    if (assignedBarn === null || assignedBarn === undefined)
+      this.assignedBarnName = "Unassigned";
+    else
+      this.assignedBarnName = "Assigned to: " + this.lookupService.getBarnName(assignedBarn);
   }
 }

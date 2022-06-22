@@ -22,7 +22,7 @@
     "resolveJsonModule": true,
     "strictPropertyInitialization": false,    
     "lib": [
-      "es2020",
+      "esnext",
       "dom"
     ]
   },

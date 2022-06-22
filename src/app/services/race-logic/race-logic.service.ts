@@ -119,6 +119,13 @@ export class RaceLogicService {
       var courseClass = "coloredText " + item.getCourseTypeClass();
       var animalDisplayName = "<span class='" + courseClass + "'>" + racingAnimal.name + "</span>";
 
+      var defaultTerrainMaxSpeedModifier = item.terrain.maxSpeedModifier;
+      var defaultTerrainAccelerationModifier = item.terrain.accelerationModifier;
+      var defaultTerrainStaminaModifier = item.terrain.staminaModifier;
+      var defaultTerrainPowerModifier = item.terrain.powerModifier;
+      var defaultTerrainFocusModifier = item.terrain.focusModifier;
+      var defaultTerrainAdaptabilityModifier = item.terrain.adaptabilityModifier;
+
       if (framesPassed < this.timeToComplete * this.frameModifier) {
         if (completedLegs.length > 0)
           lastLeg = completedLegs[completedLegs.length - 1];
@@ -151,13 +158,6 @@ export class RaceLogicService {
       var legPercentBreakpoint = 0; //used to keep up with various ability distance breakpoints
       var framesInCurrentLeg = 0;
       var previousPassedLavaBreakpoint = [false, false, false, false, false];
-      var defaultTerrainMaxSpeedModifier = item.terrain.maxSpeedModifier;
-      var defaultTerrainAccelerationModifier = item.terrain.accelerationModifier;
-      var defaultTerrainStaminaModifier = item.terrain.staminaModifier;
-      var defaultTerrainPowerModifier = item.terrain.powerModifier;
-      var defaultTerrainFocusModifier = item.terrain.focusModifier;
-      var defaultTerrainAdaptabilityModifier = item.terrain.adaptabilityModifier;
-
 
       if (racingAnimal.ability.name === "Nap" && racingAnimal.type === AnimalTypeEnum.Hare) {
         var distanceFromEnd = item.distance - this.lookupService.GetAbilityEffectiveAmount(racingAnimal, item.terrain.powerModifier, statLossFromExhaustion)
@@ -221,7 +221,7 @@ export class RaceLogicService {
         });
 
         if (racingAnimal.ability.name === "Night Vision" && racingAnimal.type === AnimalTypeEnum.Gecko &&
-          !racingAnimal.ability.abilityInUse && !lastPath.didAnimalLoseFocus && lastPath.length > 0) { 
+          !racingAnimal.ability.abilityInUse && !lastPath.didAnimalLoseFocus && lastPath.length > 0) {
           permanentMaxSpeedIncreaseMultiplier += this.lookupService.GetAbilityEffectiveAmount(racingAnimal, item.terrain.powerModifier, statLossFromExhaustion) / 100;
           this.globalService.increaseAbilityXp(racingAnimal);
           racingAnimal.ability.abilityInUse = true;
@@ -268,27 +268,31 @@ export class RaceLogicService {
           racingAnimal.ability.abilityUsed = true;
         }
 
-        if (racingAnimal.type === AnimalTypeEnum.Dolphin && racingAnimal.ability.name === "Echolocation" && racingAnimal.ability.abilityInUse) {
-          if (item.terrain.maxSpeedModifier < 1)
-            item.terrain.maxSpeedModifier = 1;
-          if (item.terrain.accelerationModifier < 1)
-            item.terrain.accelerationModifier = 1;
-          if (item.terrain.staminaModifier < 1)
-            item.terrain.staminaModifier = 1;
-          if (item.terrain.powerModifier < 1)
-            item.terrain.powerModifier = 1;
-          if (item.terrain.focusModifier < 1)
-            item.terrain.focusModifier = 1;
-          if (item.terrain.adaptabilityModifier < 1)
-            item.terrain.adaptabilityModifier = 1;
-        }
-        else {
-          item.terrain.maxSpeedModifier = defaultTerrainMaxSpeedModifier;
-          item.terrain.accelerationModifier = defaultTerrainAccelerationModifier;
-          item.terrain.staminaModifier = defaultTerrainStaminaModifier;
-          item.terrain.powerModifier = defaultTerrainPowerModifier;
-          item.terrain.focusModifier = defaultTerrainFocusModifier;
-          item.terrain.adaptabilityModifier = defaultTerrainAdaptabilityModifier;
+        if (racingAnimal.type === AnimalTypeEnum.Dolphin && racingAnimal.ability.name === "Echolocation") {
+          if (racingAnimal.ability.abilityInUse) {
+            if (item.terrain.maxSpeedModifier < 1)
+              item.terrain.maxSpeedModifier = 1;
+            if (item.terrain.accelerationModifier < 1)
+              item.terrain.accelerationModifier = 1;
+            if (item.terrain.staminaModifier < 1)
+              item.terrain.staminaModifier = 1;
+            if (item.terrain.powerModifier < 1)
+              item.terrain.powerModifier = 1;
+            if (item.terrain.focusModifier < 1)
+              item.terrain.focusModifier = 1;
+            if (item.terrain.adaptabilityModifier < 1)
+              item.terrain.adaptabilityModifier = 1;
+          }
+          else {
+            item.terrain.maxSpeedModifier = defaultTerrainMaxSpeedModifier;
+            item.terrain.accelerationModifier = defaultTerrainAccelerationModifier;
+            item.terrain.staminaModifier = defaultTerrainStaminaModifier;
+            item.terrain.powerModifier = defaultTerrainPowerModifier;
+            item.terrain.focusModifier = defaultTerrainFocusModifier;
+            item.terrain.adaptabilityModifier = defaultTerrainAdaptabilityModifier;
+            
+            this.checkForBlinders(item, racingAnimal);
+          }
         }
 
         isLastPathInLeg = currentPath === item.pathData[item.pathData.length - 1];
@@ -462,6 +466,7 @@ export class RaceLogicService {
 
         var modifiedMaxSpeed = racingAnimal.currentStats.maxSpeedMs;
         modifiedMaxSpeed *= item.terrain.maxSpeedModifier;
+        
         modifiedMaxSpeed *= statLossFromExhaustion;
 
         if (racingAnimal.type === AnimalTypeEnum.Cheetah && racingAnimal.ability.name === "Sprint" && racingAnimal.ability.abilityInUse) {
@@ -822,9 +827,25 @@ export class RaceLogicService {
             racingAnimal.ability.remainingLength = this.lookupService.GetAbilityEffectiveAmount(racingAnimal, item.terrain.powerModifier, statLossFromExhaustion);
           }
 
+          item.terrain.accelerationModifier = defaultTerrainAccelerationModifier;
+          item.terrain.maxSpeedModifier = defaultTerrainMaxSpeedModifier;
+          item.terrain.staminaModifier = defaultTerrainStaminaModifier;
+          item.terrain.powerModifier = defaultTerrainPowerModifier;
+          item.terrain.focusModifier = defaultTerrainFocusModifier;
+          item.terrain.adaptabilityModifier = defaultTerrainAdaptabilityModifier;
+
           completedAnimals.push(racingAnimal);
           completedLegs.push(item);
           break;
+        }
+
+        if (framesPassed === this.timeToComplete * this.frameModifier) {          
+          item.terrain.accelerationModifier = defaultTerrainAccelerationModifier;
+          item.terrain.maxSpeedModifier = defaultTerrainMaxSpeedModifier;
+          item.terrain.staminaModifier = defaultTerrainStaminaModifier;
+          item.terrain.powerModifier = defaultTerrainPowerModifier;
+          item.terrain.focusModifier = defaultTerrainFocusModifier;
+          item.terrain.adaptabilityModifier = defaultTerrainAdaptabilityModifier;
         }
       }
 
@@ -1033,7 +1054,6 @@ export class RaceLogicService {
 
     var totalRaceTime = this.timeToComplete * this.frameModifier;
 
-    console.log("Frames Passed: " + result.totalFramesPassed + " Race Time: " + totalRaceTime + " MM Value: " + moneyMarkPace.value);
     if (result.totalFramesPassed <= totalRaceTime * moneyMarkPace.value) {
       beatMoneyMark = true;
     }
@@ -1175,6 +1195,10 @@ export class RaceLogicService {
       path.didAnimalStumble = false;
     });
 
+    this.checkForBlinders(raceLeg, racingAnimal);
+  }
+
+  checkForBlinders(raceLeg: RaceLeg, racingAnimal: Animal) {
     if (racingAnimal.getEquippedItemName() === this.globalService.getEquipmentName(EquipmentEnum.blinders)) {
       var blinderBonus = .5; //.9 = 1 - ((1 - .8) * .5); 
       //if you wanted to make it stronger, .95 = 1 - ((1 - .8) * .25);
@@ -1253,7 +1277,7 @@ export class RaceLogicService {
             headbandMaxStumblePrevention = headbandModifierPair.value;
           if (racingAnimal.raceVariables.headbandStumblePreventionCount < headbandMaxStumblePrevention) {
             racingAnimal.raceVariables.headbandStumblePreventionCount += 1;
-            raceResult.addRaceUpdate(framesPassed, animalDisplayName + "'s headband prevents them from stumbling.");            
+            raceResult.addRaceUpdate(framesPassed, animalDisplayName + "'s headband prevents them from stumbling.");
             return false;
           }
         }
@@ -1310,7 +1334,7 @@ export class RaceLogicService {
     if (animal.type === AnimalTypeEnum.Cheetah && animal.ability.name === "Giving Chase" ||
       animal.type === AnimalTypeEnum.Hare && animal.ability.name === "Prey Instinct" ||
       animal.type === AnimalTypeEnum.Hare && animal.ability.name === "Nap" ||
-      animal.type === AnimalTypeEnum.Goat && animal.ability.name === "In The Rhythm" ||      
+      animal.type === AnimalTypeEnum.Goat && animal.ability.name === "In The Rhythm" ||
       animal.type === AnimalTypeEnum.Gecko && animal.ability.name === "Camouflage" ||
       animal.type === AnimalTypeEnum.Dolphin && animal.ability.name === "Navigator" ||
       animal.type === AnimalTypeEnum.Shark && animal.ability.name === "Feeding Frenzy" ||

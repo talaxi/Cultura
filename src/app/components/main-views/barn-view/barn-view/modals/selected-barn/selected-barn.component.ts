@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Output, EventEmitter, ViewEncapsulation, ViewChild, ElementRef } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter, ViewEncapsulation, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AnimalTypeEnum } from 'src/app/models/animal-type-enum.model';
 import { Animal } from 'src/app/models/animals/animal.model';
@@ -61,6 +61,33 @@ export class SelectedBarnComponent implements OnInit {
   filterSmall = false;
   filterMedium = false;
   filterLarge = false;
+
+  @HostListener('window:keyup', ['$event'])
+  keyEvent(event: KeyboardEvent) {
+    var availableBarns = this.lookupService.getAvailableBarns().filter(item => item !== undefined);
+    var indexOfCurrentBarn = availableBarns.findIndex(item => this.selectedBarnNumber === item!.barnNumber);
+    
+    if (indexOfCurrentBarn > -1) {
+      if (event.key === "ArrowLeft") {        
+        var indexOfNewBarn = indexOfCurrentBarn - 1;
+        if (indexOfNewBarn < 0)
+        indexOfNewBarn = availableBarns.length - 1;
+
+        var newBarn = availableBarns[indexOfNewBarn]!;
+        this.componentCommunicationService.setBarnView(NavigationEnum.barn, newBarn.barnNumber);
+        this.resetSelectedBarnInfo(newBarn);
+      }
+      else if (event.key === "ArrowRight") {
+        var indexOfNewBarn = indexOfCurrentBarn + 1;
+        if (indexOfNewBarn === availableBarns.length)
+        indexOfNewBarn = 0;
+
+        var newBarn = availableBarns[indexOfNewBarn]!;
+        this.componentCommunicationService.setBarnView(NavigationEnum.barn, newBarn.barnNumber);
+        this.resetSelectedBarnInfo(newBarn);
+      }
+    }
+  }
 
   constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private modalService: NgbModal,
     private lookupService: LookupService, private componentCommunicationService: ComponentCommunicationService,
@@ -536,7 +563,7 @@ export class SelectedBarnComponent implements OnInit {
     if (this.barn.barnUpgrades.upgradedStatGain.acceleration > 1)
       popover += "Acceleration Multiplier: " + this.barn.barnUpgrades.upgradedStatGain.acceleration.toFixed(1) + "\n";
     if (this.barn.barnUpgrades.upgradedStatGain.topSpeed > 1)
-      popover += "Top Speed Multiplier: " + this.barn.barnUpgrades.upgradedStatGain.topSpeed.toFixed(1) + "\n";
+      popover += "Speed Multiplier: " + this.barn.barnUpgrades.upgradedStatGain.topSpeed.toFixed(1) + "\n";
 
     return popover;
   }
@@ -612,6 +639,89 @@ export class SelectedBarnComponent implements OnInit {
     }
     else if (!this.globalService.globalVar.tutorialCompleted) {
       this.tutorialActive = false;
+    }
+  }
+
+  resetSelectedBarnInfo(newBarn: Barn) {    
+    this.specializationOptions = this.lookupService.getAllBarnSpecializations();
+    this.upgradeText = "Upgrade";
+    this.barnSpecializationsUnlocked = this.lookupService.isItemUnlocked("barnSpecializations");
+    this.selectedBarnNumber = newBarn.barnNumber;
+
+    if (this.selectedBarnNumber > 0 && this.selectedBarnNumber <= this.globalService.globalVar.barns.length + 1) {
+      var globalBarn = this.globalService.globalVar.barns.find(item => item.barnNumber === this.selectedBarnNumber);
+
+      if (globalBarn !== undefined) {
+        this.barn = globalBarn;
+        this.barnName = this.lookupService.getBarnName(globalBarn);
+        this.getSizeValue();
+        this.totalBarnStatsPopover = this.getTotalBarnStatsPopover();
+        this.upgradeBarnPopover = this.getUpgradeBarnPopover();
+        this.buildBiggerBarnPopover = this.getBuildLargerBarnPopover();
+        this.canUpgrade = this.canUpgradeBarn(this.lookupService.getResourcesForBarnUpgrade(this.barn.barnUpgrades.barnLevel));
+        this.canBuild = this.canBuildLargerBarn();
+
+        if (this.barn.barnUpgrades.barnLevel === 9)
+          this.upgradeText = "Specialize";
+
+        var associatedAnimal = this.globalService.globalVar.animals.find(item => item.associatedBarnNumber == this.selectedBarnNumber);
+
+        if (associatedAnimal !== undefined && associatedAnimal !== null) {
+          this.animalAssigned = true;
+          this.associatedAnimal = associatedAnimal;
+          this.associatedAnimalName = associatedAnimal.name;
+          this.existingTraining = associatedAnimal.currentTraining;
+
+          this.availableTrainings = this.GetAvailableTrainingOptions(associatedAnimal);
+
+          if (this.existingTraining !== undefined && this.existingTraining !== null) {
+            var selectedTraining = this.availableTrainings.find(item => this.existingTraining?.trainingName === item.trainingName);
+            if (selectedTraining !== null && selectedTraining !== undefined)
+              selectedTraining.isSelected = true;
+          }
+        }
+        else {
+          this.animalAssigned = false;
+          this.availableAnimals = this.GetAvailableAnimalOptions();
+        }
+
+        this.componentCommunicationService.setBarnView(NavigationEnum.barn, 0);
+
+        this.subscription = this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {
+          if (!this.barn.isLocked) {
+            var associatedAnimal = this.globalService.globalVar.animals.find(item => item.associatedBarnNumber == this.selectedBarnNumber);
+            if (associatedAnimal === undefined || associatedAnimal === null) {
+              //any game loop logic needed for an empty barn
+            }
+            else {
+              //UI updates          
+              if (associatedAnimal.currentTraining === undefined || associatedAnimal.currentTraining === null) {
+                if (this.existingTraining !== null) {
+                  var selectedTraining = this.availableTrainings.find(item => this.existingTraining?.trainingName === item.trainingName);
+                  if (selectedTraining !== null && selectedTraining !== undefined)
+                    selectedTraining.isSelected = false;
+
+                  this.existingTraining = null;
+                }
+                return;
+              }
+              if (associatedAnimal.currentTraining !== this.existingTraining)
+                this.existingTraining = associatedAnimal.currentTraining;
+
+              if (this.trainingProgressBarPercent >= 100) {
+                this.trainingProgressBarPercent = 100;
+              }
+
+              this.trainingProgressBarPercent = ((associatedAnimal.currentTraining.timeTrained / associatedAnimal.currentTraining.timeToComplete) * 100);
+            }
+          }
+        });
+      }
+
+    }
+    else {
+      console.log("Can't find barn");
+      //TODO: throw error, can't find barn
     }
   }
 
