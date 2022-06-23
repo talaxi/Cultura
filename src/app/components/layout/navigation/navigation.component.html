@@ -16,7 +16,11 @@
     <!--<div *ngIf="talentsAvailable">
         <p (click)="switchView(navigationEnum.talents)" class="clickableText" [ngClass]="selectedNavigation === navigationEnum.talents ? 'active' : ''">Talents</p>
         <hr />
-    </div>-->    
+    </div>-->       
+    <div *ngIf="trainingTrackAvailable">
+        <p (click)="switchView(navigationEnum.trainingtrack)" class="clickableText" [ngClass]="selectedNavigation === navigationEnum.trainingtrack ? 'active' : ''">Training Track</p>
+        <hr />
+    </div> 
     <p (click)="switchView(navigationEnum.resources)" class="clickableText" [ngClass]="selectedNavigation === navigationEnum.resources ? 'active' : ''">Resources</p>
     <hr />
     <p (click)="switchView(navigationEnum.settings)" class="clickableText" [ngClass]="selectedNavigation === navigationEnum.settings ? 'active' : ''">Settings</p>

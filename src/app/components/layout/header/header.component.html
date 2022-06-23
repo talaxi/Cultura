@@ -4,7 +4,8 @@
             <span class="name">
                 Cultura
             </span>
-            <span class="version versionMargin clickableText">
+            <span class="version versionMargin clickableText" [ngbPopover]="latestVersionChangesContent"
+                triggers="mouseenter:mouseleave" popoverClass="popoverClass" (click)="openChangeLog(content)">
                 v{{ this.version }}
             </span>
         </div>
@@ -20,9 +21,40 @@
             <div ngbDropdown #menuDropdown="ngbDropdown" class="d-inline-block">
                 <button type="button" class="btn dropdown" id="menuDropdown" ngbDropdownToggle>Menu</button>
                 <div ngbDropdownMenu aria-labelledby="menuDropdown" class="dropdownItems">
-                    <app-navigation (viewChanged)="changeView($event);" (click)="menuDropdown.close();"></app-navigation>
+                    <app-navigation (viewChanged)="changeView($event);" (click)="menuDropdown.close();">
+                    </app-navigation>
                 </div>
             </div>
         </div>
 
     </div>
+
+    <ng-template #latestVersionChangesContent>
+        <div class="popoverClass">
+            {{ latestVersionChanges }}
+        </div>
+    </ng-template>
+
+    <ng-template #content let-modal>
+        <div class="modalClass">
+            <div class="modal-header">
+                <h4 class="modal-title" id="modal-basic-title">Change Log</h4>
+                <button type="button" aria-label="Close" (click)="modal.dismiss()">X</button>
+            </div>
+            <div *ngIf="changeLog.length > 0">
+                <div class="modal-body">
+                    <div class="itemContainer">
+                        <p *ngFor="let change of changeLog; let i = index">
+                            <span class="s4Heading">Version {{ allVersions[i] }}</span>
+                            <br />
+                            <br />
+                            {{change}}
+                            <span>
+                            <hr/>
+                            </span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-template>

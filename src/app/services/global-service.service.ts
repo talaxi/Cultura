@@ -30,6 +30,7 @@ import { Settings } from '../models/utility/settings.model';
 import { Unlockables } from '../models/utility/unlockables.model';
 import { RaceDisplayInfoEnum } from '../models/race-display-info-enum.model';
 import { TrackedStats } from '../models/utility/tracked-stats.model';
+import { TrackRaceTypeEnum } from '../models/track-race-type-enum.model';
 
 @Injectable({
   providedIn: 'root'
@@ -2121,11 +2122,68 @@ export class GlobalService {
 
     return new Race(raceLegs, this.globalVar.circuitRank, false,
       1, totalDistance, timeToComplete, this.GenerateLocalRaceRewards(this.globalVar.circuitRank), LocalRaceTypeEnum.Free);
-
   }
 
-  GenerateRaceLegPaths(leg: RaceLeg, totalDistance: number): RacePath[] {
+  generateTrackRace(animal: Animal, type: TrackRaceTypeEnum) {
+    var timeToComplete = 60;
+
+    var raceLegs: RaceLeg[] = [];    
+    var leg = new RaceLeg();
+    leg.courseType = animal.raceCourseType;
+    
+    if (type === TrackRaceTypeEnum.Practice) {
+      timeToComplete = 20;
+      leg.distance = 100;
+      leg.terrain = new Terrain(TerrainTypeEnum.Stormy);
+    }
+    else if (type === TrackRaceTypeEnum.Novice)
+    {
+      timeToComplete = 40;
+      leg.distance = 1000;
+      leg.terrain = new Terrain(TerrainTypeEnum.Stormy);
+    }
+    else if (type === TrackRaceTypeEnum.Intermediate)
+    {
+      timeToComplete = 60;
+      leg.distance = 10000;
+      leg.terrain = new Terrain(TerrainTypeEnum.Stormy);
+    }
+    else if (type === TrackRaceTypeEnum.Master)
+    {
+      timeToComplete = 80;
+      leg.distance = 100000;
+      leg.terrain = new Terrain(TerrainTypeEnum.Stormy);
+    }
+    
+    raceLegs.push(leg);
+    console.log(raceLegs);
+
+    var totalDistance = 0;
+    
+    raceLegs.forEach(leg => {
+      totalDistance += leg.distance;
+    });
+
+    raceLegs.forEach(leg => {
+      leg.pathData = this.GenerateRaceLegPaths(leg, totalDistance, type);
+    });
+
+    return new Race(raceLegs, this.globalVar.circuitRank, false, 1, totalDistance, timeToComplete, undefined, LocalRaceTypeEnum.Track);
+  }
+
+  GenerateRaceLegPaths(leg: RaceLeg, totalDistance: number, trackRaceType?: TrackRaceTypeEnum): RacePath[] {
     var totalRacePaths = 20;
+
+    if (trackRaceType !== undefined)
+    {
+      if (trackRaceType === TrackRaceTypeEnum.Practice)
+        totalRacePaths = 5;
+      if (trackRaceType === TrackRaceTypeEnum.Novice)
+        totalRacePaths = 7;
+      if (trackRaceType === TrackRaceTypeEnum.Intermediate)
+        totalRacePaths = 14;
+    }
+
     var paths: RacePath[] = [];
     var totalLegLengthRemaining = leg.distance;
     var pathLength = totalDistance / totalRacePaths;
@@ -2352,6 +2410,16 @@ export class GlobalService {
       var increasedAmount = animal.trait.researchLevel * incubatorUpgradeIncrease;
       if (animal.trait.positiveStatGain === AnimalStatEnum.topSpeed)
         animal.incubatorStatUpgrades.maxSpeedModifier += increasedAmount;
+        if (animal.trait.positiveStatGain === AnimalStatEnum.acceleration)
+        animal.incubatorStatUpgrades.accelerationModifier += increasedAmount;
+        if (animal.trait.positiveStatGain === AnimalStatEnum.endurance)
+        animal.incubatorStatUpgrades.staminaModifier += increasedAmount;
+        if (animal.trait.positiveStatGain === AnimalStatEnum.power)
+        animal.incubatorStatUpgrades.powerModifier += increasedAmount;
+        if (animal.trait.positiveStatGain === AnimalStatEnum.focus)
+        animal.incubatorStatUpgrades.focusModifier += increasedAmount;
+        if (animal.trait.positiveStatGain === AnimalStatEnum.adaptability)
+        animal.incubatorStatUpgrades.adaptabilityModifier += increasedAmount;
     }
 
     var handlers = this.globalVar.resources.find(item => item.name === "Animal Handler");
@@ -2423,6 +2491,7 @@ export class GlobalService {
   }
 
   InitializeUnlockables() {
+    this.globalVar.unlockables.set("trainingTrack", true);
     this.globalVar.unlockables.set("monoRace", false);
     this.globalVar.unlockables.set("duoRace", false);
     this.globalVar.unlockables.set("rainbowRace", false);
@@ -2541,7 +2610,7 @@ export class GlobalService {
     if (this.globalVar.trackedStats.highestMaxSpeed === "")
       this.globalVar.trackedStats.highestMaxSpeed = animal.currentStats.maxSpeedMs.toLocaleString("en-US") + " m/s (" + animal.name + ")";
     else {
-      var highestMaxSpeedValue = parseFloat(this.globalVar.trackedStats.highestMaxSpeed.replaceAll(",","").substring(0, this.globalVar.trackedStats.highestMaxSpeed.replaceAll(",","").indexOf(' ')));
+      var highestMaxSpeedValue = parseFloat(this.globalVar.trackedStats.highestMaxSpeed.replaceAll(",", "").substring(0, this.globalVar.trackedStats.highestMaxSpeed.replaceAll(",", "").indexOf(' ')));
       if (animal.currentStats.maxSpeedMs > highestMaxSpeedValue)
         this.globalVar.trackedStats.highestMaxSpeed = animal.currentStats.maxSpeedMs.toLocaleString("en-US") + " m/s (" + animal.name + ")";
     }
@@ -2549,16 +2618,16 @@ export class GlobalService {
     if (this.globalVar.trackedStats.highestAccelerationRate === "")
       this.globalVar.trackedStats.highestAccelerationRate = animal.currentStats.accelerationMs.toLocaleString("en-US") + " m/s (" + animal.name + ")";
     else {
-      var highestAccelerationRateValue = parseFloat(this.globalVar.trackedStats.highestAccelerationRate.replaceAll(",","").substring(0, this.globalVar.trackedStats.highestAccelerationRate.replaceAll(",","").indexOf(' ')));
+      var highestAccelerationRateValue = parseFloat(this.globalVar.trackedStats.highestAccelerationRate.replaceAll(",", "").substring(0, this.globalVar.trackedStats.highestAccelerationRate.replaceAll(",", "").indexOf(' ')));
       if (animal.currentStats.accelerationMs > highestAccelerationRateValue)
         this.globalVar.trackedStats.highestAccelerationRate = animal.currentStats.accelerationMs.toLocaleString("en-US") + " m/s (" + animal.name + ")";
     }
 
-    if (this.globalVar.trackedStats.highestStamina === "") {      
+    if (this.globalVar.trackedStats.highestStamina === "") {
       this.globalVar.trackedStats.highestStamina = animal.currentStats.stamina.toLocaleString("en-US") + " (" + animal.name + ")";
     }
     else {
-      var highestStaminaValue = parseFloat(this.globalVar.trackedStats.highestStamina.replaceAll(",","").substring(0, this.globalVar.trackedStats.highestStamina.replaceAll(",","").indexOf(' ')));      
+      var highestStaminaValue = parseFloat(this.globalVar.trackedStats.highestStamina.replaceAll(",", "").substring(0, this.globalVar.trackedStats.highestStamina.replaceAll(",", "").indexOf(' ')));
       if (animal.currentStats.stamina > highestStaminaValue)
         this.globalVar.trackedStats.highestStamina = animal.currentStats.stamina.toLocaleString("en-US") + " (" + animal.name + ")";
     }
@@ -2566,7 +2635,7 @@ export class GlobalService {
     if (this.globalVar.trackedStats.highestPowerEfficiency === "")
       this.globalVar.trackedStats.highestPowerEfficiency = animal.currentStats.powerMs.toLocaleString("en-US") + "% (" + animal.name + ")";
     else {
-      var highestPowerEfficiencyValue = parseFloat(this.globalVar.trackedStats.highestPowerEfficiency.replaceAll(",","").substring(0, this.globalVar.trackedStats.highestPowerEfficiency.replaceAll(",","").indexOf(' ')));
+      var highestPowerEfficiencyValue = parseFloat(this.globalVar.trackedStats.highestPowerEfficiency.replaceAll(",", "").substring(0, this.globalVar.trackedStats.highestPowerEfficiency.replaceAll(",", "").indexOf(' ')));
       if (animal.currentStats.powerMs > highestPowerEfficiencyValue)
         this.globalVar.trackedStats.highestPowerEfficiency = animal.currentStats.powerMs.toLocaleString("en-US") + "% (" + animal.name + ")";
     }
@@ -2574,7 +2643,7 @@ export class GlobalService {
     if (this.globalVar.trackedStats.highestFocusDistance === "")
       this.globalVar.trackedStats.highestFocusDistance = animal.currentStats.focusMs.toLocaleString("en-US") + " m (" + animal.name + ")";
     else {
-      var highestFocusDistanceValue = parseFloat(this.globalVar.trackedStats.highestFocusDistance.replaceAll(",","").substring(0, this.globalVar.trackedStats.highestFocusDistance.replaceAll(",","").indexOf(' ')));
+      var highestFocusDistanceValue = parseFloat(this.globalVar.trackedStats.highestFocusDistance.replaceAll(",", "").substring(0, this.globalVar.trackedStats.highestFocusDistance.replaceAll(",", "").indexOf(' ')));
       if (animal.currentStats.focusMs > highestFocusDistanceValue)
         this.globalVar.trackedStats.highestFocusDistance = animal.currentStats.focusMs.toLocaleString("en-US") + " m (" + animal.name + ")";
     }
@@ -2582,7 +2651,7 @@ export class GlobalService {
     if (this.globalVar.trackedStats.highestAdaptabilityDistance === "")
       this.globalVar.trackedStats.highestAdaptabilityDistance = animal.currentStats.adaptabilityMs.toLocaleString("en-US") + " m (" + animal.name + ")";
     else {
-      var highestAdaptabilityDistanceValue = parseFloat(this.globalVar.trackedStats.highestAdaptabilityDistance.replaceAll(",","").substring(0, this.globalVar.trackedStats.highestAdaptabilityDistance.replaceAll(",","").indexOf(' ')));
+      var highestAdaptabilityDistanceValue = parseFloat(this.globalVar.trackedStats.highestAdaptabilityDistance.replaceAll(",", "").substring(0, this.globalVar.trackedStats.highestAdaptabilityDistance.replaceAll(",", "").indexOf(' ')));
       if (animal.currentStats.focusMs > highestAdaptabilityDistanceValue)
         this.globalVar.trackedStats.highestAdaptabilityDistance = animal.currentStats.adaptabilityMs.toLocaleString("en-US") + " m (" + animal.name + ")";
     }
@@ -2618,7 +2687,7 @@ export class GlobalService {
       this.GenerateCircuitRacesForRank(this.globalVar.circuitRank);
     }
 
-    var horse = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Horse);
+    /*var horse = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Horse);
     if (horse !== undefined) {
       horse.currentStats.topSpeed = 200;
       horse.currentStats.acceleration = 200;
@@ -2631,7 +2700,7 @@ export class GlobalService {
 
       //horse.breedGaugeMax = 5;
       //horse.breedGaugeXp = 5;
-    }
+    }*/
 
     var cheetah = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Cheetah);
     if (cheetah !== undefined) {

@@ -11,6 +11,7 @@ import { ThemeService } from './theme/theme.service';
 import { RaceLogicService } from './services/race-logic/race-logic.service';
 import { DeploymentService } from './services/utility/deployment.service';
 import { environment } from 'src/environments/environment';
+import { VersionControlService } from './services/version-control.service';
 declare var LZString: any;
 
 @Component({
@@ -27,7 +28,7 @@ export class AppComponent {
 
   constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private lookupService: LookupService,
     private specializationService: SpecializationService, private themeService: ThemeService, private raceLogicService: RaceLogicService,
-    private deploymentService: DeploymentService) {
+    private deploymentService: DeploymentService, private versionControlService: VersionControlService) {
 
   }
 
@@ -57,6 +58,8 @@ export class AppComponent {
       this.globalService.globalVar.tutorialCompleted = true;
       this.globalService.devModeInitialize(13);
     }
+
+    this.versionControlService.updatePlayerVersion();
 
     var subscription = this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {
       //if (deltaTime > 1)

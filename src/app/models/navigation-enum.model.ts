@@ -5,6 +5,7 @@ export enum NavigationEnum {
     decks,
     shop,
     incubator,
+    trainingtrack,
     talents,
     resources,
     faqs,

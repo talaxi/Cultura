@@ -131,6 +131,9 @@ export class RaceComponent implements OnInit {
 
     var maxColumns = 6;
 
+    if (race.rewards === undefined || race.rewards === null)
+      return;
+
     for (var i = 1; i <= race.rewards.length; i++) {
       this.rewardCells.push({ name: race.rewards[i - 1].name, amount: race.rewards[i - 1].amount });
       if ((i % maxColumns) == 0) {

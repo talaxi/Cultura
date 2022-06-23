@@ -1,0 +1,41 @@
+<div class="trainingTrackView">
+    Selected Animal: Animal
+    <hr />
+    <div class="trainingTracks" *ngIf="!showRace">
+        <div id="practiceTrack">
+            <div (click)="selectTrackRace(practiceTrackRace)" class="practiceTrackRace">
+                <span class="s4Heading">Practice Track</span>
+                <br />
+                <app-race-description [race]="practiceTrackRace" [showStartText]="true"></app-race-description>
+            </div>
+            <hr />
+        </div>
+
+        <div id="trainingTrack1">
+            <div (click)="selectTrackRace(noviceTrackRace)" class="noviceTrackRace">
+                <span class="s4Heading">Novice Track</span>
+                <br />
+                <app-race-description [race]="noviceTrackRace" [showStartText]="true"></app-race-description>
+            </div>
+            <hr />
+        </div>
+
+        <div id="trainingTrack2" *ngIf="intermediateTrackAvailable">
+            <div (click)="selectTrackRace(intermediateTrackRace)" class="intermediateTrackRace">
+                <span class="s4Heading">Intermediate Track</span>
+                <br />
+                <app-race-description [race]="intermediateTrackRace" [showStartText]="true"></app-race-description>
+            </div>
+            <hr />
+        </div>
+
+        <div id="trainingTrack3" *ngIf="masterTrackAvailable">
+            <div (click)="selectTrackRace(masterTrackRace)" class="masterTrackRace">
+                <span class="s4Heading">Master Track</span>
+                <br />
+                <app-race-description [race]="masterTrackRace" [showStartText]="true"></app-race-description>
+            </div>
+            <hr />
+        </div>
+    </div>    
+</div>

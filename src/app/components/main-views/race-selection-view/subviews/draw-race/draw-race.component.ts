@@ -1,5 +1,6 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
+import { LocalRaceTypeEnum } from 'src/app/models/local-race-type-enum.model';
 import { RaceCourseTypeEnum } from 'src/app/models/race-course-type-enum.model';
 import { RaceDesignEnum } from 'src/app/models/race-design-enum.model';
 import { RacerEffectEnum } from 'src/app/models/racer-effect-enum.model';
@@ -567,22 +568,36 @@ export class DrawRaceComponent implements OnInit {
     var averageDistanceScaled = (averageDistance * this.canvasXDistanceScale * xRaceModeModifier);
     this.drawRacer(context, averageDistanceScaled, "black");
 
-    var moneyMarkIsUnlocked = this.lookupService.getResourceByName("Money Mark");
-    if (moneyMarkIsUnlocked > 0) {
-      var defaultMoneyMarkPace = .75;
-      var moneyMarkPace = this.globalService.globalVar.modifiers.find(item => item.text === "moneyMarkPaceModifier");
-      if (moneyMarkPace !== undefined && moneyMarkPace !== null)
-        defaultMoneyMarkPace = moneyMarkPace.value;
+    if (this.race.localRaceType !== LocalRaceTypeEnum.Track) {
+      var moneyMarkIsUnlocked = this.lookupService.getResourceByName("Money Mark");
+      if (moneyMarkIsUnlocked > 0) {
+        var defaultMoneyMarkPace = .75;
+        var moneyMarkPace = this.globalService.globalVar.modifiers.find(item => item.text === "moneyMarkPaceModifier");
+        if (moneyMarkPace !== undefined && moneyMarkPace !== null)
+          defaultMoneyMarkPace = moneyMarkPace.value;
 
-      //var inverseMoneyMarkPace = (1 - defaultMoneyMarkPace) + 1;
+        var moneyMarkDistancePerSecond = this.race.length / (this.race.raceUI.timeToCompleteByFrame[currentFrame] * defaultMoneyMarkPace);
+        var moneyMarkDistance = (moneyMarkDistancePerSecond / this.frameModifier) * currentFrame;
 
-      //var moneyMarkDistanceScaled = averageDistanceScaled * inverseMoneyMarkPace;
-      var moneyMarkDistancePerSecond = this.race.length / (this.race.raceUI.timeToCompleteByFrame[currentFrame] * defaultMoneyMarkPace);
-      var moneyMarkDistance = (moneyMarkDistancePerSecond / this.frameModifier) * currentFrame;
-
-      var moneyMarkDistanceScaled = (moneyMarkDistance * this.canvasXDistanceScale * xRaceModeModifier);
-      this.drawRacer(context, moneyMarkDistanceScaled, "gold");
+        var moneyMarkDistanceScaled = (moneyMarkDistance * this.canvasXDistanceScale * xRaceModeModifier);
+        this.drawRacer(context, moneyMarkDistanceScaled, "gold");
+      }
     }
+    else {
+      //todo: maybe make this 6 racers instead? easier to tell what is going on?
+      //draw other 12 racers
+      var totalRacers = 12;
+      for (var j = 0; j < totalRacers; j++) {
+        var paceModifier = 1 + (.25 * (j + 1));
+        var racerDistancePerSecond = this.race.length / (this.race.raceUI.timeToCompleteByFrame[currentFrame] / paceModifier);
+        var racerDistance = (racerDistancePerSecond / this.frameModifier) * currentFrame;
+
+        var racerDistanceScaled = (racerDistance * this.canvasXDistanceScale * xRaceModeModifier);
+        var trackRacerColor = this.getTrackRacerColor(j);
+        this.drawRacer(context, racerDistanceScaled, trackRacerColor);
+      }
+    }
+
     this.drawBreakpoints(context, xRaceModeModifier);
 
     if (this.race.raceLegs.some(item => item.courseType === RaceCourseTypeEnum.Volcanic)) {
@@ -699,6 +714,37 @@ export class DrawRaceComponent implements OnInit {
 
       totalDistance += leg.distance;
     });
+
+    return color;
+  }
+
+  getTrackRacerColor(count: number) {
+    var color = "";
+
+    if (count === 0)
+      color = "#cfc800";
+    if (count === 1)
+      color = "#00cf68";
+    if (count === 2)
+      color = "#cf00c5";
+    if (count === 3)
+      color = "#cfb8e6";
+    if (count === 4)
+      color = "#4a1d1d";
+    if (count === 5)
+      color = "#1b5054";
+    if (count === 6)
+      color = "#541b3c";
+    if (count === 7)
+      color = "#7a7a7a";
+    if (count === 8)
+      color = "#ffffff";
+    if (count === 9)
+      color = "#c6cca1";
+    if (count === 10)
+      color = "#01253b";
+    if (count === 11)
+      color = "#790dde";
 
     return color;
   }

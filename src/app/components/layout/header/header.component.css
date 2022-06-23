@@ -57,6 +57,17 @@
   display: none;
 }
 
+.modalClass {
+  background-color: var(--background-secondary);
+  border-color: var(--background-tertiary);
+  color: var(--foreground-default);
+  white-space: pre-line;
+}
+
+.popoverClass {
+  white-space: pre-line;
+}
+
 @media (max-width: 800px) {
   .gridContainer {
     display: grid;

@@ -16,7 +16,7 @@ export class NavigationComponent implements OnInit {
   public navigationEnum = NavigationEnum;
   public selectedNavigation = 0;
   incubatorAvailable: boolean;
-  talentsAvailable: boolean;
+  trainingTrackAvailable: boolean;
   tutorialSubscription: any;
   tutorial3Active = false;
   tutorial6Active = false;
@@ -31,7 +31,7 @@ export class NavigationComponent implements OnInit {
     });
 
     this.incubatorAvailable = this.lookupService.isItemUnlocked("duoRace");
-    this.talentsAvailable = this.lookupService.isItemUnlocked("rainbowRace");
+    this.trainingTrackAvailable = this.lookupService.isItemUnlocked("trainingTrack");
 
     this.tutorialSubscription = this.gameLoopService.gameUpdateEvent.subscribe((value) => {
       if (!this.globalService.globalVar.tutorialCompleted && this.globalService.globalVar.currentTutorialId === 3) {
@@ -57,7 +57,7 @@ export class NavigationComponent implements OnInit {
     this.selectedNavigation = selectedView;
 
     this.incubatorAvailable = this.lookupService.isItemUnlocked("duoRace");
-    this.talentsAvailable = this.lookupService.isItemUnlocked("rainbowRace");
+    this.trainingTrackAvailable = this.lookupService.isItemUnlocked("trainingTrack");
   }
 
   handleIntroTutorial() {

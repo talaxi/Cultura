@@ -971,7 +971,7 @@ export class RaceLogicService {
       breedGaugeIncrease = this.lookupService.getLocalBreedGaugeIncrease();
     }
 
-    if (this.selectedRace.localRaceType !== LocalRaceTypeEnum.Free) {
+    if (this.selectedRace.localRaceType !== LocalRaceTypeEnum.Free && this.selectedRace.localRaceType !== LocalRaceTypeEnum.Track) {
       if (globalRaceVal === undefined)
         return;
 
@@ -983,7 +983,7 @@ export class RaceLogicService {
       this.globalService.IncreaseLocalRaceRank(this.selectedRace.localRaceType);
       globalRaceVal.isCompleted = true;
     }
-    else {
+    else if (this.selectedRace.localRaceType === LocalRaceTypeEnum.Free) {
       this.globalService.globalVar.nationalRaceCountdown += 1;
     }
 
@@ -991,7 +991,8 @@ export class RaceLogicService {
       this.globalService.IncreaseAnimalBreedGauge(animal, breedGaugeIncrease);
     });
 
-    raceResult.beatMoneyMark = this.checkMoneyMark(raceResult);
+    if (this.selectedRace.localRaceType !== LocalRaceTypeEnum.Track)
+      raceResult.beatMoneyMark = this.checkMoneyMark(raceResult);
 
     if (this.selectedRace.rewards !== undefined && this.selectedRace.rewards !== null) {
       this.selectedRace.rewards.forEach(item => {
@@ -1038,6 +1039,10 @@ export class RaceLogicService {
           }
         }
       });
+    }
+    else if (this.selectedRace.localRaceType === LocalRaceTypeEnum.Track)
+    {
+      //do your own thing here
     }
   }
 
