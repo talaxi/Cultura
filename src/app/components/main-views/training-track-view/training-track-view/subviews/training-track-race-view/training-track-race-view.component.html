@@ -1,5 +1,5 @@
 <div class="trainingTrackView">
-    Selected Animal: Animal
+    Selected Animal: <span class="keyword clickableText" [ngClass]="colorConditional" (click)="goToAnimal()">{{selectedAnimal.name}}</span>
     <hr />
     <div class="trainingTracks" *ngIf="!showRace">
         <div id="practiceTrack">
@@ -12,30 +12,102 @@
         </div>
 
         <div id="trainingTrack1">
-            <div (click)="selectTrackRace(noviceTrackRace)" class="noviceTrackRace">
+            <div class="noviceTrackRace">
                 <span class="s4Heading">Novice Track</span>
                 <br />
-                <app-race-description [race]="noviceTrackRace" [showStartText]="true"></app-race-description>
+                <span class="clickableText" (click)="openRewardsModal(noviceRewardModal)">{{selectedAnimal.allTrainingTracks.noviceTrack.totalRewards - selectedAnimal.allTrainingTracks.noviceTrack.rewardsObtained}} / {{ selectedAnimal.allTrainingTracks.noviceTrack.totalRewards }} rewards remaining</span>
+                <br />
+                <app-race-description (click)="selectTrackRace(noviceTrackRace)" [race]="noviceTrackRace" [showStartText]="true"></app-race-description>
             </div>
             <hr />
         </div>
 
         <div id="trainingTrack2" *ngIf="intermediateTrackAvailable">
-            <div (click)="selectTrackRace(intermediateTrackRace)" class="intermediateTrackRace">
+            <div class="intermediateTrackRace">
                 <span class="s4Heading">Intermediate Track</span>
                 <br />
-                <app-race-description [race]="intermediateTrackRace" [showStartText]="true"></app-race-description>
+                <span class="clickableText" (click)="openRewardsModal(intermediateRewardModal)">{{selectedAnimal.allTrainingTracks.intermediateTrack.totalRewards - selectedAnimal.allTrainingTracks.intermediateTrack.rewardsObtained}} / {{ selectedAnimal.allTrainingTracks.intermediateTrack.totalRewards }} rewards remaining</span>
+                <br />
+                <app-race-description (click)="selectTrackRace(intermediateTrackRace)" [race]="intermediateTrackRace" [showStartText]="true"></app-race-description>
             </div>
             <hr />
         </div>
 
         <div id="trainingTrack3" *ngIf="masterTrackAvailable">
-            <div (click)="selectTrackRace(masterTrackRace)" class="masterTrackRace">
+            <div class="masterTrackRace">
                 <span class="s4Heading">Master Track</span>
                 <br />
-                <app-race-description [race]="masterTrackRace" [showStartText]="true"></app-race-description>
+                <span class="clickableText" (click)="openRewardsModal(masterRewardModal)">{{selectedAnimal.allTrainingTracks.masterTrack.totalRewards - selectedAnimal.allTrainingTracks.masterTrack.rewardsObtained}} / {{ selectedAnimal.allTrainingTracks.masterTrack.totalRewards }} rewards remaining</span>
+                <br />
+                <app-race-description (click)="selectTrackRace(masterTrackRace)" [race]="masterTrackRace" [showStartText]="true"></app-race-description>
             </div>
             <hr />
         </div>
     </div>    
 </div>
+
+<ng-template #noviceRewardModal let-modal>
+    <div class="modalClass">
+        <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">Novice Rewards</h4>
+            <button type="button" aria-label="Close" (click)="modal.dismiss()">X</button>
+        </div>
+        <div class="modal-body">
+            <div class="centered">
+                Training tracks pit you against multiple competitors moving at increasingly faster speeds. Each time you beat a competitor for the first time, you gain a reward.
+                <br />
+                <br />
+                <div class="rewards" [innerHTML] = "getTrackRewardsPopover(trackRaceTypeEnum.novice)">
+                </div>
+            </div>
+           
+        </div>
+        <div class="buttonSpacing">
+            <button type="button" (click)="modal.dismiss()">Close</button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #intermediateRewardModal let-modal>
+    <div class="modalClass">
+        <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">Intermediate Rewards</h4>
+            <button type="button" aria-label="Close" (click)="modal.dismiss()">X</button>
+        </div>
+        <div class="modal-body">
+            <div class="centered">
+                Training tracks pit you against multiple competitors moving at increasingly faster speeds. Each time you beat a competitor for the first time, you gain a reward.
+                <br />
+                <br />
+                <div class="rewards" [innerHTML] = "getTrackRewardsPopover(trackRaceTypeEnum.intermediate)">
+                </div>
+            </div>
+           
+        </div>
+        <div class="buttonSpacing">
+            <button type="button" (click)="modal.dismiss()">Close</button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #masterRewardModal let-modal>
+    <div class="modalClass">
+        <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">Master Rewards</h4>
+            <button type="button" aria-label="Close" (click)="modal.dismiss()">X</button>
+        </div>
+        <div class="modal-body">
+            <div class="centered">
+                Training tracks pit you against multiple competitors moving at increasingly faster speeds. Each time you beat a competitor for the first time, you gain a reward.
+                <br />
+                <br />
+                <div class="rewards" [innerHTML] = "getTrackRewardsPopover(trackRaceTypeEnum.master)">
+                </div>
+            </div>
+           
+        </div>
+        <div class="buttonSpacing">
+            <button type="button" (click)="modal.dismiss()">Close</button>
+        </div>
+    </div>
+</ng-template>

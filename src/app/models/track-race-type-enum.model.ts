@@ -1,6 +1,6 @@
 export enum TrackRaceTypeEnum {
-    Practice,
-    Novice,
-    Intermediate,
-    Master
+    practice,
+    novice,
+    intermediate,
+    master
 }

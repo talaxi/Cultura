@@ -26,7 +26,7 @@ export class AnimalStats {
     defaultAdaptabilityModifier = 5;
     defaultBurstDistanceModifier = 3;
 
-    diminishingReturnsDefaultStatThreshold = 20;
+    diminishingReturnsDefaultStatThreshold = 20;    
 
     constructor(topSpeed?: number, acceleration?: number, endurance?: number, power?: number, focus?: number, adaptability?: number) {
         if (topSpeed !== undefined)

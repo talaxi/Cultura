@@ -114,6 +114,8 @@ export class GlobalService {
     this.globalVar.modifiers.push(new StringNumberPair(10, "circuitBreedGaugeIncrease"));
     this.globalVar.modifiers.push(new StringNumberPair(1, "localBreedGaugeIncrease"));
 
+    this.globalVar.modifiers.push(new StringNumberPair(.50, "trainingTrackPaceModifier"));
+
     this.globalVar.modifiers.push(new StringNumberPair(.02, "breedLevelStatModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(5, "breedGaugeMaxIncreaseModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(.001, "incubatorUpgradeIncreaseModifier"));
@@ -162,6 +164,8 @@ export class GlobalService {
     this.globalVar.modifiers.push(new StringNumberPair(.9, "feedingFrenzyNegativeModifier"));
 
     this.globalVar.modifiers.push(new StringNumberPair(20, "maxDriftAmountModifier"));
+
+    this.globalVar.modifiers.push(new StringNumberPair(4, "relayAbilityXpGainModifier"));
 
     var baseMaxSpeedModifier = .3;
     var baseAccelerationModifier = .1;
@@ -2131,32 +2135,31 @@ export class GlobalService {
     var leg = new RaceLeg();
     leg.courseType = animal.raceCourseType;
     
-    if (type === TrackRaceTypeEnum.Practice) {
-      timeToComplete = 20;
+    if (type === TrackRaceTypeEnum.practice) {
+      timeToComplete = 45;
       leg.distance = 100;
       leg.terrain = new Terrain(TerrainTypeEnum.Stormy);
     }
-    else if (type === TrackRaceTypeEnum.Novice)
+    else if (type === TrackRaceTypeEnum.novice)
     {
-      timeToComplete = 40;
+      timeToComplete = 60;
       leg.distance = 1000;
       leg.terrain = new Terrain(TerrainTypeEnum.Stormy);
     }
-    else if (type === TrackRaceTypeEnum.Intermediate)
+    else if (type === TrackRaceTypeEnum.intermediate)
     {
-      timeToComplete = 60;
+      timeToComplete = 80;
       leg.distance = 10000;
       leg.terrain = new Terrain(TerrainTypeEnum.Stormy);
     }
-    else if (type === TrackRaceTypeEnum.Master)
+    else if (type === TrackRaceTypeEnum.master)
     {
-      timeToComplete = 80;
+      timeToComplete = 100;
       leg.distance = 100000;
       leg.terrain = new Terrain(TerrainTypeEnum.Stormy);
     }
     
     raceLegs.push(leg);
-    console.log(raceLegs);
 
     var totalDistance = 0;
     
@@ -2168,13 +2171,13 @@ export class GlobalService {
       leg.pathData = this.GenerateRaceLegPaths(leg, totalDistance, type);
     });
 
-    return new Race(raceLegs, this.globalVar.circuitRank, false, 1, totalDistance, timeToComplete, undefined, LocalRaceTypeEnum.Track);
+    return new Race(raceLegs, this.globalVar.circuitRank, false, 1, totalDistance, timeToComplete, undefined, LocalRaceTypeEnum.Track, type);
   }
 
   GenerateRaceLegPaths(leg: RaceLeg, totalDistance: number, trackRaceType?: TrackRaceTypeEnum): RacePath[] {
     var totalRacePaths = 20;
 
-    if (trackRaceType !== undefined)
+    /*if (trackRaceType !== undefined)
     {
       if (trackRaceType === TrackRaceTypeEnum.Practice)
         totalRacePaths = 5;
@@ -2182,7 +2185,7 @@ export class GlobalService {
         totalRacePaths = 7;
       if (trackRaceType === TrackRaceTypeEnum.Intermediate)
         totalRacePaths = 14;
-    }
+    }*/
 
     var paths: RacePath[] = [];
     var totalLegLengthRemaining = leg.distance;
@@ -2492,6 +2495,8 @@ export class GlobalService {
 
   InitializeUnlockables() {
     this.globalVar.unlockables.set("trainingTrack", true);
+    this.globalVar.unlockables.set("intermediateTrack", false);
+    this.globalVar.unlockables.set("masterTrack", false);
     this.globalVar.unlockables.set("monoRace", false);
     this.globalVar.unlockables.set("duoRace", false);
     this.globalVar.unlockables.set("rainbowRace", false);
@@ -2687,20 +2692,20 @@ export class GlobalService {
       this.GenerateCircuitRacesForRank(this.globalVar.circuitRank);
     }
 
-    /*var horse = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Horse);
+    var horse = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Horse);
     if (horse !== undefined) {
-      horse.currentStats.topSpeed = 200;
-      horse.currentStats.acceleration = 200;
-      horse.currentStats.endurance = 200;
-      horse.currentStats.power = 200;
-      horse.currentStats.focus = 100;
-      horse.currentStats.adaptability = 100;
-      horse.breedLevel = 27;
+      horse.currentStats.topSpeed = 20;
+      horse.currentStats.acceleration = 20;
+      horse.currentStats.endurance = 20;
+      horse.currentStats.power = 20;
+      horse.currentStats.focus = 10;
+      horse.currentStats.adaptability = 10;
+      horse.breedLevel = 5;
       this.calculateAnimalRacingStats(horse);
 
       //horse.breedGaugeMax = 5;
       //horse.breedGaugeXp = 5;
-    }*/
+    }
 
     var cheetah = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Cheetah);
     if (cheetah !== undefined) {
@@ -2710,7 +2715,7 @@ export class GlobalService {
       cheetah.currentStats.power = 200;
       cheetah.currentStats.focus = 200;
       cheetah.currentStats.adaptability = 200;
-      cheetah.breedLevel = 70;
+      cheetah.breedLevel = 150;
       this.calculateAnimalRacingStats(cheetah);
     }
 
@@ -2728,13 +2733,13 @@ export class GlobalService {
 
     var monkey = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Monkey);
     if (monkey !== undefined) {
-      monkey.currentStats.topSpeed = 200;
-      monkey.currentStats.acceleration = 200;
-      monkey.currentStats.endurance = 20000;
-      monkey.currentStats.power = 200;
-      monkey.currentStats.focus = 200;
-      monkey.currentStats.adaptability = 200;
-      monkey.breedLevel = 60;
+      monkey.currentStats.topSpeed = 50;
+      monkey.currentStats.acceleration = 50;
+      monkey.currentStats.endurance = 50;
+      monkey.currentStats.power = 50;
+      monkey.currentStats.focus = 50;
+      monkey.currentStats.adaptability = 50;
+      monkey.breedLevel = 50;
       this.calculateAnimalRacingStats(monkey);
 
       //monkey.breedGaugeMax = 5;
@@ -2767,13 +2772,13 @@ export class GlobalService {
 
     var dolphin = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Dolphin);
     if (dolphin !== undefined) {
-      dolphin.currentStats.topSpeed = 200;
-      dolphin.currentStats.acceleration = 200;
-      dolphin.currentStats.endurance = 200;
-      dolphin.currentStats.power = 200;
-      dolphin.currentStats.focus = 200;
-      dolphin.currentStats.adaptability = 200;
-      dolphin.breedLevel = 60;
+      dolphin.currentStats.topSpeed = 100;
+      dolphin.currentStats.acceleration = 100;
+      dolphin.currentStats.endurance = 100;
+      dolphin.currentStats.power = 100;
+      dolphin.currentStats.focus = 100;
+      dolphin.currentStats.adaptability = 100;
+      dolphin.breedLevel = 160;
       this.calculateAnimalRacingStats(dolphin);
     }
 

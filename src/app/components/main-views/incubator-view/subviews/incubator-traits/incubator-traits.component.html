@@ -2,13 +2,13 @@
     <div class="infoText">
         <div class="infoGridContainer">            
             <div class="info">                
-                <div *ngIf="this.selectedAnimal.name !== this.selectedAnimal.getAnimalType()">
+                <div [ngClass]="colorConditional" (click)="goToAnimal()" class="clickableText" *ngIf="this.selectedAnimal.name !== this.selectedAnimal.getAnimalType()">
                     <span *ngIf="this.selectedAnimal.name !== this.selectedAnimal.getAnimalType()">{{
                         this.selectedAnimal.name }}</span>
                     <br />
                     <span>{{ this.selectedAnimal.getAnimalType() }}</span>
                 </div>
-                <div *ngIf="this.selectedAnimal.name === this.selectedAnimal.getAnimalType()">
+                <div [ngClass]="colorConditional" (click)="goToAnimal()" class="clickableText" *ngIf="this.selectedAnimal.name === this.selectedAnimal.getAnimalType()">
                     <span>{{ this.selectedAnimal.getAnimalType() }}</span>
                 </div>      
                 <span>Current Trait: {{ this.selectedAnimal.getTraitName() }}</span>          

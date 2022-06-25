@@ -50,6 +50,8 @@ export class RaceComponent implements OnInit {
   maxSpeedAtCurrentFrame: any;
   staminaAtCurrentFrame: any;
   racerEffectAtCurrentFrame: any;
+  positionAtCurrentFrame: any;
+  totalRacers: number;
   frameByFrameSubscription: any;
   displayVisualRace = true;
   displayTextUpdates = true;
@@ -162,6 +164,7 @@ export class RaceComponent implements OnInit {
 
   getFrameByFrameStats() {
     var currentTime = 0;
+    this.totalRacers = this.lookupService.getTotalRacersByRace(this.selectedRace);
 
     this.frameByFrameSubscription = this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {
       if (!this.racePaused)
@@ -174,12 +177,14 @@ export class RaceComponent implements OnInit {
         this.staminaAtCurrentFrame = (this.selectedRace.raceUI.staminaPercentByFrame[lastFrameCount] * 100).toFixed(2);
         this.maxSpeedAtCurrentFrame = this.selectedRace.raceUI.maxSpeedByFrame[lastFrameCount].toFixed(2);
         this.racerEffectAtCurrentFrame = this.selectedRace.raceUI.racerEffectByFrame[lastFrameCount];
+        this.positionAtCurrentFrame = this.utilityService.ordinalSuffixOf(this.selectedRace.raceUI.racePositionByFrame[lastFrameCount]);
       }
       else {
         this.velocityAtCurrentFrame = (this.selectedRace.raceUI.velocityByFrame[currentFrame] * this.frameModifier).toFixed(2);
         this.staminaAtCurrentFrame = (this.selectedRace.raceUI.staminaPercentByFrame[currentFrame] * 100).toFixed(2);
         this.maxSpeedAtCurrentFrame = this.selectedRace.raceUI.maxSpeedByFrame[currentFrame].toFixed(2);
         this.racerEffectAtCurrentFrame = this.selectedRace.raceUI.racerEffectByFrame[currentFrame];
+        this.positionAtCurrentFrame = this.utilityService.ordinalSuffixOf(this.selectedRace.raceUI.racePositionByFrame[currentFrame]);
       }
     });
   }

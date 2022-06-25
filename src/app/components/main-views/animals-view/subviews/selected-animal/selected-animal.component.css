@@ -57,18 +57,24 @@
 .gridContainer {
    /* height: 100%;*/
     display: grid;
-    grid-template-columns: auto;
+    grid-template-columns: 1fr 1fr 1fr;
     grid-template-rows: auto;
+    justify-items: center;
     justify-content: stretch;    
     grid-template-areas: 
-      "trainingStats racingStats";
+      "trainingStats racingStats miscStats";
   }
-  .trainingStats {
+  .trainableStats {
+    justify-self: left;
     grid-area: trainingStats;    
   }
 
   .racingStats {
     grid-area: racingStats;    
+  }
+
+  .miscStats {
+    grid-area: miscStats;
   }
 
   ::ng-deep ngb-modal-backdrop {

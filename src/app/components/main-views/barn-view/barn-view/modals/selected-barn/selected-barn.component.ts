@@ -452,6 +452,8 @@ export class SelectedBarnComponent implements OnInit {
       }
 
       this.getSizeValue();
+      this.canUpgrade = this.canUpgradeBarn(this.lookupService.getResourcesForBarnUpgrade(this.barn.barnUpgrades.barnLevel));
+      this.canBuild = this.canBuildLargerBarn();
       this.availableTrainings = this.GetAvailableTrainingOptions(this.associatedAnimal);
       this.buildBiggerBarnPopover = this.getBuildLargerBarnPopover();
     }
@@ -499,6 +501,8 @@ export class SelectedBarnComponent implements OnInit {
       this.upgradeBarnPopover = this.getUpgradeBarnPopover();
     }
 
+    this.canUpgrade = this.canUpgradeBarn(this.lookupService.getResourcesForBarnUpgrade(this.barn.barnUpgrades.barnLevel));
+    this.canBuild = this.canBuildLargerBarn();
     this.availableTrainings = this.GetAvailableTrainingOptions(this.associatedAnimal);
   }
 

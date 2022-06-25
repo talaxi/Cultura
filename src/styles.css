@@ -180,6 +180,10 @@ h1 {
   font-weight: 550;
 }
 
+.crossed {
+  text-decoration: line-through;
+}
+
 .coloredText {
   font-weight: 550;
 }

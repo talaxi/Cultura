@@ -2,6 +2,7 @@ import { Type } from "class-transformer";
 import { AnimalTypeEnum } from "../animal-type-enum.model";
 import { RaceCourseTypeEnum } from "../race-course-type-enum.model";
 import { ResourceValue } from "../resources/resource-value.model";
+import { AllTrainingTracks } from "../training-track/all-training-tracks.model";
 import { TrainingOption } from "../training/training-option.model";
 import { Ability } from "./ability.model";
 import { AnimalStats } from "./animal-stats.model";
@@ -21,6 +22,7 @@ export class Animal {
     isAvailable: boolean;
     @Type(() => TrainingOption)
     currentTraining: TrainingOption | null;
+    @Type(() => TrainingOption)
     queuedTraining: TrainingOption | null;
     associatedBarnNumber: number;
     @Type(() => Ability)
@@ -29,21 +31,33 @@ export class Animal {
     raceVariables: RaceVariables;
     @Type(() => ResourceValue)
     equippedItem: ResourceValue | null;
+    @Type(() => IncubatorStatUpgrades)
     incubatorStatUpgrades: IncubatorStatUpgrades;
+    @Type(() => AllTrainingTracks)
+    allTrainingTracks: AllTrainingTracks;
     breedLevel: number;
     breedGaugeXp: number;
     breedGaugeMax: number;
+    bonusBreedXpGainFromTraining: number;
+    bonusBreedXpGainFromLocalRaces: number;
+    bonusBreedXpGainFromCircuitRaces: number;
     autoBreedActive: boolean;
+    @Type(() => Ability)
     availableAbilities: Ability[];
+    @Type(() => AnimalTraits)
     trait: AnimalTraits;
     canTrain: boolean;
     totalRacesRun: number; //for tracked stats
 
     constructor() {
         this.incubatorStatUpgrades = new IncubatorStatUpgrades();
+        this.allTrainingTracks = new AllTrainingTracks();
         this.breedLevel = 1;
         this.breedGaugeXp = 0;
         this.breedGaugeMax = 100;
+        this.bonusBreedXpGainFromLocalRaces = 0;
+        this.bonusBreedXpGainFromCircuitRaces = 0;
+        this.bonusBreedXpGainFromTraining = 0;
         this.totalRacesRun = 0;
         this.canTrain = true;
         this.isAvailable = false;

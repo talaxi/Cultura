@@ -583,12 +583,16 @@ export class DrawRaceComponent implements OnInit {
         this.drawRacer(context, moneyMarkDistanceScaled, "gold");
       }
     }
-    else {
-      //todo: maybe make this 6 racers instead? easier to tell what is going on?
-      //draw other 12 racers
-      var totalRacers = 12;
+    else {      
+      //only need 11 racers as the average distance is already drawn above
+      var totalRacers = 11;
+      var trackPaceModifierValue = .25;
+      var trackPaceModifierValuePair = this.globalService.globalVar.modifiers.find(item => item.text === "trainingTrackPaceModifier");
+      if (trackPaceModifierValuePair !== undefined)
+        trackPaceModifierValue = trackPaceModifierValuePair.value;  
+      
       for (var j = 0; j < totalRacers; j++) {
-        var paceModifier = 1 + (.25 * (j + 1));
+        var paceModifier = 1 + (trackPaceModifierValue * (j + 1));
         var racerDistancePerSecond = this.race.length / (this.race.raceUI.timeToCompleteByFrame[currentFrame] / paceModifier);
         var racerDistance = (racerDistancePerSecond / this.frameModifier) * currentFrame;
 
@@ -738,12 +742,10 @@ export class DrawRaceComponent implements OnInit {
     if (count === 7)
       color = "#7a7a7a";
     if (count === 8)
-      color = "#ffffff";
+      color = "#ffffff";    
     if (count === 9)
-      color = "#c6cca1";
-    if (count === 10)
       color = "#01253b";
-    if (count === 11)
+    if (count === 10)
       color = "#790dde";
 
     return color;

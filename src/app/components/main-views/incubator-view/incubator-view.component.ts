@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Animal } from 'src/app/models/animals/animal.model';
+import { NavigationEnum } from 'src/app/models/navigation-enum.model';
 import { ComponentCommunicationService } from 'src/app/services/component-communication.service';
 import { GlobalService } from 'src/app/services/global-service.service';
 import { LookupService } from 'src/app/services/lookup.service';
@@ -16,9 +17,10 @@ export class IncubatorViewComponent implements OnInit {
   animal: Animal;
   researchLevel: number;
 
-  constructor(private globalService: GlobalService, private lookupService: LookupService) { }
+  constructor(private globalService: GlobalService, private lookupService: LookupService, private componentCommunicationService: ComponentCommunicationService) { }
 
   ngOnInit(): void {
+    this.componentCommunicationService.setNewView(NavigationEnum.incubator);
     this.availableAnimals = this.globalService.globalVar.animals.filter(item => item.isAvailable);
     this.researchLevel = this.lookupService.getResearchLevel();
 

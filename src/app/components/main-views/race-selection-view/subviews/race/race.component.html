@@ -5,6 +5,7 @@
             <div>Velocity: {{ velocityAtCurrentFrame }} / {{ maxSpeedAtCurrentFrame }}m/s <span
                     *ngIf="racerEffectAtCurrentFrame === burstEffect">BURST!</span></div>
             <div>Stamina: {{ staminaAtCurrentFrame }}%</div>
+            <div>Position: {{ positionAtCurrentFrame }} / {{ totalRacers }}</div>
             <div><button (click)="pauseRaceAnimation()">Pause</button></div>
         </div>
         <div class="updates">

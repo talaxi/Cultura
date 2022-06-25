@@ -9,12 +9,15 @@ import { Animal } from '../models/animals/animal.model';
 import { BarnSpecializationEnum } from '../models/barn-specialization-enum.model';
 import { BarnUpgrades } from '../models/barns/barn-upgrades.model';
 import { Barn } from '../models/barns/barn.model';
+import { LocalRaceTypeEnum } from '../models/local-race-type-enum.model';
 import { RaceCourseTypeEnum } from '../models/race-course-type-enum.model';
 import { RaceLeg } from '../models/races/race-leg.model';
+import { Race } from '../models/races/race.model';
 import { Terrain } from '../models/races/terrain.model';
 import { ResourceValue } from '../models/resources/resource-value.model';
 import { ShopItemTypeEnum } from '../models/shop-item-type-enum.model';
 import { TerrainTypeEnum } from '../models/terrain-type-enum.model';
+import { TrackRaceTypeEnum } from '../models/track-race-type-enum.model';
 import { TrainingOption } from '../models/training/training-option.model';
 import { GlobalService } from './global-service.service';
 import { UtilityService } from './utility/utility.service';
@@ -285,11 +288,14 @@ export class LookupService {
     return totalModifier;
   }
 
-  getTrainingBreedGaugeIncrease(breedingGroundsSpecializationLevel: number): number {
+  getTrainingBreedGaugeIncrease(breedingGroundsSpecializationLevel: number, animal: Animal): number {
     var increaseAmount = 0;
     var modifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "trainingBreedGaugeIncrease");
     if (modifierPair !== null && modifierPair !== undefined)
       increaseAmount = modifierPair.value;
+
+    if (animal.bonusBreedXpGainFromTraining !== undefined && animal.bonusBreedXpGainFromTraining !== null && animal.bonusBreedXpGainFromTraining > 0)
+      increaseAmount += animal.bonusBreedXpGainFromTraining;
 
     if (breedingGroundsSpecializationLevel > 0) {
       var breedingGroundsModifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "breedingGroundsSpecializationModifier");
@@ -301,20 +307,44 @@ export class LookupService {
     return increaseAmount;
   }
 
-  getCircuitBreedGaugeIncrease(): number {
+  getCircuitBreedGaugeIncrease(animal: Animal): number {
+    var increaseAmount = 0;
     var modifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "circuitBreedGaugeIncrease");
     if (modifierPair !== null && modifierPair !== undefined)
-      return modifierPair.value;
+      increaseAmount = modifierPair.value;
 
-    return 0;
+      if (animal.bonusBreedXpGainFromCircuitRaces !== undefined && animal.bonusBreedXpGainFromCircuitRaces !== null && animal.bonusBreedXpGainFromCircuitRaces > 0)
+      increaseAmount += animal.bonusBreedXpGainFromCircuitRaces;
+
+    return increaseAmount;
   }
 
-  getLocalBreedGaugeIncrease(): number {
+  getLocalBreedGaugeIncrease(animal: Animal): number {
+    var increaseAmount = 0;
     var modifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "localBreedGaugeIncrease");
     if (modifierPair !== null && modifierPair !== undefined)
-      return modifierPair.value;
+      increaseAmount = modifierPair.value;
 
-    return 0;
+      if (animal.bonusBreedXpGainFromLocalRaces !== undefined && animal.bonusBreedXpGainFromLocalRaces !== null && animal.bonusBreedXpGainFromLocalRaces > 0)
+      increaseAmount += animal.bonusBreedXpGainFromLocalRaces;
+
+    return increaseAmount;
+  }
+
+  getTotalRacersByRace(race: Race) {
+    var totalRacers = 2;
+
+    //don't forget to include 1 for yourself when doing this
+    if (race.localRaceType === LocalRaceTypeEnum.Track) {
+      totalRacers = 13;
+    }
+    else {
+      var moneyMarkIsUnlocked = this.getResourceByName("Money Mark");
+      if (moneyMarkIsUnlocked > 0)
+        totalRacers += 1;
+    }
+
+    return totalRacers;
   }
 
   getDiminishingReturnsThreshold(animal?: Animal): number {
@@ -384,6 +414,33 @@ export class LookupService {
     if (this.isItemUnlocked("researchCenterSpecialization"))
       itemList.push("Research Center");
     return itemList;
+  }
+
+  getTrackRaceRewards(type: TrackRaceTypeEnum) {
+    var rewards: string[] = [];
+
+    if (type === TrackRaceTypeEnum.novice) {
+      rewards.push("- 50 Coins");
+      rewards.push("- +1 Bonus Breed XP gain from Training");
+      rewards.push("- 50 Coins");
+      rewards.push("- +1 Bonus Breed XP gain from Local Races");
+      rewards.push("- 50 Coins");
+      rewards.push("- +1 Bonus Breed XP gain from Training");
+      rewards.push("- 50 Coins");
+      rewards.push("- +1 Bonus Breed XP gain from Local Races");
+      rewards.push("- 50 Coins");
+      rewards.push("- +1 Bonus Breed XP gain from Training");
+      rewards.push("- 50 Coins");
+      rewards.push("- +1 Bonus Breed XP gain from Local Races");
+    }
+    else if (type === TrackRaceTypeEnum.intermediate) {
+
+    }
+    else if (type === TrackRaceTypeEnum.master) {
+
+    }
+
+    return rewards;
   }
 
   isItemUnlocked(name: string) {
@@ -1016,7 +1073,7 @@ export class LookupService {
     else if (itemName === "Team Manager")
       description = "Add option to automatically run 1 free race per reset period";
     else if (itemName === "Incubator Upgrade")
-      description = "When breeding, permanently increase racing stat gain from base stat by 5% of positive trait value";
+      description = "When breeding, permanently increase racing stat gain from base stat by .1% of positive trait value";
 
     return description;
   }

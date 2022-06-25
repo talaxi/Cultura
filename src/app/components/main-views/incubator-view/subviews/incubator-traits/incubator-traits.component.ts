@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AnimalStatEnum } from 'src/app/models/animal-stat-enum.model';
 import { AnimalTraits } from 'src/app/models/animals/animal-traits.model';
 import { Animal } from 'src/app/models/animals/animal.model';
+import { NavigationEnum } from 'src/app/models/navigation-enum.model';
 import { ComponentCommunicationService } from 'src/app/services/component-communication.service';
 import { GameLoopService } from 'src/app/services/game-loop/game-loop.service';
 import { GlobalService } from 'src/app/services/global-service.service';
@@ -29,8 +30,10 @@ export class IncubatorTraitsComponent implements OnInit {
   filterFocus = false;
   filterAdaptability = false;
 
+  colorConditional: any;
+
   constructor(private globalService: GlobalService, private gameLoopService: GameLoopService,
-    private lookupService: LookupService) { }
+    private lookupService: LookupService, private componentCommunicationService: ComponentCommunicationService) { }
 
   ngOnInit(): void {
     this.availableTraits = this.GetAvailableTraits();
@@ -46,6 +49,14 @@ export class IncubatorTraitsComponent implements OnInit {
       if (selectedTraining !== null && selectedTraining !== undefined)
         selectedTraining.isSelected = true;
     }
+
+    this.colorConditional = {
+      'flatlandColor': this.selectedAnimal.getRaceCourseType() === 'Flatland',
+      'mountainColor': this.selectedAnimal.getRaceCourseType() === 'Mountain',
+      'waterColor': this.selectedAnimal.getRaceCourseType() === 'Ocean',
+      'tundraColor': this.selectedAnimal.getRaceCourseType() === 'Tundra',
+      'volcanicColor': this.selectedAnimal.getRaceCourseType() === 'Volcanic'
+    };
 
     var subscription = this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {
       var incubator = this.globalService.globalVar.incubator;
@@ -162,6 +173,10 @@ export class IncubatorTraitsComponent implements OnInit {
 
   returnToAnimalView(): void {
     this.returnEmitter.emit(false);
+  }
+
+  goToAnimal() {
+    this.componentCommunicationService.setAnimalView(NavigationEnum.animals, this.selectedAnimal);
   }
 
   ngOnDestroy() {

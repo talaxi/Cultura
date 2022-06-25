@@ -110,7 +110,7 @@ export class AppComponent {
             else
               animal.increaseStatsFromCurrentTraining();
             this.globalService.calculateAnimalRacingStats(animal);
-            var breedGaugeIncrease = this.lookupService.getTrainingBreedGaugeIncrease(breedingGroundsSpecializationLevel);
+            var breedGaugeIncrease = this.lookupService.getTrainingBreedGaugeIncrease(breedingGroundsSpecializationLevel, animal);
             this.globalService.IncreaseAnimalBreedGauge(animal, breedGaugeIncrease);
 
             animal.currentTraining.timeTrained -= animal.currentTraining.timeToComplete;
