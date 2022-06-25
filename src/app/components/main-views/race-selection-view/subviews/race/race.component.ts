@@ -88,6 +88,7 @@ export class RaceComponent implements OnInit {
 
   ngOnDestroy() {
     this.frameByFrameSubscription.unsubscribe();
+    this.raceFinished.emit(true);
   }
 
   displayRaceUpdates(raceResult: RaceResult): void {
@@ -131,7 +132,7 @@ export class RaceComponent implements OnInit {
     this.rewardCells = [];
     this.rewardRows = [];
 
-    var maxColumns = 6;
+    var maxColumns = 4;
 
     if (race.rewards === undefined || race.rewards === null)
       return;

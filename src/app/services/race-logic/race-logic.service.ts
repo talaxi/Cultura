@@ -1073,17 +1073,35 @@ export class RaceLogicService {
             }
           }
           else {
-            if (item.name === "Bonus Breed XP gain from Training" && item.itemType === ShopItemTypeEnum.Other) {
+            if (item.name === "Bonus Breed XP Gain From Training" && item.itemType === ShopItemTypeEnum.Other) {
               var courseType = this.selectedRace.raceLegs[0].courseType;
               var racingAnimal = this.racingAnimals.find(animal => animal.raceCourseType === courseType);
               if (racingAnimal !== undefined && racingAnimal !== null)
-                racingAnimal.bonusBreedXpGainFromTraining += item.amount;
+                racingAnimal.miscStats.bonusBreedXpGainFromTraining += item.amount;
             }
-            else if (item.name === "Bonus Breed XP gain from Local Races" && item.itemType === ShopItemTypeEnum.Other) {
+            else if (item.name === "Bonus Breed XP Gain From Local Races" && item.itemType === ShopItemTypeEnum.Other) {
               var courseType = this.selectedRace.raceLegs[0].courseType;
               var racingAnimal = this.racingAnimals.find(animal => animal.raceCourseType === courseType);
               if (racingAnimal !== undefined && racingAnimal !== null)
-                racingAnimal.bonusBreedXpGainFromLocalRaces += item.amount;
+                racingAnimal.miscStats.bonusBreedXpGainFromLocalRaces += item.amount;
+            }
+            else if (item.name === "Bonus Breed XP Gain From Circuit Races" && item.itemType === ShopItemTypeEnum.Other) {
+              var courseType = this.selectedRace.raceLegs[0].courseType;
+              var racingAnimal = this.racingAnimals.find(animal => animal.raceCourseType === courseType);
+              if (racingAnimal !== undefined && racingAnimal !== null)
+                racingAnimal.miscStats.bonusBreedXpGainFromCircuitRaces += item.amount;
+            }
+            else if (item.name === "Training Time Reduction" && item.itemType === ShopItemTypeEnum.Other) {
+              var courseType = this.selectedRace.raceLegs[0].courseType;
+              var racingAnimal = this.racingAnimals.find(animal => animal.raceCourseType === courseType);
+              if (racingAnimal !== undefined && racingAnimal !== null)
+                racingAnimal.miscStats.trainingTimeReduction += item.amount;
+            }
+            else if (item.name === "Diminishing Returns per Facility Level" && item.itemType === ShopItemTypeEnum.Other) {
+              var courseType = this.selectedRace.raceLegs[0].courseType;
+              var racingAnimal = this.racingAnimals.find(animal => animal.raceCourseType === courseType);
+              if (racingAnimal !== undefined && racingAnimal !== null)
+                racingAnimal.miscStats.diminishingReturnsBonus += item.amount;
             }
             else
               this.globalService.globalVar.resources.push(new ResourceValue(item.name, item.amount, item.itemType));

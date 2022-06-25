@@ -25,6 +25,6 @@
         </div>
     </div>
     <div *ngIf="showRace" class="raceDiv">
-        <app-race [selectedRace]="selectedRace" (raceFinished)="showRace = false"></app-race>
+        <app-race [selectedRace]="selectedRace" (raceFinished)="raceFinished()"></app-race>
     </div>
 </div>

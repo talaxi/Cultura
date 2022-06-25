@@ -294,8 +294,8 @@ export class LookupService {
     if (modifierPair !== null && modifierPair !== undefined)
       increaseAmount = modifierPair.value;
 
-    if (animal.bonusBreedXpGainFromTraining !== undefined && animal.bonusBreedXpGainFromTraining !== null && animal.bonusBreedXpGainFromTraining > 0)
-      increaseAmount += animal.bonusBreedXpGainFromTraining;
+    if (animal.miscStats.bonusBreedXpGainFromTraining !== undefined && animal.miscStats.bonusBreedXpGainFromTraining !== null && animal.miscStats.bonusBreedXpGainFromTraining > 0)
+      increaseAmount += animal.miscStats.bonusBreedXpGainFromTraining;
 
     if (breedingGroundsSpecializationLevel > 0) {
       var breedingGroundsModifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "breedingGroundsSpecializationModifier");
@@ -313,8 +313,8 @@ export class LookupService {
     if (modifierPair !== null && modifierPair !== undefined)
       increaseAmount = modifierPair.value;
 
-      if (animal.bonusBreedXpGainFromCircuitRaces !== undefined && animal.bonusBreedXpGainFromCircuitRaces !== null && animal.bonusBreedXpGainFromCircuitRaces > 0)
-      increaseAmount += animal.bonusBreedXpGainFromCircuitRaces;
+      if (animal.miscStats.bonusBreedXpGainFromCircuitRaces !== undefined && animal.miscStats.bonusBreedXpGainFromCircuitRaces !== null && animal.miscStats.bonusBreedXpGainFromCircuitRaces > 0)
+      increaseAmount += animal.miscStats.bonusBreedXpGainFromCircuitRaces;
 
     return increaseAmount;
   }
@@ -325,8 +325,8 @@ export class LookupService {
     if (modifierPair !== null && modifierPair !== undefined)
       increaseAmount = modifierPair.value;
 
-      if (animal.bonusBreedXpGainFromLocalRaces !== undefined && animal.bonusBreedXpGainFromLocalRaces !== null && animal.bonusBreedXpGainFromLocalRaces > 0)
-      increaseAmount += animal.bonusBreedXpGainFromLocalRaces;
+      if (animal.miscStats.bonusBreedXpGainFromLocalRaces !== undefined && animal.miscStats.bonusBreedXpGainFromLocalRaces !== null && animal.miscStats.bonusBreedXpGainFromLocalRaces > 0)
+      increaseAmount += animal.miscStats.bonusBreedXpGainFromLocalRaces;
 
     return increaseAmount;
   }
@@ -421,17 +421,17 @@ export class LookupService {
 
     if (type === TrackRaceTypeEnum.novice) {
       rewards.push("- 50 Coins");
-      rewards.push("- +1 Bonus Breed XP gain from Training");
+      rewards.push("- +1 Bonus Breed XP Gain From Training");
       rewards.push("- 50 Coins");
-      rewards.push("- +1 Bonus Breed XP gain from Local Races");
+      rewards.push("- +1 Bonus Breed XP Gain From Local Races");
       rewards.push("- 50 Coins");
-      rewards.push("- +1 Bonus Breed XP gain from Training");
+      rewards.push("- +1 Bonus Breed XP Gain From Training");
       rewards.push("- 50 Coins");
-      rewards.push("- +1 Bonus Breed XP gain from Local Races");
+      rewards.push("- +1 Bonus Breed XP Gain From Local Races");
       rewards.push("- 50 Coins");
-      rewards.push("- +1 Bonus Breed XP gain from Training");
+      rewards.push("- +1 Bonus Breed XP Gain From Training");
       rewards.push("- 50 Coins");
-      rewards.push("- +1 Bonus Breed XP gain from Local Races");
+      rewards.push("- +1 Bonus Breed XP Gain From Local Races");
     }
     else if (type === TrackRaceTypeEnum.intermediate) {
 

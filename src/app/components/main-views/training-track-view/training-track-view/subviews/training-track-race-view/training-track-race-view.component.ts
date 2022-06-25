@@ -52,6 +52,11 @@ export class TrainingTrackRaceViewComponent implements OnInit {
   }
 
   selectTrackRace(race: Race) {
+    //TODO: change animal to selected animal, then reset it after. don't think changing decks will work cause your temp won't be in the global set
+    var currentPrimaryDeck = this.globalService.globalVar.animalDecks.find(item => item.isPrimaryDeck);
+      if (currentPrimaryDeck !== null && currentPrimaryDeck !== undefined)
+        currentPrimaryDeck.isPrimaryDeck = false;
+    
     this.raceSelected.emit(race);
   }
 

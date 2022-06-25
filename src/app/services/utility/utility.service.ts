@@ -91,15 +91,12 @@ export class UtilityService {
     list.forEach(item => {
       if (newList.some(val => val.name === item.name))
       {
-        console.log("Adding " + newList.find(val => val.name === item.name)!.amount + " with " + item.amount);
         newList.find(val => val.name === item.name)!.amount += item.amount;
       }
       else
       {
         var itemCopy = item.makeCopy(item);
         newList.push(itemCopy);
-        console.log("Creating new item: ");
-        console.log(itemCopy);
       }
     });
 

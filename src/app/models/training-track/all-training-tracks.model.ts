@@ -22,20 +22,33 @@ export class AllTrainingTracks {
 
         var noviceCoinAmount = 50;
         this.noviceTrack.rewards.push(new ResourceValue("Coins", noviceCoinAmount, ShopItemTypeEnum.Resources));
-        this.noviceTrack.rewards.push(new ResourceValue("Bonus Breed XP gain from Training", 1, ShopItemTypeEnum.Other));
+        this.noviceTrack.rewards.push(new ResourceValue("Bonus Breed XP Gain From Training", 1, ShopItemTypeEnum.Other));
         this.noviceTrack.rewards.push(new ResourceValue("Coins", noviceCoinAmount, ShopItemTypeEnum.Resources));
-        this.noviceTrack.rewards.push(new ResourceValue("Bonus Breed XP gain from Local Races", 1, ShopItemTypeEnum.Other));
+        this.noviceTrack.rewards.push(new ResourceValue("Bonus Breed XP Gain From Local Races", 1, ShopItemTypeEnum.Other));
         this.noviceTrack.rewards.push(new ResourceValue("Coins", noviceCoinAmount, ShopItemTypeEnum.Resources));
-        this.noviceTrack.rewards.push(new ResourceValue("Bonus Breed XP gain from Training", 1, ShopItemTypeEnum.Other));
+        this.noviceTrack.rewards.push(new ResourceValue("Bonus Breed XP Gain From Training", 1, ShopItemTypeEnum.Other));
         this.noviceTrack.rewards.push(new ResourceValue("Coins", noviceCoinAmount, ShopItemTypeEnum.Resources));
-        this.noviceTrack.rewards.push(new ResourceValue("Bonus Breed XP gain from Local Races", 1, ShopItemTypeEnum.Other));
+        this.noviceTrack.rewards.push(new ResourceValue("Bonus Breed XP Gain From Local Races", 1, ShopItemTypeEnum.Other));
         this.noviceTrack.rewards.push(new ResourceValue("Coins", noviceCoinAmount, ShopItemTypeEnum.Resources));
-        this.noviceTrack.rewards.push(new ResourceValue("Bonus Breed XP gain from Training", 1, ShopItemTypeEnum.Other));
+        this.noviceTrack.rewards.push(new ResourceValue("Bonus Breed XP Gain From Training", 1, ShopItemTypeEnum.Other));
         this.noviceTrack.rewards.push(new ResourceValue("Coins", noviceCoinAmount, ShopItemTypeEnum.Resources));
-        this.noviceTrack.rewards.push(new ResourceValue("Bonus Breed XP gain from Local Races", 1, ShopItemTypeEnum.Other));
+        this.noviceTrack.rewards.push(new ResourceValue("Bonus Breed XP Gain From Local Races", 1, ShopItemTypeEnum.Other));
 
         this.intermediateTrack = new TrainingTrack();
         this.intermediateTrack.totalRewards = 12;
+        var intermediateCoinAmount = 200;
+        this.intermediateTrack.rewards.push(new ResourceValue("Coins", intermediateCoinAmount, ShopItemTypeEnum.Resources));
+        this.intermediateTrack.rewards.push(new ResourceValue("Bonus Breed XP Gain From Training", 2, ShopItemTypeEnum.Other));
+        this.intermediateTrack.rewards.push(new ResourceValue("Medals", 1, ShopItemTypeEnum.Resources));
+        this.intermediateTrack.rewards.push(new ResourceValue("Diminishing Returns per Facility Level", 2, ShopItemTypeEnum.Other));
+        this.intermediateTrack.rewards.push(new ResourceValue("Training Time Reduction", 1, ShopItemTypeEnum.Resources));
+        this.intermediateTrack.rewards.push(new ResourceValue("Bonus Breed XP Gain From Circuit Races", 5, ShopItemTypeEnum.Other));
+        this.intermediateTrack.rewards.push(new ResourceValue("Coins", intermediateCoinAmount, ShopItemTypeEnum.Resources));
+        this.intermediateTrack.rewards.push(new ResourceValue("Bonus Breed XP Gain From Local Races", 1, ShopItemTypeEnum.Other));
+        this.intermediateTrack.rewards.push(new ResourceValue("Coins", noviceCoinAmount, ShopItemTypeEnum.Resources));
+        this.intermediateTrack.rewards.push(new ResourceValue("Bonus Breed XP Gain From Training", 2, ShopItemTypeEnum.Other));
+        this.intermediateTrack.rewards.push(new ResourceValue("Training Time Reduction", 1, ShopItemTypeEnum.Resources));
+        this.intermediateTrack.rewards.push(new ResourceValue("Diminishing Returns per Facility Level", 3, ShopItemTypeEnum.Other));
 
         this.masterTrack = new TrainingTrack();
         this.masterTrack.totalRewards = 12;

@@ -9,6 +9,7 @@ import { AnimalStats } from "./animal-stats.model";
 import { AnimalTraits } from "./animal-traits.model";
 import { Equipment } from "./equipment.model";
 import { IncubatorStatUpgrades } from "./incubator-stat-upgrades.model";
+import { MiscStats } from "./misc-stats.model";
 import { RaceVariables } from "./race-variables.model";
 
 export class Animal {
@@ -38,9 +39,8 @@ export class Animal {
     breedLevel: number;
     breedGaugeXp: number;
     breedGaugeMax: number;
-    bonusBreedXpGainFromTraining: number;
-    bonusBreedXpGainFromLocalRaces: number;
-    bonusBreedXpGainFromCircuitRaces: number;
+    @Type(() => MiscStats)
+    miscStats: MiscStats;
     autoBreedActive: boolean;
     @Type(() => Ability)
     availableAbilities: Ability[];
@@ -52,12 +52,10 @@ export class Animal {
     constructor() {
         this.incubatorStatUpgrades = new IncubatorStatUpgrades();
         this.allTrainingTracks = new AllTrainingTracks();
+        this.miscStats = new MiscStats();
         this.breedLevel = 1;
         this.breedGaugeXp = 0;
         this.breedGaugeMax = 100;
-        this.bonusBreedXpGainFromLocalRaces = 0;
-        this.bonusBreedXpGainFromCircuitRaces = 0;
-        this.bonusBreedXpGainFromTraining = 0;
         this.totalRacesRun = 0;
         this.canTrain = true;
         this.isAvailable = false;

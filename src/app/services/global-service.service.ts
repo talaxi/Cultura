@@ -2369,10 +2369,16 @@ export class GlobalService {
 
   GetAnimalDiminishingReturns(animal: Animal) {
     var diminishingReturnsThreshold = animal.currentStats.diminishingReturnsDefaultStatThreshold;
-    var facilityLevelModifier = this.globalVar.modifiers.find(item => item.text === "facilityLevelModifier");
     var facilityLevel = this.globalVar.resources.find(item => item.name === "Facility Level");
-    if (facilityLevelModifier !== undefined && facilityLevel !== undefined)
-      diminishingReturnsThreshold += facilityLevel.amount * facilityLevelModifier.value;
+    if (facilityLevel === undefined || facilityLevel === null)
+      return diminishingReturnsThreshold;
+
+    var facilityLevelModifierValue = 5;
+    var facilityLevelModifier = this.globalVar.modifiers.find(item => item.text === "facilityLevelModifier");    
+    if (facilityLevelModifier !== undefined)
+      facilityLevelModifierValue = facilityLevelModifier.value;
+      
+    diminishingReturnsThreshold += facilityLevel.amount * (facilityLevelModifierValue + animal.miscStats.diminishingReturnsBonus);
 
     return diminishingReturnsThreshold;
   }
@@ -2715,7 +2721,7 @@ export class GlobalService {
       cheetah.currentStats.power = 200;
       cheetah.currentStats.focus = 200;
       cheetah.currentStats.adaptability = 200;
-      cheetah.breedLevel = 150;
+      cheetah.breedLevel = 450;
       this.calculateAnimalRacingStats(cheetah);
     }
 
@@ -2733,13 +2739,13 @@ export class GlobalService {
 
     var monkey = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Monkey);
     if (monkey !== undefined) {
-      monkey.currentStats.topSpeed = 50;
-      monkey.currentStats.acceleration = 50;
-      monkey.currentStats.endurance = 50;
-      monkey.currentStats.power = 50;
-      monkey.currentStats.focus = 50;
-      monkey.currentStats.adaptability = 50;
-      monkey.breedLevel = 50;
+      monkey.currentStats.topSpeed = 150;
+      monkey.currentStats.acceleration = 150;
+      monkey.currentStats.endurance = 150;
+      monkey.currentStats.power = 150;
+      monkey.currentStats.focus = 150;
+      monkey.currentStats.adaptability = 150;
+      monkey.breedLevel = 1000;
       this.calculateAnimalRacingStats(monkey);
 
       //monkey.breedGaugeMax = 5;
@@ -2778,7 +2784,7 @@ export class GlobalService {
       dolphin.currentStats.power = 100;
       dolphin.currentStats.focus = 100;
       dolphin.currentStats.adaptability = 100;
-      dolphin.breedLevel = 160;
+      dolphin.breedLevel = 300;
       this.calculateAnimalRacingStats(dolphin);
     }
 

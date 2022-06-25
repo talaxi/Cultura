@@ -178,13 +178,41 @@
                     <span class="s4Heading">Miscellaneous Stats</span>
                     <br />
                     <br />
-                    <span>
-                        Bonus Breed XP From Training: {{ selectedAnimal.bonusBreedXpGainFromTraining | number : '1.0-0' }}
-                    </span>
-                    <br />
-                    <span>
-                        Bonus Breed XP From Local Races: {{ selectedAnimal.bonusBreedXpGainFromLocalRaces | number : '1.0-0' }}
-                    </span>                    
+                    <div *ngIf="selectedAnimal.miscStats.bonusBreedXpGainFromTraining > 0">
+                        <span>
+                            Bonus Breed XP From Training: {{ selectedAnimal.miscStats.bonusBreedXpGainFromTraining |
+                            number : '1.0-0' }}
+                        </span>
+                        <br />
+                    </div>
+                    <div *ngIf="selectedAnimal.miscStats.bonusBreedXpGainFromLocalRaces > 0">
+                        <span>
+                            Bonus Breed XP From Local Races: {{ selectedAnimal.miscStats.bonusBreedXpGainFromLocalRaces
+                            |
+                            number : '1.0-0' }}
+                        </span>
+                    </div>
+                    <div *ngIf="selectedAnimal.miscStats.bonusBreedXpGainFromCircuitRaces > 0">
+                        <span>
+                            Bonus Breed XP From Circuit Races: {{ selectedAnimal.miscStats.bonusBreedXpGainFromCircuitRaces
+                            |
+                            number : '1.0-0' }}
+                        </span>
+                    </div>
+                    <div *ngIf="selectedAnimal.miscStats.trainingTimeReduction > 0">
+                        <span>
+                            Training Time Reduction: {{ selectedAnimal.miscStats.trainingTimeReduction
+                            |
+                            number : '1.0-0' }}%
+                        </span>
+                    </div>
+                    <div *ngIf="selectedAnimal.miscStats.diminishingReturnsBonus > 0">
+                        <span>
+                            Bonus Diminishing Returns per Facility Level: {{ selectedAnimal.miscStats.diminishingReturnsBonus
+                            |
+                            number : '1.0-0' }}
+                        </span>
+                    </div>
                 </div>
             </div>
             <br />
@@ -209,7 +237,7 @@
                                 {{selectedAbility.abilityMaxXp}} XP</span> <span
                                 *ngIf="abilityLevelMaxedOut">MAX</span></span>
                         <br />
-                        <span [innerHTML] = "longDescription"></span>
+                        <span [innerHTML]="longDescription"></span>
                         <!--{{ longDescription }}-->
                     </p>
                 </div>

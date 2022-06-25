@@ -242,7 +242,7 @@ export class SelectedBarnComponent implements OnInit {
       if (stopwatch === undefined || stopwatch === null)
         stopwatch = 0;
 
-      modifiedOption.timeToComplete *= 1 - (stopwatch * .05 + trainingTimeReduction);
+      modifiedOption.timeToComplete *= 1 - (stopwatch * .05 + trainingTimeReduction + (associatedAnimal.miscStats.trainingTimeReduction / 100));
       modifiedOption.timeToComplete = Math.round((modifiedOption.timeToComplete + Number.EPSILON) * 100) / 100;
 
       if (associatedAnimal.raceCourseType === RaceCourseTypeEnum.Mountain) {
