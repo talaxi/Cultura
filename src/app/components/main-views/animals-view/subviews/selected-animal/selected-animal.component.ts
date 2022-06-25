@@ -37,6 +37,7 @@ export class SelectedAnimalComponent implements OnInit {
   traitStatGainDescription: string;
   autoBreedActive: boolean;
   canAutoBreed = false;
+  areTalentsAvailable = false;
   assignedBarnName: string;
 
   ability1: Ability;
@@ -85,6 +86,8 @@ export class SelectedAnimalComponent implements OnInit {
 
   ngOnInit(): void {
     this.handleIntroTutorial();
+    this.areTalentsAvailable = this.lookupService.isItemUnlocked("rainbowRace");
+
     this.maxSpeedModifierAmount = this.lookupService.getMaxSpeedModifierByAnimalType(this.selectedAnimal.type);
     this.accelerationModifierAmount = this.lookupService.getAccelerationModifierByAnimalType(this.selectedAnimal.type);
     this.staminaModifierAmount = this.lookupService.getStaminaModifierByAnimalType(this.selectedAnimal.type);
@@ -257,6 +260,11 @@ export class SelectedAnimalComponent implements OnInit {
 
     if (this.equipmentCells.length !== 0)
       this.equipmentRows.push(this.equipmentCells);
+  }
+
+  openTalentsModal(content: any) {
+    //this.setupDisplayItems();
+    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'lg' });
   }
 
   openItemModal(content: any) {

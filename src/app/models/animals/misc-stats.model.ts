@@ -4,6 +4,7 @@ export class MiscStats {
     bonusBreedXpGainFromCircuitRaces: number;
     trainingTimeReduction: number;
     diminishingReturnsBonus: number;
+    bonusTalents: number;
 
     constructor() {        
         this.bonusBreedXpGainFromLocalRaces = 0;
@@ -11,5 +12,6 @@ export class MiscStats {
         this.bonusBreedXpGainFromTraining = 0;
         this.trainingTimeReduction = 0;
         this.diminishingReturnsBonus = 0;
+        this.bonusTalents = 0;
     }
 }

@@ -84,8 +84,14 @@
                     <app-toggle *ngIf="canAutoBreed" [callbackFunction]="toggleAutoBreed" [label]="'Auto Breed'"
                         [model]="autoBreedActive"></app-toggle>
                 </div>
-                <div class="back clickableText" (click)="returnToAnimalView()">
-                    <span>Back</span>
+                <div class="back">
+                    <span class="clickableText" (click)="returnToAnimalView()">Back</span>
+                </div>
+                <br />
+                <br />
+                <br />
+                <div *ngIf="areTalentsAvailable">
+                    <button (click)="openTalentsModal(talentsContent)">View Talents</button>
                 </div>
             </div>
             <hr />
@@ -209,6 +215,13 @@
                     <div *ngIf="selectedAnimal.miscStats.diminishingReturnsBonus > 0">
                         <span>
                             Bonus Diminishing Returns per Facility Level: {{ selectedAnimal.miscStats.diminishingReturnsBonus
+                            |
+                            number : '1.0-0' }}
+                        </span>
+                    </div>
+                    <div *ngIf="selectedAnimal.miscStats.bonusTalents > 0">
+                        <span>
+                            Bonus Talents: {{ selectedAnimal.miscStats.bonusTalents
                             |
                             number : '1.0-0' }}
                         </span>
@@ -368,6 +381,22 @@
             <div *ngIf="equipmentList.length == 0">
                 No equipment available.
             </div>
+        </form>
+    </div>
+</ng-template>
+
+<ng-template #talentsContent let-modal>
+    <div class="modalClass">
+        <form>
+            <div class="modal-header">
+                <h4 class="modal-title" id="modal-basic-title">Talents</h4>
+                <button type="button" aria-label="Close" (click)="modal.dismiss()">X</button>
+            </div>
+            <div>
+                <div class="modal-body">                    
+                    Coming Soon!
+                </div> 
+            </div>               
         </form>
     </div>
 </ng-template>

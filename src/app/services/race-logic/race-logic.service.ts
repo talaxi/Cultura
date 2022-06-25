@@ -1103,6 +1103,12 @@ export class RaceLogicService {
               if (racingAnimal !== undefined && racingAnimal !== null)
                 racingAnimal.miscStats.diminishingReturnsBonus += item.amount;
             }
+            else if (item.name === "Bonus Talents" && item.itemType === ShopItemTypeEnum.Other) {
+              var courseType = this.selectedRace.raceLegs[0].courseType;
+              var racingAnimal = this.racingAnimals.find(animal => animal.raceCourseType === courseType);
+              if (racingAnimal !== undefined && racingAnimal !== null)
+                racingAnimal.miscStats.bonusTalents += item.amount;
+            }
             else
               this.globalService.globalVar.resources.push(new ResourceValue(item.name, item.amount, item.itemType));
           }

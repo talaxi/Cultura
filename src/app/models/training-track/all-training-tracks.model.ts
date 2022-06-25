@@ -41,16 +41,30 @@ export class AllTrainingTracks {
         this.intermediateTrack.rewards.push(new ResourceValue("Bonus Breed XP Gain From Training", 2, ShopItemTypeEnum.Other));
         this.intermediateTrack.rewards.push(new ResourceValue("Medals", 1, ShopItemTypeEnum.Resources));
         this.intermediateTrack.rewards.push(new ResourceValue("Diminishing Returns per Facility Level", 2, ShopItemTypeEnum.Other));
-        this.intermediateTrack.rewards.push(new ResourceValue("Training Time Reduction", 1, ShopItemTypeEnum.Resources));
+        this.intermediateTrack.rewards.push(new ResourceValue("Training Time Reduction", 1, ShopItemTypeEnum.Other));
         this.intermediateTrack.rewards.push(new ResourceValue("Bonus Breed XP Gain From Circuit Races", 5, ShopItemTypeEnum.Other));
         this.intermediateTrack.rewards.push(new ResourceValue("Coins", intermediateCoinAmount, ShopItemTypeEnum.Resources));
         this.intermediateTrack.rewards.push(new ResourceValue("Bonus Breed XP Gain From Local Races", 1, ShopItemTypeEnum.Other));
-        this.intermediateTrack.rewards.push(new ResourceValue("Coins", noviceCoinAmount, ShopItemTypeEnum.Resources));
+        this.intermediateTrack.rewards.push(new ResourceValue("Medals", 1, ShopItemTypeEnum.Resources));
         this.intermediateTrack.rewards.push(new ResourceValue("Bonus Breed XP Gain From Training", 2, ShopItemTypeEnum.Other));
-        this.intermediateTrack.rewards.push(new ResourceValue("Training Time Reduction", 1, ShopItemTypeEnum.Resources));
+        this.intermediateTrack.rewards.push(new ResourceValue("Training Time Reduction", 1, ShopItemTypeEnum.Other));
         this.intermediateTrack.rewards.push(new ResourceValue("Diminishing Returns per Facility Level", 3, ShopItemTypeEnum.Other));
 
         this.masterTrack = new TrainingTrack();
         this.masterTrack.totalRewards = 12;
+        var masterCoinAmount = 1000;
+        this.masterTrack.rewards.push(new ResourceValue("Bonus Breed XP Gain From Local Races", 5, ShopItemTypeEnum.Other));
+        this.masterTrack.rewards.push(new ResourceValue("Diminishing Returns per Facility Level", 2, ShopItemTypeEnum.Other));
+        this.masterTrack.rewards.push(new ResourceValue("Training Time Reduction", 1, ShopItemTypeEnum.Other));
+        this.masterTrack.rewards.push(new ResourceValue("Coins", masterCoinAmount, ShopItemTypeEnum.Resources));
+        this.masterTrack.rewards.push(new ResourceValue("Bonus Breed XP Gain From Training", 3, ShopItemTypeEnum.Other));
+        this.masterTrack.rewards.push(new ResourceValue("Bonus Talents", 2, ShopItemTypeEnum.Other));
+        this.masterTrack.rewards.push(new ResourceValue("Training Time Reduction", 1, ShopItemTypeEnum.Other));
+        this.masterTrack.rewards.push(new ResourceValue("Coins", masterCoinAmount, ShopItemTypeEnum.Resources));
+        this.masterTrack.rewards.push(new ResourceValue("??", 1, ShopItemTypeEnum.Other));
+        this.masterTrack.rewards.push(new ResourceValue("Diminishing Returns per Facility Level", 3, ShopItemTypeEnum.Other));
+        this.masterTrack.rewards.push(new ResourceValue("Training Time Reduction", 1, ShopItemTypeEnum.Other));
+        this.masterTrack.rewards.push(new ResourceValue("Talents", 3, ShopItemTypeEnum.Other));
+
     }
 }

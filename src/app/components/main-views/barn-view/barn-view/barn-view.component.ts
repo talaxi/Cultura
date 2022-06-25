@@ -15,6 +15,7 @@ export class BarnViewComponent implements OnInit {
   barnRow2IsUnlocked = false;
   barnRow3IsUnlocked = false;
   barnRow4IsUnlocked = false;
+  barnRow5IsUnlocked = false;
   subscription: any;
 
   constructor(private lookupService: LookupService, private componentCommunicationService: ComponentCommunicationService,
@@ -24,6 +25,7 @@ export class BarnViewComponent implements OnInit {
     this.barnRow2IsUnlocked = this.lookupService.isItemUnlocked("barnRow2");
     this.barnRow3IsUnlocked = this.lookupService.isItemUnlocked("barnRow3");
     this.barnRow4IsUnlocked = this.lookupService.isItemUnlocked("barnRow4");
+    this.barnRow5IsUnlocked = this.lookupService.isItemUnlocked("barnRow5");
 
     if (!this.globalService.globalVar.tutorialCompleted && this.globalService.globalVar.currentTutorialId === 1) {
       this.tutorialActive = true;

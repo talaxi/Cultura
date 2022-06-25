@@ -434,10 +434,32 @@ export class LookupService {
       rewards.push("- +1 Bonus Breed XP Gain From Local Races");
     }
     else if (type === TrackRaceTypeEnum.intermediate) {
-
+      rewards.push("- 200 Coins");
+      rewards.push("- +2 Bonus Breed XP Gain From Training");
+      rewards.push("- 1 Medal");
+      rewards.push("- +2 Diminishing Returns per Facility Level");
+      rewards.push("- +1% Training Time Reduction");
+      rewards.push("- +5 Bonus Breed XP Gain From Circuit Races");
+      rewards.push("- 200 Coins");
+      rewards.push("- +2 Bonus Breed XP Gain From Training");
+      rewards.push("- 1 Medal");
+      rewards.push("- +2 Bonus Breed XP Gain From Local Races");
+      rewards.push("- +1% Training Time Reduction");
+      rewards.push("- +3 Diminishing Returns per Facility Level");
     }
     else if (type === TrackRaceTypeEnum.master) {
-
+      rewards.push("- +5 Bonus Breed XP Gain From Local Races");
+      rewards.push("- +2 Diminishing Returns per Facility Level");
+      rewards.push("- +1% Training Time Reduction");
+      rewards.push("- 1000 Coins");
+      rewards.push("- +3 Bonus Breed XP Gain From Training");
+      rewards.push("- +2 Talents");
+      rewards.push("- +1% Training Time Reduction");
+      rewards.push("- 1000 Coins");
+      rewards.push("- Nothing Yet -- Coming Soon!");
+      rewards.push("- +3 Diminishing Returns per Facility Level");
+      rewards.push("- +1% Training Time Reduction");
+      rewards.push("- +3 Talents");
     }
 
     return rewards;

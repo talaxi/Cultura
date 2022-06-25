@@ -33,6 +33,9 @@ export class VersionControlService {
   }
 
   updatePlayerVersion() {
+    //TODO: Remove this after your beta testing
+    this.globalService.globalVar.unlockables.set("trainingTrack", true);   
+
     this.gameVersions.forEach(version => {
       if (this.globalService.globalVar.currentVersion < version)
       {
