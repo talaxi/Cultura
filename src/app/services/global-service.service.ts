@@ -1819,10 +1819,23 @@ export class GlobalService {
         availableCourses.push(RaceCourseTypeEnum.Flatland);
         availableCourses.push(RaceCourseTypeEnum.Mountain);
       }
+      else if (i < 40) {
+        availableCourses.push(RaceCourseTypeEnum.Flatland);
+        availableCourses.push(RaceCourseTypeEnum.Mountain);
+        availableCourses.push(RaceCourseTypeEnum.Ocean);
+      }
+      else if (i < 50) {
+        availableCourses.push(RaceCourseTypeEnum.Flatland);
+        availableCourses.push(RaceCourseTypeEnum.Mountain);
+        availableCourses.push(RaceCourseTypeEnum.Ocean);
+        availableCourses.push(RaceCourseTypeEnum.Tundra);
+      }
       else {
         availableCourses.push(RaceCourseTypeEnum.Flatland);
         availableCourses.push(RaceCourseTypeEnum.Mountain);
         availableCourses.push(RaceCourseTypeEnum.Ocean);
+        availableCourses.push(RaceCourseTypeEnum.Tundra);
+        availableCourses.push(RaceCourseTypeEnum.Volcanic);
       }
 
       if (this.globalVar.lastMonoRaceCourseType !== null && this.globalVar.lastMonoRaceCourseType !== undefined && i > 2)
@@ -1841,8 +1854,7 @@ export class GlobalService {
       leg.pathData = this.GenerateRaceLegPaths(leg, totalDistance);
     });
 
-    this.globalVar.localRaces.push(new Race(raceLegs, monoRank, false, raceIndex, totalDistance, timeToComplete, this.GenerateMonoRaceRewards(monoRank), LocalRaceTypeEnum.Mono));
-    //console.log(this.globalVar.localRaces.filter(item => item.localRaceType === LocalRaceTypeEnum.Mono));
+    this.globalVar.localRaces.push(new Race(raceLegs, monoRank, false, raceIndex, totalDistance, timeToComplete, this.GenerateMonoRaceRewards(monoRank), LocalRaceTypeEnum.Mono));    
     raceIndex += 1;
   }
 
