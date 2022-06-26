@@ -1468,10 +1468,16 @@ export class GlobalService {
           additiveValue = 60 * i;
 
         var availableCourses: RaceCourseTypeEnum[] = [];
+        if (i <= 43) {
+          availableCourses.push(RaceCourseTypeEnum.Flatland);
+          availableCourses.push(RaceCourseTypeEnum.Mountain);
+          availableCourses.push(RaceCourseTypeEnum.Ocean);
+        }
         if (i <= 53) {
           availableCourses.push(RaceCourseTypeEnum.Flatland);
           availableCourses.push(RaceCourseTypeEnum.Mountain);
           availableCourses.push(RaceCourseTypeEnum.Ocean);
+          availableCourses.push(RaceCourseTypeEnum.Tundra);
         }
         else {
           availableCourses.push(RaceCourseTypeEnum.Flatland);
@@ -1806,7 +1812,7 @@ export class GlobalService {
 
     var leg = new RaceLeg();
     if (i === 1)
-      leg.courseType = RaceCourseTypeEnum.Volcanic;
+      leg.courseType = RaceCourseTypeEnum.Flatland;
     else {
       var availableCourses: RaceCourseTypeEnum[] = [];
       if (i < 9) {

@@ -30,7 +30,7 @@ export class TrainingTrackRaceViewComponent implements OnInit {
   colorConditional: any;
   public trackRaceTypeEnum = TrackRaceTypeEnum;
 
-  constructor(private globalService: GlobalService, private lookupService: LookupService, private sanitizer: DomSanitizer,  
+  constructor(private globalService: GlobalService, private lookupService: LookupService, private sanitizer: DomSanitizer,
     private modalService: NgbModal, private componentCommunicationService: ComponentCommunicationService) { }
 
   ngOnInit(): void {
@@ -38,7 +38,7 @@ export class TrainingTrackRaceViewComponent implements OnInit {
     this.noviceTrackRace = this.globalService.generateTrackRace(this.selectedAnimal, TrackRaceTypeEnum.novice);
     this.intermediateTrackRace = this.globalService.generateTrackRace(this.selectedAnimal, TrackRaceTypeEnum.intermediate);
     this.masterTrackRace = this.globalService.generateTrackRace(this.selectedAnimal, TrackRaceTypeEnum.master);
-    
+
     this.intermediateTrackAvailable = this.selectedAnimal.allTrainingTracks.intermediateTrackAvailable;
     this.masterTrackAvailable = this.selectedAnimal.allTrainingTracks.masterTrackAvailable;
 
@@ -51,39 +51,41 @@ export class TrainingTrackRaceViewComponent implements OnInit {
     };
   }
 
-  selectTrackRace(race: Race) {    
+  selectTrackRace(race: Race) {
     var currentPrimaryDeck = this.globalService.globalVar.animalDecks.find(item => item.isPrimaryDeck);
-      if (currentPrimaryDeck !== null && currentPrimaryDeck !== undefined)
-      {
-        currentPrimaryDeck.selectedAnimals = currentPrimaryDeck.selectedAnimals.filter(item => item.raceCourseType !== this.selectedAnimal.raceCourseType);       
-        currentPrimaryDeck.selectedAnimals.push(this.selectedAnimal); 
-        console.log("New Primary Deck: ");
-        console.log(currentPrimaryDeck);       
-      }
-    
+    if (currentPrimaryDeck !== null && currentPrimaryDeck !== undefined) {
+      currentPrimaryDeck.selectedAnimals = currentPrimaryDeck.selectedAnimals.filter(item => item.raceCourseType !== this.selectedAnimal.raceCourseType);
+      currentPrimaryDeck.selectedAnimals.push(this.selectedAnimal);
+    }
+
     this.raceSelected.emit(race);
   }
 
   getTrackRewardsPopover(type: TrackRaceTypeEnum) {
     var popover = "";
-    var rewards = this.lookupService.getTrackRaceRewards(type);    
+    var rewards = this.lookupService.getTrackRaceRewards(type);
     var trackPaceModifierValue = .25;
     var trackPaceModifierValuePair = this.globalService.globalVar.modifiers.find(item => item.text === "trainingTrackPaceModifier");
     if (trackPaceModifierValuePair !== undefined)
       trackPaceModifierValue = trackPaceModifierValuePair.value;
 
-    for (var i = 0; i < rewards.length; i++)
-    {
+    for (var i = 0; i < rewards.length; i++) {
       var reward = rewards[i];
-      var rewardsObtained = this.selectedAnimal.allTrainingTracks.noviceTrack.rewardsObtained;
+      var rewardsObtained = 0;
 
-      if (i < rewardsObtained)
-      {
-        popover += "<span class='crossed'>(" + (i * trackPaceModifierValue * 100) + "% average pace) " + reward +"</span>\n";
+      if (type === TrackRaceTypeEnum.novice)
+        rewardsObtained = this.selectedAnimal.allTrainingTracks.noviceTrack.rewardsObtained;
+      else if (type === TrackRaceTypeEnum.intermediate)
+        rewardsObtained = this.selectedAnimal.allTrainingTracks.intermediateTrack.rewardsObtained;
+      else if (type === TrackRaceTypeEnum.master)
+        rewardsObtained = this.selectedAnimal.allTrainingTracks.masterTrack.rewardsObtained;
+
+      if (i < rewardsObtained) {
+        popover += "<span class='crossed'>(" + (i * trackPaceModifierValue * 100) + "% average pace) " + reward + "</span>\n";
       }
       else
-        popover += "<span>(" + (i * trackPaceModifierValue * 100) + "% average pace) " + reward +"</span>\n";
-    }    
+        popover += "<span>(" + (i * trackPaceModifierValue * 100) + "% average pace) " + reward + "</span>\n";
+    }
 
     return this.sanitizer.sanitize(SecurityContext.HTML, this.sanitizer.bypassSecurityTrustHtml(popover));
   }
@@ -91,7 +93,7 @@ export class TrainingTrackRaceViewComponent implements OnInit {
   openRewardsModal(content: any) {
     this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'lg' });
   }
-  
+
   goToAnimal() {
     this.componentCommunicationService.setAnimalView(NavigationEnum.animals, this.selectedAnimal);
   }

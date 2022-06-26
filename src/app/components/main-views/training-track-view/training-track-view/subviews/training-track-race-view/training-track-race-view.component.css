@@ -7,10 +7,6 @@
     color: var(--foreground-default);
 }
 
-.info {
-    text-align: center;
-}
-
 .popoverClass {
     white-space: pre-line;
     width: 100%;

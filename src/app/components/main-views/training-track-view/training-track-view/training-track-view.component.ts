@@ -52,18 +52,8 @@ export class TrainingTrackViewComponent implements OnInit {
     this.showRace = false;
 
     var existingDeck = this.globalService.globalVar.animalDecks.find(item => item.isPrimaryDeck);
-    console.log("Saved existing deck: ");
-    console.log(this.existingPrimaryDeckAnimals);
+  
     if (existingDeck !== undefined && existingDeck !== null)
-      existingDeck.selectedAnimals = this.existingPrimaryDeckAnimals;
-    /*
-        if (existingDeck !== null && existingDeck !== undefined)
-        {
-          var currentPrimaryDeck = this.globalService.globalVar.animalDecks.find(item => item.isPrimaryDeck);
-          if (currentPrimaryDeck !== null && currentPrimaryDeck !== undefined)
-            currentPrimaryDeck.isPrimaryDeck = false;
-    
-          existingDeck.isPrimaryDeck = true;
-        }*/
+      existingDeck.selectedAnimals = this.existingPrimaryDeckAnimals;  
   }
 }

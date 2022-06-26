@@ -7,7 +7,23 @@
     color: var(--foreground-default);     
 }
 
-.info {    
+.infoGridContainer
+{
+    height: 100%;
+    display: grid;
+    grid-template-columns: 10% 1fr 10%;
+    grid-template-rows: auto;
+    justify-content: stretch;
+    grid-template-areas: 
+      ". info back";
+}
+
+.back {
+  grid-area: back;
+}
+
+.info {
+    grid-area: info;
     text-align: center;
 }
 

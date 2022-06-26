@@ -418,7 +418,7 @@ export class LookupService {
 
   getTrackRaceRewards(type: TrackRaceTypeEnum) {
     var rewards: string[] = [];
-
+    
     if (type === TrackRaceTypeEnum.novice) {
       rewards.push("- 50 Coins");
       rewards.push("- +1 Bonus Breed XP Gain From Training");
