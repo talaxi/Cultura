@@ -1806,7 +1806,7 @@ export class GlobalService {
 
     var leg = new RaceLeg();
     if (i === 1)
-      leg.courseType = RaceCourseTypeEnum.Flatland;
+      leg.courseType = RaceCourseTypeEnum.Volcanic;
     else {
       var availableCourses: RaceCourseTypeEnum[] = [];
       if (i < 9) {
@@ -2838,13 +2838,13 @@ export class GlobalService {
 
     var salamander = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Salamander);
     if (salamander !== undefined) {
-      salamander.currentStats.topSpeed = 200;
-      salamander.currentStats.acceleration = 200;
-      salamander.currentStats.endurance = 200;
-      salamander.currentStats.power = 200;
-      salamander.currentStats.focus = 200;
-      salamander.currentStats.adaptability = 200;
-      salamander.breedLevel = 200;
+      salamander.currentStats.topSpeed = 15;
+      salamander.currentStats.acceleration = 15;
+      salamander.currentStats.endurance = 25;
+      salamander.currentStats.power = 20;
+      salamander.currentStats.focus = 10;
+      salamander.currentStats.adaptability = 10;
+      salamander.breedLevel = 1;
       this.calculateAnimalRacingStats(salamander);
     }
     var fox = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Fox);

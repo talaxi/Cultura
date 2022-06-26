@@ -750,6 +750,13 @@ export class RaceLogicService {
             timingUpdate.text = racingAnimal.getAbilityUseUpdateText(animalDisplayName);
           raceResult.raceUpdates.push(timingUpdate);
           racingAnimal.ability.currentCooldown = racingAnimal.ability.cooldown;
+          if (racingAnimal.getEquippedItemName() === this.globalService.getEquipmentName(EquipmentEnum.pendant)) {
+            var pendantCooldownModifier = .9;
+            var pendantModifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "pendantEquipmentModifier");
+            if (pendantModifierPair !== undefined)
+              pendantCooldownModifier = pendantModifierPair.value;
+              racingAnimal.ability.currentCooldown *= pendantCooldownModifier;
+          }
 
           if (racingAnimal.type === AnimalTypeEnum.Caribou && racingAnimal.ability.name === "Great Migration") {
             var lostStamina = animalMaxStamina * .1;

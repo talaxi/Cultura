@@ -1647,7 +1647,11 @@ export class DrawRaceComponent implements OnInit {
 
     //lava
     var originalFillColor = context.fillStyle;
-    context.fillStyle = "orange";
+    //lava gradient
+    var grd = context.createLinearGradient(0,0,this.canvasWidth,this.canvasHeight);
+    grd.addColorStop(0,"red");
+    grd.addColorStop(1,"orange");
+    context.fillStyle = grd;
 
     //lava top fill
     //top of volcano
@@ -1771,12 +1775,6 @@ export class DrawRaceComponent implements OnInit {
 
     //quarter 1 of volcano
     var xQuarterOffset = (70 / 4) / 100;
-    /*var volcanoBezier4X1 = volcanoStartX + (volcanoXLength * (xQuarterOffset + .025));
-    var volcanoBezier4Y1 = volcanoStartY * .9;
-    var volcanoBezier4X2 = volcanoStartX + (volcanoXLength * (xQuarterOffset + .2));
-    var volcanoBezier4Y2 = volcanoEndY * 1.2;
-    var volcanoBezier4X3 = volcanoStartX + (volcanoXLength * (xQuarterOffset + .25));
-    var volcanoBezier4Y3 = volcanoEndY * 1.15;*/
     var volcanoBezier4X1 = volcanoStartX + (volcanoXLength * (xQuarterOffset + .025));
     var volcanoBezier4Y1 = volcanoStartY - (volcanoYRadius / 4);
     var volcanoBezier4X2 = volcanoStartX + (volcanoXLength * (xQuarterOffset + .2));

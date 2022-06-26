@@ -88,6 +88,9 @@ export class UtilityService {
   condenseList(list: ResourceValue[]) {
     var newList: ResourceValue[] = [];
 
+    console.log("List: ");
+    console.log(list);
+
     list.forEach(item => {
       if (newList.some(val => val.name === item.name))
       {

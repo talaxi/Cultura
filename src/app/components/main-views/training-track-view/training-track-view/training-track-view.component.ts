@@ -18,13 +18,20 @@ export class TrainingTrackViewComponent implements OnInit {
   animal: Animal;
   showRace: boolean;
   selectedRace: Race;
-  existingPrimaryDeck: AnimalDeck;
+  existingPrimaryDeckAnimals: Animal[];
 
   constructor(private globalService: GlobalService, private componentCommunicationService: ComponentCommunicationService) { }
 
   ngOnInit(): void {
-    this.availableAnimals = this.globalService.globalVar.animals.filter(item => item.isAvailable);        
+    this.availableAnimals = this.globalService.globalVar.animals.filter(item => item.isAvailable);
     this.componentCommunicationService.setNewView(NavigationEnum.trainingtrack);
+    var existingPrimaryDeck = this.globalService.globalVar.animalDecks.find(item => item.isPrimaryDeck);
+    if (existingPrimaryDeck !== null && existingPrimaryDeck !== undefined) {
+      this.existingPrimaryDeckAnimals = [];
+      existingPrimaryDeck.selectedAnimals.forEach(animal => {
+        this.existingPrimaryDeckAnimals.push(animal);
+      });
+    }
   }
 
   selectedAnimal($event: Animal): void {
@@ -36,23 +43,27 @@ export class TrainingTrackViewComponent implements OnInit {
     this.animalSelected = false;
   }
 
-  raceSelected(race: Race)
-  {               
-    this.selectedRace = race;    
-    this.showRace = true;    
+  raceSelected(race: Race) {
+    this.selectedRace = race;
+    this.showRace = true;
   }
 
   raceFinished() {
-    this.showRace = false;    
-    
-    var existingDeck = this.globalService.globalVar.animalDecks.find(item => item.deckNumber === this.existingPrimaryDeck.deckNumber);
-    if (existingDeck !== null && existingDeck !== undefined)
-    {
-      var currentPrimaryDeck = this.globalService.globalVar.animalDecks.find(item => item.isPrimaryDeck);
-      if (currentPrimaryDeck !== null && currentPrimaryDeck !== undefined)
-        currentPrimaryDeck.isPrimaryDeck = false;
+    this.showRace = false;
 
-      existingDeck.isPrimaryDeck = true;
-    }
+    var existingDeck = this.globalService.globalVar.animalDecks.find(item => item.isPrimaryDeck);
+    console.log("Saved existing deck: ");
+    console.log(this.existingPrimaryDeckAnimals);
+    if (existingDeck !== undefined && existingDeck !== null)
+      existingDeck.selectedAnimals = this.existingPrimaryDeckAnimals;
+    /*
+        if (existingDeck !== null && existingDeck !== undefined)
+        {
+          var currentPrimaryDeck = this.globalService.globalVar.animalDecks.find(item => item.isPrimaryDeck);
+          if (currentPrimaryDeck !== null && currentPrimaryDeck !== undefined)
+            currentPrimaryDeck.isPrimaryDeck = false;
+    
+          existingDeck.isPrimaryDeck = true;
+        }*/
   }
 }
