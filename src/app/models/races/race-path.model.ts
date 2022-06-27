@@ -35,7 +35,7 @@ export class RacePath {
             this.stumbleSeverity = StumbleSeverityEnum.None;
             this.frequencyOfStumble = 0;
             this.stumbleOpportunities = 0;
-            this.frequencyOfDrift = 500;
+            this.frequencyOfDrift = 400;
         }
         if (this.routeDesign === RaceDesignEnum.S) {
             this.isSpecialPath = true;
@@ -77,7 +77,7 @@ export class RacePath {
             this.isSpecialPath = true;
             this.frequencyOfStumble = 0;
             this.stumbleOpportunities = 0;
-            this.frequencyOfDrift = 500;
+            this.frequencyOfDrift = 400;
         }
         if (this.routeDesign === RaceDesignEnum.Hills) {
             this.isSpecialPath = true;

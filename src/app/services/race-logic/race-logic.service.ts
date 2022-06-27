@@ -541,10 +541,9 @@ export class RaceLogicService {
           velocity = modifiedMaxSpeed;
 
         var doesRacerBurst = this.doesRacerBurst(racingAnimal, currentPath, this.timeToComplete, race.length, distanceCovered, modifiedAdaptabilityMs, modifiedFocusMs);
-        if (doesRacerBurst) {
-          //do a raceupdate
+        if (doesRacerBurst) {          
           racingAnimal.raceVariables.isBursting = true;
-          racingAnimal.raceVariables.remainingBurstMeters = racingAnimal.currentStats.burstDistance;
+          racingAnimal.raceVariables.remainingBurstMeters = racingAnimal.currentStats.burstDistance; //TODO: Calculate burst distance instead
           racingAnimal.raceVariables.burstCount += 1;
 
           if (racingAnimal.type === AnimalTypeEnum.Monkey && racingAnimal.ability.name === "Frenzy") {
@@ -948,7 +947,13 @@ export class RaceLogicService {
 
   doesRacerBurst(animal: Animal, currentPath: RacePath, timeToComplete: number, raceLength: number, currentDistanceInRace: number, modifiedAdaptabilityMs: number, modifiedFocusMs: number): boolean {
     var distanceModifier = 1000 / this.selectedRace.length;
-    var modifiedBurstChance = animal.currentStats.calculateBurstChance(modifiedFocusMs, modifiedAdaptabilityMs) * distanceModifier;
+
+    var breedLevelStatModifierValue = 0;
+    var breedLevelStatModifier = this.globalService.globalVar.modifiers.find(item => item.text === "breedLevelStatModifier");
+    if (breedLevelStatModifier !== undefined && breedLevelStatModifier !== null)
+      breedLevelStatModifierValue = breedLevelStatModifier.value;
+    breedLevelStatModifierValue = 1 + (breedLevelStatModifierValue * (animal.breedLevel - 1));
+    var modifiedBurstChance = animal.currentStats.calculateBurstChance(breedLevelStatModifierValue, modifiedFocusMs, modifiedAdaptabilityMs) * distanceModifier;
 
     if (currentPath.checkedForBurst)
       return false;
@@ -1343,6 +1348,7 @@ export class RaceLogicService {
       path.checkedForNineTails = false;
       path.driftAmount = 0;
       path.didAnimalStumble = false;
+      path.checkedForDrift = false;
     });
 
     this.checkForBlinders(raceLeg, racingAnimal);
@@ -1821,9 +1827,12 @@ export class RaceLogicService {
 
     var percentChanceOfSlipping = ((currentPath.frequencyOfDrift / frequencyPerNumberOfMeters) * currentPath.length);
 
-    //console.log("RNG: " + rng + " Chance To Slip: " + percentChanceOfSlipping + " Path Length: " + currentPath.length);
-    if (rng <= percentChanceOfSlipping) {
+    //console.log("RNG: " + rng + " Chance To Slip: " + percentChanceOfSlipping + "Slip Frequency: " + currentPath.frequencyOfDrift + " Adjusted: " + frequencyPerNumberOfMeters + " Path Length: " + currentPath.length);
+    if (rng < percentChanceOfSlipping) {
       currentPath.didAnimalStumble = true;
+      percentChanceOfSlipping -= rng;
+      if (percentChanceOfSlipping <= 0)
+        percentChanceOfSlipping = 0; //should never happen but you never know
 
       var goingUp = this.utilityService.getRandomInteger(1, 2);
       if (goingUp === 1)
@@ -1831,7 +1840,9 @@ export class RaceLogicService {
       else
         racingAnimal.raceVariables.icyCurrentDirectionUp = false;
 
-      var slipAmount = percentChanceOfSlipping - rng;
+      //var slipAmount = percentChanceOfSlipping - rng;
+      var percentChanceOfSlippingCap = 100;
+
       var maxSlipAmount = 20;
       var maxSlipAmountPair = this.globalService.globalVar.modifiers.find(item => item.text === "maxDriftAmountModifier");
       if (maxSlipAmountPair !== undefined)
@@ -1839,10 +1850,18 @@ export class RaceLogicService {
 
       if (racingAnimal.ability.name === "Wild Toboggan" && racingAnimal.type === AnimalTypeEnum.Penguin) {
         maxSlipAmount *= 2;
+        percentChanceOfSlippingCap *= 2;
         racingAnimal.ability.abilityInUse = true;
       }
       if (racingAnimal.ability.name === "Quick Toboggan" && racingAnimal.type === AnimalTypeEnum.Penguin)
         racingAnimal.ability.abilityInUse = false;
+
+      //var slipAmount = percentChanceOfSlipping - rng;
+      var slipAmount = 0;
+      if (percentChanceOfSlipping > percentChanceOfSlippingCap)
+        slipAmount = maxSlipAmount;
+      else
+        slipAmount = (percentChanceOfSlipping / percentChanceOfSlippingCap) * maxSlipAmount;
 
       if (slipAmount > maxSlipAmount)
         slipAmount = maxSlipAmount;
@@ -1858,6 +1877,7 @@ export class RaceLogicService {
       if (racingAnimal.raceVariables.icyCurrentYAmount <= minYAmount)
         racingAnimal.raceVariables.icyCurrentYAmount = minYAmount;
 
+      raceResult.addRaceUpdate(framesPassed, animalDisplayName + " drifts to the side as they go, losing " + slipAmount.toFixed(2) + "% max speed.");
       //console.log("Slippage: " + racingAnimal.raceVariables.icyCurrentDirectionUp ? -slipAmount : slipAmount);
       //console.log("Total Amount: " + racingAnimal.raceVariables.icyCurrentYAmount);
       currentPath.driftAmount = racingAnimal.raceVariables.icyCurrentDirectionUp ? -slipAmount : slipAmount;

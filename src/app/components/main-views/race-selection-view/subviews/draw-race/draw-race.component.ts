@@ -742,7 +742,7 @@ export class DrawRaceComponent implements OnInit {
     if (count === 6)
       color = "#541b3c";
     if (count === 7)
-      color = "#7a7a7a";
+      color = "#aeb85a";
     if (count === 8)
       color = "#ffffff";    
     if (count === 9)

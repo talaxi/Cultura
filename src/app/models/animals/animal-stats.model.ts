@@ -139,24 +139,45 @@ export class AnimalStats {
         }
     }
 
-    calculateBurstChance(modifiedFocusMs?: number, modifiedAdaptabilityMs?: number): number {
-        var statTotal = this.adaptability + this.focus;
+    calculateBurstChance(breedLevelStatModifier: number, modifiedFocusMs?: number, modifiedAdaptabilityMs?: number): number {        
         /*if (modifiedFocusMs !== null && modifiedFocusMs !== undefined &&
             modifiedAdaptabilityMs !== null && modifiedAdaptabilityMs !== undefined)
             statTotal = modifiedAdaptabilityMs + modifiedFocusMs;
 */
+        var focusTotal = this.focus;
+        var adaptabilityTotal = this.adaptability;
+        if (modifiedFocusMs !== null && modifiedFocusMs !== undefined)
+        {
+            var percentChange = modifiedFocusMs / this.focusMs;
+            focusTotal *= percentChange;
+        }
+        if (modifiedAdaptabilityMs !== null && modifiedAdaptabilityMs !== undefined)
+        {
+            var percentChange = modifiedAdaptabilityMs / this.adaptabilityMs;
+            adaptabilityTotal *= percentChange;
+        }
+
+        var statTotal = adaptabilityTotal + focusTotal;
 
         var offset = 1000;
 
 
-        return (statTotal / (offset) * 100);
+        return ((statTotal * breedLevelStatModifier) / (offset) * 100);
     }
 
-    calculateBurstDistance(animalDefaultModifier?: number): number {
+    calculateBurstDistance(breedLevelStatModifier: number, animalDefaultModifier?: number, modifiedPower?: number): number {
         if (animalDefaultModifier === null || animalDefaultModifier === undefined)
             animalDefaultModifier = this.defaultBurstDistanceModifier;
 
-        return this.power * animalDefaultModifier;
+        var powerTotal = this.power;
+
+        if (modifiedPower !== null && modifiedPower !== undefined)
+        {
+            var percentChange = modifiedPower / this.powerMs;
+            powerTotal *= percentChange;
+        }
+
+        return powerTotal * breedLevelStatModifier * animalDefaultModifier;
     }
 
     topSpeedPopover(modifierAmount: number): string {

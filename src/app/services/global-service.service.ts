@@ -2367,8 +2367,8 @@ export class GlobalService {
     animal.currentStats.powerMs = animal.currentStats.calculateTruePower(totalPowerModifier * breedLevelStatModifierValue * traitPowerModifier * animal.incubatorStatUpgrades.powerModifier, diminishingReturnsThreshold);
     animal.currentStats.focusMs = animal.currentStats.calculateTrueFocus(totalFocusModifier * breedLevelStatModifierValue * traitFocusModifier * animal.incubatorStatUpgrades.focusModifier, diminishingReturnsThreshold);
     animal.currentStats.adaptabilityMs = animal.currentStats.calculateTrueAdaptability(totalAdaptabilityModifier * breedLevelStatModifierValue * traitAdaptabilityModifier * animal.incubatorStatUpgrades.adaptabilityModifier, diminishingReturnsThreshold);
-    animal.currentStats.burstChance = animal.currentStats.calculateBurstChance();
-    animal.currentStats.burstDistance = animal.currentStats.calculateBurstDistance();
+    animal.currentStats.burstChance = animal.currentStats.calculateBurstChance(breedLevelStatModifierValue);
+    animal.currentStats.burstDistance = animal.currentStats.calculateBurstDistance(breedLevelStatModifierValue);
 
     this.updateTrackedMaxStats(animal);
   }

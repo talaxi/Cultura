@@ -95,10 +95,13 @@ export class RaceComponent implements OnInit {
     var raceUpdates = raceResult.raceUpdates;
     var currentTime = 0;
     this.incrementalRaceUpdates = "";
+    var framesPassed = 0;
     var subscription = this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {
       if (!this.racePaused)
+      {
         currentTime += deltaTime;
-
+        framesPassed += 1;
+      }
       //TODO: if you hit the back button then this is delayed -- needs to be considered like skipping.
       //run a race that will rank you up, hit back, and wait and you should see this
       if (raceUpdates.length === 0 || this.raceSkipped) //also check if skip button pressed/setting to auto skip is checked
@@ -121,7 +124,8 @@ export class RaceComponent implements OnInit {
         return;
       }
 
-      if ((currentTime * this.frameModifier) >= raceUpdates[0].value) {
+      //if ((currentTime * this.frameModifier) >= raceUpdates[0].value) {
+        if (framesPassed >= raceUpdates[0].value) {
         this.incrementalRaceUpdates += this.sanitizer.sanitize(SecurityContext.HTML, this.sanitizer.bypassSecurityTrustHtml(raceUpdates[0].text + "\n"));
         raceUpdates.shift();
       }
@@ -166,11 +170,15 @@ export class RaceComponent implements OnInit {
   getFrameByFrameStats() {
     var currentTime = 0;
     this.totalRacers = this.lookupService.getTotalRacersByRace(this.selectedRace);
+    var framesPassed = 0;
 
     this.frameByFrameSubscription = this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {
       if (!this.racePaused)
+      {
         currentTime += deltaTime;
-      var currentFrame = Math.round(currentTime * this.frameModifier);
+        framesPassed += 1;
+      }
+      var currentFrame = framesPassed;
 
       if (this.selectedRace.raceUI.velocityByFrame.length <= currentFrame || this.raceSkipped) {
         var lastFrameCount = this.selectedRace.raceUI.velocityByFrame.length - 1;
