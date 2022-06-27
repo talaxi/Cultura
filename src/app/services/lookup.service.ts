@@ -778,7 +778,7 @@ export class LookupService {
           return "Every time you make it through a path without drifting, gain <span class='keyword'>" + effectiveAmountDisplay + "</span>% max speed. Passive.";
         }
         if (abilityName === "Cold Blooded") {
-          return "Increase stamina and focus by 0-50% depending on how close to the center of the volcano you are. Focus boost lasts <span class='keyword'>" + effectiveAmountDisplay + "</span>%. " + cooldownDisplay + " second cooldown.";
+          return "Increase stamina and focus by 0-50% depending on how close to the center of the volcano you are. Focus boost lasts <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. " + cooldownDisplay + " second cooldown.";
         }
         if (abilityName === "Burrow") {
           return "Go underground for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters, dodging lava fall and preventing stumbles. " + cooldownDisplay + " second cooldown.";

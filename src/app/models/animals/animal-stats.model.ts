@@ -24,7 +24,7 @@ export class AnimalStats {
     defaultPowerModifier = 1;
     defaultFocusModifier = 5;
     defaultAdaptabilityModifier = 5;
-    defaultBurstDistanceModifier = 3;
+    defaultBurstDistanceModifier = 1;
 
     diminishingReturnsDefaultStatThreshold = 20;    
 
@@ -159,10 +159,10 @@ export class AnimalStats {
 
         var statTotal = adaptabilityTotal + focusTotal;
 
-        var offset = 1000;
+        var offset = 2000;
 
 
-        return ((statTotal * breedLevelStatModifier) / (offset) * 100);
+        return ((statTotal * (breedLevelStatModifier/2)) / (offset) * 100);
     }
 
     calculateBurstDistance(breedLevelStatModifier: number, animalDefaultModifier?: number, modifiedPower?: number): number {
@@ -177,7 +177,7 @@ export class AnimalStats {
             powerTotal *= percentChange;
         }
 
-        return powerTotal * breedLevelStatModifier * animalDefaultModifier;
+        return powerTotal * (breedLevelStatModifier/2) * animalDefaultModifier;
     }
 
     topSpeedPopover(modifierAmount: number): string {

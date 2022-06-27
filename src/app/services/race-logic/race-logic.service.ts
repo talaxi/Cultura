@@ -1877,7 +1877,7 @@ export class RaceLogicService {
       if (racingAnimal.raceVariables.icyCurrentYAmount <= minYAmount)
         racingAnimal.raceVariables.icyCurrentYAmount = minYAmount;
 
-      raceResult.addRaceUpdate(framesPassed, animalDisplayName + " drifts to the side as they go, losing " + slipAmount.toFixed(2) + "% max speed.");
+      raceResult.addRaceUpdate(framesPassed, animalDisplayName + " drifts to the side, losing " + slipAmount.toFixed(2) + "% max speed.");
       //console.log("Slippage: " + racingAnimal.raceVariables.icyCurrentDirectionUp ? -slipAmount : slipAmount);
       //console.log("Total Amount: " + racingAnimal.raceVariables.icyCurrentYAmount);
       currentPath.driftAmount = racingAnimal.raceVariables.icyCurrentDirectionUp ? -slipAmount : slipAmount;
