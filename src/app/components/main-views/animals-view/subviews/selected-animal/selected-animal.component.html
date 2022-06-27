@@ -76,8 +76,7 @@
                         popoverClass="popoverClass">Breed XP: {{selectedAnimal.breedGaugeXp | number :
                         '1.2-2'}}/{{selectedAnimal.breedGaugeMax}}
                         <button (click)="breed()">Breed</button>
-                    </span>
-                    <!--TODO: Move this to one of the sides of dead space-->
+                    </span>                    
                     <br />
                     <button (click)="openItemModal(content)">Use Item</button>
                     <br />
@@ -86,12 +85,12 @@
                 </div>
                 <div class="back">
                     <span class="clickableText" (click)="returnToAnimalView()">Back</span>
-                </div>
-                <br />
-                <br />
-                <br />
-                <div *ngIf="areTalentsAvailable">
-                    <button (click)="openTalentsModal(talentsContent)">View Talents</button>
+                    <br />
+                    <br />
+                    <br />
+                    <div *ngIf="areTalentsAvailable">
+                        <button (click)="openTalentsModal(talentsContent)">View Talents</button>
+                    </div>
                 </div>
             </div>
             <hr />

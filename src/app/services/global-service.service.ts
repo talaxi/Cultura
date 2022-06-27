@@ -845,7 +845,7 @@ export class GlobalService {
 
       this.globalVar.barns.push(barn1);
 
-      for (var i = 2; i <= 9; i++) {
+      for (var i = 2; i <= 15; i++) {
         var newBarn = new Barn();
         newBarn.barnNumber = i;
         newBarn.isLocked = true;

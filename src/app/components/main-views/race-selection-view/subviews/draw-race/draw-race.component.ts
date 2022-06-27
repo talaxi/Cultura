@@ -43,7 +43,7 @@ export class DrawRaceComponent implements OnInit {
   volcanoYOffset = 0;
   volcanoRadiusXModifier = 6;
   backgroundVolcanoYStart = 0;
-  //volcanoYEndPosition = 0;
+  currentRaceFrame = 0;
 
   lastPathEndingX = 0;
   lastPathEndingY = 0;
@@ -101,11 +101,13 @@ export class DrawRaceComponent implements OnInit {
       if (!this.pauseRace) {
         //keep up with current time
         currentTime += deltaTime;
+        this.currentRaceFrame += 1;
       }
 
       //Two modes: Full Overview (shown at the very beginning of the race and then final view after race ends) and
       //Race Mode (keeps up with your animal as it progresses through each section)      
-      if (currentTime >= effectiveTimeToComplete || this.isRaceFinished || this.skipRace)
+      //if (currentTime >= effectiveTimeToComplete || this.isRaceFinished || this.skipRace)
+      if (this.currentRaceFrame >= effectiveTimeToComplete * this.frameModifier || this.isRaceFinished || this.skipRace)
         this.displayOverview(context, true);
       else {
         this.displayRace(context, currentTime);
@@ -306,9 +308,9 @@ export class DrawRaceComponent implements OnInit {
     var yRaceModeModifier = 10;
     this.totalRaceModeXDistance = this.race.length * xRaceModeModifier;
 
-    var currentFrame = Math.round(currentTime * this.frameModifier);
+    //var currentFrame = Math.round(currentTime * this.frameModifier);
+    var currentFrame = this.currentRaceFrame;
 
-    //console.log("current frame: " + currentFrame);
     var currentDistanceTraveled = this.race.raceUI.distanceCoveredByFrame[currentFrame];
     var currentYDistanceTraveled = 0;
 

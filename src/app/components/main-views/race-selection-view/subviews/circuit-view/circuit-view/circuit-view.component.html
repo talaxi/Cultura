@@ -1,15 +1,28 @@
 <div class="circuitViewDiv">
-    <div class="circuitRaceHeader s4Heading">
-        <span  [ngbPopover]="circuitRewardContent"
-            triggers="mouseenter:mouseleave" popoverClass="popoverClass">Rank <strong>{{ circuitRank }}</strong>
-            Circuit</span>
-    </div>
     <app-animal-deck></app-animal-deck>
     <hr />
+    <div class="circuitRaceHeader s4Heading">
+        <span  [ngbPopover]="circuitRewardContent"
+            triggers="mouseenter:mouseleave" popoverClass="popoverClass">Circuit Rank <strong>{{ circuitRank }}</strong></span>
+    </div>
     <div class="circuitRaceGrid">
         <div [ngClass]='tutorialActive ? "tutorialActive" : ""' class="circuitRace{{i+1}}" (click)="selectCircuitRace(race)"
             *ngFor="let race of availableCircuitRaces; let i = index">
             <app-race-description [index]="i" [race]="race" [showStartText]="true"></app-race-description>
+        </div>
+    </div>
+    <hr/>
+    <div id="localRaceSection">
+        <span class="s4Heading">Free Races</span>
+        <br/>
+        <em> {{freeRacesRemaining}} of {{totalFreeRaces}} remaining -- resets in {{ freeRaceTimer }}</em>                        
+        <br />
+        <br />
+        <div class="localRaceGrid">
+            <div class="localRace{{i+1}}" (click)="selectLocalRace(race)"
+                *ngFor="let race of availableLocalRaces; let i = index">
+                <app-race-description [index]="i" [race]="race" [showStartText]="true"></app-race-description>
+            </div>
         </div>
     </div>
 </div>

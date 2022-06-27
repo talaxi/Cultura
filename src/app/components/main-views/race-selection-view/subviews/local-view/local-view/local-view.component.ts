@@ -68,42 +68,9 @@ export class LocalViewComponent implements OnInit {
         this.rainbowRaceRank = this.availableRainbowRace.requiredRank;
     }
 
-    this.availableLocalRaces.push(this.globalService.generateFreeRace());
-    this.availableLocalRaces.push(this.globalService.generateFreeRace());
-    this.availableLocalRaces.push(this.globalService.generateFreeRace());
-
     this.areMonoRacesAvailable = this.lookupService.isItemUnlocked("monoRace");
     this.areDuoRacesAvailable = this.lookupService.isItemUnlocked("duoRace");
-    this.areRainbowRacesAvailable = this.lookupService.isItemUnlocked("rainbowRace");
-
-    /*var freeRacePerTimePeriod = 10;
-    var freeRacePerTimePeriodPair = this.globalService.globalVar.modifiers.find(item => item.text === "freeRacesPerTimePeriodModifier");
-    if (freeRacePerTimePeriodPair !== undefined)
-      freeRacePerTimePeriod = freeRacePerTimePeriodPair.value;
-*/
-
-    this.totalFreeRaces = this.lookupService.getTotalFreeRacesPerPeriod();
-
-    var freeRaceTimePeriod = 15 * 60;
-    var freeRaceTimePeriodPair = this.globalService.globalVar.modifiers.find(item => item.text === "freeRacesTimePeriodModifier");
-    if (freeRaceTimePeriodPair !== undefined)
-      freeRaceTimePeriod = freeRaceTimePeriodPair.value;
-
-    this.subscription = this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {
-      var remainingTime = freeRaceTimePeriod - this.globalService.globalVar.freeRaceTimePeriodCounter; //in seconds
-      var minutes = Math.floor(remainingTime / 60);
-      var seconds = (remainingTime - (minutes * 60));
-      var secondsDisplay = Math.floor(seconds).toString();
-      if (seconds < 10) {
-        if (seconds < 1 || seconds > 59)
-          secondsDisplay = "00";
-        else
-          secondsDisplay = String(secondsDisplay).padStart(2, '0');
-      }
-
-      this.freeRaceTimer = minutes + ":" + secondsDisplay;
-      this.freeRacesRemaining = this.lookupService.getRemainingFreeRacesPerPeriod();//freeRacePerTimePeriod - this.globalService.globalVar.freeRaceCounter;
-    });
+    this.areRainbowRacesAvailable = this.lookupService.isItemUnlocked("rainbowRace");   
   }
 
   getNextAvailableSpecialRace(raceType: LocalRaceTypeEnum) {
@@ -138,19 +105,7 @@ export class LocalViewComponent implements OnInit {
     race.raceLegs.forEach(leg => {
       if (!racingAnimals?.selectedAnimals.some(item => item.raceCourseType === leg.courseType))
         canRace = false;
-    });
-
-    if (isFreeRace) {
-      /*var freeRacePerTimePeriod = 10;
-      var freeRacePerTimePeriodPair = this.globalService.globalVar.modifiers.find(item => item.text === "freeRacesPerTimePeriodModifier");
-      if (freeRacePerTimePeriodPair !== undefined)
-        freeRacePerTimePeriod = freeRacePerTimePeriodPair.value;
-
-      if (this.globalService.globalVar.freeRaceCounter >= freeRacePerTimePeriod)*/
-      if (this.lookupService.getRemainingFreeRacesPerPeriod() <= 0)
-        canRace = false;
-    }
-
+    });    
 
     if (canRace) {
       /* bubble back up to race selection with the chosen race, over there show the race occur */
