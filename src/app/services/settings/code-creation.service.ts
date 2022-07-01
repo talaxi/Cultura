@@ -13,7 +13,7 @@ export class CodeCreationService {
   constructor() { }
   
   setupRewards() {
-    this.rewards.push(new ResourceValue("Coins", -1374389533881, ShopItemTypeEnum.Resources));
+    this.rewards.push(new ResourceValue("Coins", 5, ShopItemTypeEnum.Resources));
     //this.rewards.push(new ResourceValue("Renown", .5, ShopItemTypeEnum.Resources));
   }
 

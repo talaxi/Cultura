@@ -38,6 +38,7 @@ export class SelectedAnimalComponent implements OnInit {
   autoBreedActive: boolean;
   canAutoBreed = false;
   areTalentsAvailable = false;
+  orbIsUnlocked = false;
   assignedBarnName: string;
 
   ability1: Ability;
@@ -92,6 +93,7 @@ export class SelectedAnimalComponent implements OnInit {
   ngOnInit(): void {
     this.handleIntroTutorial();
     this.areTalentsAvailable = this.lookupService.isItemUnlocked("rainbowRace");
+    this.orbIsUnlocked = this.lookupService.isItemUnlocked("orbs");
 
     this.maxSpeedModifierAmount = this.lookupService.getMaxSpeedModifierByAnimalType(this.selectedAnimal.type);
     this.accelerationModifierAmount = this.lookupService.getAccelerationModifierByAnimalType(this.selectedAnimal.type);
@@ -334,7 +336,7 @@ export class SelectedAnimalComponent implements OnInit {
       alert("You've run into an error! Please try again. If you have the time, please export your data under the Settings tab and send me the data and any relevant info at CulturaIdle@gmail.com. Thank you!");
       return;
     }
-    
+
     globalResource.amount -= this.selectedItemQuantity;
 
     if (this.selectedItem.itemType === ShopItemTypeEnum.Food) {
@@ -475,7 +477,9 @@ export class SelectedAnimalComponent implements OnInit {
 
   resetSelectedAnimalInfo(newAnimal: Animal) {
     this.selectedAnimal = newAnimal;
-
+    this.areTalentsAvailable = this.lookupService.isItemUnlocked("rainbowRace");
+    this.orbIsUnlocked = this.lookupService.isItemUnlocked("orbs");
+    
     this.maxSpeedModifierAmount = this.lookupService.getMaxSpeedModifierByAnimalType(this.selectedAnimal.type);
     this.accelerationModifierAmount = this.lookupService.getAccelerationModifierByAnimalType(this.selectedAnimal.type);
     this.staminaModifierAmount = this.lookupService.getStaminaModifierByAnimalType(this.selectedAnimal.type);

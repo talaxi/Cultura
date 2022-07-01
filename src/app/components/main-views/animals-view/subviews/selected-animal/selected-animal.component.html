@@ -90,7 +90,7 @@
                 <div class="back">
                     <span class="clickableText" (click)="returnToAnimalView()">Back</span>
                     <br />                    
-                    <div class="orb">
+                    <div *ngIf="orbIsUnlocked" class="orb">
                         <div *ngIf="selectedAnimal.equippedOrb !== undefined && selectedAnimal.equippedOrb !== null"
                             [ngbPopover]="getEquipmentShortDescription(selectedAnimal.equippedOrb.name)"
                             triggers="mouseenter:mouseleave" popoverClass="popoverClass">Orb: {{

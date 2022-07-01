@@ -68,7 +68,7 @@ export class CoachingComponent implements OnInit {
 
     var currentTime = 0;
     var timeToCompletePath = 5;
-    this.currentPathType = CoachingCourseTypeEnum.power;//this.getRandomPathType();
+    this.currentPathType = this.getRandomPathType();
 
     this.subscription = this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {
       //clear canvas

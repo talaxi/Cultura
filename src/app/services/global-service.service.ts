@@ -1252,6 +1252,7 @@ export class GlobalService {
     }
     else if (numericValue === 55) {
       this.globalVar.resources.push(new ResourceValue("Amethyst Orb", 1, ShopItemTypeEnum.Equipment));
+      this.globalVar.unlockables.set("orbs", true);
 
       returnVal = ["Amethyst Orb", "You receive a glowing violet orb. What it does is a mystery."];
 
@@ -2529,6 +2530,7 @@ export class GlobalService {
     this.globalVar.unlockables.set("monoRace", false);
     this.globalVar.unlockables.set("duoRace", false);
     this.globalVar.unlockables.set("rainbowRace", false);
+    this.globalVar.unlockables.set("orbs", false);
     this.globalVar.unlockables.set("barnRow2", false);
     this.globalVar.unlockables.set("barnRow3", false);
     this.globalVar.unlockables.set("barnRow4", false);

@@ -1,5 +1,5 @@
 export const environment = {
     production: true,
     devEnvironment: true,
-    CODEREDEMPTIONSECRET: 'TestVal'  
+    CODEREDEMPTIONSECRET: 'LaunchSecret!CLTRA71'  
 };
