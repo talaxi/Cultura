@@ -226,6 +226,12 @@ button:active:enabled {
 
 .clickableText {
   cursor: pointer;
+
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .flatlandColor {
@@ -250,7 +256,7 @@ button:active:enabled {
 }
 
 .flatlandSubcolor {
-  color: var(--flatlandSubcolor);  
+  color: var(--flatlandSubcolor);
 }
 
 .mountainSubcolor {

@@ -63,7 +63,7 @@ export class CoachingComponent implements OnInit {
 
     var currentTime = 0;
     var timeToCompletePath = 5;
-    this.currentPathType = CoachingCourseTypeEnum.endurance;//this.getRandomPathType();
+    this.currentPathType = CoachingCourseTypeEnum.acceleration;//this.getRandomPathType();
 
     this.subscription = this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {
       //clear canvas
@@ -281,34 +281,46 @@ export class CoachingComponent implements OnInit {
     return linePoints;
   }
 
-  //TODO
+  //finalized
   drawAccelerationTrace(context: any) {
     var offsetX = this.canvasWidth * .1;
     var offsetY = this.canvasHeight * .1;
 
-    var linePoints = [];
-    linePoints.push([offsetX, offsetY]);
-    linePoints.push([this.canvasWidth - offsetX, offsetY]);
-    linePoints.push([this.canvasWidth / 2, this.canvasHeight / 2]);
-    linePoints.push([this.canvasWidth - offsetX, this.canvasHeight - offsetY]);
-    linePoints.push([offsetX, this.canvasHeight - offsetY]);
+    var numberOfPeaks = 7;
+    var xPeakOffset = (this.canvasWidth - 2*offsetX) / (numberOfPeaks*2);
+    var yPeakOffset = (this.canvasHeight - 2*offsetY) / numberOfPeaks;
 
-    context.beginPath();
-    context.moveTo(linePoints[0][0], linePoints[0][1]);
-    context.lineTo(linePoints[1][0], linePoints[1][1]);
-    context.stroke();
-    context.beginPath();
-    context.moveTo(linePoints[1][0], linePoints[1][1]);
-    context.lineTo(linePoints[2][0], linePoints[2][1]);
-    context.stroke();
-    context.beginPath();
-    context.moveTo(linePoints[2][0], linePoints[2][1]);
-    context.lineTo(linePoints[3][0], linePoints[3][1]);
-    context.stroke();
-    context.beginPath();
-    context.moveTo(linePoints[3][0], linePoints[3][1]);
-    context.lineTo(linePoints[4][0], linePoints[4][1]);
-    context.stroke();
+    var linePoints = [];
+    linePoints.push([offsetX, this.canvasHeight / 2]);
+    linePoints.push([offsetX + xPeakOffset, this.canvasHeight / 2 - yPeakOffset]);
+    linePoints.push([offsetX + 2*xPeakOffset, this.canvasHeight / 2 + yPeakOffset]);
+    
+    linePoints.push([offsetX + 3*xPeakOffset, this.canvasHeight / 2 - 2 * yPeakOffset]);
+    linePoints.push([offsetX + 4*xPeakOffset, this.canvasHeight / 2 + 2 * yPeakOffset]);
+
+    linePoints.push([offsetX + 5*xPeakOffset, this.canvasHeight / 2 - 3 * yPeakOffset]);
+    linePoints.push([offsetX + 6*xPeakOffset, this.canvasHeight / 2 + 3 * yPeakOffset]);
+
+    linePoints.push([offsetX + 7*xPeakOffset, this.canvasHeight / 2 - 4 * yPeakOffset]);
+    linePoints.push([offsetX + 8*xPeakOffset, this.canvasHeight / 2 + 4 * yPeakOffset]);
+
+    linePoints.push([offsetX + 9*xPeakOffset, this.canvasHeight / 2 - 5 * yPeakOffset]);
+    linePoints.push([offsetX + 10*xPeakOffset, this.canvasHeight / 2 + 5 * yPeakOffset]);
+
+    linePoints.push([offsetX + 11*xPeakOffset, this.canvasHeight / 2 - 6 * yPeakOffset]);
+    linePoints.push([offsetX + 12*xPeakOffset, this.canvasHeight / 2 + 6 * yPeakOffset]);
+
+    linePoints.push([offsetX + 13*xPeakOffset, this.canvasHeight / 2 - 7 * yPeakOffset]);
+    linePoints.push([offsetX + 14*xPeakOffset, this.canvasHeight / 2 + 7 * yPeakOffset]);
+
+    
+    for (var i=1;i<linePoints.length;i++)
+    {
+      context.beginPath();
+      context.moveTo(linePoints[i-1][0], linePoints[i-1][1]);
+      context.lineTo(linePoints[i][0], linePoints[i][1]);
+      context.stroke();      
+    }
 
     return linePoints;
   }
@@ -363,8 +375,6 @@ export class CoachingComponent implements OnInit {
     linePoints.push([offsetX + 2*xSquareOffset, this.canvasHeight - (offsetY + 2*ySquareOffset)]);
 
     linePoints.push([offsetX + 2* xSquareOffset, this.canvasHeight / 2]);
-    //linePoints.push([this.canvasWidth - (offsetX + 3*xSquareOffset), offsetY + 3*ySquareOffset]);
-    //linePoints.push([this.canvasWidth - (offsetX + 3*xSquareOffset), this.canvasHeight - (offsetY + 3*ySquareOffset)]);
     linePoints.push([this.canvasWidth / 2, this.canvasHeight / 2]);
 
     for (var i=1;i<linePoints.length;i++)
@@ -526,7 +536,6 @@ export class CoachingComponent implements OnInit {
         options.push(Number(obj));
       }
     });
-    console.log(options);
 
     var rng = this.utilityService.getRandomInteger(0, options.length - 1);
 
@@ -570,6 +579,8 @@ export class CoachingComponent implements OnInit {
       this.associatedAnimal.currentStats.adaptability += 1;
       this.incrementalCoachingUpdates += animalDisplayName + " completes the course and gains " + statGainAmount + " adaptability. (" + this.associatedAnimal.currentStats.adaptability + ")\n";
     }
+
+    this.globalService.calculateAnimalRacingStats(this.associatedAnimal);
   }
 
   ngOnDestroy() {
