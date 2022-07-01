@@ -304,14 +304,14 @@ export class CoachingComponent implements OnInit {
     linePoints.push([offsetX + 7*xPeakOffset, this.canvasHeight / 2 - 4 * yPeakOffset]);
     linePoints.push([offsetX + 8*xPeakOffset, this.canvasHeight / 2 + 4 * yPeakOffset]);
 
-    linePoints.push([offsetX + 9*xPeakOffset, this.canvasHeight / 2 - 5 * yPeakOffset]);
-    linePoints.push([offsetX + 10*xPeakOffset, this.canvasHeight / 2 + 5 * yPeakOffset]);
+    linePoints.push([offsetX + 9*xPeakOffset, this.canvasHeight / 2 - 3 * yPeakOffset]);
+    linePoints.push([offsetX + 10*xPeakOffset, this.canvasHeight / 2 + 3 * yPeakOffset]);
 
-    linePoints.push([offsetX + 11*xPeakOffset, this.canvasHeight / 2 - 6 * yPeakOffset]);
-    linePoints.push([offsetX + 12*xPeakOffset, this.canvasHeight / 2 + 6 * yPeakOffset]);
+    linePoints.push([offsetX + 11*xPeakOffset, this.canvasHeight / 2 - 2 * yPeakOffset]);
+    linePoints.push([offsetX + 12*xPeakOffset, this.canvasHeight / 2 + 2 * yPeakOffset]);
 
-    linePoints.push([offsetX + 13*xPeakOffset, this.canvasHeight / 2 - 7 * yPeakOffset]);
-    linePoints.push([offsetX + 14*xPeakOffset, this.canvasHeight / 2 + 7 * yPeakOffset]);
+    linePoints.push([offsetX + 13*xPeakOffset, this.canvasHeight / 2 - yPeakOffset]);
+    linePoints.push([offsetX + 14*xPeakOffset, this.canvasHeight / 2 + yPeakOffset]);
 
     
     for (var i=1;i<linePoints.length;i++)

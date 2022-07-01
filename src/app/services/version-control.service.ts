@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Tutorials } from '../models/tutorials.model';
 import { GlobalService } from './global-service.service';
 
 @Injectable({
@@ -35,6 +36,7 @@ export class VersionControlService {
   updatePlayerVersion() {
     //TODO: Remove this after your beta testing
     this.globalService.globalVar.unlockables.set("trainingTrack", true);   
+    this.globalService.globalVar.tutorials = new Tutorials();
 
     this.gameVersions.forEach(version => {
       if (this.globalService.globalVar.currentVersion < version)
