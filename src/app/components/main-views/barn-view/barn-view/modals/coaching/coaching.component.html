@@ -1,18 +1,35 @@
 <div class="coachingView">
-    <div id="coachingInfo">
-    </div>
-
-    <div class="updates">
-        <div class="drawCoaching" id="drawCoaching" #drawCoaching>
-            <div class="drawCoachingDiv">
-                <canvas id="coachingCanvas" class="coachingCanvas" #coachingCanvas (pointermove)="pointerMove($event)"
-                    (pointerdown)="pointerDown()" (pointerup)="pointerUp()">
-
-                </canvas>
+    <div class="marginDiv">
+        <div id="coachingInfo">
+            <div class="infoGridContainer">
+                <div class="info">
+                    <h2>Coaching</h2>
+                    <div class="description">
+                        Show your animals the way by tracing each path. Successfully making it through will reward your
+                        partner with a stat point.
+                    </div>
+                </div>
+                <div class="back clickableText" (click)="returnToSelectedBarnView()">
+                    <span>Back</span>
+                </div>
             </div>
+            <hr />
         </div>
-        <div class="coachingUpdates" #scrollMe [scrollTop]="scrollMe.scrollHeight"
-            [innerHTML]="incrementalCoachingUpdates.trim()">
+
+        <div class="drawingDiv">
+            <div class="updates">
+                <div class="drawCoaching" id="drawCoaching" #drawCoaching>
+                    <div class="drawCoachingDiv">
+                        <canvas id="coachingCanvas" class="coachingCanvas" #coachingCanvas
+                            (pointermove)="pointerMove($event)" (pointerdown)="pointerDown()" (pointerup)="pointerUp()">
+
+                        </canvas>
+                    </div>
+                </div>
+                <div class="coachingUpdates" #scrollMe [scrollTop]="scrollMe.scrollHeight"
+                    [innerHTML]="incrementalCoachingUpdates.trim()">
+                </div>
+            </div>
         </div>
     </div>
 </div>

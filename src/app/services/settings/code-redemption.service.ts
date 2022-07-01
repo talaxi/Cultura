@@ -17,7 +17,7 @@ export class CodeRedemptionService {
     var key = environment.CODEREDEMPTIONSECRET;
     var decrypted = CryptoJS.AES.decrypt(encryptedVal, key);
     if (decrypted.toString(CryptoJS.enc.Utf8).length === 0) {
-      //TODO: error handle
+      alert("Invalid code entered.");
     }
     try {
       var parsedRewards = <ResourceValue[]>JSON.parse(decrypted.toString(CryptoJS.enc.Utf8));
@@ -33,7 +33,7 @@ export class CodeRedemptionService {
       }
     }
     catch (error) {
-      //TODO: error handle
+      alert("You've run into an error! Please try again. If you have the time, please export your data under the Settings tab and send me the data and any relevant info at CulturaIdle@gmail.com. Thank you!");
     }
   }
 }

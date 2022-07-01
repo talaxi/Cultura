@@ -185,7 +185,7 @@ export class SelectedBarnComponent implements OnInit {
     }
     else {
       console.log("Can't find barn");
-      //TODO: throw error, can't find barn
+      alert("You've run into an error! Please try again. If you have the time, please export your data under the Settings tab and send me the data and any relevant info at CulturaIdle@gmail.com. Thank you!");
     }
   }
 
@@ -477,7 +477,10 @@ export class SelectedBarnComponent implements OnInit {
     var canBuy = this.canUpgradeBarn(requiredResources);
 
     if (!canBuy)
-      return; //TODO: Add Error
+    {
+      alert("You've run into an error! Please try again. If you have the time, please export your data under the Settings tab and send me the data and any relevant info at CulturaIdle@gmail.com. Thank you!");
+      return; 
+    }
 
     if (this.barn.barnUpgrades.barnLevel === 9) {
       this.modalService.open(this.specializationModal, { ariaLabelledBy: 'modal-basic-title', size: 'lg' });
@@ -744,7 +747,7 @@ export class SelectedBarnComponent implements OnInit {
     }
     else {
       console.log("Can't find barn");
-      //TODO: throw error, can't find barn
+      alert("You've run into an error! Please try again. If you have the time, please export your data under the Settings tab and send me the data and any relevant info at CulturaIdle@gmail.com. Thank you!");
     }
   }
 

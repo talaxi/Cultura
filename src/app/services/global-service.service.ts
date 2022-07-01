@@ -841,7 +841,7 @@ export class GlobalService {
       }
       else {
         console.log("Can't find horse");
-        //TODO: throw error, can't find default animal. initialize animal first
+        alert("You've run into an error! Please try again. If you have the time, please export your data under the Settings tab and send me the data and any relevant info at CulturaIdle@gmail.com. Thank you!");
       }
 
       this.globalVar.barns.push(barn1);

@@ -192,8 +192,8 @@ export class SelectedAnimalComponent implements OnInit {
     this.abilityLevelMaxedOut = this.isAbilityLevelMaxedOut();
   }
 
-  editName(): void {
-    //TODO: error message?
+  editName(): void {    
+    alert("Name must be between 1 and 50 characters long.");
     if (this.newName.length <= 50 && this.newName.length >= 1) {
       this.selectedAnimal.name = this.newName;
       this.editingName = false;
@@ -324,11 +324,17 @@ export class SelectedAnimalComponent implements OnInit {
   useItem() {
     var globalResource = this.globalService.globalVar.resources.find(item => item.name === this.selectedItem.name && item.itemType === this.selectedItem.itemType);
     if (globalResource === undefined)
-      return; //TODO: Error handle
+    {
+      alert("You've run into an error! Please try again. If you have the time, please export your data under the Settings tab and send me the data and any relevant info at CulturaIdle@gmail.com. Thank you!");
+      return;
+    }
 
     if (globalResource.amount < this.selectedItemQuantity)
-      return; //TODO: error handle
-
+    {
+      alert("You've run into an error! Please try again. If you have the time, please export your data under the Settings tab and send me the data and any relevant info at CulturaIdle@gmail.com. Thank you!");
+      return;
+    }
+    
     globalResource.amount -= this.selectedItemQuantity;
 
     if (this.selectedItem.itemType === ShopItemTypeEnum.Food) {

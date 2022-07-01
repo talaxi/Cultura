@@ -98,7 +98,7 @@ export class RaceLogicService {
     race.raceLegs.forEach(item => {
       var racingAnimal = this.racingAnimals.find(animal => animal.raceCourseType === item.courseType);
       if (racingAnimal === null || racingAnimal === undefined) {
-        //TODO: throw error? no animal found
+        alert("You've run into an error! Please try again. If you have the time, please export your data under the Settings tab and send me the data and any relevant info at CulturaIdle@gmail.com. Thank you!");
         return;
       }
 
@@ -112,7 +112,7 @@ export class RaceLogicService {
     race.raceLegs.forEach(item => {
       var racingAnimal = this.racingAnimals.find(animal => animal.raceCourseType === item.courseType);
       if (racingAnimal === null || racingAnimal === undefined) {
-        //TODO: throw error? no animal found
+        alert("You've run into an error! Please try again. If you have the time, please export your data under the Settings tab and send me the data and any relevant info at CulturaIdle@gmail.com. Thank you!");
         return;
       }
 

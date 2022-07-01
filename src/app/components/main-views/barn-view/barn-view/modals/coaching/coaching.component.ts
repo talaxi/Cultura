@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { Animal } from 'src/app/models/animals/animal.model';
 import { CoachingCourseTypeEnum } from 'src/app/models/coaching-course-type-enum.model';
 import { RaceCourseTypeEnum } from 'src/app/models/race-course-type-enum.model';
@@ -14,6 +14,7 @@ import { ThemeService } from 'src/app/theme/theme.service';
 })
 export class CoachingComponent implements OnInit {
   @Input() selectedBarnNumber: number;
+  @Output() isCoachingEmitter = new EventEmitter<boolean>();
   associatedAnimal: Animal;
   incrementalCoachingUpdates: string;
   @ViewChild('coachingCanvas', { static: false, read: ElementRef }) coachingCanvas: ElementRef;
@@ -67,7 +68,7 @@ export class CoachingComponent implements OnInit {
 
     var currentTime = 0;
     var timeToCompletePath = 5;
-    this.currentPathType = CoachingCourseTypeEnum.adaptability;//this.getRandomPathType();
+    this.currentPathType = CoachingCourseTypeEnum.power;//this.getRandomPathType();
 
     this.subscription = this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {
       //clear canvas
@@ -113,9 +114,10 @@ export class CoachingComponent implements OnInit {
         //console.log("Fill completed section: " + (this.activePoints[i][0] - this.context.lineWidth / 2) + ", " + (this.activePoints[i][1] - this.context.lineWidth / 2) + ", " + (this.activePoints[i + 1][0] + this.context.lineWidth / 2) + ", " + (this.activePoints[i + 1][1] + this.context.lineWidth / 2));
         //completed sections
 
-        if (this.currentPathType === CoachingCourseTypeEnum.power) {
-          if (i === 0)
-            context.ellipse(this.activePoints[0][0], this.activePoints[0][1], this.activePoints[0][2], this.activePoints[0][3], this.activePoints[0][4], this.activePoints[0][5], this.activePoints[0][6], true);
+        if (this.currentPathType === CoachingCourseTypeEnum.power && i === 0) {
+          context.beginPath();
+          context.ellipse(this.activePoints[0][0], this.activePoints[0][1], this.activePoints[0][2], this.activePoints[0][3], this.activePoints[0][4], this.activePoints[0][5], this.activePoints[0][6], true);
+          context.stroke();
         }
         else {
           context.beginPath();
@@ -128,14 +130,25 @@ export class CoachingComponent implements OnInit {
       else {
         //console.log("Drawn Line: (" + this.activePoints[i][0] + ", " + this.activePoints[i][1] + ") to (" + this.currentX + ", " + this.currentY + ")");
         //current section
-        if (this.currentPathType === CoachingCourseTypeEnum.power) {
-          if (i === 0 || i === 2) {
-            context.fillRect(this.activePoints[i][0] - this.activePoints[i][2], this.activePoints[i][1] - this.activePoints[i][3],
-              2 * this.activePoints[i][2], 2 * this.activePoints[i][3]);
+        if (this.currentPathType === CoachingCourseTypeEnum.power && (i === 0 || i === 2)) {          
+          var index = 0;
+          if (i === 2)
+            index = 3;
 
-            context.fillStyle = this.getAnimalRacerColor(this.associatedAnimal.raceCourseType);
-            context.fillRect(this.currentX - 5, this.activePoints[i][1] - this.activePoints[i][3], 10, 2 * this.activePoints[i][3]);
-          }
+          context.fillStyle = this.getAnimalDistanceColor(this.associatedAnimal.raceCourseType);
+          if (index === 0)
+            context.fillRect(this.activePoints[index][0] - this.activePoints[index][2] - 5, this.activePoints[index][1] - 2 * this.activePoints[index][3],
+            this.currentX - (this.activePoints[index][0] - this.activePoints[index][2]), 2 * this.activePoints[index][3] + 2);
+          else
+            context.fillRect(this.activePoints[index][0] - this.activePoints[index][2] - 5, this.activePoints[index][1],
+            this.currentX - (this.activePoints[index][0] - this.activePoints[index][2]), 2 * this.activePoints[index][3] + 2);
+
+          context.fillStyle = this.getAnimalRacerColor(this.associatedAnimal.raceCourseType);
+
+          if (index === 0)
+            context.fillRect(this.currentX - 5, this.activePoints[index][1] - 2 * this.activePoints[index][3], 10, 2 * this.activePoints[index][3]);
+          else
+            context.fillRect(this.currentX - 5, this.activePoints[index][1], 10, 2 * this.activePoints[index][3]);
         }
         else {
           context.beginPath();
@@ -163,15 +176,19 @@ export class CoachingComponent implements OnInit {
 
     //do initial set up here maybe
     if (this.currentEndPoint === 0) {
+      this.currentX = this.activePoints[0][0];
+      this.currentY = this.activePoints[0][1];
+
       if (this.currentPathType === CoachingCourseTypeEnum.power) {
-        this.currentX = this.activePoints[0][0];
+        this.currentX = this.activePoints[0][0] - this.activePoints[0][2];
         this.currentY = this.activePoints[0][1];
       }
-      else {
-        this.currentX = this.activePoints[0][0];
-        this.currentY = this.activePoints[0][1];
-      }
+
       this.currentEndPoint = 1;
+    }
+
+    if (this.currentPathType === CoachingCourseTypeEnum.power) {
+      yGraceAmount = this.canvasHeight * .25;
     }
 
     //console.log("Current End Point: " + this.currentEndPoint + " Total Points: " + this.activePoints.length);
@@ -198,6 +215,45 @@ export class CoachingComponent implements OnInit {
     if (this.activePoints[this.currentEndPoint - 1][1] === this.activePoints[this.currentEndPoint][1])
       yStaysSame = true;
 
+    //currentendpoint is 1 or 3
+    if (this.currentPathType === CoachingCourseTypeEnum.power && (this.currentEndPoint === 1 || this.currentEndPoint === 3)) {
+      if (this.currentEndPoint === 1) {
+        minXPoint = this.activePoints[this.currentEndPoint - 1][0] - this.activePoints[this.currentEndPoint - 1][2];
+        maxXPoint = this.activePoints[this.currentEndPoint - 1][0] + this.activePoints[this.currentEndPoint - 1][2];
+        minYPoint = this.activePoints[this.currentEndPoint - 1][1];
+        maxYPoint = this.activePoints[this.currentEndPoint - 1][1];
+      }
+      else {
+        minXPoint = this.activePoints[this.currentEndPoint][0] - this.activePoints[this.currentEndPoint][2];
+        maxXPoint = this.activePoints[this.currentEndPoint][0] + this.activePoints[this.currentEndPoint][2];
+        minYPoint = this.activePoints[this.currentEndPoint][1];
+        maxYPoint = this.activePoints[this.currentEndPoint][1];
+      }
+      drawingMinXPoint = minXPoint - xGraceAmount;
+      drawingMaxXPoint = maxXPoint + xGraceAmount;
+      drawingMinYPoint = minYPoint - yGraceAmount;
+      drawingMaxYPoint = maxYPoint + yGraceAmount;
+      xGoingBackwards = false;
+      yGoingBackwards = false;
+      xStaysSame = false;
+      yStaysSame = true;
+
+      //console.log("Arc 2 current X: " + this.currentX + " current Y: " + this.currentY + " MaxX: " + maxXPoint + " MaxY: " + maxYPoint + " XBackwards: " + xGoingBackwards + " YBackwards: " + yGoingBackwards);
+    }
+    else if (this.currentPathType === CoachingCourseTypeEnum.power && this.currentEndPoint === 2) {
+      minXPoint = this.activePoints[2][0];
+      maxXPoint = this.activePoints[1][0];
+      minYPoint = this.activePoints[1][1];
+      maxYPoint = this.activePoints[2][1];
+      drawingMinXPoint = minXPoint - xGraceAmount;
+      drawingMaxXPoint = maxXPoint + xGraceAmount;
+      drawingMinYPoint = minYPoint - yGraceAmount;
+      drawingMaxYPoint = maxYPoint + yGraceAmount;
+      xGoingBackwards = true;
+      yGoingBackwards = false;
+      xStaysSame = false;
+      yStaysSame = false;
+    }
 
     //you'll have to do this uniquely for each path        
     if (mouseX >= drawingMinXPoint && mouseX <= drawingMaxXPoint && mouseY >= drawingMinYPoint && mouseY <= drawingMaxYPoint) {
@@ -229,7 +285,7 @@ export class CoachingComponent implements OnInit {
         }
       }
 
-      //console.log("CEP: " + this.currentEndPoint + " current X: " + this.currentX + " current Y: " + this.currentY + " MaxX: " + maxXPoint + " MaxY: " + maxYPoint);
+      console.log("CEP: " + this.currentEndPoint + " current X: " + this.currentX + " current Y: " + this.currentY + " MaxX: " + maxXPoint + " MaxY: " + maxYPoint + " XBackwards: " + xGoingBackwards + " YBackwards: " + yGoingBackwards);
       if (((!xGoingBackwards && this.currentX >= maxXPoint) || (xGoingBackwards && this.currentX <= minXPoint)) &&
         ((!yGoingBackwards && this.currentY >= maxYPoint) || (yGoingBackwards && this.currentY <= minYPoint))) {
         this.currentX = xGoingBackwards ? minXPoint : maxXPoint;
@@ -330,15 +386,15 @@ export class CoachingComponent implements OnInit {
     return linePoints;
   }
 
-  //finalized?
+  //finalized
   drawPowerTrace(context: any) {
     var offsetX = this.canvasWidth * .1;
     var offsetY = this.canvasHeight * .1;
 
     var linePoints = [];
     linePoints.push([this.canvasWidth / 2, this.canvasHeight / 4, this.canvasWidth / 2 - offsetX, this.canvasHeight / 4 - offsetY, 0, 0, Math.PI]);
-    linePoints.push([(this.canvasWidth / 2) - (this.canvasWidth / 2 - offsetX), 3 * this.canvasHeight / 4]);
     linePoints.push([(this.canvasWidth / 2) + (this.canvasWidth / 2 - offsetX), this.canvasHeight / 4]);
+    linePoints.push([(this.canvasWidth / 2) - (this.canvasWidth / 2 - offsetX), 3 * this.canvasHeight / 4]);
     linePoints.push([this.canvasWidth / 2, 3 * this.canvasHeight / 4, this.canvasWidth / 2 - offsetX, this.canvasHeight / 4 - offsetY, 0, 0, Math.PI]);
 
     context.beginPath();
@@ -416,14 +472,14 @@ export class CoachingComponent implements OnInit {
     return linePoints;
   }
 
-  //TODO
+  //finalized
   drawAdaptabilityTrace(context: any) {
     var offsetX = this.canvasWidth * .1;
     var offsetY = this.canvasHeight * .1;
 
     var numberOfDropOffs = 11;
-    var availableWidth = this.canvasWidth - (2*offsetX);
-    var availableHeight = this.canvasHeight - (2*offsetY);
+    var availableWidth = this.canvasWidth - (2 * offsetX);
+    var availableHeight = this.canvasHeight - (2 * offsetY);
 
     var linePoints = [];
     linePoints.push([offsetX, offsetY]);
@@ -565,30 +621,34 @@ export class CoachingComponent implements OnInit {
 
     if (pathType === CoachingCourseTypeEnum.speed) {
       this.associatedAnimal.currentStats.topSpeed += 1;
-      this.incrementalCoachingUpdates += this.animalDisplayName + " completes the course and gains " + statGainAmount + " speed. (" + this.associatedAnimal.currentStats.topSpeed + ")\n";
+      this.incrementalCoachingUpdates += this.animalDisplayName + " completes the course and gains " + statGainAmount + " speed. (" + this.associatedAnimal.currentStats.topSpeed.toFixed(2) + ")\n";
     }
     if (pathType === CoachingCourseTypeEnum.acceleration) {
       this.associatedAnimal.currentStats.acceleration += 1;
-      this.incrementalCoachingUpdates += this.animalDisplayName + " completes the course and gains " + statGainAmount + " acceleration. (" + this.associatedAnimal.currentStats.acceleration + ")\n";
+      this.incrementalCoachingUpdates += this.animalDisplayName + " completes the course and gains " + statGainAmount + " acceleration. (" + this.associatedAnimal.currentStats.acceleration.toFixed(2) + ")\n";
     }
     if (pathType === CoachingCourseTypeEnum.endurance) {
       this.associatedAnimal.currentStats.endurance += 1;
-      this.incrementalCoachingUpdates += this.animalDisplayName + " completes the course and gains " + statGainAmount + " endurance. (" + this.associatedAnimal.currentStats.endurance + ")\n";
+      this.incrementalCoachingUpdates += this.animalDisplayName + " completes the course and gains " + statGainAmount + " endurance. (" + this.associatedAnimal.currentStats.endurance.toFixed(2) + ")\n";
     }
     if (pathType === CoachingCourseTypeEnum.power) {
       this.associatedAnimal.currentStats.power += 1;
-      this.incrementalCoachingUpdates += this.animalDisplayName + " completes the course and gains " + statGainAmount + " power. (" + this.associatedAnimal.currentStats.power + ")\n";
+      this.incrementalCoachingUpdates += this.animalDisplayName + " completes the course and gains " + statGainAmount + " power. (" + this.associatedAnimal.currentStats.power.toFixed(2) + ")\n";
     }
     if (pathType === CoachingCourseTypeEnum.focus) {
       this.associatedAnimal.currentStats.focus += 1;
-      this.incrementalCoachingUpdates += this.animalDisplayName + " completes the course and gains " + statGainAmount + " focus. (" + this.associatedAnimal.currentStats.focus + ")\n";
+      this.incrementalCoachingUpdates += this.animalDisplayName + " completes the course and gains " + statGainAmount + " focus. (" + this.associatedAnimal.currentStats.focus.toFixed(2) + ")\n";
     }
     if (pathType === CoachingCourseTypeEnum.adaptability) {
       this.associatedAnimal.currentStats.adaptability += 1;
-      this.incrementalCoachingUpdates += this.animalDisplayName + " completes the course and gains " + statGainAmount + " adaptability. (" + this.associatedAnimal.currentStats.adaptability + ")\n";
+      this.incrementalCoachingUpdates += this.animalDisplayName + " completes the course and gains " + statGainAmount + " adaptability. (" + this.associatedAnimal.currentStats.adaptability.toFixed(2) + ")\n";
     }
 
     this.globalService.calculateAnimalRacingStats(this.associatedAnimal);
+  }
+
+  returnToSelectedBarnView() {
+    this.isCoachingEmitter.emit(false);
   }
 
   ngOnDestroy() {

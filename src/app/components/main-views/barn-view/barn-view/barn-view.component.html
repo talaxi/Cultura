@@ -69,6 +69,6 @@
 <div class="selectedBarnDiv" *ngIf="selectedBarn > 0">    
     <app-selected-barn *ngIf="!isCoaching" [selectedBarnNumber]="this.selectedBarn" (returnToBarnEmitter)="goToBarn(0)" (isCoachingEmitter)="goToCoaching($event)">
     </app-selected-barn>
-    <app-coaching [selectedBarnNumber]="this.selectedBarn" *ngIf="isCoaching">        
+    <app-coaching [selectedBarnNumber]="this.selectedBarn" (isCoachingEmitter)="goToCoaching($event)" *ngIf="isCoaching">        
     </app-coaching>
 </div>

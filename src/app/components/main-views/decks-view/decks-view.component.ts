@@ -242,6 +242,9 @@ export class DecksViewComponent implements OnInit {
   }
 
   dropCourseType(event: any) {
+    event.preventDefault();
+    event.stopPropagation();
+
     var data = event.dataTransfer.getData("text");
     var dataElement = document.getElementById(data);
     var targetEventHtml = event.target.innerHTML;
