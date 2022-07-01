@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Animal } from 'src/app/models/animals/animal.model';
+import { NavigationEnum } from 'src/app/models/navigation-enum.model';
 import { ComponentCommunicationService } from 'src/app/services/component-communication.service';
 import { GlobalService } from 'src/app/services/global-service.service';
 
@@ -17,6 +18,7 @@ export class AnimalsViewComponent implements OnInit {
   constructor(private globalService: GlobalService, private componentCommunicationService: ComponentCommunicationService) { }
 
   ngOnInit(): void {
+    this.componentCommunicationService.setNewView(NavigationEnum.animals);
     this.availableAnimals = this.globalService.globalVar.animals.filter(item => item.isAvailable);
 
     this.subscription = this.componentCommunicationService.getAnimalView().subscribe((value) => {

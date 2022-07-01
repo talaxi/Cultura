@@ -24,7 +24,7 @@ export class TrainingTrackViewComponent implements OnInit {
 
   ngOnInit(): void {
     this.availableAnimals = this.globalService.globalVar.animals.filter(item => item.isAvailable);
-    this.componentCommunicationService.setNewView(NavigationEnum.trainingtrack);
+    //this.componentCommunicationService.setNewView(NavigationEnum.trainingtrack);
     var existingPrimaryDeck = this.globalService.globalVar.animalDecks.find(item => item.isPrimaryDeck);
     if (existingPrimaryDeck !== null && existingPrimaryDeck !== undefined) {
       this.existingPrimaryDeckAnimals = [];

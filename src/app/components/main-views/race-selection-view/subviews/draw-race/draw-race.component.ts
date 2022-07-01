@@ -699,7 +699,7 @@ export class DrawRaceComponent implements OnInit {
       if (currentDistanceTraveled >= totalDistance && currentDistanceTraveled < totalDistance + leg.distance) {
         //we are in this leg
         if (leg.courseType === RaceCourseTypeEnum.Flatland)
-          color = "#D16900";//"#eb3023";
+          color = "#c66900";//"#eb3023";
         if (leg.courseType === RaceCourseTypeEnum.Mountain) {
           //if (this.themeService.getActiveThemeName() === "light")
           color = "#279113";

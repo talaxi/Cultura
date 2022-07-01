@@ -19,7 +19,7 @@
             <div class="info">
                 <span> {{ this.barnName }}</span>
                 <br />
-                <div *ngIf="this.associatedAnimal.name !== this.associatedAnimal.getAnimalType()" class="clickableText"
+                <div *ngIf="this.associatedAnimal.name !== this.associatedAnimal.getAnimalType()" [ngClass]="colorConditional" class="keyword clickableText"
                     (click)="goToAnimal()">
                     <span *ngIf="this.associatedAnimal.name !== this.associatedAnimal.getAnimalType()">{{
                         this.associatedAnimal.name }}</span>
@@ -27,7 +27,7 @@
                     <span>{{ this.associatedAnimal.getAnimalType() }}</span>
                 </div>
                 <div *ngIf="this.associatedAnimal.name === this.associatedAnimal.getAnimalType()"
-                    (click)="goToAnimal()" class="clickableText">
+                    (click)="goToAnimal()" [ngClass]="colorConditional" class="clickableText keyword">
                     <span>{{ this.associatedAnimal.getAnimalType() }}</span>
                 </div>
                 <div>
@@ -47,8 +47,16 @@
                     <span>No Training Assigned</span>
                 </div>
             </div>
-            <div class="back clickableText" (click)="returnToBarnView()">
-                <span>Back</span>
+            <div class="back">
+                <span (click)="returnToBarnView()" class="clickableText">Back</span>
+                <br />
+                <br />
+                <br />
+                <div *ngIf="coachingUnlocked">                    
+                    <span>
+                        <button (click)="goToCoaching()">Coach</button>
+                    </span>
+                </div>
             </div>
         </div>
         <hr />

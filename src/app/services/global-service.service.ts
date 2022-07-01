@@ -31,6 +31,8 @@ import { Unlockables } from '../models/utility/unlockables.model';
 import { RaceDisplayInfoEnum } from '../models/race-display-info-enum.model';
 import { TrackedStats } from '../models/utility/tracked-stats.model';
 import { TrackRaceTypeEnum } from '../models/track-race-type-enum.model';
+import { OrbStats } from '../models/animals/orb-stats.model';
+import { Tutorials } from '../models/tutorials.model';
 
 @Injectable({
   providedIn: 'root'
@@ -55,10 +57,9 @@ export class GlobalService {
     this.globalVar.unlockables = new Unlockables();
     this.globalVar.incubator = new Incubator();
     this.globalVar.trackedStats = new TrackedStats();
-    this.globalVar.userIsRacing = false;
-    this.globalVar.tutorialCompleted = false;
-    this.globalVar.currentTutorialId = 1;
-    this.globalVar.showTutorial = false;
+    this.globalVar.orbStats = new OrbStats();
+    this.globalVar.tutorials = new Tutorials();
+    this.globalVar.userIsRacing = false;  
     this.globalVar.nationalRaceCountdown = 0;
     this.globalVar.autoFreeRaceCounter = 0;
     this.globalVar.freeRaceCounter = 0;
@@ -1247,12 +1248,12 @@ export class GlobalService {
       this.globalVar.unlockables.set("rainbowRace", true);
       returnVal = ["Rainbow Race", "A new race type has been unlocked! This race requires a full team effort spanning all five course types. Your team of researchers are on hand for these races, coming up with more efficient ways to win. Gain Talent Tree Points that can be spent to improve various course types."];
 
-      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(55) + "Power Orb";
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(55) + "Amethyst Orb";
     }
     else if (numericValue === 55) {
-      this.globalVar.resources.push(new ResourceValue("Power Orb", 1, ShopItemTypeEnum.Equipment));
+      this.globalVar.resources.push(new ResourceValue("Amethyst Orb", 1, ShopItemTypeEnum.Equipment));
 
-      returnVal = ["Power Orb", "You receive a glowing violet orb. What it does is a mystery."];
+      returnVal = ["Amethyst Orb", "You receive a glowing violet orb. What it does is a mystery."];
 
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(58) + "Barn Row 4";
     }
@@ -1262,12 +1263,12 @@ export class GlobalService {
       returnVal = ["Barn Row 4", ""];
 
       var renownAmount = 1;
-      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(20) + "Focus Orb";
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(20) + "Sapphire Orb";
     }
     else if (numericValue === 60) {
-      this.globalVar.resources.push(new ResourceValue("Power Orb", 1, ShopItemTypeEnum.Equipment));
+      this.globalVar.resources.push(new ResourceValue("Sapphire Orb", 1, ShopItemTypeEnum.Equipment));
 
-      returnVal = ["Focus Orb", "You receive a glowing blue orb. What it does is a mystery."];
+      returnVal = ["Sapphire Orb", "You receive a glowing blue orb. What it does is a mystery."];
 
       var amount = 100;
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(62) + amount + " Mangoes";
@@ -1282,12 +1283,12 @@ export class GlobalService {
 
       returnVal = [amount + " Mangoes", ""];
 
-      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(65) + "Acceleration Orb";
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(65) + "Amber Orb";
     }
     else if (numericValue === 65) {
-      this.globalVar.resources.push(new ResourceValue("Acceleration Orb", 1, ShopItemTypeEnum.Equipment));
+      this.globalVar.resources.push(new ResourceValue("Amber Orb", 1, ShopItemTypeEnum.Equipment));
 
-      returnVal = ["Acceleration Orb", "You receive a glowing orange orb. What it does is a mystery."];
+      returnVal = ["Amber Orb", "You receive a glowing orange orb. What it does is a mystery."];
 
       var amount = 25;
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(67) + amount + " Renown";
@@ -1302,12 +1303,12 @@ export class GlobalService {
 
       returnVal = [renownAmount + " Renown", ""];
 
-      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(70) + "Endurance Orb";
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(70) + "Topaz Orb";
     }
     else if (numericValue === 70) {
-      this.globalVar.resources.push(new ResourceValue("Endurance Orb", 1, ShopItemTypeEnum.Equipment));
+      this.globalVar.resources.push(new ResourceValue("Topaz Orb", 1, ShopItemTypeEnum.Equipment));
 
-      returnVal = ["Endurance Orb", "You receive a glowing yellow orb. What it does is a mystery."];
+      returnVal = ["Topaz Orb", "You receive a glowing yellow orb. What it does is a mystery."];
 
       var amount = 500;
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(73) + amount + " Stat Increasing Food Items";
@@ -1318,19 +1319,19 @@ export class GlobalService {
 
       returnVal = [amount + " Stat Increasing Food", amount + " Apples, Bananas, Oranges, Turnips, Carrots, and Strawberries"];
 
-      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(75) + "Adaptability Orb";
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(75) + "Emerald Orb";
     }
     else if (numericValue === 75) {
-      this.globalVar.resources.push(new ResourceValue("Adaptability Orb", 1, ShopItemTypeEnum.Equipment));
+      this.globalVar.resources.push(new ResourceValue("Emerald Orb", 1, ShopItemTypeEnum.Equipment));
 
-      returnVal = ["Adaptability Orb", "You receive a glowing green orb. What it does is a mystery."];
+      returnVal = ["Emerald Orb", "You receive a glowing green orb. What it does is a mystery."];
 
-      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(78) + "Max Speed Orb";
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(78) + "Ruby Orb";
     }
     else if (numericValue === 78) {
-      this.globalVar.resources.push(new ResourceValue("Max Speed Orb", 1, ShopItemTypeEnum.Equipment));
+      this.globalVar.resources.push(new ResourceValue("Ruby Orb", 1, ShopItemTypeEnum.Equipment));
 
-      returnVal = ["Max Speed Orb", "You receive a glowing red orb. What it does is a mystery."];
+      returnVal = ["Ruby Orb", "You receive a glowing red orb. What it does is a mystery."];
 
       this.globalVar.circuitRankUpRewardDescription = "More Coming Soon!";
     }
@@ -1473,7 +1474,7 @@ export class GlobalService {
           availableCourses.push(RaceCourseTypeEnum.Mountain);
           availableCourses.push(RaceCourseTypeEnum.Ocean);
         }
-        if (i <= 53) {
+        else if (i <= 53) {
           availableCourses.push(RaceCourseTypeEnum.Flatland);
           availableCourses.push(RaceCourseTypeEnum.Mountain);
           availableCourses.push(RaceCourseTypeEnum.Ocean);
@@ -1854,7 +1855,7 @@ export class GlobalService {
       leg.pathData = this.GenerateRaceLegPaths(leg, totalDistance);
     });
 
-    this.globalVar.localRaces.push(new Race(raceLegs, monoRank, false, raceIndex, totalDistance, timeToComplete, this.GenerateMonoRaceRewards(monoRank), LocalRaceTypeEnum.Mono));    
+    this.globalVar.localRaces.push(new Race(raceLegs, monoRank, false, raceIndex, totalDistance, timeToComplete, this.GenerateMonoRaceRewards(monoRank), LocalRaceTypeEnum.Mono));
     raceIndex += 1;
   }
 
@@ -2149,38 +2150,35 @@ export class GlobalService {
   generateTrackRace(animal: Animal, type: TrackRaceTypeEnum) {
     var timeToComplete = 60;
 
-    var raceLegs: RaceLeg[] = [];    
+    var raceLegs: RaceLeg[] = [];
     var leg = new RaceLeg();
     leg.courseType = animal.raceCourseType;
-    
+
     if (type === TrackRaceTypeEnum.practice) {
       timeToComplete = 45;
       leg.distance = 100;
       leg.terrain = new Terrain(TerrainTypeEnum.Stormy);
     }
-    else if (type === TrackRaceTypeEnum.novice)
-    {
+    else if (type === TrackRaceTypeEnum.novice) {
       timeToComplete = 60;
       leg.distance = 1000;
       leg.terrain = new Terrain(TerrainTypeEnum.Stormy);
     }
-    else if (type === TrackRaceTypeEnum.intermediate)
-    {
+    else if (type === TrackRaceTypeEnum.intermediate) {
       timeToComplete = 80;
       leg.distance = 10000;
       leg.terrain = new Terrain(TerrainTypeEnum.Stormy);
     }
-    else if (type === TrackRaceTypeEnum.master)
-    {
+    else if (type === TrackRaceTypeEnum.master) {
       timeToComplete = 100;
       leg.distance = 100000;
       leg.terrain = new Terrain(TerrainTypeEnum.Stormy);
     }
-    
+
     raceLegs.push(leg);
 
     var totalDistance = 0;
-    
+
     raceLegs.forEach(leg => {
       totalDistance += leg.distance;
     });
@@ -2352,6 +2350,16 @@ export class GlobalService {
     var traitFocusModifier = this.getTraitModifier(animal, AnimalStatEnum.focus);
     var traitAdaptabilityModifier = this.getTraitModifier(animal, AnimalStatEnum.adaptability);
 
+    //orb modifier
+    var animalMaxSpeedOrbModifier = animal.equippedOrb !== null && animal.equippedOrb.name === "Ruby Orb" ? this.globalVar.orbStats.maxSpeedIncrease : 1;
+    var animalAccelerationOrbModifier = animal.equippedOrb !== null && animal.equippedOrb.name === "Amber Orb" ? this.globalVar.orbStats.accelerationRateIncrease : 1;
+    var animalStaminaOrbModifier = animal.equippedOrb !== null && animal.equippedOrb.name === "Topaz Orb" ? this.globalVar.orbStats.staminaIncrease : 1;
+    var animalPowerOrbModifier = animal.equippedOrb !== null && animal.equippedOrb.name === "Amethyst Orb" ? this.globalVar.orbStats.powerEfficiencyIncrease : 1;
+    var animalFocusOrbModifier = animal.equippedOrb !== null && animal.equippedOrb.name === "Sapphire Orb" ? this.globalVar.orbStats.focusDistanceIncrease : 1;
+    var animalAdaptabilityOrbModifier = animal.equippedOrb !== null && animal.equippedOrb.name === "Emerald Orb" ? this.globalVar.orbStats.adaptabilityDistanceIncrease : 1;
+
+
+
     //leave space to adjust modifiers with other items or anything
     var breedLevelStatModifier = this.globalVar.modifiers.find(item => item.text === "breedLevelStatModifier");
     if (breedLevelStatModifier !== undefined && breedLevelStatModifier !== null)
@@ -2361,12 +2369,12 @@ export class GlobalService {
     var diminishingReturnsThreshold = this.GetAnimalDiminishingReturns(animal);
 
     //do the calculations      
-    animal.currentStats.maxSpeedMs = animal.currentStats.calculateMaxSpeed(totalMaxSpeedModifier * breedLevelStatModifierValue * traitMaxSpeedModifier * animal.incubatorStatUpgrades.maxSpeedModifier, diminishingReturnsThreshold);
-    animal.currentStats.accelerationMs = animal.currentStats.calculateTrueAcceleration(totalAccelerationModifier * breedLevelStatModifierValue * traitAccelerationModifier * animal.incubatorStatUpgrades.accelerationModifier, diminishingReturnsThreshold);
-    animal.currentStats.stamina = animal.currentStats.calculateStamina(totalStaminaModifier * breedLevelStatModifierValue * traitEnduranceModifier * animal.incubatorStatUpgrades.staminaModifier, diminishingReturnsThreshold);
-    animal.currentStats.powerMs = animal.currentStats.calculateTruePower(totalPowerModifier * breedLevelStatModifierValue * traitPowerModifier * animal.incubatorStatUpgrades.powerModifier, diminishingReturnsThreshold);
-    animal.currentStats.focusMs = animal.currentStats.calculateTrueFocus(totalFocusModifier * breedLevelStatModifierValue * traitFocusModifier * animal.incubatorStatUpgrades.focusModifier, diminishingReturnsThreshold);
-    animal.currentStats.adaptabilityMs = animal.currentStats.calculateTrueAdaptability(totalAdaptabilityModifier * breedLevelStatModifierValue * traitAdaptabilityModifier * animal.incubatorStatUpgrades.adaptabilityModifier, diminishingReturnsThreshold);
+    animal.currentStats.maxSpeedMs = animal.currentStats.calculateMaxSpeed(totalMaxSpeedModifier * breedLevelStatModifierValue * traitMaxSpeedModifier * animal.incubatorStatUpgrades.maxSpeedModifier, diminishingReturnsThreshold, animalMaxSpeedOrbModifier);
+    animal.currentStats.accelerationMs = animal.currentStats.calculateTrueAcceleration(totalAccelerationModifier * breedLevelStatModifierValue * traitAccelerationModifier * animal.incubatorStatUpgrades.accelerationModifier, diminishingReturnsThreshold, animalAccelerationOrbModifier);
+    animal.currentStats.stamina = animal.currentStats.calculateStamina(totalStaminaModifier * breedLevelStatModifierValue * traitEnduranceModifier * animal.incubatorStatUpgrades.staminaModifier, diminishingReturnsThreshold, animalStaminaOrbModifier);
+    animal.currentStats.powerMs = animal.currentStats.calculateTruePower(totalPowerModifier * breedLevelStatModifierValue * traitPowerModifier * animal.incubatorStatUpgrades.powerModifier, diminishingReturnsThreshold, animalPowerOrbModifier);
+    animal.currentStats.focusMs = animal.currentStats.calculateTrueFocus(totalFocusModifier * breedLevelStatModifierValue * traitFocusModifier * animal.incubatorStatUpgrades.focusModifier, diminishingReturnsThreshold, animalFocusOrbModifier);
+    animal.currentStats.adaptabilityMs = animal.currentStats.calculateTrueAdaptability(totalAdaptabilityModifier * breedLevelStatModifierValue * traitAdaptabilityModifier * animal.incubatorStatUpgrades.adaptabilityModifier, diminishingReturnsThreshold, animalAdaptabilityOrbModifier);
     animal.currentStats.burstChance = animal.currentStats.calculateBurstChance(breedLevelStatModifierValue);
     animal.currentStats.burstDistance = animal.currentStats.calculateBurstDistance(breedLevelStatModifierValue);
 
@@ -2392,10 +2400,10 @@ export class GlobalService {
       return diminishingReturnsThreshold;
 
     var facilityLevelModifierValue = 5;
-    var facilityLevelModifier = this.globalVar.modifiers.find(item => item.text === "facilityLevelModifier");    
+    var facilityLevelModifier = this.globalVar.modifiers.find(item => item.text === "facilityLevelModifier");
     if (facilityLevelModifier !== undefined)
       facilityLevelModifierValue = facilityLevelModifier.value;
-      
+
     diminishingReturnsThreshold += facilityLevel.amount * (facilityLevelModifierValue + animal.miscStats.diminishingReturnsBonus);
 
     return diminishingReturnsThreshold;
@@ -2437,15 +2445,15 @@ export class GlobalService {
       var increasedAmount = animal.trait.researchLevel * incubatorUpgradeIncrease;
       if (animal.trait.positiveStatGain === AnimalStatEnum.topSpeed)
         animal.incubatorStatUpgrades.maxSpeedModifier += increasedAmount;
-        if (animal.trait.positiveStatGain === AnimalStatEnum.acceleration)
+      if (animal.trait.positiveStatGain === AnimalStatEnum.acceleration)
         animal.incubatorStatUpgrades.accelerationModifier += increasedAmount;
-        if (animal.trait.positiveStatGain === AnimalStatEnum.endurance)
+      if (animal.trait.positiveStatGain === AnimalStatEnum.endurance)
         animal.incubatorStatUpgrades.staminaModifier += increasedAmount;
-        if (animal.trait.positiveStatGain === AnimalStatEnum.power)
+      if (animal.trait.positiveStatGain === AnimalStatEnum.power)
         animal.incubatorStatUpgrades.powerModifier += increasedAmount;
-        if (animal.trait.positiveStatGain === AnimalStatEnum.focus)
+      if (animal.trait.positiveStatGain === AnimalStatEnum.focus)
         animal.incubatorStatUpgrades.focusModifier += increasedAmount;
-        if (animal.trait.positiveStatGain === AnimalStatEnum.adaptability)
+      if (animal.trait.positiveStatGain === AnimalStatEnum.adaptability)
         animal.incubatorStatUpgrades.adaptabilityModifier += increasedAmount;
     }
 
@@ -2518,14 +2526,14 @@ export class GlobalService {
   }
 
   InitializeUnlockables() {
-    this.globalVar.unlockables.set("trainingTrack", true);
-    this.globalVar.unlockables.set("intermediateTrack", false);
-    this.globalVar.unlockables.set("masterTrack", false);
     this.globalVar.unlockables.set("monoRace", false);
     this.globalVar.unlockables.set("duoRace", false);
     this.globalVar.unlockables.set("rainbowRace", false);
     this.globalVar.unlockables.set("barnRow2", false);
     this.globalVar.unlockables.set("barnRow3", false);
+    this.globalVar.unlockables.set("barnRow4", false);
+    this.globalVar.unlockables.set("barnRow5", false);
+    this.globalVar.unlockables.set("coaching", false);
     this.globalVar.unlockables.set("barnSpecializations", false);
     this.globalVar.unlockables.set("attractionSpecialization", false);
     this.globalVar.unlockables.set("researchCenterSpecialization", false);
@@ -2590,6 +2598,18 @@ export class GlobalService {
       returnVal = "Increase next racer's Acceleration by 10% on Relay";
     if (name === "Yellow Baton")
       returnVal = "Increase next racer's Endurance by 10% on Relay";
+    if (name === "Amethyst Orb")
+      returnVal = "Increase your Power Efficiency by 10%.";
+    if (name === "Sapphire Orb")
+      returnVal = "Increase your Focus Distance by 10%.";
+    if (name === "Amber Orb")
+      returnVal = "Increase your Acceleration Rate by 10%.";
+    if (name === "Topaz Orb")
+      returnVal = "Increase your Stamina by 10%.";
+    if (name === "Emerald Orb")
+      returnVal = "Increase your Adaptability Distance by 10%.";
+    if (name === "Ruby Orb")
+      returnVal = "Increase your Max Speed by 10%.";
 
     return returnVal;
   }
@@ -2725,6 +2745,7 @@ export class GlobalService {
       horse.currentStats.focus = 10;
       horse.currentStats.adaptability = 10;
       horse.breedLevel = 5;
+      horse.canEquipOrb = true;
       this.calculateAnimalRacingStats(horse);
 
       //horse.breedGaugeMax = 5;

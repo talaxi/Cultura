@@ -27,6 +27,7 @@ export class BarnComponent implements OnInit {
   showTrainingAnimation = false;
   previousTrainedAmount: number;
   readyToBreed: boolean;
+  colorConditional: any;
 
   @Output() selectedBarn = new EventEmitter<number>();
   trainingProgressBarPercent: number;
@@ -48,6 +49,14 @@ export class BarnComponent implements OnInit {
           this.associatedAnimalName = associatedAnimal.name;
           this.associatedAnimalType = AnimalTypeEnum[associatedAnimal.type];
           this.associatedAnimal = associatedAnimal;
+
+          this.colorConditional = {
+            'flatlandColor': associatedAnimal.getRaceCourseType() === 'Flatland',
+            'mountainColor': associatedAnimal.getRaceCourseType() === 'Mountain',
+            'waterColor': associatedAnimal.getRaceCourseType() === 'Ocean',
+            'tundraColor': associatedAnimal.getRaceCourseType() === 'Tundra',
+            'volcanicColor': associatedAnimal.getRaceCourseType() === 'Volcanic'
+          };
         }
         else
           this.isOccupied = false;
@@ -60,7 +69,7 @@ export class BarnComponent implements OnInit {
       //TODO: throw error, can't find barn
     }
 
-    if (!this.isLocked) {
+    if (!this.isLocked) {      
       this.subscription = this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {
         var associatedAnimal = this.globalService.globalVar.animals.find(item => item.associatedBarnNumber == this.barnNumber);
         if (associatedAnimal === undefined || associatedAnimal === null) {

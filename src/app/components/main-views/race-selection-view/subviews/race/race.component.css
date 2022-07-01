@@ -59,6 +59,7 @@
 
 .raceUpdates {
   overflow-y: auto;
+  white-space: break-spaces;
   grid-area: raceUpdates;
 }
 

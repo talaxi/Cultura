@@ -1346,4 +1346,12 @@ export class LookupService {
   getRemainingFreeRacesPerPeriod() {
     return this.getTotalFreeRacesPerPeriod() - this.globalService.globalVar.freeRaceCounter;
   }
+
+  isEquipmentItemAnOrb(name: string) {
+    if (name === "Amethyst Orb" || name === "Sapphire Orb" || name === "Amber Orb" ||
+    name === "Topaz Orb" || name === "Emerald Orb" || name === "Ruby Orb")
+      return true;
+
+    return false;
+  }
 }

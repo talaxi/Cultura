@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { NavigationEnum } from 'src/app/models/navigation-enum.model';
+import { ComponentCommunicationService } from 'src/app/services/component-communication.service';
 
 @Component({
   selector: 'app-faq-view',
@@ -7,9 +9,10 @@ import { Component, OnInit } from '@angular/core';
 })
 export class FaqViewComponent implements OnInit {
 
-  constructor() { }
+  constructor(private componentCommunicationService: ComponentCommunicationService) { }
 
   ngOnInit(): void {
+    this.componentCommunicationService.setNewView(NavigationEnum.faqs);
   }
 
   expandAnswer(id: string) {

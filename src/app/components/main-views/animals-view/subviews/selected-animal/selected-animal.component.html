@@ -23,6 +23,10 @@
                             (click)="unequipItem()">Unequip Item</button>
                         <button (click)="openEquipmentModal(equipment)">Equip New Item</button>
                     </div>
+                    <br />
+                    <div class="talents" *ngIf="areTalentsAvailable">
+                        <button (click)="openTalentsModal(talentsContent)">View Talents</button>
+                    </div>
                 </div>
                 <div class="animalInfo">
                     <div [ngClass]="colorConditional">
@@ -67,7 +71,7 @@
                         <span class="keyword">{{ selectedAnimal.getRaceCourseType() }}</span>
                         <br />
                     </div>
-                    <span class="clickableText" (click)="goToAssignedBarn()">{{ this.assignedBarnName }}</span>
+                    <span class="clickableText" (click)="goToAssignedBarn()">{{ this.assignedBarnName }} <em *ngIf="this.selectedAnimal.currentTraining !== null && this.selectedAnimal.currentTraining !== undefined">({{this.selectedAnimal.currentTraining.trainingName}})</em></span>
                     <br />
                     <span ngbPopover="{{ breedLevelPopover }}" triggers="mouseenter:mouseleave"
                         popoverClass="popoverClass">Breed Level {{selectedAnimal.breedLevel}}</span>
@@ -85,12 +89,27 @@
                 </div>
                 <div class="back">
                     <span class="clickableText" (click)="returnToAnimalView()">Back</span>
-                    <br />
-                    <br />
-                    <br />
-                    <div *ngIf="areTalentsAvailable">
-                        <button (click)="openTalentsModal(talentsContent)">View Talents</button>
-                    </div>
+                    <br />                    
+                    <div class="orb">
+                        <div *ngIf="selectedAnimal.equippedOrb !== undefined && selectedAnimal.equippedOrb !== null"
+                            [ngbPopover]="getEquipmentShortDescription(selectedAnimal.equippedOrb.name)"
+                            triggers="mouseenter:mouseleave" popoverClass="popoverClass">Orb: {{
+                            selectedAnimal.equippedOrb.name
+                            }}
+                            <br />
+                            <br />
+                            {{getEquipmentShortDescription(selectedAnimal.equippedOrb.name)}}
+                        </div>
+                        <div *ngIf="selectedAnimal.equippedOrb === undefined || selectedAnimal.equippedOrb === null">
+                            Orb: None
+                        </div>
+                        <br />
+
+                        <button
+                            *ngIf="selectedAnimal.equippedOrb !== undefined && selectedAnimal.equippedOrb !== null"
+                            (click)="unequipOrb()">Unequip Orb</button>
+                        <button (click)="openOrbModal(orb)">Equip New Orb</button>
+                    </div>                   
                 </div>
             </div>
             <hr />
@@ -373,6 +392,47 @@
 
                         <span class="rightAlign">
                             <button type="button" class="spaced" (click)="equipItem()">Equip</button>
+                        </span>
+                    </span>
+                </div>
+            </div>
+            <div *ngIf="equipmentList.length == 0">
+                No equipment available.
+            </div>
+        </form>
+    </div>
+</ng-template>
+
+<ng-template #orb let-modal>
+    <div class="modalClass">
+        <form>
+            <div class="modal-header">
+                <h4 class="modal-title" id="modal-basic-title">Change Orb</h4>
+                <button type="button" aria-label="Close" (click)="modal.dismiss()">X</button>
+            </div>
+            <div>
+                <div class="modal-body">
+                    <div class="orbContainer">
+                        <table>
+                            <tr *ngFor="let cells of orbRows;">
+                                <td *ngFor="let c of cells;" class="cell">
+                                    <div (click)="selectOrb(c)">
+                                        {{ c.name }} ({{ c.amount }})
+                                        <br />
+                                        {{ this.getEquipmentShortDescription(c.name) }}
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div *ngIf="selectedOrb !== undefined && selectedOrb !== null" class="modal-footer">
+                    <span class="selectedOrbSpan">
+                        <span>{{selectedOrb.name}} - {{ this.getEquipmentShortDescription(selectedOrb.name)
+                            }} </span>
+
+                        <span class="rightAlign">
+                            <button type="button" class="spaced" (click)="equipOrb()">Equip</button>
                         </span>
                     </span>
                 </div>

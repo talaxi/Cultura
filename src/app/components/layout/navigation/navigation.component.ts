@@ -34,20 +34,20 @@ export class NavigationComponent implements OnInit {
     this.trainingTrackAvailable = this.lookupService.isItemUnlocked("trainingTrack");
 
     this.tutorialSubscription = this.gameLoopService.gameUpdateEvent.subscribe((value) => {
-      if (!this.globalService.globalVar.tutorialCompleted && this.globalService.globalVar.currentTutorialId === 3) {
+      if (!this.globalService.globalVar.tutorials.tutorialCompleted && this.globalService.globalVar.tutorials.currentTutorialId === 3) {
         this.tutorial3Active = true;
       }
       else
         this.tutorial3Active = false;
 
-        if (!this.globalService.globalVar.tutorialCompleted && this.globalService.globalVar.currentTutorialId === 6 && 
+        if (!this.globalService.globalVar.tutorials.tutorialCompleted && this.globalService.globalVar.tutorials.currentTutorialId === 6 && 
           this.globalService.globalVar.animals.find(item => item.type === AnimalTypeEnum.Monkey)?.isAvailable) {
           this.tutorial6Active = true;
         }
         else
           this.tutorial6Active = false;
 
-      if (this.globalService.globalVar.tutorialCompleted)
+      if (this.globalService.globalVar.tutorials.tutorialCompleted)
         this.tutorialSubscription.unsubscribe();
     });
   }
@@ -61,8 +61,8 @@ export class NavigationComponent implements OnInit {
   }
 
   handleIntroTutorial() {
-    if (!this.globalService.globalVar.tutorialCompleted && this.globalService.globalVar.currentTutorialId === 3) {
-      this.globalService.globalVar.showTutorial = true;
+    if (!this.globalService.globalVar.tutorials.tutorialCompleted && this.globalService.globalVar.tutorials.currentTutorialId === 3) {
+      this.globalService.globalVar.tutorials.showTutorial = true;
     }
   }
 }

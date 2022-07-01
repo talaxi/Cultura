@@ -91,9 +91,9 @@ export class CircuitViewComponent implements OnInit {
     if (race.isCompleted)
       canRace = false;
 
-    if (!this.globalService.globalVar.tutorialCompleted && this.globalService.globalVar.currentTutorialId === 4) {
+    if (!this.globalService.globalVar.tutorials.tutorialCompleted && this.globalService.globalVar.tutorials.currentTutorialId === 4) {
       this.tutorialActive = false;
-      this.globalService.globalVar.currentTutorialId += 1;      
+      this.globalService.globalVar.tutorials.currentTutorialId += 1;      
     }
 
     if (canRace) {
@@ -132,20 +132,20 @@ export class CircuitViewComponent implements OnInit {
   }
 
   handleTutorial() {
-    if (!this.globalService.globalVar.tutorialCompleted && this.globalService.globalVar.currentTutorialId === 3) {
+    if (!this.globalService.globalVar.tutorials.tutorialCompleted && this.globalService.globalVar.tutorials.currentTutorialId === 3) {
       this.tutorialActive = true;
-      this.globalService.globalVar.currentTutorialId += 1;
-      this.globalService.globalVar.showTutorial = true;
+      this.globalService.globalVar.tutorials.currentTutorialId += 1;
+      this.globalService.globalVar.tutorials.showTutorial = true;
     }
 
-    if (!this.globalService.globalVar.tutorialCompleted && this.globalService.globalVar.currentTutorialId === 5) {
-      this.globalService.globalVar.showTutorial = true;      
+    if (!this.globalService.globalVar.tutorials.tutorialCompleted && this.globalService.globalVar.tutorials.currentTutorialId === 5) {
+      this.globalService.globalVar.tutorials.showTutorial = true;      
     }
 
-    if (!this.globalService.globalVar.tutorialCompleted && this.globalService.globalVar.currentTutorialId === 6 &&
+    if (!this.globalService.globalVar.tutorials.tutorialCompleted && this.globalService.globalVar.tutorials.currentTutorialId === 6 &&
       this.globalService.globalVar.animals.find(item => item.type === AnimalTypeEnum.Monkey)?.isAvailable)
     {
-      this.globalService.globalVar.showTutorial = true;  
+      this.globalService.globalVar.tutorials.showTutorial = true;  
     }
   }
 }

@@ -1,12 +1,12 @@
 .raceGridContainer {
     width: 100%;
     display: grid;
-    grid-template-columns: auto;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
     grid-template-rows: auto;
     justify-content: stretch;
     gap: 1rem;
     grid-template-areas: 
-      "circuit local";
+      "circuit local event trainingTrack";
   }
 
   .raceSelectionDiv {
@@ -24,6 +24,16 @@
 
   .local {
     grid-area: local;
+    text-align: center;    
+  }
+
+  .event {
+    grid-area: event;
+    text-align: center;    
+  }
+
+  .trainingTrack {
+    grid-area: trainingTrack;
     text-align: center;    
   }
 

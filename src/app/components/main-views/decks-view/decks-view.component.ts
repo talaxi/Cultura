@@ -3,7 +3,9 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AnimalDeck } from 'src/app/models/animals/animal-deck.model';
 import { Animal } from 'src/app/models/animals/animal.model';
+import { NavigationEnum } from 'src/app/models/navigation-enum.model';
 import { RaceCourseTypeEnum } from 'src/app/models/race-course-type-enum.model';
+import { ComponentCommunicationService } from 'src/app/services/component-communication.service';
 import { GlobalService } from 'src/app/services/global-service.service';
 import { LookupService } from 'src/app/services/lookup.service';
 
@@ -32,9 +34,12 @@ export class DecksViewComponent implements OnInit {
     deckName: new FormControl(''),
   });
 
-  constructor(private globalService: GlobalService, private modalService: NgbModal, private lookupService: LookupService) { }
+  constructor(private globalService: GlobalService, private modalService: NgbModal, private lookupService: LookupService,
+    private componentCommunicationService: ComponentCommunicationService) { }
 
   ngOnInit(): void {
+    this.componentCommunicationService.setNewView(NavigationEnum.decks);
+    
     this.isRaceOrderOn = false;
     this.newAnimalList = [];
     this.animalDecks = this.globalService.globalVar.animalDecks;

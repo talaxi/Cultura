@@ -10,6 +10,8 @@ import { CodeRedemptionService } from 'src/app/services/settings/code-redemption
 import { CodeCreationService } from 'src/app/services/settings/code-creation.service';
 import { DeploymentService } from 'src/app/services/utility/deployment.service';
 import { LookupService } from 'src/app/services/lookup.service';
+import { NavigationEnum } from 'src/app/models/navigation-enum.model';
+import { ComponentCommunicationService } from 'src/app/services/component-communication.service';
 declare var LZString: any;
 
 @Component({
@@ -34,9 +36,12 @@ export class SettingsViewComponent implements OnInit {
   public raceDisplayInfoEnum = RaceDisplayInfoEnum;
 
   constructor(private globalService: GlobalService, private themeService: ThemeService, private lookupService: LookupService,
-    private codeRedemptionService: CodeRedemptionService, private codeCreationService: CodeCreationService, private deploymentService: DeploymentService) { }
+    private codeRedemptionService: CodeRedemptionService, private codeCreationService: CodeCreationService, private deploymentService: DeploymentService,
+    private componentCommunicationService: ComponentCommunicationService) { }
 
   ngOnInit(): void {
+    this.componentCommunicationService.setNewView(NavigationEnum.settings);
+    
     if (this.deploymentService.codeCreationMode)
       console.log(this.codeCreationService.createCode());
     
@@ -90,8 +95,7 @@ export class SettingsViewComponent implements OnInit {
     if (confirm("This will overwrite your existing game data. Continue?")) {
       var decompressedData = LZString.decompressFromBase64(this.importExportValue);
       var loadDataJson = <GlobalVariables>JSON.parse(decompressedData);
-      this.globalService.globalVar = plainToInstance(GlobalVariables, loadDataJson);
-      console.log("Coins: " + this.lookupService.getCoins());
+      this.globalService.globalVar = plainToInstance(GlobalVariables, loadDataJson);      
     }
   }
 

@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { NavigationEnum } from 'src/app/models/navigation-enum.model';
+import { ComponentCommunicationService } from 'src/app/services/component-communication.service';
 import { GameLoopService } from 'src/app/services/game-loop/game-loop.service';
 import { GlobalService } from 'src/app/services/global-service.service';
 import { LookupService } from 'src/app/services/lookup.service';
@@ -15,7 +17,8 @@ export class FooterComponent implements OnInit {
   totalTime: number;
   maxTipTime: number;
 
-  constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private lookupService: LookupService) { }
+  constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private lookupService: LookupService,
+    private componentCommunicationService: ComponentCommunicationService) { }
 
   ngOnInit(): void {
     if (this.globalService.globalVar.settings.get("hideTips")) {
@@ -46,4 +49,7 @@ export class FooterComponent implements OnInit {
     });
   }
 
+  openFAQs() {
+    this.componentCommunicationService.setNewView(NavigationEnum.faqs);    
+  }
 }

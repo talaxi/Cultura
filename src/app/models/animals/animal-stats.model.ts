@@ -26,7 +26,7 @@ export class AnimalStats {
     defaultAdaptabilityModifier = 5;
     defaultBurstDistanceModifier = 1;
 
-    diminishingReturnsDefaultStatThreshold = 20;    
+    diminishingReturnsDefaultStatThreshold = 20;
 
     constructor(topSpeed?: number, acceleration?: number, endurance?: number, power?: number, focus?: number, adaptability?: number) {
         if (topSpeed !== undefined)
@@ -43,126 +43,141 @@ export class AnimalStats {
             this.adaptability = adaptability;
     }
 
-    calculateStamina(animalDefaultModifier?: number, diminishingReturnsValue?: number): number {
+    calculateStamina(animalDefaultModifier?: number, diminishingReturnsValue?: number, orbModifier?: number): number {
         if (animalDefaultModifier === null || animalDefaultModifier === undefined)
             animalDefaultModifier = this.defaultStaminaModifier;
 
         if (diminishingReturnsValue === null || diminishingReturnsValue === undefined)
             diminishingReturnsValue = this.diminishingReturnsDefaultStatThreshold;
 
+        if (orbModifier === null || orbModifier === undefined)
+            orbModifier = 1;
+
         if (this.endurance <= diminishingReturnsValue)
-            return this.endurance * animalDefaultModifier;
+            return this.endurance * animalDefaultModifier * orbModifier;
         else {
             var upToThreshold = diminishingReturnsValue * animalDefaultModifier;
             var diminishedValue = (this.endurance - diminishingReturnsValue) * (animalDefaultModifier * this.calculateDiminishingReturns(this.endurance - diminishingReturnsValue));
-            return upToThreshold + diminishedValue;
+            return (upToThreshold + diminishedValue) * orbModifier;
         }
     }
 
-    calculateMaxSpeed(animalDefaultModifier?: number, diminishingReturnsValue?: number): number {
+    calculateMaxSpeed(animalDefaultModifier?: number, diminishingReturnsValue?: number, orbModifier?: number): number {
         if (animalDefaultModifier === null || animalDefaultModifier === undefined)
             animalDefaultModifier = this.defaultMaxSpeedModifier;
 
         if (diminishingReturnsValue === null || diminishingReturnsValue === undefined)
             diminishingReturnsValue = this.diminishingReturnsDefaultStatThreshold;
 
+        if (orbModifier === null || orbModifier === undefined)
+            orbModifier = 1;
+
         if (this.topSpeed <= diminishingReturnsValue)
-            return this.topSpeed * animalDefaultModifier;
+            return this.topSpeed * animalDefaultModifier * orbModifier;
         else {
             var upToThreshold = diminishingReturnsValue * animalDefaultModifier;
             var diminishedValue = (this.topSpeed - diminishingReturnsValue) * (animalDefaultModifier * this.calculateDiminishingReturns(this.topSpeed - diminishingReturnsValue));
-            return upToThreshold + diminishedValue;
+            return (upToThreshold + diminishedValue) * orbModifier;
         }
     }
 
-    calculateTrueAcceleration(animalDefaultModifier?: number, diminishingReturnsValue?: number): number {
+    calculateTrueAcceleration(animalDefaultModifier?: number, diminishingReturnsValue?: number, orbModifier?: number): number {
         if (animalDefaultModifier === null || animalDefaultModifier === undefined)
             animalDefaultModifier = this.defaultAccelerationModifier;
 
         if (diminishingReturnsValue === null || diminishingReturnsValue === undefined)
             diminishingReturnsValue = this.diminishingReturnsDefaultStatThreshold;
 
+        if (orbModifier === null || orbModifier === undefined)
+            orbModifier = 1;
+
         if (this.acceleration <= diminishingReturnsValue)
-            return this.acceleration * animalDefaultModifier;
+            return this.acceleration * animalDefaultModifier * orbModifier;
         else {
             var upToThreshold = diminishingReturnsValue * animalDefaultModifier;
             var diminishedValue = (this.acceleration - diminishingReturnsValue) * (animalDefaultModifier * this.calculateDiminishingReturns(this.acceleration - diminishingReturnsValue));
-            return upToThreshold + diminishedValue;
+            return (upToThreshold + diminishedValue) * orbModifier;
         }
     }
 
-    calculateTruePower(animalDefaultModifier?: number, diminishingReturnsValue?: number): number {
+    calculateTruePower(animalDefaultModifier?: number, diminishingReturnsValue?: number, orbModifier?: number): number {
         if (animalDefaultModifier === null || animalDefaultModifier === undefined)
             animalDefaultModifier = this.defaultPowerModifier;
 
         if (diminishingReturnsValue === null || diminishingReturnsValue === undefined)
             diminishingReturnsValue = this.diminishingReturnsDefaultStatThreshold;
 
+        if (orbModifier === null || orbModifier === undefined)
+            orbModifier = 1;
+
         if (this.power <= diminishingReturnsValue)
-            return this.power * animalDefaultModifier;
+            return this.power * animalDefaultModifier * orbModifier;
         else {
             var upToThreshold = diminishingReturnsValue * animalDefaultModifier; //copy below to other stats, fix calculations for other stats everywhere including breed
             var diminishedValue = (this.power - diminishingReturnsValue) * (animalDefaultModifier * this.calculateDiminishingReturns(this.power - diminishingReturnsValue));
-            return upToThreshold + diminishedValue;
+            return (upToThreshold + diminishedValue) * orbModifier;
         }
     }
 
-    calculateTrueFocus(animalDefaultModifier?: number, diminishingReturnsValue?: number): number {
+    calculateTrueFocus(animalDefaultModifier?: number, diminishingReturnsValue?: number, orbModifier?: number): number {
         if (animalDefaultModifier === null || animalDefaultModifier === undefined)
             animalDefaultModifier = this.defaultFocusModifier;
+
+        if (orbModifier === null || orbModifier === undefined)
+            orbModifier = 1;
 
         if (diminishingReturnsValue === null || diminishingReturnsValue === undefined)
             diminishingReturnsValue = this.diminishingReturnsDefaultStatThreshold;
 
         if (this.focus <= diminishingReturnsValue)
-            return this.focus * animalDefaultModifier;
+            return this.focus * animalDefaultModifier * orbModifier;
         else {
             var upToThreshold = diminishingReturnsValue * animalDefaultModifier;
             var diminishedValue = (this.focus - diminishingReturnsValue) * (animalDefaultModifier * this.calculateDiminishingReturns(this.focus - diminishingReturnsValue));
-            return upToThreshold + diminishedValue;
+            return (upToThreshold + diminishedValue) * orbModifier;
         }
     }
 
-    calculateTrueAdaptability(animalDefaultModifier?: number, diminishingReturnsValue?: number): number {
+    calculateTrueAdaptability(animalDefaultModifier?: number, diminishingReturnsValue?: number, orbModifier?: number): number {
         if (animalDefaultModifier === null || animalDefaultModifier === undefined)
             animalDefaultModifier = this.defaultAdaptabilityModifier;
 
         if (diminishingReturnsValue === null || diminishingReturnsValue === undefined)
             diminishingReturnsValue = this.diminishingReturnsDefaultStatThreshold;
 
+        if (orbModifier === null || orbModifier === undefined)
+            orbModifier = 1;
+
         if (this.adaptability <= diminishingReturnsValue)
-            return this.adaptability * animalDefaultModifier;
+            return this.adaptability * animalDefaultModifier * orbModifier;
         else {
             var upToThreshold = diminishingReturnsValue * animalDefaultModifier;
             var diminishedValue = (this.adaptability - diminishingReturnsValue) * (animalDefaultModifier * this.calculateDiminishingReturns(this.adaptability - diminishingReturnsValue));
-            return upToThreshold + diminishedValue;
+            return (upToThreshold + diminishedValue) * orbModifier;
         }
     }
 
-    calculateBurstChance(breedLevelStatModifier: number, modifiedFocusMs?: number, modifiedAdaptabilityMs?: number): number {        
+    calculateBurstChance(breedLevelStatModifier: number, modifiedFocusMs?: number, modifiedAdaptabilityMs?: number): number {
         /*if (modifiedFocusMs !== null && modifiedFocusMs !== undefined &&
             modifiedAdaptabilityMs !== null && modifiedAdaptabilityMs !== undefined)
             statTotal = modifiedAdaptabilityMs + modifiedFocusMs;
 */
         var focusTotal = this.focus;
         var adaptabilityTotal = this.adaptability;
-        if (modifiedFocusMs !== null && modifiedFocusMs !== undefined)
-        {
+        if (modifiedFocusMs !== null && modifiedFocusMs !== undefined) {
             var percentChange = modifiedFocusMs / this.focusMs;
             focusTotal *= percentChange;
         }
-        if (modifiedAdaptabilityMs !== null && modifiedAdaptabilityMs !== undefined)
-        {
+        if (modifiedAdaptabilityMs !== null && modifiedAdaptabilityMs !== undefined) {
             var percentChange = modifiedAdaptabilityMs / this.adaptabilityMs;
             adaptabilityTotal *= percentChange;
         }
 
         var statTotal = adaptabilityTotal + focusTotal;
 
-        var offset = 2000;
+        var offset = 1000;
 
-
-        return ((statTotal * (breedLevelStatModifier/2)) / (offset) * 100);
+        return ((statTotal * (1 + breedLevelStatModifier / 4)) / (offset) * 100);
     }
 
     calculateBurstDistance(breedLevelStatModifier: number, animalDefaultModifier?: number, modifiedPower?: number): number {
@@ -171,13 +186,12 @@ export class AnimalStats {
 
         var powerTotal = this.power;
 
-        if (modifiedPower !== null && modifiedPower !== undefined)
-        {
+        if (modifiedPower !== null && modifiedPower !== undefined) {
             var percentChange = modifiedPower / this.powerMs;
             powerTotal *= percentChange;
         }
 
-        return powerTotal * (breedLevelStatModifier/2) * animalDefaultModifier;
+        return powerTotal * (1 + breedLevelStatModifier / 4) * animalDefaultModifier;
     }
 
     topSpeedPopover(modifierAmount: number): string {

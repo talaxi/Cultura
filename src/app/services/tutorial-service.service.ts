@@ -13,8 +13,8 @@ export class TutorialService {
 
   skipTutorial()
   {
-    this.globalService.globalVar.tutorialCompleted = true;
-    this.globalService.globalVar.currentTutorialId = 9; //need to keep this updated or come up with better idea
+    this.globalService.globalVar.tutorials.tutorialCompleted = true;
+    this.globalService.globalVar.tutorials.currentTutorialId = 9; //need to keep this updated or come up with better idea
   }
 
   getTutorialState(id: number)
@@ -85,7 +85,7 @@ export class TutorialService {
       tutorialState.tutorialText = "Here you can see how close your animal is to being able to breed. Training and racing both contribute to this. Once you're ready, you can breed your animal and start racing the offspring. There's a strategic element to this. After breeding, your animal will have its stats set back to their starting points, but the amount that the base stats contribute to the racing stats will increase. To keep up with the competition, you'll need to keep breeding and getting faster animals. But don't breed right before a big race or you might find yourself in trouble!\n\n" +
       "That's all I have for you. Good luck and have fun!";
       tutorialState.associatedTab = NavigationEnum.animals;
-      this.globalService.globalVar.tutorialCompleted = true;
+      this.globalService.globalVar.tutorials.tutorialCompleted = true;
     }
     
 

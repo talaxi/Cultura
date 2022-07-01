@@ -32,6 +32,8 @@ export class Animal {
     raceVariables: RaceVariables;
     @Type(() => ResourceValue)
     equippedItem: ResourceValue | null;
+    @Type(() => ResourceValue)
+    equippedOrb: ResourceValue | null;
     @Type(() => IncubatorStatUpgrades)
     incubatorStatUpgrades: IncubatorStatUpgrades;
     @Type(() => AllTrainingTracks)
@@ -47,6 +49,7 @@ export class Animal {
     @Type(() => AnimalTraits)
     trait: AnimalTraits;
     canTrain: boolean;
+    canEquipOrb: boolean;
     totalRacesRun: number; //for tracked stats
 
     constructor() {
@@ -57,6 +60,8 @@ export class Animal {
         this.breedGaugeXp = 0;
         this.breedGaugeMax = 100;
         this.totalRacesRun = 0;
+        this.equippedOrb = null;
+        this.canEquipOrb = false;
         this.canTrain = true;
         this.isAvailable = false;
 
@@ -95,6 +100,21 @@ export class Animal {
             return this.equippedItem.name;
 
         return undefined;
+    }
+
+    getCourseTypeClass() {
+        if (this.raceCourseType === RaceCourseTypeEnum.Flatland)
+            return "flatlandColor";
+        if (this.raceCourseType === RaceCourseTypeEnum.Mountain)
+            return "mountainColor";
+        if (this.raceCourseType === RaceCourseTypeEnum.Ocean)
+            return "waterColor";
+        if (this.raceCourseType === RaceCourseTypeEnum.Tundra)
+            return "tundraColor";
+        if (this.raceCourseType === RaceCourseTypeEnum.Volcanic)
+            return "volcanicColor";
+
+        return "";
     }
 
     increaseStatsFromCurrentTraining(): void {
@@ -180,7 +200,7 @@ export class Cheetah extends Animal {
 
         this.ability = new Ability();
         this.ability.cooldown = 6;
-        this.ability.efficiency = 30;
+        this.ability.efficiency = 35;
         this.ability.oneTimeEffect = false;
         this.ability.name = "Sprint";
         this.ability.description = "Sprint";
@@ -197,7 +217,7 @@ export class Cheetah extends Animal {
         this.availableAbilities.push(ability2);
 
         var ability3 = new Ability();        
-        ability3.efficiency = 2;
+        ability3.efficiency = 1;
         ability3.oneTimeEffect = false;
         ability3.name = "On The Hunt";
         ability3.description = "On The Hunt";
@@ -418,7 +438,7 @@ export class Shark extends Animal {
         this.availableAbilities.push(ability2);
 
         var ability3 = new Ability();
-        ability3.efficiency = 2;
+        ability3.efficiency = 1;
         ability3.oneTimeEffect = true;
         ability3.name = "Blood In The Water";
         ability3.isAbilityPurchased = false;

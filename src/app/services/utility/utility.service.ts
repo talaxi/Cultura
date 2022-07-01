@@ -34,22 +34,6 @@ export class UtilityService {
     return (Math.random() * (99) + 1);
   }
 
-  /*getRandomTerrain(): TerrainTypeEnum {
-    return TerrainTypeEnum.Sunny;
-  }
-
-  getRandomRaceCourseType(): RaceCourseTypeEnum {
-    return RaceCourseTypeEnum.Flatland;
-  }*/
-
-  /*getRenownCircuitRaceModifier(totalRenown: number) {
-    return totalRenown;
-  }
-
-  getRenownCircuitRaceModifierPopover(totalRenown: number) {
-    return totalRenown * 100;
-  }*/
-
   getNumericValueOfCircuitRank(circuitRank: string) {
     var circuitValue = 0;
     if (circuitRank.length > 1) {
@@ -87,9 +71,6 @@ export class UtilityService {
 
   condenseList(list: ResourceValue[]) {
     var newList: ResourceValue[] = [];
-
-    console.log("List: ");
-    console.log(list);
 
     list.forEach(item => {
       if (newList.some(val => val.name === item.name))

@@ -1,12 +1,12 @@
 <div class="barn clickableText">
     <div class="unlocked" *ngIf="this.isOccupied">
         <span>{{ barnName }}</span>
-        <div *ngIf="associatedAnimal.name !== associatedAnimal.getAnimalType()">
+        <div [ngClass]="colorConditional" class="keyword" *ngIf="associatedAnimal.name !== associatedAnimal.getAnimalType()">
             <span>{{ this.associatedAnimalName }}</span>
             <br />
             <span>{{ this.associatedAnimalType }}</span>
         </div>
-        <div *ngIf="associatedAnimal.name === associatedAnimal.getAnimalType()">            
+        <div [ngClass]="colorConditional" class="keyword" *ngIf="associatedAnimal.name === associatedAnimal.getAnimalType()">            
             <span>{{ this.associatedAnimalType }}</span>
         </div>
         <br />        
@@ -18,9 +18,8 @@
             {{ trainingCompleteText }}
         </div>
         <br />
-        <br />
         <div *ngIf="readyToBreed">
-            Ready to Breed
+            <em>Ready to Breed</em>
         </div>
     </div>
     <div class="unassigned" *ngIf="!this.isOccupied && !this.isLocked">

@@ -4,6 +4,8 @@
     <div class="circuitRaceHeader s4Heading">
         <span  [ngbPopover]="circuitRewardContent"
             triggers="mouseenter:mouseleave" popoverClass="popoverClass">Circuit Rank <strong>{{ circuitRank }}</strong></span>
+            <br/>
+            <br/>
     </div>
     <div class="circuitRaceGrid">
         <div [ngClass]='tutorialActive ? "tutorialActive" : ""' class="circuitRace{{i+1}}" (click)="selectCircuitRace(race)"

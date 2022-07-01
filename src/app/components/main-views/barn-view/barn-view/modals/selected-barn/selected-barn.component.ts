@@ -26,6 +26,7 @@ import { TutorialService } from 'src/app/services/tutorial-service.service';
 export class SelectedBarnComponent implements OnInit {
   @Input() selectedBarnNumber: number;
   @Output() returnToBarnEmitter = new EventEmitter<number>();
+  @Output() isCoachingEmitter = new EventEmitter<boolean>();
   @ViewChild('specializationModal', { static: true }) specializationModal: ElementRef;
 
   barn: Barn;
@@ -49,8 +50,10 @@ export class SelectedBarnComponent implements OnInit {
   specializationDescription: string;
   inDepthSpecializationDescription: string;
   barnSpecializationsUnlocked = false;
+  coachingUnlocked = false;
   tutorialActive = false;
   subscription: any;
+  colorConditional: any;
 
   filterSpeed = false;
   filterAcceleration = false;
@@ -99,6 +102,7 @@ export class SelectedBarnComponent implements OnInit {
     this.specializationOptions = this.lookupService.getAllBarnSpecializations();
     this.upgradeText = "Upgrade";
     this.barnSpecializationsUnlocked = this.lookupService.isItemUnlocked("barnSpecializations");
+    this.coachingUnlocked = true; //TODO: set this back //this.lookupService.isItemUnlocked("coaching");
 
     if (this.selectedBarnNumber > 0 && this.selectedBarnNumber <= this.globalService.globalVar.barns.length + 1) {
       var globalBarn = this.globalService.globalVar.barns.find(item => item.barnNumber === this.selectedBarnNumber);
@@ -123,6 +127,14 @@ export class SelectedBarnComponent implements OnInit {
           this.associatedAnimal = associatedAnimal;
           this.associatedAnimalName = associatedAnimal.name;
           this.existingTraining = associatedAnimal.currentTraining;
+
+          this.colorConditional = {
+            'flatlandColor': associatedAnimal.getRaceCourseType() === 'Flatland',
+            'mountainColor': associatedAnimal.getRaceCourseType() === 'Mountain',
+            'waterColor': associatedAnimal.getRaceCourseType() === 'Ocean',
+            'tundraColor': associatedAnimal.getRaceCourseType() === 'Tundra',
+            'volcanicColor': associatedAnimal.getRaceCourseType() === 'Volcanic'
+          };
 
           this.availableTrainings = this.GetAvailableTrainingOptions(associatedAnimal);
 
@@ -210,10 +222,10 @@ export class SelectedBarnComponent implements OnInit {
     animal.currentTraining = newTraining;
     this.existingTraining = newTraining;
 
-    if (!this.globalService.globalVar.tutorialCompleted && this.globalService.globalVar.currentTutorialId === 2) {
+    if (!this.globalService.globalVar.tutorials.tutorialCompleted && this.globalService.globalVar.tutorials.currentTutorialId === 2) {
       this.tutorialActive = false;
-      this.globalService.globalVar.currentTutorialId += 1;
-      this.globalService.globalVar.showTutorial = true;
+      this.globalService.globalVar.tutorials.currentTutorialId += 1;
+      this.globalService.globalVar.tutorials.showTutorial = true;
       this.componentCommunicationService.setAnimalView(NavigationEnum.animals, this.associatedAnimal);
     }
   }
@@ -351,10 +363,10 @@ export class SelectedBarnComponent implements OnInit {
       this.associatedAnimal = globalAnimal;
     }
 
-    if (!this.globalService.globalVar.tutorialCompleted && this.globalService.globalVar.currentTutorialId === 7 &&
+    if (!this.globalService.globalVar.tutorials.tutorialCompleted && this.globalService.globalVar.tutorials.currentTutorialId === 7 &&
       this.associatedAnimal.type === AnimalTypeEnum.Monkey) {
-      this.globalService.globalVar.currentTutorialId += 1;
-      this.globalService.globalVar.showTutorial = true;
+      this.globalService.globalVar.tutorials.currentTutorialId += 1;
+      this.globalService.globalVar.tutorials.showTutorial = true;
     }
   }
 
@@ -631,17 +643,17 @@ export class SelectedBarnComponent implements OnInit {
 
   handleTutorial() {
     var monkey = this.globalService.globalVar.animals.find(item => item.type === AnimalTypeEnum.Monkey);
-    if (!this.globalService.globalVar.tutorialCompleted && this.globalService.globalVar.currentTutorialId === 1) {
+    if (!this.globalService.globalVar.tutorials.tutorialCompleted && this.globalService.globalVar.tutorials.currentTutorialId === 1) {
       this.tutorialActive = true;
-      this.globalService.globalVar.currentTutorialId += 1;
-      this.globalService.globalVar.showTutorial = true;
+      this.globalService.globalVar.tutorials.currentTutorialId += 1;
+      this.globalService.globalVar.tutorials.showTutorial = true;
     }
-    else if (!this.globalService.globalVar.tutorialCompleted && this.globalService.globalVar.currentTutorialId === 6 &&
+    else if (!this.globalService.globalVar.tutorials.tutorialCompleted && this.globalService.globalVar.tutorials.currentTutorialId === 6 &&
       monkey?.isAvailable) {
-      this.globalService.globalVar.currentTutorialId += 1;
-      this.globalService.globalVar.showTutorial = true;
+      this.globalService.globalVar.tutorials.currentTutorialId += 1;
+      this.globalService.globalVar.tutorials.showTutorial = true;
     }
-    else if (!this.globalService.globalVar.tutorialCompleted) {
+    else if (!this.globalService.globalVar.tutorials.tutorialCompleted) {
       this.tutorialActive = false;
     }
   }
@@ -727,6 +739,10 @@ export class SelectedBarnComponent implements OnInit {
       console.log("Can't find barn");
       //TODO: throw error, can't find barn
     }
+  }
+
+  goToCoaching() {
+    this.isCoachingEmitter.emit(true);
   }
 
   ngOnDestroy() {

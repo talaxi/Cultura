@@ -303,7 +303,7 @@ export class InitializeService {
       training.trainingType = TrainingOptionsEnum.Marathon;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
       training.statGain = 1;
-      training.affectedStatRatios = new AnimalStats(2, 0, 3, 0, 3, 0);
+      training.affectedStatRatios = new AnimalStats(0, 2, 3, 0, 3, 0);
     }
 
     if (trainingType === TrainingOptionsEnum.AgilityCourse) {      
@@ -315,7 +315,7 @@ export class InitializeService {
       training.trainingType = TrainingOptionsEnum.AgilityCourse;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
       training.statGain = 1;
-      training.affectedStatRatios = new AnimalStats(0, 3, 0, 2, 0, 3);
+      training.affectedStatRatios = new AnimalStats(3, 0, 0, 2, 0, 3);
     }
 
 

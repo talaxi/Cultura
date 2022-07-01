@@ -5,38 +5,48 @@
   color: var(--foreground-default);
 }
 
-.gridContainer {
-    height: 100%;
+.selectedBarnDiv {
+  height: 100%;
+}
+
+.barnDefault {
+  background-color: var(--background-secondary);
+  border-color: var(--background-tertiary);
+  color: var(--foreground-default);
+
+  border: 1px solid rgba(0, 0, 0, .1);
+  border-right: none;
+  border-top: none;
+  width: 33.3333%;
+  display: inline-block;
+  vertical-align: middle;
+  height: 100%;
+}
+
+.barnRow {
+  height: 25%;
+  width: 100%;
+  display: inline-block;
+}
+
+.lockedBarnRow {
+  border: none !important;
+}
+
+/*
+  .gridContainer {    
     display: grid;
     grid-template-columns: 33.333%;
-    grid-template-rows: 33.333%;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
     justify-content: stretch;
     grid-template-areas: 
       "barn1 barn2 barn3"
       "barn4 barn5 barn6"
-      "barn7 barn8 barn9";
+      "barn7 barn8 barn9"
+      "barn10 barn11 barn12"
+      "barn13 barn14 barn15";
   }
 
-  .selectedBarnDiv {
-    height: 100%;
-  }
-
-  .barnDefault {
-    justify-self: stretch;
-    display: grid;
-    align-items: center;
-
-    background-color: var(--background-secondary);
-    border-color: var(--background-tertiary);
-    color: var(--foreground-default);
-
-    border: 1px solid rgba(0,0,0,.1);
-    border-right: none;
-  }
-
-  .lockedBarnRow {
-    border: none !important;
-  }
 
   .barn1 {
     grid-area: barn1;
@@ -74,7 +84,31 @@
     grid-area: barn9;
   }
 
-  .tutorialActive {
-    border: 1px solid rgba(0,0,0,.1);
-    border-color: red;
+  .barn10 {
+    grid-area: barn10;
   }
+
+  .barn11 {
+    grid-area: barn11;
+  }
+
+  .barn12 {
+    grid-area: barn12;
+  }
+
+  .barn13 {
+    grid-area: barn13;
+  }
+
+  .barn14 {
+    grid-area: barn14;
+  }
+
+  .barn15 {
+    grid-area: barn15;
+  }*/
+
+.tutorialActive {
+  border: 1px solid rgba(0, 0, 0, .1);
+  border-color: red;
+}

@@ -29,7 +29,7 @@ export class MainComponent implements OnInit {
     this.openTutorialModal();
 
     var subscription = this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {
-      if (this.globalService.globalVar.showTutorial)
+      if (this.globalService.globalVar.tutorials.showTutorial)
         this.openTutorialModal();
     });
   }
@@ -39,14 +39,14 @@ export class MainComponent implements OnInit {
   }
 
   openTutorialModal() {
-    if (!this.globalService.globalVar.tutorialCompleted) {
-      var getTutorialState = this.tutorialService.getTutorialState(this.globalService.globalVar.currentTutorialId);
+    if (!this.globalService.globalVar.tutorials.tutorialCompleted) {
+      var getTutorialState = this.tutorialService.getTutorialState(this.globalService.globalVar.tutorials.currentTutorialId);
         
       if (this.activeView === getTutorialState.associatedTab) {
         this.tutorialText = this.sanitizer.sanitize(SecurityContext.HTML, this.sanitizer.bypassSecurityTrustHtml(getTutorialState.tutorialText + "\n"));
-        this.globalService.globalVar.showTutorial = false;
+        this.globalService.globalVar.tutorials.showTutorial = false;
         if (getTutorialState.id === 5)
-          this.globalService.globalVar.currentTutorialId += 1;
+          this.globalService.globalVar.tutorials.currentTutorialId += 1;
         this.modalService.open(this.tutorialContent, { ariaLabelledBy: 'modal-basic-title', size: 'lg' }).result.then(
           result => {
             this.closeTutorialModal();

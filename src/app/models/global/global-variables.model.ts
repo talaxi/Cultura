@@ -1,6 +1,7 @@
 import { Type } from "class-transformer";
 import { AnimalDeck } from "../animals/animal-deck.model";
 import { Animal } from "../animals/animal.model";
+import { OrbStats } from "../animals/orb-stats.model";
 import { Barn } from "../barns/barn.model";
 import { Incubator } from "../incubator.model";
 import { RaceCourseTypeEnum } from "../race-course-type-enum.model";
@@ -9,6 +10,7 @@ import { Race } from "../races/race.model";
 import { ResourceValue } from "../resources/resource-value.model";
 import { ShopSection } from "../shop/shop-section.model";
 import { TrainingOption } from "../training/training-option.model";
+import { Tutorials } from "../tutorials.model";
 import { Settings } from "../utility/settings.model";
 import { StringNumberPair } from "../utility/string-number-pair.model";
 import { TrackedStats } from "../utility/tracked-stats.model";
@@ -50,10 +52,11 @@ export class GlobalVariables {
     incubator: Incubator;
     @Type(() => TrackedStats)
     trackedStats: TrackedStats;
+    @Type(() => OrbStats)
+    orbStats: OrbStats;
+    @Type(() => Tutorials)
+    tutorials: Tutorials;
     circuitRankUpRewardDescription: string;
-    tutorialCompleted: boolean;
-    currentTutorialId: number;
-    showTutorial: boolean;
     nationalRaceCountdown: number;
     userIsRacing = false;   
     autoFreeRaceCounter: number;     
@@ -78,6 +81,7 @@ export class GlobalVariables {
             this.incubator = existingVariables.incubator;
             this.trackedStats = existingVariables.trackedStats;
             this.pinnacle = existingVariables.pinnacle;
+            this.orbStats = existingVariables.orbStats;
             this.nationalRaceCountdown = 0;
             this.autoFreeRaceCounter = 0;
             this.freeRaceCounter = 0;

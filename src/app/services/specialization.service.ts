@@ -205,7 +205,7 @@ export class SpecializationService {
         resource.amount += amountEarned;
 
       collectedAmount += amountEarned;     
-      console.log("Attraction: " + amountEarned + ' New Total: ' + resource?.amount); 
+      //console.log("Attraction: " + amountEarned + ' New Total: ' + resource?.amount); 
     }    
   }
 }

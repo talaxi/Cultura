@@ -1,0 +1,18 @@
+<div class="coachingView">
+    <div id="coachingInfo">
+    </div>
+
+    <div class="updates">
+        <div class="drawCoaching" id="drawCoaching" #drawCoaching>
+            <div class="drawCoachingDiv">
+                <canvas id="coachingCanvas" class="coachingCanvas" #coachingCanvas (pointermove)="pointerMove($event)"
+                    (pointerdown)="pointerDown()" (pointerup)="pointerUp()">
+
+                </canvas>
+            </div>
+        </div>
+        <div class="coachingUpdates" #scrollMe [scrollTop]="scrollMe.scrollHeight"
+            [innerHTML]="incrementalCoachingUpdates.trim()">
+        </div>
+    </div>
+</div>

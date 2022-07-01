@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { NavigationEnum } from 'src/app/models/navigation-enum.model';
 import { ShopSection } from 'src/app/models/shop/shop-section.model';
+import { ComponentCommunicationService } from 'src/app/services/component-communication.service';
 import { GlobalService } from 'src/app/services/global-service.service';
 
 @Component({
@@ -16,9 +18,10 @@ export class ShopViewComponent implements OnInit {
   filterSpecialty = false;
   filterAbilities = false;
 
-  constructor(private globalService: GlobalService) { }
+  constructor(private globalService: GlobalService, private componentCommunicationService: ComponentCommunicationService) { }
 
   ngOnInit(): void {
+    this.componentCommunicationService.setNewView(NavigationEnum.shop);
     this.getShopOptions();
   }
 

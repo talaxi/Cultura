@@ -10,8 +10,16 @@
       ". area1 area2 area4 .";
   }
 
-  a {
+  a, .faqs {
     color: var(--foreground-quaternary);
+  }
+
+  .faqs {
+    cursor:pointer;
+  }
+
+  .faqs:hover {    
+    text-decoration:underline;
   }
 
   .area1 {

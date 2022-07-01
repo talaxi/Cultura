@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Animal } from 'src/app/models/animals/animal.model';
+import { NavigationEnum } from 'src/app/models/navigation-enum.model';
 import { TrackedStats } from 'src/app/models/utility/tracked-stats.model';
+import { ComponentCommunicationService } from 'src/app/services/component-communication.service';
 import { GlobalService } from 'src/app/services/global-service.service';
 
 @Component({
@@ -13,9 +15,10 @@ export class StatsViewComponent implements OnInit {
   mostUsedAnimal: string;
   mostUsedAnimalCount: number;
 
-  constructor(private globalService: GlobalService) { }
+  constructor(private globalService: GlobalService, private componentCommunicationService: ComponentCommunicationService) { }
 
   ngOnInit(): void {
+    this.componentCommunicationService.setNewView(NavigationEnum.stats);
     this.trackedStats = this.globalService.globalVar.trackedStats;
 
     var maxCount = 0;

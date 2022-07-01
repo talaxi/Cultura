@@ -55,6 +55,11 @@ export class SelectedAnimalComponent implements OnInit {
   equipmentCells: ResourceValue[]; //for display purposes
   selectedEquipment: ResourceValue;
 
+  orbList: ResourceValue[];
+  orbRows: ResourceValue[][]; //for display purposes
+  orbCells: ResourceValue[]; //for display purposes
+  selectedOrb: ResourceValue;
+
   @HostListener('window:keyup', ['$event'])
   keyEvent(event: KeyboardEvent) {
     var availableAnimals = this.globalService.globalVar.animals.filter(item => item.isAvailable);
@@ -128,6 +133,7 @@ export class SelectedAnimalComponent implements OnInit {
 
     this.updateItemsList();
     this.updateEquipmentList();
+    this.updateOrbList();
 
     //remove any equipment already in use
     this.globalService.globalVar.animals.filter(item => item.equippedItem !== null && item.equippedItem !== undefined).forEach(animal => {
@@ -216,10 +222,25 @@ export class SelectedAnimalComponent implements OnInit {
   updateEquipmentList() {
     this.equipmentList = [];
     //add equipment to list
-    this.globalService.globalVar.resources.filter(item => item.itemType === ShopItemTypeEnum.Equipment).forEach(equipment => {
+    this.globalService.globalVar.resources .filter(item => item.itemType === ShopItemTypeEnum.Equipment && !this.lookupService.isEquipmentItemAnOrb(item.name))
+    .forEach(equipment => {
       if (equipment !== undefined) {
         var modifiedEquipment = equipment.makeCopy(equipment);
         this.equipmentList.push(modifiedEquipment);
+      }
+    });
+
+    this.setupDisplayEquipment();
+  }
+
+  updateOrbList() {
+    this.orbList = [];
+    //add equipment to list
+    this.globalService.globalVar.resources .filter(item => item.itemType === ShopItemTypeEnum.Equipment && this.lookupService.isEquipmentItemAnOrb(item.name))
+    .forEach(orb => {
+      if (orb !== undefined) {
+        var modifiedOrb = orb.makeCopy(orb);
+        this.orbList.push(modifiedOrb);
       }
     });
 
@@ -262,6 +283,24 @@ export class SelectedAnimalComponent implements OnInit {
       this.equipmentRows.push(this.equipmentCells);
   }
 
+  setupDisplayOrbs(): void {
+    this.orbCells = [];
+    this.orbRows = [];
+
+    var maxColumns = 4;
+
+    for (var i = 1; i <= this.orbList.length; i++) {
+      this.orbCells.push(this.orbList[i - 1]);
+      if ((i % maxColumns) == 0) {
+        this.orbRows.push(this.orbCells);
+        this.orbCells = [];
+      }
+    }
+
+    if (this.orbCells.length !== 0)
+      this.orbRows.push(this.orbCells);
+  }
+
   openTalentsModal(content: any) {
     //this.setupDisplayItems();
     this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'lg' });
@@ -274,6 +313,11 @@ export class SelectedAnimalComponent implements OnInit {
 
   openEquipmentModal(content: any) {
     this.setupDisplayEquipment();
+    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'lg' });
+  }
+
+  openOrbModal(content: any) {
+    this.setupDisplayOrbs();
     this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'lg' });
   }
 
@@ -334,6 +378,22 @@ export class SelectedAnimalComponent implements OnInit {
     this.selectedAnimal.equippedItem = null;
   }
 
+  equipOrb() {
+    this.selectedAnimal.equippedOrb = this.selectedOrb;
+    this.updateOrbList();
+    this.globalService.calculateAnimalRacingStats(this.selectedAnimal);
+    this.modalService.dismissAll();
+  }
+
+  selectOrb(item: ResourceValue) {    
+    this.selectedOrb = item;
+  }
+
+  unequipOrb() {    
+    this.selectedAnimal.equippedOrb = null;
+    this.globalService.calculateAnimalRacingStats(this.selectedAnimal);
+  }
+
   toggleAutoBreed = (): void => {
     this.autoBreedActive = !this.autoBreedActive;
     this.selectedAnimal.autoBreedActive = this.autoBreedActive;
@@ -392,12 +452,12 @@ export class SelectedAnimalComponent implements OnInit {
   }
 
   handleIntroTutorial() {
-    if (!this.globalService.globalVar.tutorialCompleted && this.globalService.globalVar.currentTutorialId === 3) {
-      this.globalService.globalVar.showTutorial = true;
+    if (!this.globalService.globalVar.tutorials.tutorialCompleted && this.globalService.globalVar.tutorials.currentTutorialId === 3) {
+      this.globalService.globalVar.tutorials.showTutorial = true;
     }
-    if (!this.globalService.globalVar.tutorialCompleted && this.globalService.globalVar.currentTutorialId === 8) {
-      this.globalService.globalVar.currentTutorialId += 1;
-      this.globalService.globalVar.showTutorial = true;
+    if (!this.globalService.globalVar.tutorials.tutorialCompleted && this.globalService.globalVar.tutorials.currentTutorialId === 8) {
+      this.globalService.globalVar.tutorials.currentTutorialId += 1;
+      this.globalService.globalVar.tutorials.showTutorial = true;
     }
   }
 

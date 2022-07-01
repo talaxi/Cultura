@@ -257,7 +257,7 @@ export class RaceLogicService {
             var length = this.lookupService.GetAbilityEffectiveAmount(lastAnimal, lastLeg.terrain.powerModifier, statLossFromExhaustion);
             var additiveAmount = lastAnimal.currentStats.adaptabilityMs * .25;
             this.AddRelayEffect(racingAnimal, length, new AnimalStats(0, 0, 0, 0, 0, additiveAmount), false);
-            raceResult.addRaceUpdate(framesPassed, lastAnimalDisplayName + " uses " + lastAnimal?.ability.name);
+            raceResult.addRaceUpdate(framesPassed, lastAnimalDisplayName + " uses " + lastAnimal?.ability.name + ".");
             lastAnimal.ability.abilityInUse = true;
           }
 
@@ -273,7 +273,7 @@ export class RaceLogicService {
             racingAnimal.currentStats.stamina += herdMentalityStaminaGain;
             herdMentalityStaminaGain = 0;
             lastAnimal.ability.abilityUsed = true;
-            raceResult.addRaceUpdate(framesPassed, lastAnimalDisplayName + " uses " + lastAnimal.ability.name);
+            raceResult.addRaceUpdate(framesPassed, lastAnimalDisplayName + " uses " + lastAnimal.ability.name + ".");
             this.globalService.increaseAbilityXp(lastAnimal, relayAbilityXpIncrease);
           }
         }
@@ -566,7 +566,7 @@ export class RaceLogicService {
                   if (remainingAnimal !== null && remainingAnimal !== undefined) {
                     var powerMultiplier = 1 + (this.lookupService.GetAbilityEffectiveAmount(racingAnimal!, item.terrain.powerModifier, statLossFromExhaustion) / 100);
                     this.AddRelayEffect(remainingAnimal, remainingLeg.distance, new AnimalStats(1, 1, 1, powerMultiplier, 1, 1), true);
-                    raceResult.addRaceUpdate(framesPassed, animalDisplayName + " uses " + racingAnimal?.ability.name);
+                    raceResult.addRaceUpdate(framesPassed, animalDisplayName + " uses " + racingAnimal?.ability.name + ".");
 
                     var relayAbilityXpIncrease = 4;
                     var relayAbilityXpIncreasePair = this.globalService.globalVar.modifiers.find(item => item.text === "relayAbilityXpGainModifier");
@@ -820,6 +820,7 @@ export class RaceLogicService {
         if (passedAveragePace && racingAnimal.type === AnimalTypeEnum.Shark && racingAnimal.ability.name === "Apex Predator" && !racingAnimal.ability.abilityUsed &&
           i > 1) //wait until second frame to start
         {
+          raceResult.addRaceUpdate(framesPassed, animalDisplayName + " bites the other racers as they pass, slowing them down.");
           var delayAmount = 1.5;
           racingAnimal.ability.abilityUsed = true;
           var effectiveDistance = this.lookupService.GetAbilityEffectiveAmount(racingAnimal, item.terrain.powerModifier, statLossFromExhaustion);
@@ -848,7 +849,7 @@ export class RaceLogicService {
             if (relayAbilityXpIncreasePair !== undefined)
               relayAbilityXpIncrease = relayAbilityXpIncreasePair.value;
 
-            raceResult.addRaceUpdate(framesPassed, animalDisplayName + " uses " + racingAnimal.ability.name);
+            raceResult.addRaceUpdate(framesPassed, animalDisplayName + " uses " + racingAnimal.ability.name + ".");
             this.globalService.increaseAbilityXp(racingAnimal, relayAbilityXpIncrease);
           }
           if (racingAnimal.type === AnimalTypeEnum.Octopus && racingAnimal.ability.name === "Buried Treasure") {
@@ -860,7 +861,7 @@ export class RaceLogicService {
           if (racingAnimal.type === AnimalTypeEnum.Gecko && racingAnimal.ability.name === "Camouflage") {
             camouflageVelocityGain = modifiedVelocity;
             racingAnimal.ability.remainingLength = this.lookupService.GetAbilityEffectiveAmount(racingAnimal, item.terrain.powerModifier, statLossFromExhaustion);
-            raceResult.addRaceUpdate(framesPassed, animalDisplayName + " uses " + racingAnimal.ability.name);
+            raceResult.addRaceUpdate(framesPassed, animalDisplayName + " uses " + racingAnimal.ability.name + ".");
           }
 
           item.terrain.accelerationModifier = defaultTerrainAccelerationModifier;
@@ -1122,6 +1123,12 @@ export class RaceLogicService {
               if (racingAnimal !== undefined && racingAnimal !== null)
                 racingAnimal.miscStats.diminishingReturnsBonus += item.amount;
             }
+            else if (item.name === "Orb Necklace" && item.itemType === ShopItemTypeEnum.Other) {
+              var courseType = this.selectedRace.raceLegs[0].courseType;
+              var racingAnimal = this.racingAnimals.find(animal => animal.raceCourseType === courseType);
+              if (racingAnimal !== undefined && racingAnimal !== null)
+                racingAnimal.canEquipOrb = true;
+            }
             else if (item.name === "Bonus Talents" && item.itemType === ShopItemTypeEnum.Other) {
               var courseType = this.selectedRace.raceLegs[0].courseType;
               var racingAnimal = this.racingAnimals.find(animal => animal.raceCourseType === courseType);
@@ -1265,7 +1272,7 @@ export class RaceLogicService {
             var length = this.lookupService.GetAbilityEffectiveAmount(lastCompletedAnimal, previousLeg.terrain.powerModifier, statLossFromExhaustion);
             var additiveAmount = lastCompletedAnimal.currentStats.maxSpeedMs * .25;
             this.AddRelayEffect(animal, length, new AnimalStats(additiveAmount, 0, 0, 0, 0, 0), false);
-            raceResult.addRaceUpdate(framesPassed, lastAnimalDisplayName + " uses " + lastCompletedAnimal.ability.name);
+            raceResult.addRaceUpdate(framesPassed, lastAnimalDisplayName + " uses " + lastCompletedAnimal.ability.name + ".");
             this.globalService.increaseAbilityXp(lastCompletedAnimal, relayAbilityXpIncrease);
           }
         }
@@ -1275,7 +1282,7 @@ export class RaceLogicService {
             var length = this.lookupService.GetAbilityEffectiveAmount(lastCompletedAnimal, previousLeg.terrain.powerModifier, statLossFromExhaustion);
             var additiveAmount = lastCompletedAnimal.currentStats.accelerationMs * .25;
             this.AddRelayEffect(animal, length, new AnimalStats(0, additiveAmount, 0, 0, 0, 0), false);
-            raceResult.addRaceUpdate(framesPassed, lastAnimalDisplayName + " uses " + lastCompletedAnimal.ability.name);
+            raceResult.addRaceUpdate(framesPassed, lastAnimalDisplayName + " uses " + lastCompletedAnimal.ability.name + ".");
             this.globalService.increaseAbilityXp(lastCompletedAnimal, relayAbilityXpIncrease);
           }
         }

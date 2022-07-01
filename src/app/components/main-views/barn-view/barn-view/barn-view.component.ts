@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AnimalTypeEnum } from 'src/app/models/animal-type-enum.model';
+import { NavigationEnum } from 'src/app/models/navigation-enum.model';
 import { ComponentCommunicationService } from 'src/app/services/component-communication.service';
 import { GlobalService } from 'src/app/services/global-service.service';
 import { LookupService } from 'src/app/services/lookup.service';
@@ -11,6 +12,7 @@ import { LookupService } from 'src/app/services/lookup.service';
 })
 export class BarnViewComponent implements OnInit {
   selectedBarn = 0;
+  isCoaching = false;
   tutorialActive = false;
   barnRow2IsUnlocked = false;
   barnRow3IsUnlocked = false;
@@ -22,15 +24,17 @@ export class BarnViewComponent implements OnInit {
     private globalService: GlobalService) { }
 
   ngOnInit(): void {
+    this.componentCommunicationService.setNewView(NavigationEnum.barn);
+    
     this.barnRow2IsUnlocked = this.lookupService.isItemUnlocked("barnRow2");
     this.barnRow3IsUnlocked = this.lookupService.isItemUnlocked("barnRow3");
     this.barnRow4IsUnlocked = this.lookupService.isItemUnlocked("barnRow4");
     this.barnRow5IsUnlocked = this.lookupService.isItemUnlocked("barnRow5");
 
-    if (!this.globalService.globalVar.tutorialCompleted && this.globalService.globalVar.currentTutorialId === 1) {
+    if (!this.globalService.globalVar.tutorials.tutorialCompleted && this.globalService.globalVar.tutorials.currentTutorialId === 1) {
       this.tutorialActive = true;
     }
-    if (!this.globalService.globalVar.tutorialCompleted && this.globalService.globalVar.currentTutorialId === 6 &&
+    if (!this.globalService.globalVar.tutorials.tutorialCompleted && this.globalService.globalVar.tutorials.currentTutorialId === 6 &&
       this.globalService.globalVar.animals.find(item => item.type === AnimalTypeEnum.Monkey)?.isAvailable) {      
       this.tutorialActive = true;
     }
@@ -42,8 +46,12 @@ export class BarnViewComponent implements OnInit {
     });
   }
 
-  goToBarn(selectedBarnNumber: number): void {
+  goToBarn(selectedBarnNumber: number): void {    
     this.selectedBarn = selectedBarnNumber;
+  }
+
+  goToCoaching(isCoaching: boolean): void {    
+    this.isCoaching = isCoaching;
   }
 
   ngOnDestroy() {

@@ -17,10 +17,21 @@
 {
     text-align: center;
     grid-area: back;
+
+  justify-content: space-between;
+  flex-direction: column;
+  display: flex;
+}
+
+.talents {
+  display: flex;
 }
 
 .equippable
 {
+  justify-content: space-between;
+  flex-direction: column;
+  display: flex;
   grid-area: equippable;
 }
 
@@ -95,12 +106,7 @@
   margin-left: 4rem;
 }
 
-.selectedItemSpan
-{
-  width: 100%;
-}
-
-.selectedEquipmentSpan
+.selectedEquipmentSpan, .selectedOrbSpan, .selectedItemSpan
 {
   width: 100%;
 }
