@@ -1474,7 +1474,7 @@ export class GlobalService {
           availableCourses.push(RaceCourseTypeEnum.Mountain);
           availableCourses.push(RaceCourseTypeEnum.Ocean);
         }
-        else if (i <= 53) {
+        else if (i <= 51) {
           availableCourses.push(RaceCourseTypeEnum.Flatland);
           availableCourses.push(RaceCourseTypeEnum.Mountain);
           availableCourses.push(RaceCourseTypeEnum.Ocean);

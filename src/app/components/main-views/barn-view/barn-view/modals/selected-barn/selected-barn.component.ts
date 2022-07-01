@@ -687,7 +687,14 @@ export class SelectedBarnComponent implements OnInit {
           this.associatedAnimal = associatedAnimal;
           this.associatedAnimalName = associatedAnimal.name;
           this.existingTraining = associatedAnimal.currentTraining;
-
+          this.colorConditional = {
+            'flatlandColor': this.associatedAnimal.getRaceCourseType() === 'Flatland',
+            'mountainColor': this.associatedAnimal.getRaceCourseType() === 'Mountain',
+            'waterColor': this.associatedAnimal.getRaceCourseType() === 'Ocean',
+            'tundraColor': this.associatedAnimal.getRaceCourseType() === 'Tundra',
+            'volcanicColor': this.associatedAnimal.getRaceCourseType() === 'Volcanic'
+          };
+          
           this.availableTrainings = this.GetAvailableTrainingOptions(associatedAnimal);
 
           if (this.existingTraining !== undefined && this.existingTraining !== null) {
