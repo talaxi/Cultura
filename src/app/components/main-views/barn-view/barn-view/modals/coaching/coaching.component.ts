@@ -67,8 +67,7 @@ export class CoachingComponent implements OnInit {
     this.context.lineWidth = 6;
 
     var currentTime = 0;
-    var timeToCompletePath = 5;
-    this.currentPathType = this.getRandomPathType();
+    this.currentPathType = CoachingCourseTypeEnum.acceleration;//this.getRandomPathType();
 
     this.subscription = this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {
       //clear canvas
@@ -344,7 +343,7 @@ export class CoachingComponent implements OnInit {
   }
 
   //finalized
-  drawAccelerationTrace(context: any) {
+  drawAdaptabilityTrace(context: any) {
     var offsetX = this.canvasWidth * .1;
     var offsetY = this.canvasHeight * .1;
 
@@ -355,25 +354,29 @@ export class CoachingComponent implements OnInit {
     var linePoints = [];
     linePoints.push([offsetX, this.canvasHeight / 2]);
     linePoints.push([offsetX + xPeakOffset, this.canvasHeight / 2 - yPeakOffset]);
+
     linePoints.push([offsetX + 2 * xPeakOffset, this.canvasHeight / 2 + yPeakOffset]);
-
     linePoints.push([offsetX + 3 * xPeakOffset, this.canvasHeight / 2 - 2 * yPeakOffset]);
-    linePoints.push([offsetX + 4 * xPeakOffset, this.canvasHeight / 2 + 2 * yPeakOffset]);
 
+    linePoints.push([offsetX + 4 * xPeakOffset, this.canvasHeight / 2 + 2 * yPeakOffset]);
     linePoints.push([offsetX + 5 * xPeakOffset, this.canvasHeight / 2 - 3 * yPeakOffset]);
+
     linePoints.push([offsetX + 6 * xPeakOffset, this.canvasHeight / 2 + 3 * yPeakOffset]);
 
     linePoints.push([offsetX + 7 * xPeakOffset, this.canvasHeight / 2 - 4 * yPeakOffset]);
-    linePoints.push([offsetX + 8 * xPeakOffset, this.canvasHeight / 2 + 4 * yPeakOffset]);
-
+    linePoints.push([offsetX + 8 * xPeakOffset, this.canvasHeight / 2 + 3 * yPeakOffset]);
     linePoints.push([offsetX + 9 * xPeakOffset, this.canvasHeight / 2 - 3 * yPeakOffset]);
-    linePoints.push([offsetX + 10 * xPeakOffset, this.canvasHeight / 2 + 3 * yPeakOffset]);
+
+    linePoints.push([offsetX + 10 * xPeakOffset, this.canvasHeight / 2 + 2 * yPeakOffset]);
 
     linePoints.push([offsetX + 11 * xPeakOffset, this.canvasHeight / 2 - 2 * yPeakOffset]);
-    linePoints.push([offsetX + 12 * xPeakOffset, this.canvasHeight / 2 + 2 * yPeakOffset]);
+    linePoints.push([offsetX + 12 * xPeakOffset, this.canvasHeight / 2 + yPeakOffset]);
 
     linePoints.push([offsetX + 13 * xPeakOffset, this.canvasHeight / 2 - yPeakOffset]);
-    linePoints.push([offsetX + 14 * xPeakOffset, this.canvasHeight / 2 + yPeakOffset]);
+    /*linePoints.push([offsetX + 14 * xPeakOffset, this.canvasHeight / 2 + yPeakOffset]);
+    
+    linePoints.push([offsetX + 15 * xPeakOffset, this.canvasHeight / 2 - yPeakOffset]);*/
+    linePoints.push([offsetX + 14 * xPeakOffset, this.canvasHeight / 2]);
 
 
     for (var i = 1; i < linePoints.length; i++) {
@@ -473,7 +476,7 @@ export class CoachingComponent implements OnInit {
   }
 
   //finalized
-  drawAdaptabilityTrace(context: any) {
+  drawAccelerationTrace(context: any) {
     var offsetX = this.canvasWidth * .1;
     var offsetY = this.canvasHeight * .1;
 

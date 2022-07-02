@@ -10,7 +10,7 @@
         </div>
         <app-circuit-view *ngIf="displayRaceView === raceTypeEnum.circuit" (raceSelected)="raceSelected($event)"></app-circuit-view>
         <app-local-view *ngIf="displayRaceView === raceTypeEnum.special" (raceSelected)="raceSelected($event)"></app-local-view>
-        <app-event-view *ngIf="displayRaceView === raceTypeEnum.special" (raceSelected)="raceSelected($event)"></app-event-view>
+        <app-event-view *ngIf="displayRaceView === raceTypeEnum.event" (raceSelected)="raceSelected($event)"></app-event-view>
         <app-training-track-view *ngIf="displayRaceView === raceTypeEnum.trainingTrack" (raceSelectedEmitter)="trainingTrackRaceSelected($event)"></app-training-track-view>
 </div>
 <div class="raceDiv" *ngIf="showRace">

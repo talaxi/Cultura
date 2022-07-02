@@ -109,6 +109,7 @@ export class SpecializationService {
     animal.increaseStats(new AnimalStats(trainingAnimalStatRatio * baseTopSpeed, trainingAnimalStatRatio * baseAcceleration,
       trainingAnimalStatRatio * baseEndurance, trainingAnimalStatRatio * basePower, trainingAnimalStatRatio * baseFocus,
       trainingAnimalStatRatio * baseAdaptability));
+    this.globalService.calculateAnimalRacingStats(animal);
 
     var totalStudyingAnimals = (totalMultiplier - (maxStatGain.value - trainingAnimalDefault.value)) /
       (maxStatGain.value - studyingAnimalDefault.value);
@@ -125,6 +126,7 @@ export class SpecializationService {
         randomizedAnimalList[i].increaseStats(new AnimalStats(maxStatGain.value * baseTopSpeed, maxStatGain.value * baseAcceleration,
           maxStatGain.value * baseEndurance, maxStatGain.value * basePower, maxStatGain.value * baseFocus,
           maxStatGain.value * baseAdaptability));
+          this.globalService.calculateAnimalRacingStats(randomizedAnimalList[i]);
       }
 
       if (totalStudyingAnimals > Math.floor(totalStudyingAnimals) && randomizedAnimalList.length > i) {
@@ -133,6 +135,7 @@ export class SpecializationService {
         randomizedAnimalList[i].increaseStats(new AnimalStats(studyingAnimalStatRatio * baseTopSpeed, studyingAnimalStatRatio * baseAcceleration,
           studyingAnimalStatRatio * baseEndurance, studyingAnimalStatRatio * basePower, studyingAnimalStatRatio * baseFocus,
           studyingAnimalStatRatio * baseAdaptability));
+          this.globalService.calculateAnimalRacingStats(randomizedAnimalList[i]);
       }
     }
     else {
@@ -141,6 +144,7 @@ export class SpecializationService {
         randomizedAnimalList[0].increaseStats(new AnimalStats(studyingAnimalStatRatio * baseTopSpeed, studyingAnimalStatRatio * baseAcceleration,
           studyingAnimalStatRatio * baseEndurance, studyingAnimalStatRatio * basePower, studyingAnimalStatRatio * baseFocus,
           studyingAnimalStatRatio * baseAdaptability));
+          this.globalService.calculateAnimalRacingStats(randomizedAnimalList[0]);
       }
     }
   }
