@@ -91,6 +91,7 @@ export class SelectedAnimalComponent implements OnInit {
     private componentCommunicationService: ComponentCommunicationService) { }
 
   ngOnInit(): void {
+    console.log(this.selectedAnimal);
     this.handleIntroTutorial();
     this.areTalentsAvailable = this.lookupService.isItemUnlocked("rainbowRace");
     this.orbIsUnlocked = this.lookupService.isItemUnlocked("orbs");
@@ -479,7 +480,7 @@ export class SelectedAnimalComponent implements OnInit {
     this.selectedAnimal = newAnimal;
     this.areTalentsAvailable = this.lookupService.isItemUnlocked("rainbowRace");
     this.orbIsUnlocked = this.lookupService.isItemUnlocked("orbs");
-    
+
     this.maxSpeedModifierAmount = this.lookupService.getMaxSpeedModifierByAnimalType(this.selectedAnimal.type);
     this.accelerationModifierAmount = this.lookupService.getAccelerationModifierByAnimalType(this.selectedAnimal.type);
     this.staminaModifierAmount = this.lookupService.getStaminaModifierByAnimalType(this.selectedAnimal.type);

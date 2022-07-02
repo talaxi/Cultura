@@ -361,6 +361,14 @@ export class SelectedBarnComponent implements OnInit {
     if (globalAnimal !== null) {
       globalAnimal.associatedBarnNumber = this.selectedBarnNumber;
       this.associatedAnimal = globalAnimal;
+
+      this.colorConditional = {
+        'flatlandColor': this.associatedAnimal.getRaceCourseType() === 'Flatland',
+        'mountainColor': this.associatedAnimal.getRaceCourseType() === 'Mountain',
+        'waterColor': this.associatedAnimal.getRaceCourseType() === 'Ocean',
+        'tundraColor': this.associatedAnimal.getRaceCourseType() === 'Tundra',
+        'volcanicColor': this.associatedAnimal.getRaceCourseType() === 'Volcanic'
+      };
     }
 
     if (!this.globalService.globalVar.tutorials.tutorialCompleted && this.globalService.globalVar.tutorials.currentTutorialId === 7 &&

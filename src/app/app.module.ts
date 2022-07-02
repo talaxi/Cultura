@@ -50,6 +50,7 @@ import { StatsViewComponent } from './components/main-views/stats-view/stats-vie
 import { TrainingTrackViewComponent } from './components/main-views/training-track-view/training-track-view/training-track-view.component';
 import { TrainingTrackRaceViewComponent } from './components/main-views/training-track-view/training-track-view/subviews/training-track-race-view/training-track-race-view.component';
 import { CoachingComponent } from './components/main-views/barn-view/barn-view/modals/coaching/coaching.component';
+import { EventViewComponent } from './components/main-views/race-selection-view/subviews/event-view/event-view.component';
 
 @NgModule({
   declarations: [
@@ -61,7 +62,7 @@ import { CoachingComponent } from './components/main-views/barn-view/barn-view/m
     BarnComponent,
     BarnViewComponent,
     RaceSelectionViewComponent,    
-    SelectedBarnComponent, ProgressBarComponent, CircuitViewComponent, LocalViewComponent, RaceComponent, AnimalsViewComponent, ShopViewComponent, ResourcesViewComponent, SettingsViewComponent, AnimalComponent, AnimalListComponent, SelectedAnimalComponent, DrawRaceComponent, TrainingListComponent, TrainingOptionComponent, ShoppingListComponent, ShoppingItemComponent, AnimalDeckComponent, DecksViewComponent, RaceDescriptionComponent, ToggleComponent, IncubatorViewComponent, IncubatorTraitsComponent, TraitListComponent, TraitOptionComponent, TalentsViewComponent, FaqViewComponent, StatsViewComponent, TrainingTrackViewComponent, TrainingTrackRaceViewComponent, CoachingComponent
+    SelectedBarnComponent, ProgressBarComponent, CircuitViewComponent, LocalViewComponent, RaceComponent, AnimalsViewComponent, ShopViewComponent, ResourcesViewComponent, SettingsViewComponent, AnimalComponent, AnimalListComponent, SelectedAnimalComponent, DrawRaceComponent, TrainingListComponent, TrainingOptionComponent, ShoppingListComponent, ShoppingItemComponent, AnimalDeckComponent, DecksViewComponent, RaceDescriptionComponent, ToggleComponent, IncubatorViewComponent, IncubatorTraitsComponent, TraitListComponent, TraitOptionComponent, TalentsViewComponent, FaqViewComponent, StatsViewComponent, TrainingTrackViewComponent, TrainingTrackRaceViewComponent, CoachingComponent, EventViewComponent
   ],
   imports: [
     BrowserModule,

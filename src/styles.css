@@ -136,6 +136,18 @@ body {
   cursor: default;
 }
 
+html {
+  overflow: hidden;
+  /*width: 100%;*/
+}
+
+body {
+  height: 100%;
+  position: fixed;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+}
+
 /*@media (max-width: 800px) {
   html, body {
     font-size: 3vmin;

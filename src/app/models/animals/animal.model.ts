@@ -11,6 +11,7 @@ import { Equipment } from "./equipment.model";
 import { IncubatorStatUpgrades } from "./incubator-stat-upgrades.model";
 import { MiscStats } from "./misc-stats.model";
 import { RaceVariables } from "./race-variables.model";
+import { TrackedAnimalStats } from "./tracked-animal-stats.model";
 
 export class Animal {
     name: string;
@@ -43,6 +44,8 @@ export class Animal {
     breedGaugeMax: number;
     @Type(() => MiscStats)
     miscStats: MiscStats;
+    @Type(() => TrackedAnimalStats)
+    trackedAnimalStats: TrackedAnimalStats;
     autoBreedActive: boolean;
     @Type(() => Ability)
     availableAbilities: Ability[];
@@ -56,6 +59,7 @@ export class Animal {
         this.incubatorStatUpgrades = new IncubatorStatUpgrades();
         this.allTrainingTracks = new AllTrainingTracks();
         this.miscStats = new MiscStats();
+        this.trackedAnimalStats = new TrackedAnimalStats();
         this.breedLevel = 1;
         this.breedGaugeXp = 0;
         this.breedGaugeMax = 100;

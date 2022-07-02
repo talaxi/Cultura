@@ -1,8 +1,11 @@
-.trainingTrackView {
-  height: 100%;
+.trainingTrackView {  
   background-color: var(--background-secondary);
   border-color: var(--background-tertiary);
   color: var(--foreground-default);
+}
+
+.fullHeight {
+  height: 100%;
 }
 
 .infoGridContainer {

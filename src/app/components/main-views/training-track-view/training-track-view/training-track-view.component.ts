@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { AnimalDeck } from 'src/app/models/animals/animal-deck.model';
 import { Animal } from 'src/app/models/animals/animal.model';
 import { NavigationEnum } from 'src/app/models/navigation-enum.model';
@@ -19,6 +19,7 @@ export class TrainingTrackViewComponent implements OnInit {
   showRace: boolean;
   selectedRace: Race;
   existingPrimaryDeckAnimals: Animal[];
+  @Output() raceSelectedEmitter = new EventEmitter<boolean>();
 
   constructor(private globalService: GlobalService, private componentCommunicationService: ComponentCommunicationService) { }
 
@@ -46,10 +47,16 @@ export class TrainingTrackViewComponent implements OnInit {
   raceSelected(race: Race) {
     this.selectedRace = race;
     this.showRace = true;
+    this.raceSelectedEmitter.emit(true);
+  }
+
+  ngOnDestroy() {
+    this.raceSelectedEmitter.emit(false);
   }
 
   raceFinished() {
     this.showRace = false;
+    this.raceSelectedEmitter.emit(false);
 
     var existingDeck = this.globalService.globalVar.animalDecks.find(item => item.isPrimaryDeck);
   

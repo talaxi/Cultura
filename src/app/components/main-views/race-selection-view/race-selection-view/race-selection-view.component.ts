@@ -14,6 +14,7 @@ export class RaceSelectionViewComponent implements OnInit {
   //displayCircuitView = true;
   displayRaceView: RaceTypeEnum = RaceTypeEnum.circuit;
   showRace = false;
+  trainingTrackRace = false;
   selectedRace: Race;
   public raceTypeEnum = RaceTypeEnum;
 
@@ -34,5 +35,9 @@ export class RaceSelectionViewComponent implements OnInit {
   raceSelected(race: Race) {
     this.selectedRace = race;
     this.showRace = true;
+  }
+
+  trainingTrackRaceSelected(isSelected: boolean) {    
+    this.trainingTrackRace = isSelected;
   }
 }

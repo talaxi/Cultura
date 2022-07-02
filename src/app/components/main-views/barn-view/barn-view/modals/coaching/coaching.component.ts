@@ -613,6 +613,7 @@ export class CoachingComponent implements OnInit {
     this.currentY = 0;
     this.isPointerDown = false;
     this.getReward(this.currentPathType);
+    this.associatedAnimal.trackedAnimalStats.successfulCoachingAttempts += 1;
     this.currentPathType = this.getRandomPathType(this.currentPathType);
   }
 
