@@ -53,6 +53,7 @@ export class GlobalService {
     this.globalVar.modifiers = [];
     this.globalVar.animalDecks = [];
     this.globalVar.barns = [];
+    this.globalVar.redeemedCodes = [];
     this.globalVar.settings = new Settings();
     this.globalVar.unlockables = new Unlockables();
     this.globalVar.incubator = new Incubator();
@@ -67,6 +68,7 @@ export class GlobalService {
     this.globalVar.lastTimeStamp = Date.now();
     this.globalVar.currentVersion = 1.00;
     this.globalVar.startingVersion = 1.00;
+    this.globalVar.startDate = new Date();
 
     //Initialize modifiers
     this.InitializeModifiers();
@@ -2369,8 +2371,6 @@ export class GlobalService {
 
     var diminishingReturnsThreshold = this.GetAnimalDiminishingReturns(animal);
 
-    console.log(totalStaminaModifier * breedLevelStatModifierValue * traitEnduranceModifier * animal.incubatorStatUpgrades.staminaModifier);
-    console.log(animalStaminaOrbModifier);
     //do the calculations      
     animal.currentStats.maxSpeedMs = animal.currentStats.calculateMaxSpeed(totalMaxSpeedModifier * breedLevelStatModifierValue * traitMaxSpeedModifier * animal.incubatorStatUpgrades.maxSpeedModifier, diminishingReturnsThreshold, animalMaxSpeedOrbModifier);
     animal.currentStats.accelerationMs = animal.currentStats.calculateTrueAcceleration(totalAccelerationModifier * breedLevelStatModifierValue * traitAccelerationModifier * animal.incubatorStatUpgrades.accelerationModifier, diminishingReturnsThreshold, animalAccelerationOrbModifier);
@@ -2380,7 +2380,7 @@ export class GlobalService {
     animal.currentStats.adaptabilityMs = animal.currentStats.calculateTrueAdaptability(totalAdaptabilityModifier * breedLevelStatModifierValue * traitAdaptabilityModifier * animal.incubatorStatUpgrades.adaptabilityModifier, diminishingReturnsThreshold, animalAdaptabilityOrbModifier);
     animal.currentStats.burstChance = animal.currentStats.calculateBurstChance(breedLevelStatModifierValue);
     animal.currentStats.burstDistance = animal.currentStats.calculateBurstDistance(breedLevelStatModifierValue);
-    console.log("Stamina: " + animal.currentStats.stamina);
+    
     this.updateTrackedMaxStats(animal);
   }
 

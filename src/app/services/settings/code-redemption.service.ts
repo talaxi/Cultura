@@ -5,6 +5,7 @@ import { environment } from '../../../environments/environment';
 import * as CryptoJS from 'crypto-js';
 import { plainToInstance } from 'class-transformer';
 import { GlobalService } from '../global-service.service';
+import { RedeemableCode } from 'src/app/models/redeemable-code.model';
 
 @Injectable({
   providedIn: 'root'
@@ -20,17 +21,25 @@ export class CodeRedemptionService {
       alert("Invalid code entered.");
     }
     try {
-      console.log(decrypted.toString(CryptoJS.enc.Utf8));
-      var parsedRewards = <ResourceValue[]>JSON.parse(decrypted.toString(CryptoJS.enc.Utf8));
+      var parsedRewards = <RedeemableCode>JSON.parse(decrypted.toString(CryptoJS.enc.Utf8));
 
-      if (parsedRewards !== null && parsedRewards !== undefined && parsedRewards.length > 0) {
-        parsedRewards.forEach(reward => {
-          var existingResource = this.globalService.globalVar.resources.find(item => item.name === reward.name);
-          if (existingResource !== null && existingResource !== undefined)
-            existingResource.amount += reward.amount;
-          else
-            this.globalService.globalVar.resources.push(reward);
-        });
+      if (parsedRewards !== null && parsedRewards !== undefined && parsedRewards.rewards.length > 0) {        
+        if (new Date().getTime() > new Date(parsedRewards.expirationDate).getTime())
+          alert("This code has expired.");
+        else if (this.globalService.globalVar.redeemedCodes.some(item => item.codeValue === decrypted.toString(CryptoJS.enc.Utf8)))
+          alert("This code has already been redeemed.");
+        else {
+          parsedRewards.rewards.forEach(reward => {
+            var existingResource = this.globalService.globalVar.resources.find(item => item.name === reward.name);
+            if (existingResource !== null && existingResource !== undefined)
+              existingResource.amount += reward.amount;
+            else
+              this.globalService.globalVar.resources.push(reward);
+          });
+
+          parsedRewards.codeValue = decrypted.toString(CryptoJS.enc.Utf8);
+          this.globalService.globalVar.redeemedCodes.push(parsedRewards);
+        }
       }
     }
     catch (error) {

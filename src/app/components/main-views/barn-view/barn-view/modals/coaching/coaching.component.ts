@@ -262,7 +262,7 @@ export class CoachingComponent implements OnInit {
           if (xGoingBackwards)
             percentThroughX = 1 - percentThroughX;
 
-          console.log(percentThroughX + " " + this.currentX + " " + minXPoint + " " + maxXPoint);
+          //console.log(percentThroughX + " " + this.currentX + " " + minXPoint + " " + maxXPoint);
           if (yGoingBackwards)
             percentThroughX = 1 - percentThroughX;
           var estimatedYPosition = ((maxYPoint - minYPoint) * percentThroughX) + minYPoint;
@@ -279,14 +279,16 @@ export class CoachingComponent implements OnInit {
         }
 
         if (((!xGoingBackwards && mouseX > this.currentX) || (xGoingBackwards && mouseX < this.currentX)) && !xStaysSame) {
-          console.log("new MaxX: " + this.currentX);
+          //console.log("new MaxX: " + this.currentX);
           this.currentX = mouseX;
         }
       }
 
-      console.log("CEP: " + this.currentEndPoint + " current X: " + this.currentX + " current Y: " + this.currentY + " MaxX: " + maxXPoint + " MaxY: " + maxYPoint + " XBackwards: " + xGoingBackwards + " YBackwards: " + yGoingBackwards);
-      if (((!xGoingBackwards && this.currentX >= maxXPoint) || (xGoingBackwards && this.currentX <= minXPoint)) &&
-        ((!yGoingBackwards && this.currentY >= maxYPoint) || (yGoingBackwards && this.currentY <= minYPoint))) {
+      var graceMax = .98;
+      var graceMin = 1.02;
+      //console.log("CEP: " + this.currentEndPoint + " current X: " + this.currentX + " current Y: " + this.currentY + " MaxX: " + maxXPoint + " MaxY: " + maxYPoint + " XBackwards: " + xGoingBackwards + " YBackwards: " + yGoingBackwards);
+      if (((!xGoingBackwards && this.currentX >= maxXPoint * graceMax) || (xGoingBackwards && this.currentX <= minXPoint * graceMin)) &&
+        ((!yGoingBackwards && this.currentY >= maxYPoint * graceMax) || (yGoingBackwards && this.currentY <= minYPoint * graceMin))) {
         this.currentX = xGoingBackwards ? minXPoint : maxXPoint;
         this.currentY = yGoingBackwards ? minYPoint : maxYPoint;
         this.currentEndPoint += 1;

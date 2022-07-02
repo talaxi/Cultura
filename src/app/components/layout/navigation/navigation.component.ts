@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Output, OnInit } from '@angular/core';
 import { AnimalTypeEnum } from 'src/app/models/animal-type-enum.model';
+import { Animal } from 'src/app/models/animals/animal.model';
 import { ComponentCommunicationService } from 'src/app/services/component-communication.service';
 import { GameLoopService } from 'src/app/services/game-loop/game-loop.service';
 import { GlobalService } from 'src/app/services/global-service.service';
@@ -55,6 +56,15 @@ export class NavigationComponent implements OnInit {
   switchView(selectedView: NavigationEnum) {
     this.viewChanged.emit(selectedView);
     this.selectedNavigation = selectedView;
+
+    /*if (this.selectedNavigation === NavigationEnum.barn)
+    {
+      this.componentCommunicationService.setBarnView(NavigationEnum.barn, 0);
+    }
+    if (this.selectedNavigation === NavigationEnum.animals)
+    {
+      this.componentCommunicationService.setAnimalView(NavigationEnum.animals, new Animal());
+    }*/
 
     this.incubatorAvailable = this.lookupService.isItemUnlocked("duoRace");
     this.trainingTrackAvailable = this.lookupService.isItemUnlocked("trainingTrack");

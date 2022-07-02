@@ -48,19 +48,19 @@
                         (input)="toggleRaceOrder()">
                     <label class="spaced" (click)="toggleRaceOrder()">Race Order: </label>
                     <span><span id="raceOrder1" draggable="true" [ngClass]="getColorClass(selectedDeckOrder[0])"
-                            class="draggable" (dragstart)="dragStart($event)" (dragover)="allowDrop($event)"
+                            class="draggable keyword" (dragstart)="dragStart($event)" (dragover)="allowDrop($event)"
                             (drop)="dropCourseType($event)">{{selectedDeckOrder[0]}}</span>
                         / <span id="raceOrder2" draggable="true" [ngClass]="getColorClass(selectedDeckOrder[1])"
-                            class="draggable" (dragstart)="dragStart($event)" (dragover)="allowDrop($event)"
+                            class="draggable keyword" (dragstart)="dragStart($event)" (dragover)="allowDrop($event)"
                             (drop)="dropCourseType($event)">{{selectedDeckOrder[1]}}</span>
                         / <span id="raceOrder3" draggable="true" [ngClass]="getColorClass(selectedDeckOrder[2])"
-                            class="draggable" (dragstart)="dragStart($event)" (dragover)="allowDrop($event)"
+                            class="draggable keyword" (dragstart)="dragStart($event)" (dragover)="allowDrop($event)"
                             (drop)="dropCourseType($event)">{{selectedDeckOrder[2]}}</span>
                         / <span id="raceOrder4" draggable="true" [ngClass]="getColorClass(selectedDeckOrder[3])"
-                            class="draggable" (dragstart)="dragStart($event)" (dragover)="allowDrop($event)"
+                            class="draggable keyword" (dragstart)="dragStart($event)" (dragover)="allowDrop($event)"
                             (drop)="dropCourseType($event)">{{selectedDeckOrder[3]}}</span>
                         / <span id="raceOrder5" draggable="true" [ngClass]="getColorClass(selectedDeckOrder[4])"
-                            class="draggable" (dragstart)="dragStart($event)" (dragover)="allowDrop($event)"
+                            class="draggable keyword" (dragstart)="dragStart($event)" (dragover)="allowDrop($event)"
                             (drop)="dropCourseType($event)">{{selectedDeckOrder[4]}}</span></span>
                 </div>
                 <br />

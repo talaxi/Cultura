@@ -134,6 +134,9 @@ export class DecksViewComponent implements OnInit {
         stringOrder.push(fourth);
         stringOrder.push(fifth);
 
+        if (deckToEdit !== undefined && deckToEdit !== null)
+          deckToEdit.courseTypeOrder = [];
+
         stringOrder.forEach(stringItem => {
           if (stringItem === "Flatland")
             deckToEdit?.courseTypeOrder.push(RaceCourseTypeEnum.Flatland);
