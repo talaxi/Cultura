@@ -136,7 +136,7 @@ body {
   cursor: default;
 }
 
-html {
+/*html {
   overflow: hidden;
 }
 
@@ -145,7 +145,7 @@ body {
   position: fixed;
   overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
-}
+}*/
 
 /*@media (max-width: 800px) {
   html, body {
