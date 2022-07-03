@@ -1012,6 +1012,13 @@ export class GlobalService {
 
       returnVal = ["Monkey", "The Monkey is a powerful Mountain climbing animal capable of slowing its competitors and leaping to victory."];
 
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(5) + "Coaching";
+    }
+    else if (numericValue === 4) {
+      this.globalVar.unlockables.set("coaching", true);
+
+      returnVal = ["Coaching", "Take charge of your animal's training by giving them some coaching yourself. Visit a barn with an animal assigned and select 'Coach' to get started."];
+      
       var amount = 500;
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(5) + amount + " Coins";
     }
@@ -1160,6 +1167,18 @@ export class GlobalService {
 
       var amount = 20;
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(33) + amount + " Mangoes";
+    }
+    else if (numericValue === 32) {
+      var amount = 1;
+      var resource = this.globalVar.resources.find(item => item.name === "1 Blue Baton");
+      if (resource === null || resource === undefined)
+        this.globalVar.resources.push(new ResourceValue("Blue Baton", amount, ShopItemTypeEnum.Equipment));
+      else
+        resource.amount += amount;
+
+      returnVal = [amount + " Blue Baton", "Equipment can be handled when viewing an animal from the Animals tab."];
+
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(10) + "Dolphin";
     }
     else if (numericValue === 33) {
       var amount = 20;

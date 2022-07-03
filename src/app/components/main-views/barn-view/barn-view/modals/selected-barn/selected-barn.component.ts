@@ -102,7 +102,7 @@ export class SelectedBarnComponent implements OnInit {
     this.specializationOptions = this.lookupService.getAllBarnSpecializations();
     this.upgradeText = "Upgrade";
     this.barnSpecializationsUnlocked = this.lookupService.isItemUnlocked("barnSpecializations");
-    this.coachingUnlocked = true; //TODO: set this back //this.lookupService.isItemUnlocked("coaching");
+    this.coachingUnlocked = this.lookupService.isItemUnlocked("coaching");
 
     if (this.selectedBarnNumber > 0 && this.selectedBarnNumber <= this.globalService.globalVar.barns.length + 1) {
       var globalBarn = this.globalService.globalVar.barns.find(item => item.barnNumber === this.selectedBarnNumber);
