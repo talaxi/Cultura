@@ -164,6 +164,42 @@ export class ShoppingItemComponent implements OnInit {
       }
     }
 
+    if (this.selectedItem.name === "Incubator Upgrade Lv1")
+    {
+      var specialtyShop = this.globalService.globalVar.shop.find(item => item.name === "Specialty");
+      if (specialtyShop !== undefined && specialtyShop !== null)
+      {
+        var nextUpgrade = specialtyShop.itemList.find(item => item.name === "Incubator Upgrade Lv2");
+
+        if (nextUpgrade !== undefined && nextUpgrade !== null)
+        nextUpgrade.isAvailable = true;
+      }
+    }
+
+    if (this.selectedItem.name === "Incubator Upgrade Lv2")
+    {
+      var specialtyShop = this.globalService.globalVar.shop.find(item => item.name === "Specialty");
+      if (specialtyShop !== undefined && specialtyShop !== null)
+      {
+        var nextUpgrade = specialtyShop.itemList.find(item => item.name === "Incubator Upgrade Lv3");
+
+        if (nextUpgrade !== undefined && nextUpgrade !== null)
+        nextUpgrade.isAvailable = true;
+      }
+    }
+
+    if (this.selectedItem.name === "Incubator Upgrade Lv3")
+    {
+      var specialtyShop = this.globalService.globalVar.shop.find(item => item.name === "Specialty");
+      if (specialtyShop !== undefined && specialtyShop !== null)
+      {
+        var nextUpgrade = specialtyShop.itemList.find(item => item.name === "Incubator Upgrade Lv4");
+
+        if (nextUpgrade !== undefined && nextUpgrade !== null)
+        nextUpgrade.isAvailable = true;
+      }
+    }
+
     if (this.selectedItem.name === "Team Manager" && this.selectedItem.amountPurchased === 1)
     {
       var primaryDeck = this.globalService.globalVar.animalDecks.find(item => item.isPrimaryDeck);

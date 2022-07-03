@@ -3,7 +3,7 @@
         <span class="s4Heading keyword sectionHeaderText">{{ section.name }}</span>        
     </div>
     <div class="items">
-        <table>
+        <table *ngIf="itemsRows.length > 0">
             <tr *ngFor="let cells of itemsRows;">
                 <td *ngFor="let c of cells;" class="cell">
                     <div>
@@ -13,6 +13,11 @@
                 </td>
             </tr>
         </table>
+        <div class="centered"c *ngIf="itemsRows.length === 0">
+            <br />
+            <span>Fresh out! Check back again in the future to see if more items are added!</span>
+            <br />
+        </div>
         <br />
     </div>
 </div>

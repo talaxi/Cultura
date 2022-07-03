@@ -618,7 +618,7 @@ export class GlobalService {
     teamManager.basePurchasePrice.push(this.getMedalResourceValue(3));
     teamManager.canHaveMultiples = true;
     teamManager.quantityMultiplier = 2;
-    teamManager.totalShopQuantity = 5;
+    teamManager.totalShopQuantity = 20;
     teamManager.type = ShopItemTypeEnum.Specialty;
     specialtyShopItems.push(teamManager);
 
@@ -656,9 +656,36 @@ export class GlobalService {
     specialtyShopItems.push(internationalRace);
 
     var incubatorUpgrade = new ShopItem();
-    incubatorUpgrade.name = "Incubator Upgrade";
+    incubatorUpgrade.name = "Incubator Upgrade Lv1";
     incubatorUpgrade.purchasePrice.push(this.getCoinsResourceValue(5000));
     incubatorUpgrade.basePurchasePrice.push(this.getCoinsResourceValue(5000));
+    incubatorUpgrade.canHaveMultiples = false;
+    incubatorUpgrade.isAvailable = false;
+    incubatorUpgrade.type = ShopItemTypeEnum.Specialty;
+    specialtyShopItems.push(incubatorUpgrade);
+
+    var incubatorUpgrade = new ShopItem();
+    incubatorUpgrade.name = "Incubator Upgrade Lv2";
+    incubatorUpgrade.purchasePrice.push(this.getCoinsResourceValue(10000));
+    incubatorUpgrade.basePurchasePrice.push(this.getCoinsResourceValue(10000));
+    incubatorUpgrade.canHaveMultiples = false;
+    incubatorUpgrade.isAvailable = false;
+    incubatorUpgrade.type = ShopItemTypeEnum.Specialty;
+    specialtyShopItems.push(incubatorUpgrade);
+
+    var incubatorUpgrade = new ShopItem();
+    incubatorUpgrade.name = "Incubator Upgrade Lv3";
+    incubatorUpgrade.purchasePrice.push(this.getCoinsResourceValue(25000));
+    incubatorUpgrade.basePurchasePrice.push(this.getCoinsResourceValue(25000));
+    incubatorUpgrade.canHaveMultiples = false;
+    incubatorUpgrade.isAvailable = false;
+    incubatorUpgrade.type = ShopItemTypeEnum.Specialty;
+    specialtyShopItems.push(incubatorUpgrade);
+
+    var incubatorUpgrade = new ShopItem();
+    incubatorUpgrade.name = "Incubator Upgrade Lv4";
+    incubatorUpgrade.purchasePrice.push(this.getCoinsResourceValue(50000));
+    incubatorUpgrade.basePurchasePrice.push(this.getCoinsResourceValue(50000));
     incubatorUpgrade.canHaveMultiples = false;
     incubatorUpgrade.isAvailable = false;
     incubatorUpgrade.type = ShopItemTypeEnum.Specialty;
@@ -1111,7 +1138,7 @@ export class GlobalService {
       //unlock incubator upgrade from shop
       var specialtyShop = this.globalVar.shop.find(item => item.name === "Specialty");
       if (specialtyShop !== null && specialtyShop !== undefined) {
-        var incubatorUpgrade = specialtyShop.itemList.find(item => item.name === "Incubator Upgrade");
+        var incubatorUpgrade = specialtyShop.itemList.find(item => item.name === "Incubator Upgrade Lv1");
         if (incubatorUpgrade !== null && incubatorUpgrade !== undefined)
           incubatorUpgrade.isAvailable = true;
       }
@@ -1708,12 +1735,6 @@ export class GlobalService {
     var baseRenown = 1.1;
     var renownFactor = 1.03;
 
-    var currentRenownResource = this.globalVar.resources.find(item => item.name === "Renown");
-    var currentRenown = 1;
-
-    if (currentRenownResource !== undefined)
-      currentRenown = currentRenownResource.amount;
-
     rewards.push(new ResourceValue("Coins", Math.round(baseCoins * (CoinsFactor ** numericRank))));
     rewards.push(new ResourceValue("Renown", parseFloat(((baseRenown * (renownFactor ** numericRank)) / 100).toFixed(3))));
 
@@ -1731,12 +1752,6 @@ export class GlobalService {
     var baseRenown = 1.1;
     var renownFactor = 1.03;
 
-    var currentRenownResource = this.globalVar.resources.find(item => item.name === "Renown");
-    var currentRenown = 1;
-
-    if (currentRenownResource !== undefined)
-      currentRenown = currentRenownResource.amount;
-
     rewards.push(new ResourceValue("Coins", Math.round(baseCoins * (CoinsFactor ** numericRank))));
     rewards.push(new ResourceValue("Renown", parseFloat(((baseRenown * (renownFactor ** numericRank)) / 100).toFixed(3))));
 
@@ -1753,13 +1768,7 @@ export class GlobalService {
 
     var baseRenown = 1.1;
     var renownFactor = 1.03;
-
-    var currentRenownResource = this.globalVar.resources.find(item => item.name === "Renown");
-    var currentRenown = 1;
-
-    if (currentRenownResource !== undefined)
-      currentRenown = currentRenownResource.amount;
-
+  
     rewards.push(new ResourceValue("Coins", Math.round(baseCoins * (CoinsFactor ** numericRank))));
     rewards.push(new ResourceValue("Renown", parseFloat(((baseRenown * (renownFactor ** numericRank)) / 100).toFixed(3))));
 
@@ -1912,7 +1921,7 @@ export class GlobalService {
     var raceIndex = 1;
     var timeToComplete = 120;
 
-    var baseMeters = 1500;
+    var baseMeters = 100000;
     var factor = 1.135;
 
     var maxRandomFactor = 1.2;
@@ -2421,7 +2430,7 @@ export class GlobalService {
     //increase max total
 
 
-    var incubatorUpgrade = this.globalVar.resources.find(item => item.name === "Incubator Upgrade");
+    var incubatorUpgrade = this.globalVar.resources.find(item => item.name.includes("Incubator Upgrade"));
     if (incubatorUpgrade !== null && incubatorUpgrade !== undefined && animal.trait !== null && animal.trait !== undefined) {
       var incubatorUpgradeIncrease = .001;
       var incubatorUpgradeIncreaseModifier = this.globalVar.modifiers.find(item => item.text === "incubatorUpgradeIncreaseModifier");
@@ -2429,6 +2438,33 @@ export class GlobalService {
         incubatorUpgradeIncrease = incubatorUpgradeIncreaseModifier.value;
 
       var increasedAmount = animal.trait.researchLevel * incubatorUpgradeIncrease;
+
+      var incubatorUpgradeLv1 = this.globalVar.resources.find(item => item.name === "Incubator Upgrade Lv 1");
+      var incubatorUpgradeLv2 = this.globalVar.resources.find(item => item.name === "Incubator Upgrade Lv 2");
+      var incubatorUpgradeLv3 = this.globalVar.resources.find(item => item.name === "Incubator Upgrade Lv 3");
+      var incubatorUpgradeLv4 = this.globalVar.resources.find(item => item.name === "Incubator Upgrade Lv 4");
+
+      if (incubatorUpgradeLv4 !== null && incubatorUpgradeLv4 !== undefined)
+      {
+        if (increasedAmount > .1)
+          increasedAmount = .1;
+      }
+      else if (incubatorUpgradeLv3 !== null && incubatorUpgradeLv3 !== undefined)
+      {
+        if (increasedAmount > .05)
+          increasedAmount = .05;
+      }
+      else if (incubatorUpgradeLv2 !== null && incubatorUpgradeLv2 !== undefined)
+      {
+        if (increasedAmount > .025)
+          increasedAmount = .025;
+      }
+      else if (incubatorUpgradeLv1 !== null && incubatorUpgradeLv1 !== undefined)
+      {
+        if (increasedAmount > .01)
+          increasedAmount = .01;
+      }
+
       if (animal.trait.positiveStatGain === AnimalStatEnum.topSpeed)
         animal.incubatorStatUpgrades.maxSpeedModifier += increasedAmount;
       if (animal.trait.positiveStatGain === AnimalStatEnum.acceleration)
@@ -2499,6 +2535,7 @@ export class GlobalService {
 
   InitializeResources() {
     this.globalVar.resources.push(this.initializeService.initializeResource("Coins", 500, ShopItemTypeEnum.Resources));
+    this.globalVar.resources.push(this.initializeService.initializeResource("Medals", 500, ShopItemTypeEnum.Resources));
     this.globalVar.resources.push(this.initializeService.initializeResource("Renown", 1, ShopItemTypeEnum.Progression));
   }
 

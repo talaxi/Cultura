@@ -1084,7 +1084,7 @@ export class LookupService {
     var internationalRaceCountNeededModifier = this.globalService.globalVar.modifiers.find(item => item.text === "internationalRacesToMedalModifier");
     if (internationalRaceCountNeededModifier !== undefined && internationalRaceCountNeededModifier !== null)
       internationalRaceCountNeeded = internationalRaceCountNeededModifier.value;
-    
+
     var nationalRaceCountNeeded = 10;
     var nationalRaceCountNeededModifier = this.globalService.globalVar.modifiers.find(item => item.text === "nationalRacesToMedalModifier");
     if (nationalRaceCountNeededModifier !== undefined && nationalRaceCountNeededModifier !== null)
@@ -1108,10 +1108,19 @@ export class LookupService {
     else if (itemName === "International Races")
       description = "Gain 1 medal for every " + internationalRaceCountNeeded + " free races you complete";
     else if (itemName === "Team Manager")
-      description = "Add option to automatically run 1 free race per reset period";
-    else if (itemName === "Incubator Upgrade")
-      description = "When breeding, permanently increase racing stat gain from base stat by .1% of positive trait value";
+      description = "Add option to automatically run 1 free race per reset period <em>(runs for 1 hour of idle time)</em>";
+    else if (itemName === "Incubator Upgrade Lv1")
+      description = "When breeding, permanently increase racing stat gain from base stat by .1% of positive trait value <em>(up to 1%)</em>";
+    else if (itemName === "Incubator Upgrade Lv2")
+      description = "When breeding, permanently increase racing stat gain from base stat by .1% of positive trait value <em>(up to 2.5%)</em>";
+    else if (itemName === "Incubator Upgrade Lv3")
+      description = "When breeding, permanently increase racing stat gain from base stat by .1% of positive trait value <em>(up to 5%)</em>";
+    else if (itemName === "Incubator Upgrade Lv4")
+      description = "When breeding, permanently increase racing stat gain from base stat by .1% of positive trait value <em>(up to 10%)</em>";
 
+    var sanitized = this.sanitizer.sanitize(SecurityContext.HTML, this.sanitizer.bypassSecurityTrustHtml(description));
+    if (sanitized !== null)
+      description = sanitized;
     return description;
   }
 

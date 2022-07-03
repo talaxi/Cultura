@@ -195,12 +195,13 @@ export class SelectedAnimalComponent implements OnInit {
     this.abilityLevelMaxedOut = this.isAbilityLevelMaxedOut();
   }
 
-  editName(): void {    
-    alert("Name must be between 1 and 50 characters long.");
+  editName(): void {        
     if (this.newName.length <= 50 && this.newName.length >= 1) {
       this.selectedAnimal.name = this.newName;
       this.editingName = false;
     }
+    else
+      alert("Name must be between 1 and 50 characters long.");
   }
 
   selectAbility(ability: Ability) {

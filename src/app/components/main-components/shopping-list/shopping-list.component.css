@@ -20,6 +20,10 @@
   color: var(--foreground-quaternary);
 }
 
+.centered {
+  text-align: center;
+}
+
 table {
     table-layout: fixed;
     width: 100%;

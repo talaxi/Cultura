@@ -3,7 +3,7 @@ triggers="mouseenter:mouseleave" popoverClass="popoverClass">
     {{ selectedItem.name }} <em *ngIf="selectedItem.totalShopQuantity > 1">({{ selectedItem.totalShopQuantity - selectedItem.amountPurchased }} left)</em>
     <br />
     <br />
-    {{ shortDescription }}
+    <span [innerHTML]="shortDescription"></span>    
     <br />
     <br />
     {{ purchaseResourcesRequired }}
@@ -15,7 +15,7 @@ triggers="mouseenter:mouseleave" popoverClass="popoverClass">
     {{ selectedItem.name }} <em *ngIf="selectedItem.totalShopQuantity > 1">({{ selectedItem.totalShopQuantity - selectedItem.amountPurchased }} left)</em>
     <br />
     <br />
-    {{ shortDescription }}
+    <span [innerHTML]="shortDescription"></span>
     <br />
     <br />
     {{ purchaseResourcesRequired }}
