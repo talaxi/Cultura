@@ -313,7 +313,7 @@ export class LookupService {
     if (modifierPair !== null && modifierPair !== undefined)
       increaseAmount = modifierPair.value;
 
-      if (animal.miscStats.bonusBreedXpGainFromCircuitRaces !== undefined && animal.miscStats.bonusBreedXpGainFromCircuitRaces !== null && animal.miscStats.bonusBreedXpGainFromCircuitRaces > 0)
+    if (animal.miscStats.bonusBreedXpGainFromCircuitRaces !== undefined && animal.miscStats.bonusBreedXpGainFromCircuitRaces !== null && animal.miscStats.bonusBreedXpGainFromCircuitRaces > 0)
       increaseAmount += animal.miscStats.bonusBreedXpGainFromCircuitRaces;
 
     return increaseAmount;
@@ -325,7 +325,7 @@ export class LookupService {
     if (modifierPair !== null && modifierPair !== undefined)
       increaseAmount = modifierPair.value;
 
-      if (animal.miscStats.bonusBreedXpGainFromLocalRaces !== undefined && animal.miscStats.bonusBreedXpGainFromLocalRaces !== null && animal.miscStats.bonusBreedXpGainFromLocalRaces > 0)
+    if (animal.miscStats.bonusBreedXpGainFromLocalRaces !== undefined && animal.miscStats.bonusBreedXpGainFromLocalRaces !== null && animal.miscStats.bonusBreedXpGainFromLocalRaces > 0)
       increaseAmount += animal.miscStats.bonusBreedXpGainFromLocalRaces;
 
     return increaseAmount;
@@ -418,7 +418,7 @@ export class LookupService {
 
   getTrackRaceRewards(type: TrackRaceTypeEnum) {
     var rewards: string[] = [];
-    
+
     if (type === TrackRaceTypeEnum.novice) {
       rewards.push("- 50 Coins");
       rewards.push("- +1 Bonus Breed XP Gain From Training");
@@ -1040,6 +1040,10 @@ export class LookupService {
     
   }*/
 
+  canAnimalTrain(animal: Animal) {
+    //TODO: if animal not in incubator or event run, return true
+  }
+
   getTraitStatGainDescription(trait: AnimalTraits) {
     var positiveStat = "";
     var negativeStat = "";
@@ -1076,6 +1080,17 @@ export class LookupService {
   getSpecialtyItemDescription(itemName: string) {
     var description = ""
 
+    var internationalRaceCountNeeded = 5;
+    var internationalRaceCountNeededModifier = this.globalService.globalVar.modifiers.find(item => item.text === "internationalRacesToMedalModifier");
+    if (internationalRaceCountNeededModifier !== undefined && internationalRaceCountNeededModifier !== null)
+      internationalRaceCountNeeded = internationalRaceCountNeededModifier.value;
+    
+    var nationalRaceCountNeeded = 10;
+    var nationalRaceCountNeededModifier = this.globalService.globalVar.modifiers.find(item => item.text === "nationalRacesToMedalModifier");
+    if (nationalRaceCountNeededModifier !== undefined && nationalRaceCountNeededModifier !== null)
+      nationalRaceCountNeeded = nationalRaceCountNeededModifier.value;
+
+
     if (itemName === "Stopwatch")
       description = "Reduce training time by 5%";
     else if (itemName === "Animal Handler")
@@ -1089,9 +1104,9 @@ export class LookupService {
     else if (itemName === "Money Mark")
       description = "Add new indicator to race, beat its time to gain increased coins";
     else if (itemName === "National Races")
-      description = "Gain 1 medal for every 10 free races you complete";
+      description = "Gain 1 medal for every " + nationalRaceCountNeeded + " free races you complete";
     else if (itemName === "International Races")
-      description = "Gain 1 medal for every 5 free races you complete";
+      description = "Gain 1 medal for every " + internationalRaceCountNeeded + " free races you complete";
     else if (itemName === "Team Manager")
       description = "Add option to automatically run 1 free race per reset period";
     else if (itemName === "Incubator Upgrade")
@@ -1349,7 +1364,7 @@ export class LookupService {
 
   isEquipmentItemAnOrb(name: string) {
     if (name === "Amethyst Orb" || name === "Sapphire Orb" || name === "Amber Orb" ||
-    name === "Topaz Orb" || name === "Emerald Orb" || name === "Ruby Orb")
+      name === "Topaz Orb" || name === "Emerald Orb" || name === "Ruby Orb")
       return true;
 
     return false;

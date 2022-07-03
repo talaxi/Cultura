@@ -32,7 +32,7 @@ export class TutorialService {
     }
     if (id === 2)
     {
-      tutorialState.tutorialText = "You gotta train your animals if you want them to win. There are only a few training options to choose from now, but as you grow you will find better and faster ways to improve. Each training will develop your animals in specific ways, improving the following stats:\n\n" +
+      tutorialState.tutorialText = "You'll have to train your animals if you want them to win. There are only a few training options to choose from now, but as you grow you will find better and faster ways to improve. Each training will develop your animals in specific ways, improving the following stats:\n\n" +
       "Speed: Increase the max speed your animal can run in a race.\n" +
       "Acceleration: Increase how quickly your animal gains speed.\n" +
       "Endurance: Increase the distance your animal can run before tiring out and slowing down.\n" +

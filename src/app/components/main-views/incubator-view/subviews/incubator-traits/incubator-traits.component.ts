@@ -58,7 +58,8 @@ export class IncubatorTraitsComponent implements OnInit {
       'volcanicColor': this.selectedAnimal.getRaceCourseType() === 'Volcanic'
     };
 
-    var subscription = this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {
+    this.subscription = this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {
+      console.log("Incubator sub");
       var incubator = this.globalService.globalVar.incubator;
 
       //UI updates          

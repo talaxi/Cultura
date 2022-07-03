@@ -67,7 +67,7 @@ export class CoachingComponent implements OnInit {
     this.context.lineWidth = 6;
 
     var currentTime = 0;
-    this.currentPathType = CoachingCourseTypeEnum.acceleration;//this.getRandomPathType();
+    this.currentPathType = this.getRandomPathType();
 
     this.subscription = this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {
       //clear canvas
@@ -284,11 +284,11 @@ export class CoachingComponent implements OnInit {
         }
       }
 
-      var graceMax = .98;
-      var graceMin = 1.02;
+      var graceX = this.canvasWidth * .005;
+      var graceY = this.canvasHeight * .005;
       //console.log("CEP: " + this.currentEndPoint + " current X: " + this.currentX + " current Y: " + this.currentY + " MaxX: " + maxXPoint + " MaxY: " + maxYPoint + " XBackwards: " + xGoingBackwards + " YBackwards: " + yGoingBackwards);
-      if (((!xGoingBackwards && this.currentX >= maxXPoint * graceMax) || (xGoingBackwards && this.currentX <= minXPoint * graceMin)) &&
-        ((!yGoingBackwards && this.currentY >= maxYPoint * graceMax) || (yGoingBackwards && this.currentY <= minYPoint * graceMin))) {
+      if (((!xGoingBackwards && this.currentX >= maxXPoint - graceX) || (xGoingBackwards && this.currentX <= minXPoint + graceX)) &&
+        ((!yGoingBackwards && this.currentY >= maxYPoint - graceY) || (yGoingBackwards && this.currentY <= minYPoint + graceY))) {
         this.currentX = xGoingBackwards ? minXPoint : maxXPoint;
         this.currentY = yGoingBackwards ? minYPoint : maxYPoint;
         this.currentEndPoint += 1;

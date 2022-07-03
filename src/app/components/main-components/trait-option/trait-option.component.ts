@@ -11,10 +11,17 @@ import { LookupService } from 'src/app/services/lookup.service';
 export class TraitOptionComponent implements OnInit {
   @Input() trait: AnimalTraits;
   traitLevel: number;
+  maxNegativePercent: number;
 
   constructor(private globalService: GlobalService, private lookupService: LookupService) { }
 
   ngOnInit(): void {
     this.traitLevel = this.lookupService.getResearchLevel();
+
+    this.maxNegativePercent = 25;    
+    var negativePercentModifier = this.globalService.globalVar.modifiers.find(item => item.text === "maximumTraitNegativePercentModifier");
+    if (negativePercentModifier !== undefined)
+      this.maxNegativePercent = negativePercentModifier.value;
+    
   }
 }

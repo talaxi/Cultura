@@ -56,7 +56,7 @@ export class AppComponent {
 
     if (devMode) {
       this.globalService.globalVar.tutorials.tutorialCompleted = true;
-      this.globalService.devModeInitialize(100);
+      this.globalService.devModeInitialize(2);
     }
 
     this.versionControlService.updatePlayerVersion();
@@ -200,10 +200,6 @@ export class AppComponent {
     var remainingFreeRuns = teamManager - this.globalService.globalVar.autoFreeRaceCounter;
 
     var freeRacePerTimePeriod = this.lookupService.getTotalFreeRacesPerPeriod();
-    /*var freeRacePerTimePeriodPair = this.globalService.globalVar.modifiers.find(item => item.text === "freeRacesPerTimePeriodModifier");
-    if (freeRacePerTimePeriodPair !== undefined)
-      freeRacePerTimePeriod = freeRacePerTimePeriodPair.value;
-    */
 
     for (var i = 0; i < remainingFreeRuns; i++) {
       if (this.globalService.globalVar.freeRaceCounter >= freeRacePerTimePeriod) {
@@ -225,7 +221,7 @@ export class AppComponent {
       }
 
       var raceResult = this.raceLogicService.runRace(freeRace);
-      //console.log("Ran free race");
+      //console.log("Result: " + raceResult.wasSuccessful + " National Race Counter: " + this.globalService.globalVar.nationalRaceCountdown + " Medals: " + this.lookupService.getMedals())
     }
   }
 

@@ -23,9 +23,11 @@ export class AnimalTraits {
             this.negativeStatGain = negativeStatGain;
     }
 
-    getStatGainDescription() {
+    getStatGainDescription(maxNegativePercent: number) {
         var positiveStat = "";
         var negativeStat = "";
+        var positivePercent = this.researchLevel;
+        var negativePercent = this.researchLevel > maxNegativePercent ? maxNegativePercent : this.researchLevel;
 
         if (this.positiveStatGain === AnimalStatEnum.acceleration)
             positiveStat = "Acceleration";
@@ -53,6 +55,6 @@ export class AnimalTraits {
         if (this.negativeStatGain === AnimalStatEnum.topSpeed)
             negativeStat = "Speed";
 
-        return "+" + this.researchLevel + "% " + positiveStat + ", -" + this.researchLevel + "% " + negativeStat;
+        return "+" + positivePercent + "% " + positiveStat + ", -" + negativePercent + "% " + negativeStat;
     }
 }

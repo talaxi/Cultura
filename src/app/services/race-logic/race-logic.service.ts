@@ -71,7 +71,7 @@ export class RaceLogicService {
     var camouflageVelocityGain = 0; //Gecko Ability - Camouflage
     var specialDeliveryMaxSpeedBonus = 0;
     var buriedTreasureModifier = 1;
-    
+
     var lastAnimal: Animal | null = new Animal();
     var nextAnimal: Animal | null = new Animal();
 
@@ -154,8 +154,7 @@ export class RaceLogicService {
       var defaultTerrainAdaptabilityModifier = item.terrain.adaptabilityModifier;
 
       if (framesPassed < this.timeToComplete * this.frameModifier) {
-        if (completedLegs.length > 0)
-        {
+        if (completedLegs.length > 0) {
           lastLeg = completedLegs[completedLegs.length - 1];
 
           if (lastLeg !== undefined) {
@@ -541,7 +540,7 @@ export class RaceLogicService {
           velocity = modifiedMaxSpeed;
 
         var doesRacerBurst = this.doesRacerBurst(racingAnimal, currentPath, this.timeToComplete, race.length, distanceCovered, modifiedAdaptabilityMs, modifiedFocusMs);
-        if (doesRacerBurst) {          
+        if (doesRacerBurst) {
           racingAnimal.raceVariables.isBursting = true;
           racingAnimal.raceVariables.remainingBurstMeters = racingAnimal.currentStats.burstDistance; //TODO: Calculate burst distance instead
           racingAnimal.raceVariables.burstCount += 1;
@@ -1013,6 +1012,33 @@ export class RaceLogicService {
     else {
       globalRaceVal = this.globalService.globalVar.localRaces
         .find(item => item.raceId === this.selectedRace.raceId && item.localRaceType === this.selectedRace.localRaceType);
+
+      if (this.selectedRace.localRaceType === LocalRaceTypeEnum.Free) {
+        var internationalRaceItem = this.globalService.globalVar.resources.find(item => item.name === "International Races");
+        var nationalRaceItem = this.globalService.globalVar.resources.find(item => item.name === "National Races");
+        if (internationalRaceItem !== undefined && internationalRaceItem !== null && internationalRaceItem.amount > 0) {
+          var internationalRaceCountNeeded = 5;
+          var internationalRaceCountNeededModifier = this.globalService.globalVar.modifiers.find(item => item.text === "internationalRacesToMedalModifier");
+          if (internationalRaceCountNeededModifier !== undefined && internationalRaceCountNeededModifier !== null)
+            internationalRaceCountNeeded = internationalRaceCountNeededModifier.value;
+
+          if (this.globalService.globalVar.nationalRaceCountdown >= internationalRaceCountNeeded) {
+            this.selectedRace.rewards.push(this.initializeService.initializeResource("Medals", 1, ShopItemTypeEnum.Resources));
+            this.globalService.globalVar.nationalRaceCountdown = 0;
+          }
+        }
+        else if (nationalRaceItem !== undefined && nationalRaceItem !== null && nationalRaceItem.amount > 0) {
+          var nationalRaceCountNeeded = 12;
+          var nationalRaceCountNeededModifier = this.globalService.globalVar.modifiers.find(item => item.text === "nationalRacesToMedalModifier");
+          if (nationalRaceCountNeededModifier !== undefined && nationalRaceCountNeededModifier !== null)
+            nationalRaceCountNeeded = nationalRaceCountNeededModifier.value;
+
+          if (this.globalService.globalVar.nationalRaceCountdown >= nationalRaceCountNeeded) {
+            this.selectedRace.rewards.push(this.initializeService.initializeResource("Medals", 1, ShopItemTypeEnum.Resources));
+            this.globalService.globalVar.nationalRaceCountdown = 0;
+          }
+        }
+      }
     }
 
     if (this.selectedRace.localRaceType !== LocalRaceTypeEnum.Free && this.selectedRace.localRaceType !== LocalRaceTypeEnum.Track) {

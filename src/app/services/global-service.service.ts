@@ -60,7 +60,7 @@ export class GlobalService {
     this.globalVar.trackedStats = new TrackedStats();
     this.globalVar.orbStats = new OrbStats();
     this.globalVar.tutorials = new Tutorials();
-    this.globalVar.userIsRacing = false;  
+    this.globalVar.userIsRacing = false;
     this.globalVar.nationalRaceCountdown = 0;
     this.globalVar.autoFreeRaceCounter = 0;
     this.globalVar.freeRaceCounter = 0;
@@ -127,8 +127,8 @@ export class GlobalService {
     this.globalVar.modifiers.push(new StringNumberPair(.02, "animalHandlerModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(.01, "stopwatchModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(.1, "racerMapsModifier"));
-    this.globalVar.modifiers.push(new StringNumberPair(10, "nationalRacesToMedalModifier"));
-    this.globalVar.modifiers.push(new StringNumberPair(5, "internationalRacesToMedalModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(25, "nationalRacesToMedalModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(10, "internationalRacesToMedalModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(.75, "moneyMarkPaceModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(1.25, "moneyMarkRewardModifier"));
 
@@ -169,6 +169,8 @@ export class GlobalService {
     this.globalVar.modifiers.push(new StringNumberPair(20, "maxDriftAmountModifier"));
 
     this.globalVar.modifiers.push(new StringNumberPair(4, "relayAbilityXpGainModifier"));
+
+    this.globalVar.modifiers.push(new StringNumberPair(25, "maximumTraitNegativePercentModifier"));
 
     var baseMaxSpeedModifier = .3;
     var baseAccelerationModifier = .1;
@@ -1690,32 +1692,7 @@ export class GlobalService {
       currentRenown = currentRenownResource.amount;
 
     rewards.push(new ResourceValue("Coins", Math.round(baseCoins * (CoinsFactor ** numericRank))));
-    rewards.push(new ResourceValue("Renown", parseFloat(((baseRenown * (renownFactor ** numericRank)) / 100).toFixed(3))));
-
-    var internationalRaceItem = this.globalVar.resources.find(item => item.name === "International Races");
-    var nationalRaceItem = this.globalVar.resources.find(item => item.name === "National Races");
-    if (internationalRaceItem !== undefined && internationalRaceItem !== null && internationalRaceItem.amount > 0) {
-      var internationalRaceCountNeeded = 5;
-      var internationalRaceCountNeededModifier = this.globalVar.modifiers.find(item => item.text === "internationalRacesToMedalModifier");
-      if (internationalRaceCountNeededModifier !== undefined && internationalRaceCountNeededModifier !== null)
-        internationalRaceCountNeeded = internationalRaceCountNeededModifier.value;
-
-      if (this.globalVar.nationalRaceCountdown >= internationalRaceCountNeeded) {
-        rewards.push(new ResourceValue("Medals", 1));
-        this.globalVar.nationalRaceCountdown = 0;
-      }
-    }
-    else if (nationalRaceItem !== undefined && nationalRaceItem !== null && nationalRaceItem.amount > 0) {
-      var nationalRaceCountNeeded = 10;
-      var nationalRaceCountNeededModifier = this.globalVar.modifiers.find(item => item.text === "nationalRacesToMedalModifier");
-      if (nationalRaceCountNeededModifier !== undefined && nationalRaceCountNeededModifier !== null)
-        nationalRaceCountNeeded = nationalRaceCountNeededModifier.value;
-
-      if (this.globalVar.nationalRaceCountdown >= nationalRaceCountNeeded) {
-        rewards.push(new ResourceValue("Medals", 1));
-        this.globalVar.nationalRaceCountdown = 0;
-      }
-    }
+    rewards.push(new ResourceValue("Renown", parseFloat(((baseRenown * (renownFactor ** numericRank)) / 100).toFixed(3))));    
 
     return rewards;
   }
@@ -2380,7 +2357,7 @@ export class GlobalService {
     animal.currentStats.adaptabilityMs = animal.currentStats.calculateTrueAdaptability(totalAdaptabilityModifier * breedLevelStatModifierValue * traitAdaptabilityModifier * animal.incubatorStatUpgrades.adaptabilityModifier, diminishingReturnsThreshold, animalAdaptabilityOrbModifier);
     animal.currentStats.burstChance = animal.currentStats.calculateBurstChance(breedLevelStatModifierValue);
     animal.currentStats.burstDistance = animal.currentStats.calculateBurstDistance(breedLevelStatModifierValue);
-    
+
     this.updateTrackedMaxStats(animal);
   }
 
@@ -2388,10 +2365,16 @@ export class GlobalService {
     var statMultiplier = 1;
 
     if (animal.trait !== undefined && animal.trait !== null) {
+      var positivePercent = animal.trait.researchLevel;
+      var negativePercent = animal.trait.researchLevel;
+      var negativePercentModifier = this.globalVar.modifiers.find(item => item.text === "maximumTraitNegativePercentModifier");
+      if (negativePercentModifier !== undefined && negativePercent > negativePercentModifier.value)
+        negativePercent = negativePercentModifier.value;
+
       if (animal.trait.positiveStatGain === stat)
-        statMultiplier += animal.trait.researchLevel / 100;
+        statMultiplier += positivePercent / 100;
       if (animal.trait.negativeStatGain === stat)
-        statMultiplier -= animal.trait.researchLevel / 100;
+        statMultiplier -= negativePercent / 100;
     }
     return statMultiplier;
   }
@@ -2748,7 +2731,7 @@ export class GlobalService {
       horse.currentStats.power = 20;
       horse.currentStats.focus = 10;
       horse.currentStats.adaptability = 10;
-      horse.breedLevel = 5;
+      horse.breedLevel = 1;
       horse.canEquipOrb = true;
       this.calculateAnimalRacingStats(horse);
 

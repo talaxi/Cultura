@@ -15,8 +15,8 @@ export class CodeCreationService {
   
   setupRewards() {
     this.redeemableCode = new RedeemableCode();
-    this.redeemableCode.expirationDate = new Date('2022-07-03');    
-    this.redeemableCode.rewards.push(new ResourceValue("Coins", 5, ShopItemTypeEnum.Resources));
+    this.redeemableCode.expirationDate = new Date('2022-07-04');    
+    this.redeemableCode.rewards.push(new ResourceValue("Coins", 3000, ShopItemTypeEnum.Resources));
   }
 
   createCode() {
