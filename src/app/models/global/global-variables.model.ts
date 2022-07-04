@@ -5,6 +5,7 @@ import { OrbStats } from "../animals/orb-stats.model";
 import { Barn } from "../barns/barn.model";
 import { Incubator } from "../incubator.model";
 import { RaceCourseTypeEnum } from "../race-course-type-enum.model";
+import { EventRaceData } from "../races/event-race-data.model";
 import { Pinnacle } from "../races/pinnacle.model";
 import { Race } from "../races/race.model";
 import { RedeemableCode } from "../redeemable-code.model";
@@ -59,6 +60,8 @@ export class GlobalVariables {
     tutorials: Tutorials;
     @Type(() => RedeemableCode)
     redeemedCodes: RedeemableCode[];
+    @Type(() => EventRaceData)
+    eventRaceData: EventRaceData;
     circuitRankUpRewardDescription: string;
     nationalRaceCountdown: number;
     userIsRacing = false;   
@@ -87,6 +90,7 @@ export class GlobalVariables {
             this.pinnacle = existingVariables.pinnacle;
             this.orbStats = existingVariables.orbStats;
             this.redeemedCodes = existingVariables.redeemedCodes;
+            this.eventRaceData = existingVariables.eventRaceData;
             this.nationalRaceCountdown = 0;
             this.autoFreeRaceCounter = 0;
             this.freeRaceCounter = 0;

@@ -27,10 +27,13 @@ export class MainComponent implements OnInit {
 
   ngOnInit(): void {
     this.openTutorialModal();
-
-    var subscription = this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {
+    
+    var subscription = this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {      
       if (this.globalService.globalVar.tutorials.showTutorial)
         this.openTutorialModal();
+
+        if (this.globalService.globalVar.tutorials.tutorialCompleted)
+          subscription.unsubscribe();
     });
   }
 

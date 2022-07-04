@@ -59,7 +59,6 @@ export class IncubatorTraitsComponent implements OnInit {
     };
 
     this.subscription = this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {
-      console.log("Incubator sub");
       var incubator = this.globalService.globalVar.incubator;
 
       //UI updates          

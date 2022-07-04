@@ -58,7 +58,7 @@ export class CircuitViewComponent implements OnInit {
     if (freeRaceTimePeriodPair !== undefined)
       freeRaceTimePeriod = freeRaceTimePeriodPair.value;
 
-    this.subscription = this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {
+    this.subscription = this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {          
       var remainingTime = freeRaceTimePeriod - this.globalService.globalVar.freeRaceTimePeriodCounter; //in seconds
       var minutes = Math.floor(remainingTime / 60);
       var seconds = (remainingTime - (minutes * 60));
@@ -146,6 +146,12 @@ export class CircuitViewComponent implements OnInit {
       this.globalService.globalVar.animals.find(item => item.type === AnimalTypeEnum.Monkey)?.isAvailable)
     {
       this.globalService.globalVar.tutorials.showTutorial = true;  
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.subscription !== null && this.subscription !== undefined) {
+      this.subscription.unsubscribe();
     }
   }
 }

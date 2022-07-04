@@ -1,0 +1,32 @@
+.eventRace {
+    text-align: center;
+    height: 100%;
+  
+    background-color: var(--background-secondary);
+    border-color: var(--background-tertiary);
+    color: var(--foreground-default);
+  }
+  
+  .raceDescription,
+.popoverClass {
+    white-space: pre-line;
+}
+
+.raceDescription {
+    height: 100%;
+
+    background-color: var(--background-secondary);
+    border-color: var(--background-tertiary);
+    color: var(--foreground-default);
+}
+
+.noRacer {
+    opacity: 0.5;
+    color: var(--grayedOut-Text) !important;
+}
+
+
+.raceNotAllowed {
+    cursor: not-allowed !important;
+}
+  

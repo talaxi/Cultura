@@ -33,6 +33,7 @@ import { TrackedStats } from '../models/utility/tracked-stats.model';
 import { TrackRaceTypeEnum } from '../models/track-race-type-enum.model';
 import { OrbStats } from '../models/animals/orb-stats.model';
 import { Tutorials } from '../models/tutorials.model';
+import { EventRaceData } from '../models/races/event-race-data.model';
 
 @Injectable({
   providedIn: 'root'
@@ -60,6 +61,7 @@ export class GlobalService {
     this.globalVar.trackedStats = new TrackedStats();
     this.globalVar.orbStats = new OrbStats();
     this.globalVar.tutorials = new Tutorials();
+    this.globalVar.eventRaceData = new EventRaceData();
     this.globalVar.userIsRacing = false;
     this.globalVar.nationalRaceCountdown = 0;
     this.globalVar.autoFreeRaceCounter = 0;
@@ -1163,7 +1165,7 @@ export class GlobalService {
       else
         resource.amount += coinsAmount;
 
-      returnVal = [coinsAmount + " Coins", ""];
+      returnVal = [coinsAmount + " Coins", ""];      
 
       var amount = 20;
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(33) + amount + " Mangoes";
@@ -1727,7 +1729,7 @@ export class GlobalService {
     var baseCoins = 10;
 
     var baseRenown = 1.01;
-    var renownFactor = 1.03;
+    var renownFactor = 1.015;
 
     var rewards: ResourceValue[] = [];
 
@@ -2153,6 +2155,171 @@ export class GlobalService {
 
     return new Race(raceLegs, this.globalVar.circuitRank, false,
       1, totalDistance, timeToComplete, this.GenerateLocalRaceRewards(this.globalVar.circuitRank), LocalRaceTypeEnum.Free);
+  }
+
+  generateEventRaceSegment() {
+    var numericalRank = this.utilityService.getNumericValueOfCircuitRank(this.globalVar.circuitRank);
+    var timeToComplete = 60;
+    var legLengthCutoff = timeToComplete / 4; //a leg cannot be any shorter than this as a percentage
+
+    var baseMeters = 90;
+    var factor = 1.125;
+    var additiveAmount = 40 * numericalRank;
+    if (numericalRank >= 11)
+      additiveAmount = 70 * numericalRank;
+
+    var maxRandomFactor = 1.05;
+    var minRandomFactor = 0.8;
+
+    var legMinimumDistance = 10; //as a percentage of 100
+    var legMaximumDistance = 90; //as a percentage of 100
+
+    var raceLegs: RaceLeg[] = [];
+
+    if (numericalRank <= 2) {
+      var leg = new RaceLeg();
+      leg.courseType = RaceCourseTypeEnum.Flatland;
+      leg.terrain = this.getRandomTerrain(leg.courseType);
+      leg.distance = Math.round((baseMeters * (factor ** numericalRank) + additiveAmount) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor));
+      raceLegs.push(leg);
+    }
+    else if (numericalRank <= 10) {
+      var availableCourses: RaceCourseTypeEnum[] = [];
+      availableCourses.push(RaceCourseTypeEnum.Flatland);
+      availableCourses.push(RaceCourseTypeEnum.Mountain);
+      var randomizedCourseList = this.getCourseTypeInRandomOrder(availableCourses);
+
+      var leg1Distance = this.utilityService.getRandomNumber(legMinimumDistance, legMaximumDistance);
+      var leg2Distance = this.utilityService.getRandomNumber(legMinimumDistance, legMaximumDistance);
+      var sum = leg1Distance + leg2Distance;
+      var normalizeValue = timeToComplete / sum;
+      var leg1Normalized = leg1Distance * normalizeValue;
+      var leg2Normalized = leg2Distance * normalizeValue;
+
+      if (leg1Normalized < legLengthCutoff) {
+        leg1Normalized = 0;
+        leg2Normalized = timeToComplete;
+      }
+      else if (leg2Normalized < legLengthCutoff) {
+        leg2Normalized = 0;
+        leg1Normalized = timeToComplete;
+      }
+
+      if (leg1Normalized > 0) {
+        var leg1 = new RaceLeg();
+        leg1.courseType = randomizedCourseList[0];
+        leg1.distance = (Math.round((baseMeters * (factor ** numericalRank) + additiveAmount) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor)) * (leg1Normalized / timeToComplete));
+        leg1.terrain = this.getRandomTerrain(leg1.courseType);
+        raceLegs.push(leg1);
+      }
+
+      if (leg2Normalized > 0) {
+        var leg2 = new RaceLeg();
+        leg2.courseType = randomizedCourseList[1];
+        leg2.distance = (Math.round((baseMeters * (factor ** numericalRank) + additiveAmount) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor)) * (leg2Normalized / timeToComplete));
+        leg2.terrain = this.getRandomTerrain(leg2.courseType);
+        raceLegs.push(leg2);
+      }
+    }
+    else {
+      legLengthCutoff = timeToComplete / 6;
+
+      var availableCourses: RaceCourseTypeEnum[] = [];
+      if (numericalRank < 35) {
+        availableCourses.push(RaceCourseTypeEnum.Flatland);
+        availableCourses.push(RaceCourseTypeEnum.Mountain);
+        availableCourses.push(RaceCourseTypeEnum.Ocean);
+      }
+      else if (numericalRank < 45) {
+        availableCourses.push(RaceCourseTypeEnum.Flatland);
+        availableCourses.push(RaceCourseTypeEnum.Mountain);
+        availableCourses.push(RaceCourseTypeEnum.Ocean);
+        availableCourses.push(RaceCourseTypeEnum.Tundra);
+      }
+      else {
+        availableCourses.push(RaceCourseTypeEnum.Flatland);
+        availableCourses.push(RaceCourseTypeEnum.Mountain);
+        availableCourses.push(RaceCourseTypeEnum.Ocean);
+        availableCourses.push(RaceCourseTypeEnum.Tundra);
+        availableCourses.push(RaceCourseTypeEnum.Volcanic);
+      }
+
+      var randomizedCourseList = this.getCourseTypeInRandomOrder(availableCourses);
+
+      var leg1Distance = this.utilityService.getRandomNumber(legMinimumDistance, legMaximumDistance);
+      var leg2Distance = this.utilityService.getRandomNumber(legMinimumDistance, legMaximumDistance);
+      var leg3Distance = this.utilityService.getRandomNumber(legMinimumDistance, legMaximumDistance);
+      var sum = leg1Distance + leg2Distance + leg3Distance;
+      var normalizeValue = timeToComplete / sum;
+      var leg1Normalized = leg1Distance * normalizeValue;
+      var leg2Normalized = leg2Distance * normalizeValue;
+      var leg3Normalized = leg3Distance * normalizeValue;
+
+      if (leg1Normalized < legLengthCutoff) {
+        leg2Normalized += leg1Normalized / 2;
+        leg3Normalized += leg1Normalized / 2;
+        leg1Normalized = 0;
+      }
+      else if (leg2Normalized < legLengthCutoff) {
+        leg1Normalized += leg2Normalized / 2;
+        leg3Normalized += leg2Normalized / 2;
+        leg2Normalized = 0;
+      }
+      else if (leg3Normalized < legLengthCutoff) {
+        leg1Normalized += leg3Normalized / 2;
+        leg2Normalized += leg3Normalized / 2;
+        leg3Normalized = 0;
+      }
+
+      if (leg1Normalized > 0) {
+        var leg1 = new RaceLeg();
+        leg1.courseType = randomizedCourseList[0];
+        leg1.distance = (Math.round((baseMeters * (factor ** numericalRank) + additiveAmount) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor)) * (leg1Normalized / timeToComplete));
+        leg1.terrain = this.getRandomTerrain(leg1.courseType);
+        raceLegs.push(leg1);
+      }
+
+      if (leg2Normalized > 0) {
+        var leg2 = new RaceLeg();
+        leg2.courseType = randomizedCourseList[1];
+        leg2.distance = (Math.round((baseMeters * (factor ** numericalRank) + additiveAmount) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor)) * (leg2Normalized / timeToComplete));
+        leg2.terrain = this.getRandomTerrain(leg2.courseType);
+        raceLegs.push(leg2);
+      }
+
+      if (leg3Normalized > 0) {
+        var leg3 = new RaceLeg();
+        leg3.courseType = randomizedCourseList[2];
+        leg3.distance = (Math.round((baseMeters * (factor ** numericalRank) + additiveAmount) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor)) * (leg3Normalized / timeToComplete));
+        leg3.terrain = this.getRandomTerrain(leg3.courseType);
+        raceLegs.push(leg3);
+      }
+    }
+
+    var totalDistance = 0;
+
+    var primaryDeck = this.globalVar.animalDecks.find(item => item.isPrimaryDeck);
+    if (primaryDeck !== undefined)
+      raceLegs = this.reorganizeLegsByDeckOrder(raceLegs, primaryDeck);
+
+    raceLegs.forEach(leg => {
+      totalDistance += leg.distance;
+    });
+
+    raceLegs.forEach(leg => {
+      leg.pathData = this.GenerateRaceLegPaths(leg, totalDistance);
+    });
+
+    return new Race(raceLegs, this.globalVar.circuitRank, false,
+      1, totalDistance, timeToComplete, this.GenerateLocalRaceRewards(this.globalVar.circuitRank), LocalRaceTypeEnum.Free);
+  }
+
+  getTimeToEventRace() {
+    
+  }
+
+  initialEventRaceSetup() {
+
   }
 
   generateTrackRace(animal: Animal, type: TrackRaceTypeEnum) {

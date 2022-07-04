@@ -542,7 +542,7 @@ export class RaceLogicService {
         var doesRacerBurst = this.doesRacerBurst(racingAnimal, currentPath, this.timeToComplete, race.length, distanceCovered, modifiedAdaptabilityMs, modifiedFocusMs);
         if (doesRacerBurst) {
           racingAnimal.raceVariables.isBursting = true;
-          racingAnimal.raceVariables.remainingBurstMeters = racingAnimal.currentStats.burstDistance; //TODO: Calculate burst distance instead
+          racingAnimal.raceVariables.remainingBurstMeters = this.getBurstDistance(racingAnimal, item.terrain.powerModifier, statLossFromExhaustion); 
           racingAnimal.raceVariables.burstCount += 1;
 
           if (racingAnimal.type === AnimalTypeEnum.Monkey && racingAnimal.ability.name === "Frenzy") {
@@ -943,6 +943,27 @@ export class RaceLogicService {
       racingAnimal.currentStats.stamina = 0;
       racingAnimal.raceVariables.ranOutOfStamina = true;
     }
+  }
+
+  getBurstDistance(animal: Animal, terrainModifier: number, statLossFromExhaustion: number)
+  {
+    var breedLevelStatModifierValue = 0;
+    var breedLevelStatModifier = this.globalService.globalVar.modifiers.find(item => item.text === "breedLevelStatModifier");
+    if (breedLevelStatModifier !== undefined && breedLevelStatModifier !== null)
+      breedLevelStatModifierValue = breedLevelStatModifier.value;
+    breedLevelStatModifierValue = 1 + (breedLevelStatModifierValue * (animal.breedLevel - 1));
+
+    var powerAbilityModifier = 1;
+    if (animal.type === AnimalTypeEnum.Fox && animal.ability.name === "Trickster" && animal.ability.tricksterStatLoss === "Power" && animal.ability.abilityInUse) {
+      powerAbilityModifier *= .8;
+    }
+    if (animal.type === AnimalTypeEnum.Fox && animal.ability.name === "Trickster" && animal.ability.tricksterStatGain === "Power" && animal.ability.abilityInUse) {
+      powerAbilityModifier *= 1.4;
+    }
+
+    var modifiedPowerMs = animal.currentStats.powerMs * powerAbilityModifier * terrainModifier * statLossFromExhaustion;
+
+    return animal.currentStats.calculateBurstDistance(breedLevelStatModifierValue, undefined, modifiedPowerMs);
   }
 
   doesRacerBurst(animal: Animal, currentPath: RacePath, timeToComplete: number, raceLength: number, currentDistanceInRace: number, modifiedAdaptabilityMs: number, modifiedFocusMs: number): boolean {

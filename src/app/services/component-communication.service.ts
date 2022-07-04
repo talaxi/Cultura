@@ -38,7 +38,7 @@ export class ComponentCommunicationService {
   }
 
   setBarnView(newView: NavigationEnum, newBarnNumber: number) {
-    console.log("Old #: " + this.selectBarnView.value + " New #: " + newBarnNumber);
+    //console.log("Old #: " + this.selectBarnView.value + " New #: " + newBarnNumber);
     if (newBarnNumber !== this.selectBarnView.value)
       this.selectBarnView.next(newBarnNumber);
     if (newView !== this.switchView.value)

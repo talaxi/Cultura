@@ -1,1 +1,34 @@
-<p>Coming soon!</p>
+<p style="text-align: center;">Coming Soon!</p>
+<!--
+<div class="eventViewDiv">
+    <div class="eventRaceHeader"></div>
+    <app-animal-deck></app-animal-deck>
+    <hr />
+    <div *ngIf="!isEventRaceAvailable">
+        Next Event Race Available In 
+    </div>
+    <div id="eventRace" *ngIf="isEventRaceAvailable">
+        <div (click)="selectEventRace()">
+            <span class="s4Heading">Event Race <strong>{{ eventRaceData.rank }}</strong> </span>
+            <br />
+            <div class="raceDescription">                                
+                <div class="clickableText" [ngbPopover]="popContent"
+                    [disablePopover]="popoverText === ''" triggers="mouseenter:mouseleave" popoverClass="popoverClass">
+                    <p *ngFor="let raceLeg of eventRace.raceLegs">
+                        {{ raceLeg.distance | number : '1.2-2' }} Meters of {{ raceLeg.getTerrainName() }}
+                        <span class="coloredText">{{ raceLeg.getCourseTypeName()
+                            }}</span>
+                    </p>
+                    <p>{{ eventRace.isCompleted ? "Completed" : cannotRace ? "Cannot Run" : "Start" }}
+                    </p>
+                </div>
+            </div>
+
+            <ng-template #popContent>
+                <div class="popoverClass">
+                    {{ popoverText }}
+                </div>
+            </ng-template>
+        </div>       
+    </div>
+</div>-->

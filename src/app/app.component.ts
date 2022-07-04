@@ -61,6 +61,7 @@ export class AppComponent {
 
     this.versionControlService.updatePlayerVersion();
 
+    var lastPerformanceNow = 0;
     var subscription = this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {
       //if (deltaTime > 1)
       //  console.log("GameCheckup: " + deltaTime);
@@ -76,6 +77,13 @@ export class AppComponent {
         this.saveTime = 0;
         this.saveGame();
       }
+
+      var performanceNow = performance.now();
+
+      //if (performanceNow - lastPerformanceNow > 70)
+      //  console.log(`Call to Checkup took ${performanceNow - lastPerformanceNow} milliseconds.`);
+
+      lastPerformanceNow = performanceNow;
     });
 
     this.gameLoopService.Update();

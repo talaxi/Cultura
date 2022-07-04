@@ -555,8 +555,8 @@ export class SelectedBarnComponent implements OnInit {
 
     if (this.barn.barnUpgrades.barnLevel >= 1)
       popover = "Barn Upgrades: \n"
-
-    //TODO: Condense this entire if condition into the getspecializationpopovertext call
+    
+      //TODO: Condense this entire if condition into the getspecializationpopovertext call
     if (this.barn.barnUpgrades.specialization === BarnSpecializationEnum.TrainingFacility) {
       if (this.barn.barnUpgrades.specializationLevel <= 20)
         popover += "Training Time Reduction: " + this.barn.barnUpgrades.specializationLevel + "%\n";
@@ -721,7 +721,7 @@ export class SelectedBarnComponent implements OnInit {
 
         this.componentCommunicationService.setBarnView(NavigationEnum.barn, 0);
 
-        this.subscription = this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {
+        this.subscription = this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {          
           if (!this.barn.isLocked) {
             var associatedAnimal = this.globalService.globalVar.animals.find(item => item.associatedBarnNumber == this.selectedBarnNumber);
             if (associatedAnimal === undefined || associatedAnimal === null) {

@@ -9,6 +9,7 @@ declare var LZString: any;
 export class GameLoopService {
   lastPerformanceNow: number;
   deltaTime: number;
+  totalTime = 0;
   gameUpdateEvent = new EventEmitter<number>();
 
   constructor(private globalService: GlobalService, private lookupService: LookupService) { }
@@ -20,11 +21,12 @@ export class GameLoopService {
     //console.log(deltaTime);
     //alert(deltaTime);
     this.deltaTime = deltaTime;
+    this.totalTime += deltaTime;
 
     var performanceNow = performance.now();
 
-    //if (performanceNow - this.lastPerformanceNow > 20)
-      //console.log(`Call to doSomething took ${performanceNow - this.lastPerformanceNow} milliseconds.`);
+    if (performanceNow - this.lastPerformanceNow > 70)
+      console.log(`Call to doSomething took ${performanceNow - this.lastPerformanceNow} milliseconds at ${this.totalTime}.`);
 
     this.globalService.globalVar.lastTimeStamp = dateNow;
     this.gameUpdateEvent.emit(deltaTime);

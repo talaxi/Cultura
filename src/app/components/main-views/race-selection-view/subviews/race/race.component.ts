@@ -35,7 +35,7 @@ import { UtilityService } from 'src/app/services/utility/utility.service';
 })
 export class RaceComponent implements OnInit {
   @Input() selectedRace: Race;
-  incrementalRaceUpdates: string;
+  incrementalRaceUpdates: string = "";
   displayResults: boolean;
   rewardRows: any[][];
   rewardCells: any[];
@@ -87,7 +87,8 @@ export class RaceComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    this.frameByFrameSubscription.unsubscribe();
+    if (this.frameByFrameSubscription !== null && this.frameByFrameSubscription !== undefined)
+      this.frameByFrameSubscription.unsubscribe();
     this.raceFinished.emit(true);
   }
 
@@ -96,7 +97,9 @@ export class RaceComponent implements OnInit {
     var currentTime = 0;
     this.incrementalRaceUpdates = "";
     var framesPassed = 0;
-    var subscription = this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {
+    var subscription = this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {      
+      
+      var startTime = performance.now();
       if (!this.racePaused)
       {
         currentTime += deltaTime;
@@ -129,6 +132,10 @@ export class RaceComponent implements OnInit {
         this.incrementalRaceUpdates += this.sanitizer.sanitize(SecurityContext.HTML, this.sanitizer.bypassSecurityTrustHtml(raceUpdates[0].text + "\n"));
         raceUpdates.shift();
       }
+
+      var endTime = performance.now();
+      if (endTime - startTime > 16.7)
+        console.log(`Call to Update took ${endTime - startTime} milliseconds`);
     });
   }
 
@@ -172,7 +179,8 @@ export class RaceComponent implements OnInit {
     this.totalRacers = this.lookupService.getTotalRacersByRace(this.selectedRace);
     var framesPassed = 0;
 
-    this.frameByFrameSubscription = this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {
+    this.frameByFrameSubscription = this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {   
+      var startTime = performance.now();   
       if (!this.racePaused)
       {
         currentTime += deltaTime;
@@ -195,6 +203,10 @@ export class RaceComponent implements OnInit {
         this.racerEffectAtCurrentFrame = this.selectedRace.raceUI.racerEffectByFrame[currentFrame];
         this.positionAtCurrentFrame = this.utilityService.ordinalSuffixOf(this.selectedRace.raceUI.racePositionByFrame[currentFrame]);
       }
+
+      var endTime = performance.now();
+      if (endTime - startTime > 16.7)
+        console.log(`Call to FrameByFrame took ${endTime - startTime} milliseconds`);
     });
   }
 }
