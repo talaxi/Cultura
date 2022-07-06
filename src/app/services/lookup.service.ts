@@ -680,31 +680,31 @@ export class LookupService {
         var abilityDescription: string | null = "";
         var sanitizedDescription = "";
         if (abilityName === "Second Wind") {
-          return "Stamina does not go down for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. " + cooldownDisplay + " second cooldown.";
+          return "Stamina does not decrease for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. " + cooldownDisplay + " second cooldown.";
         }
         if (abilityName === "Inspiration") {
           return "When the next racer starts, they gain 25% of your Max Speed for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. Passive.";
         }
         if (abilityName === "Pacemaker") {
-          return "Increase acceleration by 25% for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. " + cooldownDisplay + " second cooldown.";
+          return "Increase Acceleration Rate by 50% for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. " + cooldownDisplay + " second cooldown.";
         }
         if (abilityName === "Sprint") {
-          return " Gain 25% Max Speed and 10% Acceleration for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters, but lose twice as much stamina as normal. " + cooldownDisplay + " second cooldown.";
+          return " Gain 35% Max Speed and Acceleration Rate for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters, but lose twice as much stamina as normal. " + cooldownDisplay + " second cooldown.";
         }
         if (abilityName === "Giving Chase") {
-          return "Acceleration increases by <span class='keyword'>" + effectiveAmountDisplay + "</span>% for every second behind the average pace per second. Passive.";
+          return "Acceleration Rate increases by <span class='keyword'>" + effectiveAmountDisplay + "</span>% for every second behind the average pace per second. Passive.";
         }
         if (abilityName === "On The Hunt") {
-          return "Every time you Burst, increase your max speed by <span class='keyword'>" + effectiveAmountDisplay + "</span>%. Passive.";
+          return "Every time you Burst, increase your Max Speed by <span class='keyword'>" + effectiveAmountDisplay + "</span>%. Passive.";
         }
         if (abilityName === "Awareness") {
-          return "Boosts focus and adaptability by 25% for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. " + cooldownDisplay + " second cooldown.";
+          return "Boosts Focus Distance and Adaptability Distance by 40% for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. " + cooldownDisplay + " second cooldown.";
         }
         if (abilityName === "Prey Instinct") {
-          return "Starts its leg in burst mode that continues for an additional <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. Passive.";
+          return "Starts its leg in Burst mode that continues for an additional <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. Passive.";
         }
         if (abilityName === "Nap") {
-          return "Sleep until the competition has traveled a distance equal to <span class='keyword'>" + effectiveAmountDisplay + "</span> meters from the end of your leg. Acceleration and focus are then doubled. Passive.";
+          return "Sleep until the competition has traveled a distance equal to <span class='keyword'>" + effectiveAmountDisplay + "</span> meters from the end of your leg. Max Speed and Focus Distance are then doubled. Passive.";
         }
         if (abilityName === "Landslide") {
           return "Drop rocks on competitors, delaying them <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. " + cooldownDisplay + " second cooldown.";

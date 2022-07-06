@@ -37,6 +37,23 @@ export class RaceSelectionViewComponent implements OnInit {
     this.showRace = true;
   }
 
+  raceFinished() {
+    if (this.selectedRace.raceType === RaceTypeEnum.event)
+    {      
+    //if this segment is complete, pull next segment
+    var primaryDeck = this.globalService.globalVar.animalDecks.find(item => item.isPrimaryDeck);
+    if (primaryDeck !== null && primaryDeck !== undefined)
+      this.selectedRace = this.globalService.generateGrandPrixSegment(primaryDeck.selectedAnimals[0]);
+
+    //if time runs out, end event
+    }
+    else
+    {
+      this.showRace = false;
+    }
+
+  }
+
   trainingTrackRaceSelected(isSelected: boolean) {    
     this.trainingTrackRace = isSelected;
   }

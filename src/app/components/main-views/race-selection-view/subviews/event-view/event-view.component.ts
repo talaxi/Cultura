@@ -43,6 +43,7 @@ export class EventViewComponent implements OnInit {
   }
 
   selectEventRace() {
+    this.raceSelected.emit(this.grandPrix);
 
   }
 

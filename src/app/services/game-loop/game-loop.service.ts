@@ -26,7 +26,7 @@ export class GameLoopService {
     var performanceNow = performance.now();
 
     if (performanceNow - this.lastPerformanceNow > 70)
-      console.log(`Call to doSomething took ${performanceNow - this.lastPerformanceNow} milliseconds at ${this.totalTime}.`);
+      console.log(`Call to Game Loop took ${performanceNow - this.lastPerformanceNow} milliseconds at ${this.totalTime}.`);
 
     this.globalService.globalVar.lastTimeStamp = dateNow;
     this.gameUpdateEvent.emit(deltaTime);

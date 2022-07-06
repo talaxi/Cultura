@@ -115,7 +115,7 @@ export class DrawRaceComponent implements OnInit {
 
       var endTime = performance.now();
       if (endTime - startTime > 16.7)
-        console.log(`Call to doSomething took ${endTime - startTime} milliseconds`);
+        console.log(`Call to Draw took ${endTime - startTime} milliseconds`);
     });
   }
 

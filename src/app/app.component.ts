@@ -186,7 +186,7 @@ export class AppComponent {
         this.globalService.globalVar.freeRaceCounter = 0;
         this.globalService.globalVar.autoFreeRaceCounter = 0;
 
-        this.handleAutoFreeRace(deltaTime);
+        //this.handleAutoFreeRace(deltaTime);
       }
     }
   }

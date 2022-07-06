@@ -399,10 +399,10 @@ export class RaceLogicService {
           modifiedAccelerationMs *= statLossFromExhaustion;
 
           if (racingAnimal.type === AnimalTypeEnum.Horse && racingAnimal.ability.name === "Pacemaker" && racingAnimal.ability.abilityInUse) {
-            modifiedAccelerationMs *= 1.25;
+            modifiedAccelerationMs *= 1.5;
           }
           if (racingAnimal.type === AnimalTypeEnum.Cheetah && racingAnimal.ability.name === "Sprint" && racingAnimal.ability.abilityInUse) {
-            modifiedAccelerationMs *= 1.1;
+            modifiedAccelerationMs *= 1.35;
           }
           if (racingAnimal.type === AnimalTypeEnum.Cheetah && racingAnimal.ability.name === "Giving Chase") {
             var averageDistance = distancePerSecond * (framesPassed / this.frameModifier);
@@ -488,7 +488,7 @@ export class RaceLogicService {
         modifiedMaxSpeed *= statLossFromExhaustion;
 
         if (racingAnimal.type === AnimalTypeEnum.Cheetah && racingAnimal.ability.name === "Sprint" && racingAnimal.ability.abilityInUse) {
-          modifiedMaxSpeed *= 1.25;
+          modifiedMaxSpeed *= 1.35;
         }
         if (racingAnimal.type === AnimalTypeEnum.Cheetah && racingAnimal.ability.name === "On The Hunt") {
           modifiedMaxSpeed *= permanentMaxSpeedIncreaseMultiplier;
@@ -1794,7 +1794,7 @@ export class RaceLogicService {
       modifiedAdaptabilityMs *= obj.permanentAdaptabilityIncreaseMultiplier;
     }
     if (racingAnimal.type === AnimalTypeEnum.Hare && racingAnimal.ability.name === "Awareness" && racingAnimal.ability.abilityInUse) {
-      modifiedAdaptabilityMs *= 1.25;
+      modifiedAdaptabilityMs *= 1.4;
     }
     if (racingAnimal.type === AnimalTypeEnum.Penguin && racingAnimal.ability.name === "Careful Toboggan" && racingAnimal.ability.abilityInUse) {
       modifiedAdaptabilityMs *= 1.4;
@@ -1824,7 +1824,7 @@ export class RaceLogicService {
     var unwaveringFocus = racingAnimal.currentStats.focusMs * statLossFromExhaustion;
 
     if (racingAnimal.type === AnimalTypeEnum.Hare && racingAnimal.ability.name === "Awareness" && racingAnimal.ability.abilityInUse) {
-      unwaveringFocus *= 1.25;
+      unwaveringFocus *= 1.4;
     }
     if (racingAnimal.type === AnimalTypeEnum.Hare && racingAnimal.ability.name === "Nap") {
       unwaveringFocus *= 2;

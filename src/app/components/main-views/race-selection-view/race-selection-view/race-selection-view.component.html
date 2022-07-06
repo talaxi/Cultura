@@ -14,5 +14,5 @@
         <app-training-track-view *ngIf="displayRaceView === raceTypeEnum.trainingTrack" (raceSelectedEmitter)="trainingTrackRaceSelected($event)"></app-training-track-view>
 </div>
 <div class="raceDiv" *ngIf="showRace">
-        <app-race [selectedRace]="selectedRace" (raceFinished)="showRace = false"></app-race>
+        <app-race [selectedRace]="selectedRace" (raceFinished)="raceFinished()"></app-race>
 </div>

@@ -1,5 +1,6 @@
 import { Type } from "class-transformer";
 import { LocalRaceTypeEnum } from "../local-race-type-enum.model";
+import { RaceTypeEnum } from "../race-type-enum.model";
 import { ResourceValue } from "../resources/resource-value.model";
 import { TrackRaceTypeEnum } from "../track-race-type-enum.model";
 import { RaceLeg } from "./race-leg.model";
@@ -11,6 +12,7 @@ export class Race {
     requiredRank: string;
     isCompleted: boolean;
     isCircuitRace: boolean;
+    raceType: RaceTypeEnum;
     localRaceType: LocalRaceTypeEnum;
     trackRaceType: TrackRaceTypeEnum;
     timeToComplete: number; //in seconds
@@ -22,7 +24,7 @@ export class Race {
     raceUI: RaceUI;
     circuitIncreaseReward: [string, string];
 
-    constructor(raceLegs: RaceLeg[], requiredRank: string, isCircuitRace: boolean, raceId: number, length: number, timeToComplete: number, rewards?: ResourceValue[], localRaceType?: LocalRaceTypeEnum, trackRaceType?: TrackRaceTypeEnum) {
+    constructor(raceLegs: RaceLeg[], requiredRank: string, isCircuitRace: boolean, raceId: number, length: number, timeToComplete: number, rewards?: ResourceValue[], localRaceType?: LocalRaceTypeEnum, trackRaceType?: TrackRaceTypeEnum, raceType?: RaceTypeEnum) {
         this.raceLegs = raceLegs;
         this.requiredRank = requiredRank;
         this.isCircuitRace = isCircuitRace;
@@ -40,5 +42,8 @@ export class Race {
 
         if (trackRaceType !== undefined && trackRaceType !== null)
             this.trackRaceType = trackRaceType;
+
+        if (raceType !== undefined && raceType !== null)
+            this.raceType = raceType;
     }
 }
