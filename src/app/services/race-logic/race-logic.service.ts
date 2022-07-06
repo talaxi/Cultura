@@ -467,13 +467,13 @@ export class RaceLogicService {
             modifiedAccelerationMs *= 1 + (.15 * racingAnimal.ability.totalUseCount);
           }
           if (racingAnimal.type === AnimalTypeEnum.Fox && racingAnimal.ability.name === "Trickster" && racingAnimal.ability.tricksterStatLoss === "Acceleration" && racingAnimal.ability.abilityInUse) {
-            modifiedAccelerationMs *= .8;
+            modifiedAccelerationMs *= .75;
           }
           if (racingAnimal.type === AnimalTypeEnum.Fox && racingAnimal.ability.name === "Trickster" && racingAnimal.ability.tricksterStatGain === "Acceleration" && racingAnimal.ability.abilityInUse) {
-            modifiedAccelerationMs *= 1.4;
+            modifiedAccelerationMs *= 1.5;
           }
           if (racingAnimal.type === AnimalTypeEnum.Fox && racingAnimal.ability.name === "Nine Tails") {
-            modifiedAccelerationMs *= 1 + (this.getNineTailsBuffCount("Acceleration", nineTailsBuffs) * .1);
+            modifiedAccelerationMs *= 1 + (this.getNineTailsBuffCount("Acceleration", nineTailsBuffs) * .15);
           }
 
           velocity += modifiedAccelerationMs / this.frameModifier;
@@ -517,10 +517,10 @@ export class RaceLogicService {
           modifiedMaxSpeed *= permanentMaxSpeedIncreaseMultiplier;
         }
         if (racingAnimal.type === AnimalTypeEnum.Fox && racingAnimal.ability.name === "Trickster" && racingAnimal.ability.tricksterStatLoss === "Max Speed" && racingAnimal.ability.abilityInUse) {
-          modifiedMaxSpeed *= .8;
+          modifiedMaxSpeed *= .75;
         }
         if (racingAnimal.type === AnimalTypeEnum.Fox && racingAnimal.ability.name === "Trickster" && racingAnimal.ability.tricksterStatGain === "Max Speed" && racingAnimal.ability.abilityInUse) {
-          modifiedMaxSpeed *= 1.4;
+          modifiedMaxSpeed *= 1.5;
         }
         if (racingAnimal.type === AnimalTypeEnum.Fox && racingAnimal.ability.name === "Fleeting Speed") {
           var percentComplete = Math.floor((currentDistanceInLeg / item.distance) * 100);
@@ -533,7 +533,7 @@ export class RaceLogicService {
           modifiedMaxSpeed *= modifiedFleetingSpeedIncreaseMultiplier;
         }
         if (racingAnimal.type === AnimalTypeEnum.Fox && racingAnimal.ability.name === "Nine Tails") {
-          modifiedMaxSpeed *= 1 + (this.getNineTailsBuffCount("Max Speed", nineTailsBuffs) * .1);
+          modifiedMaxSpeed *= 1 + (this.getNineTailsBuffCount("Max Speed", nineTailsBuffs) * .15);
         }
 
         if (velocity > modifiedMaxSpeed)
@@ -955,10 +955,10 @@ export class RaceLogicService {
 
     var powerAbilityModifier = 1;
     if (animal.type === AnimalTypeEnum.Fox && animal.ability.name === "Trickster" && animal.ability.tricksterStatLoss === "Power" && animal.ability.abilityInUse) {
-      powerAbilityModifier *= .8;
+      powerAbilityModifier *= .75;
     }
     if (animal.type === AnimalTypeEnum.Fox && animal.ability.name === "Trickster" && animal.ability.tricksterStatGain === "Power" && animal.ability.abilityInUse) {
-      powerAbilityModifier *= 1.4;
+      powerAbilityModifier *= 1.5;
     }
 
     var modifiedPowerMs = animal.currentStats.powerMs * powerAbilityModifier * terrainModifier * statLossFromExhaustion;
@@ -1170,7 +1170,7 @@ export class RaceLogicService {
               if (racingAnimal !== undefined && racingAnimal !== null)
                 racingAnimal.miscStats.diminishingReturnsBonus += item.amount;
             }
-            else if (item.name === "Orb Necklace" && item.itemType === ShopItemTypeEnum.Other) {
+            else if (item.name === "Orb Pendant" && item.itemType === ShopItemTypeEnum.Other) {
               var courseType = this.selectedRace.raceLegs[0].courseType;
               var racingAnimal = this.racingAnimals.find(animal => animal.raceCourseType === courseType);
               if (racingAnimal !== undefined && racingAnimal !== null)
@@ -1711,7 +1711,7 @@ export class RaceLogicService {
           racingAnimal.ability.tricksterStatLoss = "Focus";
         if (statLoss === 5) {
           racingAnimal.ability.tricksterStatLoss = "Stamina";
-          racingAnimal.currentStats.stamina -= animalMaxStamina * .2;
+          racingAnimal.currentStats.stamina -= animalMaxStamina * .25;
           if (racingAnimal.currentStats.stamina < 0)
             racingAnimal.currentStats.stamina = 0;
         }
@@ -1735,7 +1735,7 @@ export class RaceLogicService {
           racingAnimal.ability.tricksterStatGain = "Focus";
         if (statGain === 5) {
           racingAnimal.ability.tricksterStatGain = "Stamina";
-          racingAnimal.currentStats.stamina += animalMaxStamina * .4;
+          racingAnimal.currentStats.stamina += animalMaxStamina * .5;
           if (racingAnimal.currentStats.stamina > animalMaxStamina)
             racingAnimal.currentStats.stamina = animalMaxStamina;
         }
@@ -1788,7 +1788,7 @@ export class RaceLogicService {
   getModifiedAdaptability(racingAnimal: Animal, obj: { permanentAdaptabilityIncreaseMultiplier: number }, statLossFromExhaustion: number, nineTailsBuffs: [string, number][], currentLeg: RaceLeg, currentDistanceInLeg: number, nextAnimal: Animal | null, nextLeg: RaceLeg) {
     var modifiedAdaptabilityMs = racingAnimal.currentStats.adaptabilityMs * statLossFromExhaustion;
     if (racingAnimal.type === AnimalTypeEnum.Dolphin && racingAnimal.ability.name === "Echolocation" && racingAnimal.ability.abilityInUse) {
-      modifiedAdaptabilityMs *= 1.25;
+      modifiedAdaptabilityMs *= 1.75;
     }
     if (racingAnimal.type === AnimalTypeEnum.Goat && racingAnimal.ability.name === "Sure-footed") {
       modifiedAdaptabilityMs *= obj.permanentAdaptabilityIncreaseMultiplier;
@@ -1797,16 +1797,16 @@ export class RaceLogicService {
       modifiedAdaptabilityMs *= 1.4;
     }
     if (racingAnimal.type === AnimalTypeEnum.Penguin && racingAnimal.ability.name === "Careful Toboggan" && racingAnimal.ability.abilityInUse) {
-      modifiedAdaptabilityMs *= 1.4;
+      modifiedAdaptabilityMs *= 1.6;
     }
     if (racingAnimal.type === AnimalTypeEnum.Fox && racingAnimal.ability.name === "Trickster" && racingAnimal.ability.tricksterStatLoss === "Adaptability" && racingAnimal.ability.abilityInUse) {
-      modifiedAdaptabilityMs *= .8;
+      modifiedAdaptabilityMs *= .75;
     }
     if (racingAnimal.type === AnimalTypeEnum.Fox && racingAnimal.ability.name === "Trickster" && racingAnimal.ability.tricksterStatGain === "Adaptability" && racingAnimal.ability.abilityInUse) {
-      modifiedAdaptabilityMs *= 1.4;
+      modifiedAdaptabilityMs *= 1.5;
     }
     if (racingAnimal.type === AnimalTypeEnum.Fox && racingAnimal.ability.name === "Nine Tails") {
-      modifiedAdaptabilityMs *= 1 + (this.getNineTailsBuffCount("Adaptability", nineTailsBuffs) * .1);
+      modifiedAdaptabilityMs *= 1 + (this.getNineTailsBuffCount("Adaptability", nineTailsBuffs) * .15);
     }
     if (nextAnimal !== null && nextLeg !== undefined && nextAnimal.ability.name === "Navigator" &&
       nextAnimal.type === AnimalTypeEnum.Dolphin &&
@@ -1830,13 +1830,13 @@ export class RaceLogicService {
       unwaveringFocus *= 2;
     }
     if (racingAnimal.type === AnimalTypeEnum.Fox && racingAnimal.ability.name === "Trickster" && racingAnimal.ability.tricksterStatLoss === "Focus" && racingAnimal.ability.abilityInUse) {
-      unwaveringFocus *= .8;
+      unwaveringFocus *= .75;
     }
     if (racingAnimal.type === AnimalTypeEnum.Fox && racingAnimal.ability.name === "Trickster" && racingAnimal.ability.tricksterStatGain === "Focus" && racingAnimal.ability.abilityInUse) {
-      unwaveringFocus *= 1.4;
+      unwaveringFocus *= 1.5;
     }
     if (racingAnimal.type === AnimalTypeEnum.Fox && racingAnimal.ability.name === "Nine Tails") {
-      unwaveringFocus *= 1 + (this.getNineTailsBuffCount("Focus", nineTailsBuffs) * .1);
+      unwaveringFocus *= 1 + (this.getNineTailsBuffCount("Focus", nineTailsBuffs) * .15);
     }
     if (racingAnimal.type === AnimalTypeEnum.Salamander && racingAnimal.ability.name === "Cold Blooded" && racingAnimal.ability.abilityInUse) {
       unwaveringFocus *= obj.coldBloodedIncreaseMultiplier;

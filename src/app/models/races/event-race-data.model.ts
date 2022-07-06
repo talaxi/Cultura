@@ -1,6 +1,7 @@
+import { Type } from "class-transformer";
 import { Terrain } from "./terrain.model";
 
-export class EventRaceData {
+export class GrandPrixData {
     weekStartDay: number;
     weekStartHour: number;
     weekEndDay: number;
@@ -9,9 +10,10 @@ export class EventRaceData {
     weekendStartHour: number;
     weekendEndDay: number;
     weekendEndHour: number;
-    eventRaceTimeLength: number;
+    grandPrixTimeLength: number;
 
     rank: string;
+    @Type(() => Terrain) 
     raceTerrain: Terrain;
     totalDistance: number;
     distanceCovered: number;  
@@ -31,6 +33,7 @@ export class EventRaceData {
         this.weekendEndHour = 23;
 
         this.distanceCovered = 0;
+        this.grandPrixTimeLength = 51 * 60 * 60; //51 hours
         this.rank = "Z";
     }
 }

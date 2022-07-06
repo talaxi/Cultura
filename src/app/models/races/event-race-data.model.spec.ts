@@ -1,7 +1,7 @@
-import { EventRaceData } from './event-race-data.model';
+import { GrandPrixData } from './event-race-data.model';
 
-describe('EventRaceData', () => {
+describe('GrandPrixData', () => {
   it('should create an instance', () => {
-    expect(new EventRaceData()).toBeTruthy();
+    expect(new GrandPrixData()).toBeTruthy();
   });
 });

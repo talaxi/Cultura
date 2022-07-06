@@ -33,7 +33,8 @@ import { TrackedStats } from '../models/utility/tracked-stats.model';
 import { TrackRaceTypeEnum } from '../models/track-race-type-enum.model';
 import { OrbStats } from '../models/animals/orb-stats.model';
 import { Tutorials } from '../models/tutorials.model';
-import { EventRaceData } from '../models/races/event-race-data.model';
+import { GrandPrixData } from '../models/races/event-race-data.model';
+import { RaceTypeEnum } from '../models/race-type-enum.model';
 
 @Injectable({
   providedIn: 'root'
@@ -61,7 +62,7 @@ export class GlobalService {
     this.globalVar.trackedStats = new TrackedStats();
     this.globalVar.orbStats = new OrbStats();
     this.globalVar.tutorials = new Tutorials();
-    this.globalVar.eventRaceData = new EventRaceData();
+    this.globalVar.eventRaceData = new GrandPrixData();
     this.globalVar.userIsRacing = false;
     this.globalVar.nationalRaceCountdown = 0;
     this.globalVar.autoFreeRaceCounter = 0;
@@ -873,7 +874,7 @@ export class GlobalService {
           horse.associatedBarnNumber = barn1.barnNumber;
       }
       else {
-        console.log("Can't find horse");
+        //console.log("Can't find horse");
         alert("You've run into an error! Please try again. If you have the time, please export your data under the Settings tab and send me the data and any relevant info at CulturaIdle@gmail.com. Thank you!");
       }
 
@@ -1479,7 +1480,7 @@ export class GlobalService {
 
       if (i <= 2) //make these breakpoints configurable, figure out your time horizon on new races
       {
-        additiveValue = -17;
+        additiveValue = -37;
 
         var leg = new RaceLeg();
         leg.courseType = RaceCourseTypeEnum.Flatland;
@@ -1496,7 +1497,11 @@ export class GlobalService {
         raceLegs.push(leg);
       }
       else if (i <= 9) {
-        var additiveValue = 40 * i;
+        if (i === 3)
+          additiveValue = 20 * i;
+        else
+          additiveValue = 40 * i;
+
         var availableCourses: RaceCourseTypeEnum[] = [];
         availableCourses.push(RaceCourseTypeEnum.Flatland);
         availableCourses.push(RaceCourseTypeEnum.Mountain);
@@ -2194,11 +2199,23 @@ export class GlobalService {
       1, totalDistance, timeToComplete, this.GenerateLocalRaceRewards(this.globalVar.circuitRank), LocalRaceTypeEnum.Free);
   }
 
+
+  initialGrandPrixSetup(eventStartDateString: string) {
+    var grandPrix = this.globalVar.eventRaceData = new GrandPrixData();
+
+    grandPrix.totalDistance = 500000000;
+    grandPrix.raceTerrain = this.getRandomGrandPrixTerrain(eventStartDateString);
+    grandPrix.totalSegments = Math.ceil(grandPrix.totalDistance / grandPrix.grandPrixTimeLength);
+  }
+
   generateGrandPrixSegment(racingAnimal: Animal) {
     var eventData = this.globalVar.eventRaceData;
     var numericalRank = this.utilityService.getNumericValueOfCircuitRank(eventData.rank);
+    var remainingRaceTime = this.getRemainingEventRaceTime();
 
     var segmentMeters = eventData.totalDistance / eventData.totalSegments;
+    console.log(eventData);
+    console.log("Total Segments: " + eventData.totalSegments + " Total Time: " + eventData.grandPrixTimeLength + " Segment Meters: " + segmentMeters);
 
     var raceLegs: RaceLeg[] = [];
 
@@ -2206,14 +2223,14 @@ export class GlobalService {
     leg.courseType = racingAnimal.raceCourseType;
     leg.terrain = this.getRandomTerrain(leg.courseType);
     leg.distance = segmentMeters;
-    raceLegs.push(leg);
 
+    raceLegs.push(leg);
     raceLegs.forEach(leg => {
       leg.pathData = this.GenerateRaceLegPaths(leg, segmentMeters);
     });
 
     return new Race(raceLegs, this.globalVar.circuitRank, false,
-      1, segmentMeters, eventData.eventRaceTimeLength, this.GenerateLocalRaceRewards(this.globalVar.circuitRank), LocalRaceTypeEnum.Free);
+      1, segmentMeters, remainingRaceTime, this.GenerateLocalRaceRewards(this.globalVar.circuitRank), undefined, undefined, RaceTypeEnum.event);
   }
 
   getEventStartDateTime() {
@@ -2381,13 +2398,6 @@ export class GlobalService {
     }
 
     return 0;
-  }
-
-  initialGrandPrixSetup(eventStartDateString: string) {
-    var grandPrix = this.globalVar.eventRaceData;
-
-    grandPrix.totalDistance = 500000000;
-    grandPrix.raceTerrain = this.getRandomGrandPrixTerrain(eventStartDateString);
   }
 
   generateTrackRace(animal: Animal, type: TrackRaceTypeEnum) {
@@ -2785,7 +2795,6 @@ export class GlobalService {
 
   InitializeResources() {
     this.globalVar.resources.push(this.initializeService.initializeResource("Coins", 500, ShopItemTypeEnum.Resources));
-    this.globalVar.resources.push(this.initializeService.initializeResource("Medals", 500, ShopItemTypeEnum.Resources));
     this.globalVar.resources.push(this.initializeService.initializeResource("Renown", 1, ShopItemTypeEnum.Progression));
   }
 
@@ -3015,13 +3024,13 @@ export class GlobalService {
 
     var horse = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Horse);
     if (horse !== undefined) {
-      horse.currentStats.topSpeed = 20;
-      horse.currentStats.acceleration = 20;
-      horse.currentStats.endurance = 20;
-      horse.currentStats.power = 20;
-      horse.currentStats.focus = 10;
-      horse.currentStats.adaptability = 10;
-      horse.breedLevel = 1;
+      horse.currentStats.topSpeed = 200;
+      horse.currentStats.acceleration = 200;
+      horse.currentStats.endurance = 200;
+      horse.currentStats.power = 200;
+      horse.currentStats.focus = 1000;
+      horse.currentStats.adaptability = 1000;
+      horse.breedLevel = 1000;
       horse.canEquipOrb = true;
       this.calculateAnimalRacingStats(horse);
 

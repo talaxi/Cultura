@@ -99,7 +99,7 @@ export class RaceComponent implements OnInit {
     var framesPassed = 0;
     var subscription = this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {      
       
-      var startTime = performance.now();
+      //var startTime = performance.now();
       if (!this.racePaused)
       {
         currentTime += deltaTime;
@@ -133,9 +133,9 @@ export class RaceComponent implements OnInit {
         raceUpdates.shift();
       }
 
-      var endTime = performance.now();
-      if (endTime - startTime > 16.7)
-        console.log(`Call to Update took ${endTime - startTime} milliseconds`);
+      //var endTime = performance.now();
+      //if (endTime - startTime > 16.7)
+        //console.log(`Call to Update took ${endTime - startTime} milliseconds`);
     });
   }
 
@@ -180,7 +180,7 @@ export class RaceComponent implements OnInit {
     var framesPassed = 0;
 
     this.frameByFrameSubscription = this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {   
-      var startTime = performance.now();   
+      //var startTime = performance.now();   
       if (!this.racePaused)
       {
         currentTime += deltaTime;
@@ -204,9 +204,9 @@ export class RaceComponent implements OnInit {
         this.positionAtCurrentFrame = this.utilityService.ordinalSuffixOf(this.selectedRace.raceUI.racePositionByFrame[currentFrame]);
       }
 
-      var endTime = performance.now();
-      if (endTime - startTime > 16.7)
-        console.log(`Call to FrameByFrame took ${endTime - startTime} milliseconds`);
+      //var endTime = performance.now();
+      //if (endTime - startTime > 16.7)
+        //console.log(`Call to FrameByFrame took ${endTime - startTime} milliseconds`);
     });
   }
 }

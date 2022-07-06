@@ -43,7 +43,7 @@ export class CodeRedemptionService {
       }
     }
     catch (error) {
-      console.log(error);
+      //console.log(error);
       alert("You've run into an error! Please try again. If you have the time, please export your data under the Settings tab and send me the data and any relevant info at CulturaIdle@gmail.com. Thank you!");
     }
   }

@@ -3,9 +3,10 @@
 <div *ngIf="eventRaceReleased" class="eventViewDiv centered">
     <div class="eventRaceHeader"></div>
     <div *ngIf="grandPrixUnlocked">
-        <div *ngIf="!isEventRaceAvailable">
+        <div>
             {{eventRaceNotice}} {{eventRaceTimer}}
         </div>
+        <br />
         <div id="grandPrix" *ngIf="isEventRaceAvailable">
             <div (click)="selectEventRace()">
                 <span class="s4Heading">Grand Prix <strong>{{ grandPrixData.rank }}</strong> </span>

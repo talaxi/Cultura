@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { EventRaceData } from 'src/app/models/races/event-race-data.model';
+import { GrandPrixData } from 'src/app/models/races/event-race-data.model';
 import { Race } from 'src/app/models/races/race.model';
 import { GameLoopService } from 'src/app/services/game-loop/game-loop.service';
 import { GlobalService } from 'src/app/services/global-service.service';
@@ -13,12 +13,12 @@ import { LookupService } from 'src/app/services/lookup.service';
 export class EventViewComponent implements OnInit {
   @Output() raceSelected = new EventEmitter<Race>();
   grandPrix: Race;
-  grandPrixData: EventRaceData;
+  grandPrixData: GrandPrixData;
   remainingMeters: number;
   isEventRaceAvailable: boolean;
   popoverText: string = "";
   cannotRace = false;
-  eventRaceReleased = true;
+  eventRaceReleased = false;
   eventRaceNotice = "";
   eventRaceTimer = "";
   grandPrixUnlocked = false;
@@ -27,10 +27,10 @@ export class EventViewComponent implements OnInit {
   constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private lookupService: LookupService) { }
 
   ngOnInit(): void {
+    this.globalService.initialGrandPrixSetup(this.globalService.getEventStartDateTime().toString());
     this.grandPrixData = this.globalService.globalVar.eventRaceData;
     this.grandPrixUnlocked = this.lookupService.isItemUnlocked("grandPrix");
-    this.globalService.initialGrandPrixSetup(this.globalService.getEventStartDateTime().toString());
-
+    
     this.subscription = this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {
       this.setupEventTime();
       this.remainingMeters = this.grandPrixData.totalDistance - this.grandPrixData.distanceCovered;
@@ -43,6 +43,7 @@ export class EventViewComponent implements OnInit {
   }
 
   selectEventRace() {
+    //this can't actually start a race -- the race needs to be running in the background. this should just view it
     this.raceSelected.emit(this.grandPrix);
 
   }
@@ -78,7 +79,7 @@ export class EventViewComponent implements OnInit {
           secondsDisplay = String(secondsDisplay).padStart(2, '0');
       }
 
-      this.eventRaceTimer = hours + ":" + minutes + ":" + secondsDisplay;
+      this.eventRaceTimer = hoursDisplay + ":" + minutesDisplay + ":" + secondsDisplay;
     }
     else {
       var remainingEventTime = this.globalService.getRemainingEventRaceTime();
@@ -112,7 +113,7 @@ export class EventViewComponent implements OnInit {
             secondsDisplay = String(secondsDisplay).padStart(2, '0');
         }
 
-        this.eventRaceTimer = hours + ":" + minutes + ":" + secondsDisplay;
+        this.eventRaceTimer = hoursDisplay + ":" + minutesDisplay + ":" + secondsDisplay;
       }
     }
   }

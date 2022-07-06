@@ -457,7 +457,7 @@ export class LookupService {
       rewards.push("- +2 Talents");
       rewards.push("- +1% Training Time Reduction");
       rewards.push("- 1000 Coins");
-      rewards.push("- Nothing Yet -- Coming Soon!");
+      rewards.push("- Orb Pendant");
       rewards.push("- +3 Diminishing Returns per Facility Level");
       rewards.push("- +1% Training Time Reduction");
       rewards.push("- +3 Talents");
@@ -518,10 +518,10 @@ export class LookupService {
 
     var powerAbilityModifier = 1;
     if (animal.type === AnimalTypeEnum.Fox && animal.ability.name === "Trickster" && animal.ability.tricksterStatLoss === "Power" && animal.ability.abilityInUse) {
-      powerAbilityModifier *= .8;
+      powerAbilityModifier *= .75;
     }
     if (animal.type === AnimalTypeEnum.Fox && animal.ability.name === "Trickster" && animal.ability.tricksterStatGain === "Power" && animal.ability.abilityInUse) {
-      powerAbilityModifier *= 1.4;
+      powerAbilityModifier *= 1.5;
     }
 
     var usedAbility = animal.ability;
@@ -710,19 +710,19 @@ export class LookupService {
           return "Drop rocks on competitors, delaying them <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. " + cooldownDisplay + " second cooldown.";
         }
         if (abilityName === "Frenzy") {
-          return "Increase burst distance by <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. You do not stumble or lose focus while bursting. Passive.";
+          return "Increase Burst distance by <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. You do not stumble or lose focus while bursting. Passive.";
         }
         if (abilityName === "Leap") {
           return "When you are <span class='keyword'>" + effectiveAmountDisplay + "</span> meters from the finish line, leap straight to the end over .5 seconds. Passive.";
         }
         if (abilityName === "Sure-footed") {
-          return "When you make it through a special path without stumbling, increase your adaptability by <span class='keyword'>" + effectiveAmountDisplay + "</span>%. Passive.";
+          return "When you make it through a special path without stumbling, increase your Adaptability Distance by <span class='keyword'>" + effectiveAmountDisplay + "</span>%. Passive.";
         }
         if (abilityName === "Deep Breathing") {
-          return "Every time you burst, regain <span class='keyword'>" + effectiveAmountDisplay + "</span>% of your stamina, up to 100%. If this amount exceeds 100% of your stamina, increase all other racers' stamina by the amount exceeded. Passive.";
+          return "Every time you Burst, regain <span class='keyword'>" + effectiveAmountDisplay + "</span>% of your stamina, up to 100%. If this amount exceeds 100% of your stamina, increase all other racers' stamina by the amount exceeded. Passive.";
         }
         if (abilityName === "In The Rhythm") {
-          return "Increase your max speed bonus while bursting by <span class='keyword'>" + effectiveAmountDisplay + "</span>%. Passive.";
+          return "Increase your max speed bonus while Bursting by <span class='keyword'>" + effectiveAmountDisplay + "</span>%. Passive.";
         }
         if (abilityName === "Sticky") {
           return "Cannot stumble for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. " + cooldownDisplay + " second cooldown.";
@@ -731,25 +731,25 @@ export class LookupService {
           return "Increase Max Speed by <span class='keyword'>" + effectiveAmountDisplay + "</span>% for every path you complete without losing focus. If you lose focus, reset this bonus back to 0%. Passive.";
         }
         if (abilityName === "Camouflage") {
-          return "The speed you finish your leg at is given to your following racer on Relay. Decrease this amount to 0 evenly over <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. The following racer can break their max speed by up to 50% while this is active. Passive.";
+          return "The velocity you finish your leg at is given to your following racer on Relay. Decrease this amount to 0 evenly over <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. The following racer can break their max speed by up to 50% while this is active. Passive.";
         }
         if (abilityName === "Echolocation") {
-          return "Increase your adaptability by 50% for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters and ignore any negative effects from the terrain. " + cooldownDisplay + " second cooldown.";
+          return "Increase your Adaptability Distance by 75% for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters and ignore any negative effects from the terrain. " + cooldownDisplay + " second cooldown.";
         }
         if (abilityName === "Navigator") {
-          return "Assist the previous racer and next racer, boosting their adaptability by 25% of your max for the last and first <span class='keyword'>" + effectiveAmountDisplay + "</span> meters of their legs respectively. Passive.";
+          return "Assist the previous racer and next racer, boosting their Adaptability Distance by 25% of your max for the last and first <span class='keyword'>" + effectiveAmountDisplay + "</span> meters of their legs respectively. Passive.";
         }
         if (abilityName === "Flowing Current") {
-          return "When relaying, increase the acceleration of your next racer by 25% of your acceleration for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. Passive.";
+          return "When relaying, increase the Acceleration Rate of your next racer by 25% of your Acceleration Rate for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. Passive.";
         }
         if (abilityName === "Apex Predator") {
           return "If the competitors moving at the average pace pass the shark during its leg, immediately bite them, slowing their pace by 50% for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. Can only occur once. Passive.";
         }
         if (abilityName === "Feeding Frenzy") {
-          return "Increase Max Speed and Acceleration by 50% for the first and last <span class='keyword'>" + effectiveAmountDisplay + "</span> meters of your leg. Your next and previous racers have a 10% Max Speed reduction. Passive.";
+          return "Increase Max Speed and Acceleration Rate by 50% for the first and last <span class='keyword'>" + effectiveAmountDisplay + "</span> meters of your leg. Your next and previous racers have a 10% Max Speed reduction. Passive.";
         }
         if (abilityName === "Blood In The Water") {
-          return "While you are ahead of the average pace, increase max speed by <span class='keyword'>" + effectiveAmountDisplay + "</span>%. Passive.";
+          return "While you are ahead of the average pace, increase Max Speed by <span class='keyword'>" + effectiveAmountDisplay + "</span>%. Passive.";
         }
         if (abilityName === "Propulsion") {
           return "Dash <span class='keyword'>" + effectiveAmountDisplay + "</span> meters over .25 seconds. " + cooldownDisplay + " second cooldown.";
@@ -758,43 +758,43 @@ export class LookupService {
           return "Delay your start by 8 seconds. If you still win the race, increase your Coin reward by <span class='keyword'>" + effectiveAmountDisplay + "</span>%. Passive.";
         }
         if (abilityName === "Big Brain") {
-          return "After Bursting through one third of your race paths, increase Power of all remaining racers by <span class='keyword'>" + effectiveAmountDisplay + "</span>%. Passive.";
+          return "After Bursting through one third of your race paths, increase Power Efficiency of all remaining racers by <span class='keyword'>" + effectiveAmountDisplay + "</span>%. Passive.";
         }
         if (abilityName === "Herd Mentality") {
-          return "After completing your leg, <span class='keyword'>" + effectiveAmountDisplay + "</span>% of your remaining stamina is given to the next racer and they start their leg in burst mode. This does not occur if you run out of stamina during your leg. Passive.";
+          return "After completing your leg, <span class='keyword'>" + effectiveAmountDisplay + "</span>% of your remaining Stamina is given to the next racer and they start their leg in Burst mode. This does not occur if you run out of Stamina during your leg. Passive.";
         }
         if (abilityName === "Great Migration") {
-          return "Reduce stamina by 10%. For <span class='keyword'>" + effectiveAmountDisplay + "</span> meters, acceleration is increased by 25% of the amount of stamina lost. " + cooldownDisplay + " second cooldown.";
+          return "Reduce stamina by 10%. For <span class='keyword'>" + effectiveAmountDisplay + "</span> meters, Acceleration Rate is increased by 25% of the amount of stamina lost. " + cooldownDisplay + " second cooldown.";
         }
         if (abilityName === "Special Delivery") {
-          return "Increase all remaining racers’ burst max speed bonus by <span class='keyword'>" + effectiveAmountDisplay + "</span>% of your remaining stamina percentage after completing your leg. This does not occur if you run out of stamina during your leg. Passive.";
+          return "Increase all remaining racers' Burst Max Speed Bonus by <span class='keyword'>" + effectiveAmountDisplay + "</span>% of your remaining Stamina percentage after completing your leg. This does not occur if you run out of Stamina during your leg. Passive.";
         }
         if (abilityName === "Careful Toboggan") {
-          return "Increase adaptability by 40% for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. " + cooldownDisplay + " second cooldown.";
+          return "Increase Adaptability Distance by 60% for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. " + cooldownDisplay + " second cooldown.";
         }
         if (abilityName === "Wild Toboggan") {
-          return "Double the maximum amount of drift per path. Increase acceleration by up to <span class='keyword'>" + effectiveAmountDisplay + "</span>% based on how much you drift. Passive.";
+          return "Double the maximum amount of drift per path. Increase Acceleration Rate by up to <span class='keyword'>" + effectiveAmountDisplay + "</span>% based on how much you drift. Passive.";
         }
         if (abilityName === "Quick Toboggan") {
-          return "Every time you make it through a path without drifting, gain <span class='keyword'>" + effectiveAmountDisplay + "</span>% max speed. Passive.";
+          return "Every time you make it through a path without drifting, gain <span class='keyword'>" + effectiveAmountDisplay + "</span>% Max Speed. Passive.";
         }
         if (abilityName === "Cold Blooded") {
-          return "Increase stamina and focus by 0-50% depending on how close to the center of the volcano you are. Focus boost lasts <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. " + cooldownDisplay + " second cooldown.";
+          return "Increase Stamina and Focus Distance by 0-50% depending on how close to the center of the volcano you are. Focus Distance boost lasts <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. " + cooldownDisplay + " second cooldown.";
         }
         if (abilityName === "Burrow") {
           return "Go underground for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters, dodging lava fall and preventing stumbles. " + cooldownDisplay + " second cooldown.";
         }
         if (abilityName === "Heat Up") {
-          return "Increase Acceleration by 15% for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. This increase doubles every subsequent use this race. " + cooldownDisplay + " second cooldown.";
+          return "Increase Acceleration Rate by 15% for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. This increase doubles every subsequent use this race. " + cooldownDisplay + " second cooldown.";
         }
         if (abilityName === "Trickster") {
-          return "When active, sacrifice 20% of one random stat for 40% of another random stat. Lasts <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. " + cooldownDisplay + " second cooldown.";
+          return "When active, sacrifice 25% of one random stat for 50% of another random stat. Lasts <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. " + cooldownDisplay + " second cooldown.";
         }
         if (abilityName === "Fleeting Speed") {
           return "Increase Max Speed by <span class='keyword'>" + effectiveAmountDisplay + "</span>%. Decrease this bonus by 2% for every percent of the leg you complete. Passive.";
         }
         if (abilityName === "Nine Tails") {
-          return "At the start of each path, increase either Acceleration, Max Speed, Focus, or Adaptability by 10% for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. This effect can stack. Passive.";
+          return "At the start of each path, increase either Acceleration Rate, Max Speed, Focus Distance, or Adaptability Distance by 15% for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. This effect can stack. Passive.";
         }
 
         abilityDescription = this.sanitizer.sanitize(SecurityContext.HTML, this.sanitizer.bypassSecurityTrustHtml(abilityDescription));
