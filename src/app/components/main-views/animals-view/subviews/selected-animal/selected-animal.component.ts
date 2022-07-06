@@ -64,7 +64,7 @@ export class SelectedAnimalComponent implements OnInit {
   orbCells: ResourceValue[]; //for display purposes
   selectedOrb: ResourceValue;
 
-  talentsReleased = true;
+  talentsReleased = false;
   talentTreeOptions: string[];
   selectedTalentTree: string;
   talentTreeDescription: string;
