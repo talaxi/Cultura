@@ -11,6 +11,7 @@ import { Equipment } from "./equipment.model";
 import { IncubatorStatUpgrades } from "./incubator-stat-upgrades.model";
 import { MiscStats } from "./misc-stats.model";
 import { RaceVariables } from "./race-variables.model";
+import { TalentTree } from "./talent-tree.model";
 import { TrackedAnimalStats } from "./tracked-animal-stats.model";
 
 export class Animal {
@@ -51,6 +52,8 @@ export class Animal {
     availableAbilities: Ability[];
     @Type(() => AnimalTraits)
     trait: AnimalTraits;
+    @Type(() => TalentTree)
+    talentTree: TalentTree;
     canTrain: boolean;
     canEquipOrb: boolean;
     totalRacesRun: number; //for tracked stats
@@ -60,6 +63,7 @@ export class Animal {
         this.allTrainingTracks = new AllTrainingTracks();
         this.miscStats = new MiscStats();
         this.trackedAnimalStats = new TrackedAnimalStats();
+        this.talentTree = new TalentTree();
         this.breedLevel = 1;
         this.breedGaugeXp = 0;
         this.breedGaugeMax = 100;

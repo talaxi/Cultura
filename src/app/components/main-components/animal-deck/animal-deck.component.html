@@ -5,7 +5,7 @@
     <span *ngIf="deck.autoRunFreeRace && this.deckNumber !== undefined && this.deckNumber > 0" class="primaryText keyword">
         Auto Run Free Race
     </span>
-    <br/>
+    <br *ngIf="this.deckNumber > 0"/>
     <strong>{{deck.name}}</strong> - <span *ngFor="let animal of deck.selectedAnimals; let i = index;" class="coloredText" [ngClass]="getColorClass(animal)">
         {{animal.name}}<span *ngIf="i < deck.selectedAnimals.length - 1" class="defaultColor"> / </span>
     </span>

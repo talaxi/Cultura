@@ -1,34 +1,44 @@
-<p style="text-align: center;">Coming Soon!</p>
-<!--
-<div class="eventViewDiv">
-    <div class="eventRaceHeader"></div>
-    <app-animal-deck></app-animal-deck>
-    <hr />
-    <div *ngIf="!isEventRaceAvailable">
-        Next Event Race Available In 
-    </div>
-    <div id="eventRace" *ngIf="isEventRaceAvailable">
-        <div (click)="selectEventRace()">
-            <span class="s4Heading">Event Race <strong>{{ eventRaceData.rank }}</strong> </span>
-            <br />
-            <div class="raceDescription">                                
-                <div class="clickableText" [ngbPopover]="popContent"
-                    [disablePopover]="popoverText === ''" triggers="mouseenter:mouseleave" popoverClass="popoverClass">
-                    <p *ngFor="let raceLeg of eventRace.raceLegs">
-                        {{ raceLeg.distance | number : '1.2-2' }} Meters of {{ raceLeg.getTerrainName() }}
-                        <span class="coloredText">{{ raceLeg.getCourseTypeName()
-                            }}</span>
-                    </p>
-                    <p>{{ eventRace.isCompleted ? "Completed" : cannotRace ? "Cannot Run" : "Start" }}
-                    </p>
-                </div>
-            </div>
+<p *ngIf="!eventRaceReleased" class="centered">Coming Soon!</p>
 
-            <ng-template #popContent>
-                <div class="popoverClass">
-                    {{ popoverText }}
+<div *ngIf="eventRaceReleased" class="eventViewDiv centered">
+    <div class="eventRaceHeader"></div>
+    <hr />
+    <div *ngIf="grandPrixUnlocked">
+        <div *ngIf="!isEventRaceAvailable">
+            {{eventRaceNotice}} {{eventRaceTimer}}
+        </div>
+        <div id="grandPrix" *ngIf="isEventRaceAvailable">
+            <div (click)="selectEventRace()">
+                <span class="s4Heading">Grand Prix <strong>{{ grandPrixData.rank }}</strong> </span>
+                <br />
+                <div class="raceDescription">
+                    <div class="clickableText" [ngbPopover]="popContent" [disablePopover]="popoverText === ''"
+                        triggers="mouseenter:mouseleave" popoverClass="popoverClass">
+                        <span class='keyword'>{{ grandPrixData.totalDistance | number : '1.2-2' }} {{
+                            grandPrixData.raceTerrain.getTerrainType() }} Meters</span>
+                        <br />
+                        {{ remainingMeters | number : '1.2-2' }} Meters Remaining
+
+                        <br />
+                        <p>{{ grandPrix.isCompleted ? "Completed" : cannotRace ? "Cannot Run" : "Start" }}
+                        </p>
+                    </div>
                 </div>
-            </ng-template>
-        </div>       
+
+                <div>
+                    <!--make new component that is draggable and pass in the list of animals for it -->
+                    <app-animal-deck></app-animal-deck>
+                </div>
+
+                <ng-template #popContent>
+                    <div class="popoverClass">
+                        {{ popoverText }}
+                    </div>
+                </ng-template>
+            </div>
+        </div>
     </div>
-</div>-->
+    <div *ngIf="!grandPrixUnlocked">
+        Nothing here yet, but maybe as you climb the circuit ranks you might be invited to a new type of race.
+    </div>
+</div>

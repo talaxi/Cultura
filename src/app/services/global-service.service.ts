@@ -1020,7 +1020,7 @@ export class GlobalService {
       this.globalVar.unlockables.set("coaching", true);
 
       returnVal = ["Coaching", "Take charge of your animal's training by giving them some coaching yourself. Visit a barn with an animal assigned and select 'Coach' to get started."];
-      
+
       var amount = 500;
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(5) + amount + " Coins";
     }
@@ -1086,6 +1086,14 @@ export class GlobalService {
 
       returnVal = [amount + " Stat Increasing Food", amount + " Apples, Bananas, Oranges, Turnips, Carrots, and Strawberries"];
 
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(13) + "Grand Prix";
+    }
+    else if (numericValue === 13) {
+      this.globalVar.unlockables.set("grandPrix", true);
+
+      returnVal = ["Grand Prix", "Now that you've climbed the ranks and your racing team has turned some heads, you've received an invite to the Grand Prix invitational. Twice per week, a marathon style race runs over multiple days. Check the 'Event Races' tab to see more info."];
+
+      var renownAmount = 1;
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(15) + "Attraction Specialization";
     }
     else if (numericValue === 15) {
@@ -1154,18 +1162,18 @@ export class GlobalService {
 
       returnVal = ["Duo Races", "A new race type has been unlocked! Race in pairs to complete this long distance race. Success here will generate more interest for your facility, this time drawing in curious researchers. Gain Research Levels that improve incubator results."];
 
-      var CoinsAmount = 5000;
+      var CoinsAmount = 2500;
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(30) + CoinsAmount + " Coins";
     }
     else if (numericValue === 30) {
-      var coinsAmount = 5000;
+      var coinsAmount = 2500;
       var resource = this.globalVar.resources.find(item => item.name === "Coins");
       if (resource === null || resource === undefined)
         this.globalVar.resources.push(new ResourceValue("Coins", coinsAmount));
       else
         resource.amount += coinsAmount;
 
-      returnVal = [coinsAmount + " Coins", ""];      
+      returnVal = [coinsAmount + " Coins", ""];
 
       var amount = 20;
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(33) + amount + " Mangoes";
@@ -1215,6 +1223,19 @@ export class GlobalService {
       }
 
       returnVal = ["Penguin", "The Penguin is a Tundra racing animal that can slide carefully or recklessly."];
+
+      var CoinsAmount = 3500;
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(37) + CoinsAmount + " Coins";
+    }
+    else if (numericValue === 37) {
+      var coinsAmount = 3500;
+      var resource = this.globalVar.resources.find(item => item.name === "Coins");
+      if (resource === null || resource === undefined)
+        this.globalVar.resources.push(new ResourceValue("Coins", coinsAmount));
+      else
+        resource.amount += coinsAmount;
+
+      returnVal = [coinsAmount + " Coins", ""];
 
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(38) + "5 Medals";
     }
@@ -1684,6 +1705,22 @@ export class GlobalService {
     return new Terrain(availableTerrainsList[rng - 1]);
   }
 
+  getRandomGrandPrixTerrain(seed: string) {
+    var availableTerrainsList: TerrainTypeEnum[] = [];
+
+    availableTerrainsList.push(TerrainTypeEnum.Sunny);
+    availableTerrainsList.push(TerrainTypeEnum.Stormy);
+    availableTerrainsList.push(TerrainTypeEnum.Snowfall);
+
+    var rng = 0;
+    if (seed !== null && seed !== undefined)
+      rng = this.utilityService.getRandomSeededInteger(1, availableTerrainsList.length, seed);
+    else
+      rng = this.utilityService.getRandomInteger(1, availableTerrainsList.length);
+
+    return new Terrain(availableTerrainsList[rng - 1]);
+  }
+
   GetCircuitRankValue(circuitRank: string): number {
     var rankValue = 1;
 
@@ -1740,7 +1777,7 @@ export class GlobalService {
       currentRenown = currentRenownResource.amount;
 
     rewards.push(new ResourceValue("Coins", Math.round(baseCoins * (CoinsFactor ** numericRank))));
-    rewards.push(new ResourceValue("Renown", parseFloat(((baseRenown * (renownFactor ** numericRank)) / 100).toFixed(3))));    
+    rewards.push(new ResourceValue("Renown", parseFloat(((baseRenown * (renownFactor ** numericRank)) / 100).toFixed(3))));
 
     return rewards;
   }
@@ -1789,7 +1826,7 @@ export class GlobalService {
 
     var baseRenown = 1.1;
     var renownFactor = 1.03;
-  
+
     rewards.push(new ResourceValue("Coins", Math.round(baseCoins * (CoinsFactor ** numericRank))));
     rewards.push(new ResourceValue("Renown", parseFloat(((baseRenown * (renownFactor ** numericRank)) / 100).toFixed(3))));
 
@@ -2157,169 +2194,200 @@ export class GlobalService {
       1, totalDistance, timeToComplete, this.GenerateLocalRaceRewards(this.globalVar.circuitRank), LocalRaceTypeEnum.Free);
   }
 
-  generateEventRaceSegment() {
-    var numericalRank = this.utilityService.getNumericValueOfCircuitRank(this.globalVar.circuitRank);
-    var timeToComplete = 60;
-    var legLengthCutoff = timeToComplete / 4; //a leg cannot be any shorter than this as a percentage
+  generateGrandPrixSegment(racingAnimal: Animal) {
+    var eventData = this.globalVar.eventRaceData;
+    var numericalRank = this.utilityService.getNumericValueOfCircuitRank(eventData.rank);
 
-    var baseMeters = 90;
-    var factor = 1.125;
-    var additiveAmount = 40 * numericalRank;
-    if (numericalRank >= 11)
-      additiveAmount = 70 * numericalRank;
-
-    var maxRandomFactor = 1.05;
-    var minRandomFactor = 0.8;
-
-    var legMinimumDistance = 10; //as a percentage of 100
-    var legMaximumDistance = 90; //as a percentage of 100
+    var segmentMeters = eventData.totalDistance / eventData.totalSegments;
 
     var raceLegs: RaceLeg[] = [];
 
-    if (numericalRank <= 2) {
-      var leg = new RaceLeg();
-      leg.courseType = RaceCourseTypeEnum.Flatland;
-      leg.terrain = this.getRandomTerrain(leg.courseType);
-      leg.distance = Math.round((baseMeters * (factor ** numericalRank) + additiveAmount) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor));
-      raceLegs.push(leg);
-    }
-    else if (numericalRank <= 10) {
-      var availableCourses: RaceCourseTypeEnum[] = [];
-      availableCourses.push(RaceCourseTypeEnum.Flatland);
-      availableCourses.push(RaceCourseTypeEnum.Mountain);
-      var randomizedCourseList = this.getCourseTypeInRandomOrder(availableCourses);
-
-      var leg1Distance = this.utilityService.getRandomNumber(legMinimumDistance, legMaximumDistance);
-      var leg2Distance = this.utilityService.getRandomNumber(legMinimumDistance, legMaximumDistance);
-      var sum = leg1Distance + leg2Distance;
-      var normalizeValue = timeToComplete / sum;
-      var leg1Normalized = leg1Distance * normalizeValue;
-      var leg2Normalized = leg2Distance * normalizeValue;
-
-      if (leg1Normalized < legLengthCutoff) {
-        leg1Normalized = 0;
-        leg2Normalized = timeToComplete;
-      }
-      else if (leg2Normalized < legLengthCutoff) {
-        leg2Normalized = 0;
-        leg1Normalized = timeToComplete;
-      }
-
-      if (leg1Normalized > 0) {
-        var leg1 = new RaceLeg();
-        leg1.courseType = randomizedCourseList[0];
-        leg1.distance = (Math.round((baseMeters * (factor ** numericalRank) + additiveAmount) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor)) * (leg1Normalized / timeToComplete));
-        leg1.terrain = this.getRandomTerrain(leg1.courseType);
-        raceLegs.push(leg1);
-      }
-
-      if (leg2Normalized > 0) {
-        var leg2 = new RaceLeg();
-        leg2.courseType = randomizedCourseList[1];
-        leg2.distance = (Math.round((baseMeters * (factor ** numericalRank) + additiveAmount) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor)) * (leg2Normalized / timeToComplete));
-        leg2.terrain = this.getRandomTerrain(leg2.courseType);
-        raceLegs.push(leg2);
-      }
-    }
-    else {
-      legLengthCutoff = timeToComplete / 6;
-
-      var availableCourses: RaceCourseTypeEnum[] = [];
-      if (numericalRank < 35) {
-        availableCourses.push(RaceCourseTypeEnum.Flatland);
-        availableCourses.push(RaceCourseTypeEnum.Mountain);
-        availableCourses.push(RaceCourseTypeEnum.Ocean);
-      }
-      else if (numericalRank < 45) {
-        availableCourses.push(RaceCourseTypeEnum.Flatland);
-        availableCourses.push(RaceCourseTypeEnum.Mountain);
-        availableCourses.push(RaceCourseTypeEnum.Ocean);
-        availableCourses.push(RaceCourseTypeEnum.Tundra);
-      }
-      else {
-        availableCourses.push(RaceCourseTypeEnum.Flatland);
-        availableCourses.push(RaceCourseTypeEnum.Mountain);
-        availableCourses.push(RaceCourseTypeEnum.Ocean);
-        availableCourses.push(RaceCourseTypeEnum.Tundra);
-        availableCourses.push(RaceCourseTypeEnum.Volcanic);
-      }
-
-      var randomizedCourseList = this.getCourseTypeInRandomOrder(availableCourses);
-
-      var leg1Distance = this.utilityService.getRandomNumber(legMinimumDistance, legMaximumDistance);
-      var leg2Distance = this.utilityService.getRandomNumber(legMinimumDistance, legMaximumDistance);
-      var leg3Distance = this.utilityService.getRandomNumber(legMinimumDistance, legMaximumDistance);
-      var sum = leg1Distance + leg2Distance + leg3Distance;
-      var normalizeValue = timeToComplete / sum;
-      var leg1Normalized = leg1Distance * normalizeValue;
-      var leg2Normalized = leg2Distance * normalizeValue;
-      var leg3Normalized = leg3Distance * normalizeValue;
-
-      if (leg1Normalized < legLengthCutoff) {
-        leg2Normalized += leg1Normalized / 2;
-        leg3Normalized += leg1Normalized / 2;
-        leg1Normalized = 0;
-      }
-      else if (leg2Normalized < legLengthCutoff) {
-        leg1Normalized += leg2Normalized / 2;
-        leg3Normalized += leg2Normalized / 2;
-        leg2Normalized = 0;
-      }
-      else if (leg3Normalized < legLengthCutoff) {
-        leg1Normalized += leg3Normalized / 2;
-        leg2Normalized += leg3Normalized / 2;
-        leg3Normalized = 0;
-      }
-
-      if (leg1Normalized > 0) {
-        var leg1 = new RaceLeg();
-        leg1.courseType = randomizedCourseList[0];
-        leg1.distance = (Math.round((baseMeters * (factor ** numericalRank) + additiveAmount) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor)) * (leg1Normalized / timeToComplete));
-        leg1.terrain = this.getRandomTerrain(leg1.courseType);
-        raceLegs.push(leg1);
-      }
-
-      if (leg2Normalized > 0) {
-        var leg2 = new RaceLeg();
-        leg2.courseType = randomizedCourseList[1];
-        leg2.distance = (Math.round((baseMeters * (factor ** numericalRank) + additiveAmount) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor)) * (leg2Normalized / timeToComplete));
-        leg2.terrain = this.getRandomTerrain(leg2.courseType);
-        raceLegs.push(leg2);
-      }
-
-      if (leg3Normalized > 0) {
-        var leg3 = new RaceLeg();
-        leg3.courseType = randomizedCourseList[2];
-        leg3.distance = (Math.round((baseMeters * (factor ** numericalRank) + additiveAmount) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor)) * (leg3Normalized / timeToComplete));
-        leg3.terrain = this.getRandomTerrain(leg3.courseType);
-        raceLegs.push(leg3);
-      }
-    }
-
-    var totalDistance = 0;
-
-    var primaryDeck = this.globalVar.animalDecks.find(item => item.isPrimaryDeck);
-    if (primaryDeck !== undefined)
-      raceLegs = this.reorganizeLegsByDeckOrder(raceLegs, primaryDeck);
+    var leg = new RaceLeg();
+    leg.courseType = racingAnimal.raceCourseType;
+    leg.terrain = this.getRandomTerrain(leg.courseType);
+    leg.distance = segmentMeters;
+    raceLegs.push(leg);
 
     raceLegs.forEach(leg => {
-      totalDistance += leg.distance;
-    });
-
-    raceLegs.forEach(leg => {
-      leg.pathData = this.GenerateRaceLegPaths(leg, totalDistance);
+      leg.pathData = this.GenerateRaceLegPaths(leg, segmentMeters);
     });
 
     return new Race(raceLegs, this.globalVar.circuitRank, false,
-      1, totalDistance, timeToComplete, this.GenerateLocalRaceRewards(this.globalVar.circuitRank), LocalRaceTypeEnum.Free);
+      1, segmentMeters, eventData.eventRaceTimeLength, this.GenerateLocalRaceRewards(this.globalVar.circuitRank), LocalRaceTypeEnum.Free);
   }
 
+  getEventStartDateTime() {
+    var currentDate = new Date();
+
+    var currentDay = currentDate.getDay();
+    var currentHour = currentDate.getHours();
+    var eventData = this.globalVar.eventRaceData;
+
+    var event1StartDate = new Date();
+    var event1EndDate = new Date();
+    var event2StartDate = new Date();
+    var event2EndDate = new Date();
+
+    if (currentDate.getDay() === 0 && currentHour < eventData.weekendEndHour)
+      event1StartDate = new Date(new Date().setDate(new Date().getDate() - 7 - currentDay + eventData.weekStartDay));
+    else
+      event1StartDate = new Date(new Date().setDate(new Date().getDate() - currentDay + eventData.weekStartDay));
+    event1StartDate.setHours(event1StartDate.getHours() - currentHour + eventData.weekStartHour);
+    event1StartDate.setMinutes(0, 0, 0);
+
+    if (currentDate.getDay() === 0 && currentHour < eventData.weekendEndHour)
+      event1EndDate = new Date(new Date().setDate(new Date().getDate() - 7 - currentDay + eventData.weekEndDay));
+    else
+      event1EndDate = new Date(new Date().setDate(new Date().getDate() - currentDay + eventData.weekEndDay));
+    event1EndDate.setHours(event1EndDate.getHours() - currentHour + eventData.weekEndHour);
+    event1EndDate.setMinutes(0, 0, 0);
+
+    if (currentDate.getDay() === 0 && currentHour < eventData.weekendEndHour)
+      event2StartDate = new Date(new Date().setDate(new Date().getDate() - 7 - currentDay + eventData.weekendStartDay));
+    else
+      event2StartDate = new Date(new Date().setDate(new Date().getDate() - currentDay + eventData.weekendStartDay));
+    event2StartDate.setHours(event2StartDate.getHours() - currentHour + eventData.weekendStartHour);
+    event2StartDate.setMinutes(0, 0, 0);
+    //need to move into next week since sunday is first of the week
+
+    if (currentDate.getDay() === 0 && currentHour < eventData.weekendEndHour)
+      event2EndDate = new Date(new Date().setDate(new Date().getDate() - currentDay + eventData.weekendEndDay));
+    else
+      event2EndDate = new Date(new Date().setDate(new Date().getDate() + 7 - currentDay + eventData.weekendEndDay));
+    event2EndDate.setHours(event2EndDate.getHours() - currentHour + eventData.weekendEndHour);
+    event2EndDate.setMinutes(0, 0, 0);
+
+    if ((currentDate >= event1StartDate && currentDate <= event1EndDate) ||
+      (currentDate >= event2StartDate && currentDate <= event2EndDate)) {
+      return 0;
+    }
+
+    if (currentDate > event1EndDate) {
+      return event2StartDate;
+    }
+    else {
+      return event1StartDate;
+    }
+  }
+
+  //return time in seconds to next event
   getTimeToEventRace() {
-    
+    var currentDate = new Date();
+    //var currentDate = new Date(new Date().setDate(new Date().getDate() + 6));//new Date();    
+    //currentDate.setHours(23);
+    //console.log(currentDate);
+    var currentDay = currentDate.getDay();
+    var currentHour = currentDate.getHours();
+    var eventData = this.globalVar.eventRaceData;
+
+    var event1StartDate = new Date();
+    var event1EndDate = new Date();
+    var event2StartDate = new Date();
+    var event2EndDate = new Date();
+
+    if (currentDate.getDay() === 0 && currentHour < eventData.weekendEndHour)
+      event1StartDate = new Date(new Date().setDate(new Date().getDate() - 7 - currentDay + eventData.weekStartDay));
+    else
+      event1StartDate = new Date(new Date().setDate(new Date().getDate() - currentDay + eventData.weekStartDay));
+    event1StartDate.setHours(event1StartDate.getHours() - currentHour + eventData.weekStartHour);
+    event1StartDate.setMinutes(0, 0, 0);
+
+    if (currentDate.getDay() === 0 && currentHour < eventData.weekendEndHour)
+      event1EndDate = new Date(new Date().setDate(new Date().getDate() - 7 - currentDay + eventData.weekEndDay));
+    else
+      event1EndDate = new Date(new Date().setDate(new Date().getDate() - currentDay + eventData.weekEndDay));
+    event1EndDate.setHours(event1EndDate.getHours() - currentHour + eventData.weekEndHour);
+    event1EndDate.setMinutes(0, 0, 0);
+
+    if (currentDate.getDay() === 0 && currentHour < eventData.weekendEndHour)
+      event2StartDate = new Date(new Date().setDate(new Date().getDate() - 7 - currentDay + eventData.weekendStartDay));
+    else
+      event2StartDate = new Date(new Date().setDate(new Date().getDate() - currentDay + eventData.weekendStartDay));
+    event2StartDate.setHours(event2StartDate.getHours() - currentHour + eventData.weekendStartHour);
+    event2StartDate.setMinutes(0, 0, 0);
+    //need to move into next week since sunday is first of the week
+
+    if (currentDate.getDay() === 0 && currentHour < eventData.weekendEndHour)
+      event2EndDate = new Date(new Date().setDate(new Date().getDate() - currentDay + eventData.weekendEndDay));
+    else
+      event2EndDate = new Date(new Date().setDate(new Date().getDate() + 7 - currentDay + eventData.weekendEndDay));
+    event2EndDate.setHours(event2EndDate.getHours() - currentHour + eventData.weekendEndHour);
+    event2EndDate.setMinutes(0, 0, 0);
+
+    if ((currentDate >= event1StartDate && currentDate <= event1EndDate) ||
+      (currentDate >= event2StartDate && currentDate <= event2EndDate)) {
+      return 0;
+    }
+
+    if (currentDate > event1EndDate) {
+      return (event2StartDate.getTime() - currentDate.getTime()) / 1000;
+    }
+    else {
+      return (event1StartDate.getTime() - currentDate.getTime()) / 1000;
+    }
   }
 
-  initialEventRaceSetup() {
+  getRemainingEventRaceTime() {
+    var currentDate = new Date();
+    //var currentDate = new Date(new Date().setDate(new Date().getDate() + 6));//new Date();    
+    //currentDate.setHours(23);
+    //console.log(currentDate);
+    var currentDay = currentDate.getDay();
+    var currentHour = currentDate.getHours();
+    var eventData = this.globalVar.eventRaceData;
 
+    var event1StartDate = new Date();
+    var event1EndDate = new Date();
+    var event2StartDate = new Date();
+    var event2EndDate = new Date();
+
+    if (currentDate.getDay() === 0 && currentHour < eventData.weekendEndHour)
+      event1StartDate = new Date(new Date().setDate(new Date().getDate() - 7 - currentDay + eventData.weekStartDay));
+    else
+      event1StartDate = new Date(new Date().setDate(new Date().getDate() - currentDay + eventData.weekStartDay));
+    event1StartDate.setHours(event1StartDate.getHours() - currentHour + eventData.weekStartHour);
+    event1StartDate.setMinutes(0, 0, 0);
+
+    if (currentDate.getDay() === 0 && currentHour < eventData.weekendEndHour)
+      event1EndDate = new Date(new Date().setDate(new Date().getDate() - 7 - currentDay + eventData.weekEndDay));
+    else
+      event1EndDate = new Date(new Date().setDate(new Date().getDate() - currentDay + eventData.weekEndDay));
+    event1EndDate.setHours(event1EndDate.getHours() - currentHour + eventData.weekEndHour);
+    event1EndDate.setMinutes(0, 0, 0);
+
+    if (currentDate.getDay() === 0 && currentHour < eventData.weekendEndHour)
+      event2StartDate = new Date(new Date().setDate(new Date().getDate() - 7 - currentDay + eventData.weekendStartDay));
+    else
+      event2StartDate = new Date(new Date().setDate(new Date().getDate() - currentDay + eventData.weekendStartDay));
+    event2StartDate.setHours(event2StartDate.getHours() - currentHour + eventData.weekendStartHour);
+    event2StartDate.setMinutes(0, 0, 0);
+    //need to move into next week since sunday is first of the week
+
+    if (currentDate.getDay() === 0 && currentHour < eventData.weekendEndHour)
+      event2EndDate = new Date(new Date().setDate(new Date().getDate() - currentDay + eventData.weekendEndDay));
+    else
+      event2EndDate = new Date(new Date().setDate(new Date().getDate() + 7 - currentDay + eventData.weekendEndDay));
+    event2EndDate.setHours(event2EndDate.getHours() - currentHour + eventData.weekendEndHour);
+    event2EndDate.setMinutes(0, 0, 0);
+
+    if ((currentDate >= event1StartDate && currentDate <= event1EndDate) ||
+      (currentDate >= event2StartDate && currentDate <= event2EndDate)) {
+      if (currentDate > event2StartDate) {
+        return (event2EndDate.getTime() - currentDate.getTime()) / 1000;
+      }
+      else {
+        return (event1EndDate.getTime() - currentDate.getTime()) / 1000;
+      }
+    }
+
+    return 0;
+  }
+
+  initialGrandPrixSetup(eventStartDateString: string) {
+    var grandPrix = this.globalVar.eventRaceData;
+
+    grandPrix.totalDistance = 500000000;
+    grandPrix.raceTerrain = this.getRandomGrandPrixTerrain(eventStartDateString);
   }
 
   generateTrackRace(animal: Animal, type: TrackRaceTypeEnum) {
@@ -2630,23 +2698,19 @@ export class GlobalService {
       var incubatorUpgradeLv3 = this.globalVar.resources.find(item => item.name === "Incubator Upgrade Lv 3");
       var incubatorUpgradeLv4 = this.globalVar.resources.find(item => item.name === "Incubator Upgrade Lv 4");
 
-      if (incubatorUpgradeLv4 !== null && incubatorUpgradeLv4 !== undefined)
-      {
+      if (incubatorUpgradeLv4 !== null && incubatorUpgradeLv4 !== undefined) {
         if (increasedAmount > .1)
           increasedAmount = .1;
       }
-      else if (incubatorUpgradeLv3 !== null && incubatorUpgradeLv3 !== undefined)
-      {
+      else if (incubatorUpgradeLv3 !== null && incubatorUpgradeLv3 !== undefined) {
         if (increasedAmount > .05)
           increasedAmount = .05;
       }
-      else if (incubatorUpgradeLv2 !== null && incubatorUpgradeLv2 !== undefined)
-      {
+      else if (incubatorUpgradeLv2 !== null && incubatorUpgradeLv2 !== undefined) {
         if (increasedAmount > .025)
           increasedAmount = .025;
       }
-      else if (incubatorUpgradeLv1 !== null && incubatorUpgradeLv1 !== undefined)
-      {
+      else if (incubatorUpgradeLv1 !== null && incubatorUpgradeLv1 !== undefined) {
         if (increasedAmount > .01)
           increasedAmount = .01;
       }
@@ -2738,6 +2802,7 @@ export class GlobalService {
     this.globalVar.unlockables.set("monoRace", false);
     this.globalVar.unlockables.set("duoRace", false);
     this.globalVar.unlockables.set("rainbowRace", false);
+    this.globalVar.unlockables.set("grandPrix", false);
     this.globalVar.unlockables.set("orbs", false);
     this.globalVar.unlockables.set("barnRow2", false);
     this.globalVar.unlockables.set("barnRow3", false);
@@ -2927,6 +2992,8 @@ export class GlobalService {
     }
     else
       this.globalVar.resources.push(this.initializeService.initializeResource("Medals", circuitRankNumeric, ShopItemTypeEnum.Resources));
+
+    this.globalVar.resources.push(this.initializeService.initializeResource("Talent Points", 10, ShopItemTypeEnum.Resources));
 
     if (this.globalVar.resources.some(item => item.name === "Renown")) {
       var renown = this.globalVar.resources.find(item => item.name === "Renown");

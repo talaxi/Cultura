@@ -30,3 +30,6 @@
     cursor: not-allowed !important;
 }
   
+.centered {
+    text-align: center;
+}

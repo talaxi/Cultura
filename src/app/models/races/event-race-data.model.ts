@@ -1,3 +1,5 @@
+import { Terrain } from "./terrain.model";
+
 export class EventRaceData {
     weekStartDay: number;
     weekStartHour: number;
@@ -10,9 +12,12 @@ export class EventRaceData {
     eventRaceTimeLength: number;
 
     rank: string;
-    timeRemaining: string; 
+    raceTerrain: Terrain;
     totalDistance: number;
-    remainingDistance: number;  
+    distanceCovered: number;  
+    segmentTime: number;
+    totalSegments: number;
+    segmentsCompleted: number;    
     
     constructor() {
         this.weekStartDay = 2;//tues 9 am to thurs 12 pm (noon)
@@ -20,9 +25,12 @@ export class EventRaceData {
         this.weekEndDay = 4;
         this.weekEndHour = 12;
         
-        this.weekStartDay = 5;//fri 8 pm to sun 11 pm
-        this.weekStartHour = 20;
-        this.weekEndDay = 0;
-        this.weekEndHour = 23;
+        this.weekendStartDay = 5;//fri 8 pm to sun 11 pm
+        this.weekendStartHour = 20;
+        this.weekendEndDay = 0;
+        this.weekendEndHour = 23;
+
+        this.distanceCovered = 0;
+        this.rank = "Z";
     }
 }

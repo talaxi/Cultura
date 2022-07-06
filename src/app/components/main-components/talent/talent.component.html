@@ -1,0 +1,18 @@
+<div class="talent">
+    <div class="header keyword">
+        <span>Sprint Column {{column}} Row {{row}}</span>
+    </div>
+
+    <div class="content">
+        <div *ngIf="pointsNeededInColumn > 0"><em>{{pointsNeededInColumn}} points needed in this column to
+                unlock</em></div>
+        <br />
+        <div class="description" [innerHTML]="talentDescription">
+        </div>
+        <br />
+        <div class="footer">
+            {{pointsInTalent}} / {{totalPossiblePoints}} <button (click)="spendTalentPoint()"
+                [disabled]="!hasTalentPoint || !hasEnoughPointsInColumn">Upgrade</button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,17 @@
+.header
+{
+  background-color: var(--background-tertiary);
+  border: 2px solid;
+  border-color: var(--foreground-default);
+  text-align: center;
+  color: var(--foreground-quaternary);
+}
+
+.content {
+    margin: 1rem;
+}
+
+.footer {
+    display: flex;
+    justify-content: space-between;
+}

@@ -16,6 +16,7 @@ import { Race } from '../models/races/race.model';
 import { Terrain } from '../models/races/terrain.model';
 import { ResourceValue } from '../models/resources/resource-value.model';
 import { ShopItemTypeEnum } from '../models/shop-item-type-enum.model';
+import { TalentTreeTypeEnum } from '../models/talent-tree-type-enum.model';
 import { TerrainTypeEnum } from '../models/terrain-type-enum.model';
 import { TrackRaceTypeEnum } from '../models/track-race-type-enum.model';
 import { TrainingOption } from '../models/training/training-option.model';
@@ -996,6 +997,17 @@ export class LookupService {
     return BarnSpecializationEnum.None;
   }
 
+  convertTalentTreeNameToEnum(talentTreeName: string): TalentTreeTypeEnum {
+    if (talentTreeName === "Sprint")
+      return TalentTreeTypeEnum.sprint;
+    if (talentTreeName === "Support")
+      return TalentTreeTypeEnum.support;
+    if (talentTreeName === "Long Distance")
+      return TalentTreeTypeEnum.longDistance;
+
+    return TalentTreeTypeEnum.none;
+  }
+
   convertSpecializationEnumToName(specializationEnum: BarnSpecializationEnum) {
     if (specializationEnum === BarnSpecializationEnum.BreedingGrounds)
       return "Breeding Grounds";
@@ -1377,5 +1389,228 @@ export class LookupService {
       return true;
 
     return false;
+  }
+
+  getTalentTreeNames() {
+    var talentTrees = [];
+
+    talentTrees.push("Sprint");
+    talentTrees.push("Support");
+    talentTrees.push("Long Distance");
+
+    return talentTrees;
+  }
+
+  getInDepthTalentTreeDescription(talentTree: string) {
+    var description = "";
+
+    if (talentTree === "Sprint") {
+      description = "Sprinters excel at going short distances quickly. Whether it's through chaining together quick Bursts or powerful abilities, these racers will leave others in the dust at the starting line. Recommended for when you want to get the most out of Burst effects and high acceleration.";
+    }
+    else if (talentTree === "Support") {
+      description = "Supporters excel when working alongside other animals. They have a special way of encouraging the racers after and sometimes before them to reach new limits. Recommended for when you want to get the most out of Relay effects.";
+    }
+    else if (talentTree === "Long Distance") {
+      description = "Long Distance Racers excel when given time to ramp up and go the distance. These racers manage their stamina well and can reach incredible speeds over time. Recommended for racers with high max speed and that have abilities that improve over time.";
+    }
+
+    return description;
+  }
+
+  getTalentDescription(row: number, column: number, talentTreeType: TalentTreeTypeEnum, numberOfPoints?: number) {
+    var description = "";
+    if (numberOfPoints === null || numberOfPoints === undefined)
+      numberOfPoints = 1;
+
+    if (talentTreeType === TalentTreeTypeEnum.sprint) {
+      if (row === 0 && column === 0)
+        description = "Increase Adaptability stat gain from training by <span class='keyword'>" + numberOfPoints + "</span>%.";
+      if (row === 1 && column === 0)
+        description = "Increase Adaptability Distance by <span class='keyword'>" + 5 * numberOfPoints + "</span>% until you lose focus for the first time.";
+      if (row === 2 && column === 0)
+        description = "Increase Adaptability Distance gain from Adaptability stat by <span class='keyword'>" + numberOfPoints + "</span>%.";
+      if (row === 3 && column === 0)
+        description = "Every time you make it through a special path without stumbling, enter a Burst that lasts <span class='keyword'>" + 5 * numberOfPoints + "</span>% as long as normal.";
+
+      if (row === 0 && column === 1)
+      description = "Increase Acceleration stat gain from training by <span class='keyword'>" + numberOfPoints + "</span>%.";
+      if (row === 1 && column === 1)
+        description = "If velocity exceeds Max Speed while bursting, increase remaining burst distance by <span class='keyword'>" + 5 * numberOfPoints + "</span>%.";
+      if (row === 2 && column === 1)
+        description = "Increase Acceleration Rate gain from Acceleration stat by <span class='keyword'>" + numberOfPoints + "</span>%.";
+      if (row === 3 && column === 1)
+        description = "**Every second you are at or beyond max speed, increase Adaptability Distance by <span class='keyword'>" + numberOfPoints + "</span>% for the rest of the race.**";
+
+      if (row === 0 && column === 2)
+      description = "Increase Power stat gain from training by <span class='keyword'>" + numberOfPoints + "</span>%.";
+      if (row === 1 && column === 2)
+        description = "Increase Power Efficiency by <span class='keyword'>" + 5 * numberOfPoints + "</span>%, but consume stamina <span class='keyword'>" + 5 * numberOfPoints + "</span>% faster.";
+      if (row === 2 && column === 2)
+        description = "Increase Power Efficiency gain from Power stat by <span class='keyword'>" + numberOfPoints + "</span>%.";
+      if (row === 3 && column === 2)
+        description = "The first time you use an ability every race, the efficiency is increased by <span class='keyword'>" + 5 * numberOfPoints + "</span>%.";
+    }
+    if (talentTreeType === TalentTreeTypeEnum.support) {
+      if (row === 0 && column === 0)
+        description = "Increase Relay Animal's Adaptability Distance by <span class='keyword'>" + numberOfPoints + "</span>%.";
+      if (row === 1 && column === 0)
+        description = "The racer prior to you gains <span class='keyword'>" + 3 * numberOfPoints + "</span>% of any relay effects you provide.";
+      if (row === 2 && column === 0)
+        description = "Increase Relay Animal's Max Speed by <span class='keyword'>" + numberOfPoints + "</span>%.";
+      if (row === 3 && column === 0)
+        description = "Increase the effectiveness of your Relay effects by <span class='keyword'>" + 2 * numberOfPoints + "</span>%.";
+
+      if (row === 0 && column === 1)
+      description = "Increase Relay Animal's Acceleration Rate by <span class='keyword'>" + numberOfPoints + "</span>%.";
+      if (row === 1 && column === 1)
+        description = "Increase Burst Distance of next racer by <span class='keyword'>" + 5 * numberOfPoints + "</span>% of your Burst Distance on Relay.";
+      if (row === 2 && column === 1)
+        description = "Increase Relay Animal's Stamina by <span class='keyword'>" + numberOfPoints + "</span>%.";
+      if (row === 3 && column === 1)
+        description = "Increase Burst Chance of next racer by <span class='keyword'>" + 3 * numberOfPoints + "</span>% of your Burst Chance on Relay.";
+
+      if (row === 0 && column === 2)
+      description = "Increase Relay Animal's Power Efficiency by <span class='keyword'>" + numberOfPoints + "</span>%.";
+      if (row === 1 && column === 2)
+        description = "For the first <span class='keyword'>" + numberOfPoints + "</span>% of your Relay Animal's leg, double their Relay effects.";
+      if (row === 2 && column === 2)
+        description = "Increase Relay Animal's Focus Distance by <span class='keyword'>" + numberOfPoints + "</span>%.";
+      if (row === 3 && column === 2)
+        description = "Increase Relay Animal's Ability Efficiency by <span class='keyword'>" + 2 * numberOfPoints + "</span>%.";
+    }
+    if (talentTreeType === TalentTreeTypeEnum.longDistance) {
+      if (row === 0 && column === 0)
+        description = "Increase Focus stat gain from training by <span class='keyword'>" + numberOfPoints + "</span>%.";
+      if (row === 1 && column === 0)
+        description = "Every burst increases Burst Velocity Bonus by <span class='keyword'>" + .5 * numberOfPoints + "</span>%.";
+      if (row === 2 && column === 0)
+        description = "Increase Focus Distance gain from Focus stat by <span class='keyword'>" + numberOfPoints + "</span>%.";
+      if (row === 3 && column === 0)
+        description = "Instead of reducing velocity to 10% when losing focus, reduce to <span class='keyword'>" + 10 + (2 * numberOfPoints) + "</span>%.";
+
+      if (row === 0 && column === 1)
+      description = "Increase Max Speed stat gain from training by <span class='keyword'>" + numberOfPoints + "</span>%.";
+      if (row === 1 && column === 1)
+        description = "While your velocity is 25% of your Max Speed or below, increase your Acceleration Rate by <span class='keyword'>" + 5 * numberOfPoints + "</span>%.";
+      if (row === 2 && column === 1)
+        description = "Increase Max Speed gain from Speed stat by <span class='keyword'>" + numberOfPoints + "</span>%.";
+      if (row === 3 && column === 1)
+        description = "After surpassing <span class='keyword'>" + .5 * numberOfPoints + "</span>% of your Max Speed, your velocity can no longer drop below it. All calculations consider this to be 0% of your velocity.";
+
+      if (row === 0 && column === 2)
+      description = "Increase Endurance stat gain from training by <span class='keyword'>" + numberOfPoints + "</span>%.";
+      if (row === 1 && column === 2)
+        description = "While stamina is below 35%, reduce stamina consumption by <span class='keyword'>" + 5 * numberOfPoints + "</span>%.";
+      if (row === 2 && column === 2)
+        description = "Increase Stamina gain from Endurance stat by <span class='keyword'>" + numberOfPoints + "</span>%.";
+      if (row === 3 && column === 2)
+        description = "When stamina drops below 50% for the first time, increase the race time by <span class='keyword'>" + numberOfPoints + "</span>% (maximum of 1 minute).";
+    }
+
+    return description;
+  }
+
+  getTotalPossiblePointsByRowColumn(row: number, column: number, talentTreeType: TalentTreeTypeEnum) {
+    var points = 0;
+
+    if (talentTreeType === TalentTreeTypeEnum.sprint) {
+      if (row === 0 && column === 0)
+        points = 999;
+      if (row === 1 && column === 0)
+        points = 10;
+      if (row === 2 && column === 0)
+        points = 999;
+      if (row === 3 && column === 0)
+        points = 10;
+
+      if (row === 0 && column === 1)
+        points = 999;
+      if (row === 1 && column === 1)
+        points = 10;
+      if (row === 2 && column === 1)
+        points = 999;
+      if (row === 3 && column === 1)
+        points = 10;
+
+      if (row === 0 && column === 2)
+        points = 999;
+      if (row === 1 && column === 2)
+        points = 10;
+      if (row === 2 && column === 2)
+        points = 999;
+      if (row === 3 && column === 2)
+        points = 10;
+    }
+    if (talentTreeType === TalentTreeTypeEnum.support) {
+      if (row === 0 && column === 0)
+        points = 999;
+      if (row === 1 && column === 0)
+        points = 10;
+      if (row === 2 && column === 0)
+        points = 999;
+      if (row === 3 && column === 0)
+        points = 10;
+
+      if (row === 0 && column === 1)
+        points = 999;
+      if (row === 1 && column === 1)
+        points = 10;
+      if (row === 2 && column === 1)
+        points = 999;
+      if (row === 3 && column === 1)
+        points = 10;
+
+      if (row === 0 && column === 2)
+        points = 999;
+      if (row === 1 && column === 2)
+        points = 10;
+      if (row === 2 && column === 2)
+        points = 999;
+      if (row === 3 && column === 2)
+        points = 10;
+    }
+    if (talentTreeType === TalentTreeTypeEnum.longDistance) {
+      if (row === 0 && column === 0)
+        points = 999;
+      if (row === 1 && column === 0)
+        points = 10;
+      if (row === 2 && column === 0)
+        points = 999;
+      if (row === 3 && column === 0)
+        points = 10;
+
+      if (row === 0 && column === 1)
+        points = 999;
+      if (row === 1 && column === 1)
+        points = 10;
+      if (row === 2 && column === 1)
+        points = 999;
+      if (row === 3 && column === 1)
+        points = 10;
+
+      if (row === 0 && column === 2)
+        points = 999;
+      if (row === 1 && column === 2)
+        points = 10;
+      if (row === 2 && column === 2)
+        points = 999;
+      if (row === 3 && column === 2)
+        points = 10;
+    }
+
+    return points;
+  }
+
+  getTalentPointsAvailableToAnimal(animal: Animal) {
+    var availableTalentPoints = 0;
+    availableTalentPoints = this.getResourceByName("Talent Points");
+
+    availableTalentPoints += animal.miscStats.bonusTalents;
+    availableTalentPoints -= animal.talentTree.getTotalSpentPoints();
+
+    if (availableTalentPoints <= 0)
+      availableTalentPoints = 0;
+
+    return availableTalentPoints;
   }
 }

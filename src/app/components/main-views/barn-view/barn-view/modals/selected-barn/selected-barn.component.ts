@@ -69,12 +69,12 @@ export class SelectedBarnComponent implements OnInit {
   keyEvent(event: KeyboardEvent) {
     var availableBarns = this.lookupService.getAvailableBarns().filter(item => item !== undefined);
     var indexOfCurrentBarn = availableBarns.findIndex(item => this.selectedBarnNumber === item!.barnNumber);
-    
+
     if (indexOfCurrentBarn > -1) {
-      if (event.key === "ArrowLeft") {        
+      if (event.key === "ArrowLeft") {
         var indexOfNewBarn = indexOfCurrentBarn - 1;
         if (indexOfNewBarn < 0)
-        indexOfNewBarn = availableBarns.length - 1;
+          indexOfNewBarn = availableBarns.length - 1;
 
         var newBarn = availableBarns[indexOfNewBarn]!;
         this.componentCommunicationService.setBarnView(NavigationEnum.barn, newBarn.barnNumber);
@@ -83,7 +83,7 @@ export class SelectedBarnComponent implements OnInit {
       else if (event.key === "ArrowRight") {
         var indexOfNewBarn = indexOfCurrentBarn + 1;
         if (indexOfNewBarn === availableBarns.length)
-        indexOfNewBarn = 0;
+          indexOfNewBarn = 0;
 
         var newBarn = availableBarns[indexOfNewBarn]!;
         this.componentCommunicationService.setBarnView(NavigationEnum.barn, newBarn.barnNumber);
@@ -484,10 +484,9 @@ export class SelectedBarnComponent implements OnInit {
     var requiredResources = this.lookupService.getResourcesForBarnUpgrade(this.barn.barnUpgrades.barnLevel);
     var canBuy = this.canUpgradeBarn(requiredResources);
 
-    if (!canBuy)
-    {
+    if (!canBuy) {
       alert("You've run into an error! Please try again. If you have the time, please export your data under the Settings tab and send me the data and any relevant info at CulturaIdle@gmail.com. Thank you!");
-      return; 
+      return;
     }
 
     if (this.barn.barnUpgrades.barnLevel === 9) {
@@ -555,8 +554,8 @@ export class SelectedBarnComponent implements OnInit {
 
     if (this.barn.barnUpgrades.barnLevel >= 1)
       popover = "Barn Upgrades: \n"
-    
-      //TODO: Condense this entire if condition into the getspecializationpopovertext call
+
+    //TODO: Condense this entire if condition into the getspecializationpopovertext call
     if (this.barn.barnUpgrades.specialization === BarnSpecializationEnum.TrainingFacility) {
       if (this.barn.barnUpgrades.specializationLevel <= 20)
         popover += "Training Time Reduction: " + this.barn.barnUpgrades.specializationLevel + "%\n";
@@ -630,6 +629,11 @@ export class SelectedBarnComponent implements OnInit {
   }
 
   selectSpecialization() {
+    if (this.selectedSpecialization === "" || this.selectedSpecialization === null || this.selectedSpecialization === undefined) {
+      alert("You must select a specialization.");
+      return;
+    }
+
     var requiredResources = this.lookupService.getResourcesForBarnUpgrade(this.barn.barnUpgrades.barnLevel);
     requiredResources.forEach(resource => {
       this.lookupService.spendResourceByName(resource.name, resource.amount);
@@ -669,7 +673,7 @@ export class SelectedBarnComponent implements OnInit {
     }
   }
 
-  resetSelectedBarnInfo(newBarn: Barn) {    
+  resetSelectedBarnInfo(newBarn: Barn) {
     this.specializationOptions = this.lookupService.getAllBarnSpecializations();
     this.upgradeText = "Upgrade";
     this.barnSpecializationsUnlocked = this.lookupService.isItemUnlocked("barnSpecializations");
@@ -705,7 +709,7 @@ export class SelectedBarnComponent implements OnInit {
             'tundraColor': this.associatedAnimal.getRaceCourseType() === 'Tundra',
             'volcanicColor': this.associatedAnimal.getRaceCourseType() === 'Volcanic'
           };
-          
+
           this.availableTrainings = this.GetAvailableTrainingOptions(associatedAnimal);
 
           if (this.existingTraining !== undefined && this.existingTraining !== null) {
@@ -721,7 +725,7 @@ export class SelectedBarnComponent implements OnInit {
 
         this.componentCommunicationService.setBarnView(NavigationEnum.barn, 0);
 
-        this.subscription = this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {          
+        this.subscription = this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {
           if (!this.barn.isLocked) {
             var associatedAnimal = this.globalService.globalVar.animals.find(item => item.associatedBarnNumber == this.selectedBarnNumber);
             if (associatedAnimal === undefined || associatedAnimal === null) {

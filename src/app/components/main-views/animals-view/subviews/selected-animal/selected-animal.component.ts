@@ -6,6 +6,7 @@ import { Animal } from 'src/app/models/animals/animal.model';
 import { NavigationEnum } from 'src/app/models/navigation-enum.model';
 import { ResourceValue } from 'src/app/models/resources/resource-value.model';
 import { ShopItemTypeEnum } from 'src/app/models/shop-item-type-enum.model';
+import { TalentTreeTypeEnum } from 'src/app/models/talent-tree-type-enum.model';
 import { ComponentCommunicationService } from 'src/app/services/component-communication.service';
 import { GlobalService } from 'src/app/services/global-service.service';
 import { LookupService } from 'src/app/services/lookup.service';
@@ -29,6 +30,7 @@ export class SelectedAnimalComponent implements OnInit {
   breedLevelPopover: string;
   breedDescriptionPopover: string;
   colorConditional: any;
+  borderColorConditional: any;
   editingName: boolean;
   newName: string;
   selectedAbility: Ability;
@@ -40,6 +42,7 @@ export class SelectedAnimalComponent implements OnInit {
   areTalentsAvailable = false;
   orbIsUnlocked = false;
   assignedBarnName: string;
+  talentTreeTypeEnum = TalentTreeTypeEnum;
 
   ability1: Ability;
   ability2: Ability;
@@ -60,6 +63,15 @@ export class SelectedAnimalComponent implements OnInit {
   orbRows: ResourceValue[][]; //for display purposes
   orbCells: ResourceValue[]; //for display purposes
   selectedOrb: ResourceValue;
+
+  talentsReleased = true;
+  talentTreeOptions: string[];
+  selectedTalentTree: string;
+  talentTreeDescription: string;
+  inDepthTalentTreeDescription: string;
+  availableTalentPoints: number;
+  talentColumns = 3;
+  talentRows = 4;
 
   @HostListener('window:keyup', ['$event'])
   keyEvent(event: KeyboardEvent) {
@@ -90,76 +102,9 @@ export class SelectedAnimalComponent implements OnInit {
   constructor(private lookupService: LookupService, private modalService: NgbModal, private globalService: GlobalService,
     private componentCommunicationService: ComponentCommunicationService) { }
 
-  ngOnInit(): void {
-    console.log(this.selectedAnimal);
+  ngOnInit(): void {    
     this.handleIntroTutorial();
-    this.areTalentsAvailable = this.lookupService.isItemUnlocked("rainbowRace");
-    this.orbIsUnlocked = this.lookupService.isItemUnlocked("orbs");
-
-    this.maxSpeedModifierAmount = this.lookupService.getMaxSpeedModifierByAnimalType(this.selectedAnimal.type);
-    this.accelerationModifierAmount = this.lookupService.getAccelerationModifierByAnimalType(this.selectedAnimal.type);
-    this.staminaModifierAmount = this.lookupService.getStaminaModifierByAnimalType(this.selectedAnimal.type);
-    this.powerModifierAmount = this.lookupService.getPowerModifierByAnimalType(this.selectedAnimal.type);
-    this.focusModifierAmount = this.lookupService.getFocusModifierByAnimalType(this.selectedAnimal.type);
-    this.adaptabilityModifierAmount = this.lookupService.getAdaptabilityModifierByAnimalType(this.selectedAnimal.type);
-    this.diminishingReturnsAmount = this.globalService.GetAnimalDiminishingReturns(this.selectedAnimal);
-    this.breedLevelPopover = this.lookupService.getBreedLevelPopover(this.selectedAnimal.breedLevel);
-
-    var stockbreeder = this.lookupService.getStockbreeder();
-
-    if (stockbreeder !== null && stockbreeder !== undefined && stockbreeder > 0)
-      this.canAutoBreed = true;
-
-    if (this.canAutoBreed)
-      this.autoBreedActive = this.selectedAnimal.autoBreedActive;
-
-    this.ability1 = this.selectedAnimal.availableAbilities[0];
-    if (this.selectedAnimal.availableAbilities.length > 1)
-      this.ability2 = this.selectedAnimal.availableAbilities[1];
-    if (this.selectedAnimal.availableAbilities.length > 2)
-      this.ability3 = this.selectedAnimal.availableAbilities[2];
-
-    this.selectedAbility = this.selectedAnimal.ability;
-    this.abilityLevelMaxedOut = this.isAbilityLevelMaxedOut();
-    this.longDescription = this.lookupService.getAnimalAbilityDescription(false, this.selectedAnimal.ability.name, this.selectedAnimal);
-
-    if (this.selectedAnimal.trait !== undefined && this.selectedAnimal.trait !== null)
-      this.traitStatGainDescription = this.lookupService.getTraitStatGainDescription(this.selectedAnimal.trait);
-
-    this.colorConditional = {
-      'flatlandColor': this.selectedAnimal.getRaceCourseType() === 'Flatland',
-      'mountainColor': this.selectedAnimal.getRaceCourseType() === 'Mountain',
-      'waterColor': this.selectedAnimal.getRaceCourseType() === 'Ocean',
-      'tundraColor': this.selectedAnimal.getRaceCourseType() === 'Tundra',
-      'volcanicColor': this.selectedAnimal.getRaceCourseType() === 'Volcanic'
-    };
-
-    this.updateItemsList();
-    this.updateEquipmentList();
-    this.updateOrbList();
-
-    //remove any equipment already in use
-    this.globalService.globalVar.animals.filter(item => item.equippedItem !== null && item.equippedItem !== undefined).forEach(animal => {
-      var listItem = this.equipmentList.find(item => item.name === animal.equippedItem?.name);
-      if (listItem !== null && listItem !== undefined) {
-        if (listItem.amount > 0) {
-          listItem.amount -= 1;
-        }
-
-        if (listItem.amount <= 0) {
-          this.equipmentList = this.equipmentList.filter(item => item.name !== listItem?.name);
-        }
-      }
-    });
-
-    this.componentCommunicationService.setAnimalView(NavigationEnum.animals, new Animal());
-
-    var assignedBarn = this.globalService.globalVar.barns.find(item => item.barnNumber === this.selectedAnimal.associatedBarnNumber);
-    if (assignedBarn === null || assignedBarn === undefined)
-      this.assignedBarnName = "Unassigned";
-    else
-      this.assignedBarnName = "Assigned to: " + this.lookupService.getBarnName(assignedBarn);
-
+    this.resetSelectedAnimalInfo(this.selectedAnimal);
     this.breedDescriptionPopover = "When your Breed XP reaches the max, you can Breed your animal. This will reset your base stats, but it will also increase the amount that your base stats contribute to your racing stats.";
   }
 
@@ -307,7 +252,7 @@ export class SelectedAnimalComponent implements OnInit {
 
   openTalentsModal(content: any) {
     //this.setupDisplayItems();
-    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'lg' });
+    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
   }
 
   openItemModal(content: any) {
@@ -477,6 +422,20 @@ export class SelectedAnimalComponent implements OnInit {
       this.componentCommunicationService.setBarnView(NavigationEnum.barn, assignedBarn.barnNumber);
   }
 
+  filterTalentTree(talentTree: string) {
+    this.selectedTalentTree = talentTree;
+    this.inDepthTalentTreeDescription = this.lookupService.getInDepthTalentTreeDescription(talentTree);
+  }
+
+  selectTalentTree() {
+    if (this.selectedTalentTree === "" || this.selectedTalentTree === null || this.selectedTalentTree === undefined) {
+      alert("You must select a talent tree.");
+      return;
+    }
+
+    this.selectedAnimal.talentTree.talentTreeType = this.lookupService.convertTalentTreeNameToEnum(this.selectedTalentTree);    
+  }
+
   resetSelectedAnimalInfo(newAnimal: Animal) {
     this.selectedAnimal = newAnimal;
     this.areTalentsAvailable = this.lookupService.isItemUnlocked("rainbowRace");
@@ -520,6 +479,14 @@ export class SelectedAnimalComponent implements OnInit {
       'volcanicColor': this.selectedAnimal.getRaceCourseType() === 'Volcanic'
     };
 
+    this.borderColorConditional = {
+      'completedFlatlandTalentSpacer': this.selectedAnimal.getRaceCourseType() === 'Flatland',
+      'completedMountainTalentSpacer': this.selectedAnimal.getRaceCourseType() === 'Mountain',
+      'completedOceanTalentSpacer': this.selectedAnimal.getRaceCourseType() === 'Ocean',
+      'completedTundraTalentSpacer': this.selectedAnimal.getRaceCourseType() === 'Tundra',
+      'completedVolcanicTalentSpacer': this.selectedAnimal.getRaceCourseType() === 'Volcanic'
+    };
+
     this.updateItemsList();
     this.updateEquipmentList();
 
@@ -544,5 +511,15 @@ export class SelectedAnimalComponent implements OnInit {
       this.assignedBarnName = "Unassigned";
     else
       this.assignedBarnName = "Assigned to: " + this.lookupService.getBarnName(assignedBarn);
+
+    if (this.areTalentsAvailable)
+    {
+      this.talentTreeOptions = this.lookupService.getTalentTreeNames();
+      this.availableTalentPoints = this.lookupService.getTalentPointsAvailableToAnimal(this.selectedAnimal);
+    }
+  }
+
+  spentTalent(spent: boolean) {
+    this.availableTalentPoints = this.lookupService.getTalentPointsAvailableToAnimal(this.selectedAnimal);
   }
 }

@@ -64,7 +64,7 @@ export class AllTrainingTracks {
         this.masterTrack.rewards.push(new ResourceValue("Orb Necklace", 1, ShopItemTypeEnum.Other));
         this.masterTrack.rewards.push(new ResourceValue("Diminishing Returns per Facility Level", 3, ShopItemTypeEnum.Other));
         this.masterTrack.rewards.push(new ResourceValue("Training Time Reduction", 1, ShopItemTypeEnum.Other));
-        this.masterTrack.rewards.push(new ResourceValue("Talents", 3, ShopItemTypeEnum.Other));
+        this.masterTrack.rewards.push(new ResourceValue("Bonus Talents", 3, ShopItemTypeEnum.Other));
 
     }
 }

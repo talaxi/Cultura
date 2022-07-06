@@ -71,7 +71,8 @@
                         <span class="keyword">{{ selectedAnimal.getRaceCourseType() }}</span>
                         <br />
                     </div>
-                    <span class="clickableText" (click)="goToAssignedBarn()">{{ this.assignedBarnName }} <em *ngIf="this.selectedAnimal.currentTraining !== null && this.selectedAnimal.currentTraining !== undefined">({{this.selectedAnimal.currentTraining.trainingName}})</em></span>
+                    <span class="clickableText" (click)="goToAssignedBarn()">{{ this.assignedBarnName }} <em
+                            *ngIf="this.selectedAnimal.currentTraining !== null && this.selectedAnimal.currentTraining !== undefined">({{this.selectedAnimal.currentTraining.trainingName}})</em></span>
                     <br />
                     <span ngbPopover="{{ breedLevelPopover }}" triggers="mouseenter:mouseleave"
                         popoverClass="popoverClass">Breed Level {{selectedAnimal.breedLevel}}</span>
@@ -80,7 +81,7 @@
                         popoverClass="popoverClass">Breed XP: {{selectedAnimal.breedGaugeXp | number :
                         '1.2-2'}}/{{selectedAnimal.breedGaugeMax}}
                         <button (click)="breed()">Breed</button>
-                    </span>                    
+                    </span>
                     <br />
                     <button (click)="openItemModal(content)">Use Item</button>
                     <br />
@@ -89,7 +90,7 @@
                 </div>
                 <div class="back">
                     <span class="clickableText" (click)="returnToAnimalView()">Back</span>
-                    <br />                    
+                    <br />
                     <div *ngIf="orbIsUnlocked" class="orb">
                         <div *ngIf="selectedAnimal.equippedOrb !== undefined && selectedAnimal.equippedOrb !== null"
                             [ngbPopover]="getEquipmentShortDescription(selectedAnimal.equippedOrb.name)"
@@ -105,11 +106,10 @@
                         </div>
                         <br />
 
-                        <button
-                            *ngIf="selectedAnimal.equippedOrb !== undefined && selectedAnimal.equippedOrb !== null"
+                        <button *ngIf="selectedAnimal.equippedOrb !== undefined && selectedAnimal.equippedOrb !== null"
                             (click)="unequipOrb()">Unequip Orb</button>
                         <button (click)="openOrbModal(orb)">Equip New Orb</button>
-                    </div>                   
+                    </div>
                 </div>
             </div>
             <hr />
@@ -218,7 +218,8 @@
                     </div>
                     <div *ngIf="selectedAnimal.miscStats.bonusBreedXpGainFromCircuitRaces > 0">
                         <span>
-                            Bonus Breed XP From Circuit Races: {{ selectedAnimal.miscStats.bonusBreedXpGainFromCircuitRaces
+                            Bonus Breed XP From Circuit Races: {{
+                            selectedAnimal.miscStats.bonusBreedXpGainFromCircuitRaces
                             |
                             number : '1.0-0' }}
                         </span>
@@ -232,7 +233,8 @@
                     </div>
                     <div *ngIf="selectedAnimal.miscStats.diminishingReturnsBonus > 0">
                         <span>
-                            Bonus Diminishing Returns per Facility Level: {{ selectedAnimal.miscStats.diminishingReturnsBonus
+                            Bonus Diminishing Returns per Facility Level: {{
+                            selectedAnimal.miscStats.diminishingReturnsBonus
                             |
                             number : '1.0-0' }}
                         </span>
@@ -451,11 +453,48 @@
                 <h4 class="modal-title" id="modal-basic-title">Talents</h4>
                 <button type="button" aria-label="Close" (click)="modal.dismiss()">X</button>
             </div>
-            <div>
-                <div class="modal-body">                    
-                    Coming Soon!
-                </div> 
-            </div>               
+            <div *ngIf="talentsReleased && selectedAnimal.talentTree.talentTreeType === talentTreeTypeEnum.none">
+                <div class="modal-body">
+                    <div *ngIf="talentTreeOptions.length > 0">
+                        <div class="typeContainer">
+                            <span *ngFor="let talentTree of talentTreeOptions" class="talents subHeading"
+                                [ngClass]="{'selectedTalentTree': selectedTalentTree === talentTree}"
+                                (click)="filterTalentTree(talentTree)">
+                                {{talentTree.trim()}}
+                            </span>
+                        </div>
+                        <hr />
+                        <div *ngIf="inDepthTalentTreeDescription !== '' && inDepthTalentTreeDescription !== undefined">
+                            <strong> {{ inDepthTalentTreeDescription }} </strong>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" (click)="selectTalentTree()">Select</button>
+                </div>
+            </div>
+            <div class="modal-body"
+                *ngIf="talentsReleased && selectedAnimal.talentTree.talentTreeType !== talentTreeTypeEnum.none">
+                <div class="talentInfo">Available Talent Points: {{ availableTalentPoints }}</div>
+                <br />
+                <div class="talentRow" *ngFor="let _ of [].constructor(talentRows); let rowIndex = index">
+                    <div class="rowFlex">
+                        <div class="talentColumn"
+                            *ngFor="let _ of [].constructor(talentColumns); let columnIndex = index">
+                            <div class="talentContent">
+                                <app-talent [row]="rowIndex" [column]="columnIndex" [selectedAnimal]="selectedAnimal"
+                                    (spentTalent)="spentTalent($event)"></app-talent>
+                            </div>
+                            <div *ngIf="rowIndex !== talentRows-1" class="talentSpacer" [ngClass]="borderColorConditional">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="!talentsReleased">
+                Coming Soon!
+            </div>
         </form>
     </div>
 </ng-template>
