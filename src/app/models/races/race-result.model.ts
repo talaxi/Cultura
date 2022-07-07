@@ -4,14 +4,14 @@ export class RaceResult {
     wasSuccessful: boolean;
     raceUpdates: StringNumberPair[];
     errorMessage: string; 
-    //circuitReward: string;
     totalFramesPassed: number; //how long it took to finish
+    distanceCovered: number;
     beatMoneyMark: boolean;
 
     constructor() {
         this.raceUpdates = [];
-        //this.circuitReward = "";
         this.beatMoneyMark = false;
+        this.distanceCovered = 0;
     }
 
     addRaceUpdate(time: number, update: string) {

@@ -170,14 +170,43 @@ export class AppComponent {
     if (!grandPrix.initialSetupComplete) //wasn't within event and now you are
     {
       //do initial set up
-
+      this.globalService.initialGrandPrixSetup();
       grandPrix.initialSetupComplete = true;
     }
 
     if (grandPrix.isRunning) {
       //if you've entered the race
       //do auto run
+      //create event race segment, save it in data
+      //TODO: this should be its own thing, event deck or something
+      var eventDeck = this.globalService.globalVar.animalDecks.find(item => item.isPrimaryDeck);
+      if (eventDeck === null || eventDeck === undefined)
+        return;
 
+      if (grandPrix.currentRaceSegmentCount === 0)
+      {
+        grandPrix.currentRaceSegment = this.globalService.generateGrandPrixSegment(eventDeck.selectedAnimals[0]);
+        grandPrix.currentRaceSegmentResult = this.raceLogicService.runRace(grandPrix.currentRaceSegment);
+        grandPrix.currentRaceSegmentCount += 1;
+      }
+
+      grandPrix.segmentTimeCounter += deltaTime;
+      grandPrix.overallTimeCounter += deltaTime;
+      
+      //do we even need to check if it was successful? totalframes will be right either way
+      //if (grandPrix.currentRaceSegmentResult.wasSuccessful)
+      //{
+        var timeToComplete = grandPrix.currentRaceSegmentResult.totalFramesPassed / 60; //framemodifier
+
+        if (grandPrix.segmentTimeCounter >= timeToComplete)
+        {
+          grandPrix.currentRaceSegment = this.globalService.generateGrandPrixSegment(eventDeck.selectedAnimals[0]);
+          grandPrix.currentRaceSegmentResult = this.raceLogicService.runRace(grandPrix.currentRaceSegment);
+          grandPrix.currentRaceSegmentCount += 1;
+          grandPrix.segmentTimeCounter -= timeToComplete;
+          grandPrix.distanceCovered += grandPrix.currentRaceSegmentResult.distanceCovered;
+        }
+      //}
       //do a 3 min segment
       //every 3 min or after completing check up on where you are and create a new segment
     }

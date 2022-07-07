@@ -892,11 +892,15 @@ export class RaceLogicService {
       race.isCompleted = true;
       raceResult.wasSuccessful = true;
       raceResult.totalFramesPassed = framesPassed;
+      raceResult.distanceCovered = race.raceUI.distanceCoveredByFrame[framesPassed-1];
 
       raceResult.addRaceUpdate(framesPassed, "You won the race!");
     }
     else {
       raceResult.wasSuccessful = false;
+      raceResult.totalFramesPassed = framesPassed;
+      raceResult.distanceCovered = race.raceUI.distanceCoveredByFrame[framesPassed-1];
+      
       raceResult.addRaceUpdate(framesPassed, "You lost the race...");
     }
 

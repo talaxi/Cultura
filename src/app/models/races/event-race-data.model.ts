@@ -1,4 +1,6 @@
 import { Type } from "class-transformer";
+import { RaceResult } from "./race-result.model";
+import { Race } from "./race.model";
 import { Terrain } from "./terrain.model";
 
 export class GrandPrixData {
@@ -18,8 +20,14 @@ export class GrandPrixData {
     totalDistance: number;
     distanceCovered: number;  
     segmentTime: number;
+    segmentTimeCounter: number;
+    overallTimeCounter: number;
     totalSegments: number;
-    segmentsCompleted: number;       
+    segmentsCompleted: number;
+    currentRaceSegmentCount: number;     
+    @Type(() => Race)
+    currentRaceSegment: Race; 
+    currentRaceSegmentResult: RaceResult; 
     isRunning: boolean;
     initialSetupComplete: boolean = false;
     
@@ -36,6 +44,9 @@ export class GrandPrixData {
 
         this.distanceCovered = 0;
         this.grandPrixTimeLength = 51 * 60 * 60; //51 hours
+        this.segmentTime = 180; //each segment is 180 seconds
+        this.segmentTimeCounter = 0;
+        this.overallTimeCounter = 0;
         this.rank = "Z";
     }
 }

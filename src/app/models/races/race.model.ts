@@ -1,4 +1,5 @@
 import { Type } from "class-transformer";
+import { EventRaceTypeEnum } from "../event-race-type-enum.model";
 import { LocalRaceTypeEnum } from "../local-race-type-enum.model";
 import { RaceTypeEnum } from "../race-type-enum.model";
 import { ResourceValue } from "../resources/resource-value.model";
@@ -24,7 +25,7 @@ export class Race {
     raceUI: RaceUI;
     circuitIncreaseReward: [string, string];
 
-    constructor(raceLegs: RaceLeg[], requiredRank: string, isCircuitRace: boolean, raceId: number, length: number, timeToComplete: number, rewards?: ResourceValue[], localRaceType?: LocalRaceTypeEnum, trackRaceType?: TrackRaceTypeEnum, raceType?: RaceTypeEnum) {
+    constructor(raceLegs: RaceLeg[], requiredRank: string, isCircuitRace: boolean, raceId: number, length: number, timeToComplete: number, rewards?: ResourceValue[], localRaceType?: LocalRaceTypeEnum, trackRaceType?: TrackRaceTypeEnum, raceType?: RaceTypeEnum, eventRaceType?: EventRaceTypeEnum) {
         this.raceLegs = raceLegs;
         this.requiredRank = requiredRank;
         this.isCircuitRace = isCircuitRace;

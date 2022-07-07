@@ -373,7 +373,7 @@ export class LookupService {
       return "Rare currency gained from improving your circuit rank and winning certain special races.";
     else if (name === "Renown") {
       var currentRenown = this.getRenown();
-      return "Increases Coins gained from races by " + currentRenown + "%. Increase total number of local races available per reset period by 1 for every 100 renown for a total of " + this.getTotalFreeRacesPerPeriod() + ". Complete circuit or local races to get your name out there and raise your renown.";
+      return "Increases Coins gained from races by " + currentRenown + "%. Increase total number of free races available per reset period by 1 for every 100 renown for a total of " + this.getTotalFreeRacesPerPeriod() + ". Complete circuit or local races to get your name out there and raise your renown.";
     }
     else if (name === "Facility Level") {
       var diminishingReturnsThreshold = this.getDiminishingReturnsThreshold();

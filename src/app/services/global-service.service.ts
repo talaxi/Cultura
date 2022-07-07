@@ -35,6 +35,7 @@ import { OrbStats } from '../models/animals/orb-stats.model';
 import { Tutorials } from '../models/tutorials.model';
 import { GrandPrixData } from '../models/races/event-race-data.model';
 import { RaceTypeEnum } from '../models/race-type-enum.model';
+import { EventRaceTypeEnum } from '../models/event-race-type-enum.model';
 
 @Injectable({
   providedIn: 'root'
@@ -2199,15 +2200,17 @@ export class GlobalService {
       1, totalDistance, timeToComplete, this.GenerateLocalRaceRewards(this.globalVar.circuitRank), LocalRaceTypeEnum.Free);
   }
 
-  getGrandPrixDetails(eventStartDateString: string) {
+  getGrandPrixDetails() {
     
   }
 
-  initialGrandPrixSetup(eventStartDateString: string) {
+  initialGrandPrixSetup() {
     var grandPrix = this.globalVar.eventRaceData = new GrandPrixData();
 
     grandPrix.totalDistance = 500000000;
-    grandPrix.raceTerrain = this.getRandomGrandPrixTerrain(eventStartDateString);
+    grandPrix.currentRaceSegmentCount = 0;
+    grandPrix.segmentTimeCounter = 0;
+    grandPrix.raceTerrain = this.getRandomGrandPrixTerrain(this.getEventStartDateTime().toString());
     grandPrix.totalSegments = Math.ceil(grandPrix.totalDistance / grandPrix.grandPrixTimeLength);
   }
 
@@ -2233,7 +2236,7 @@ export class GlobalService {
     });
 
     return new Race(raceLegs, this.globalVar.circuitRank, false,
-      1, segmentMeters, remainingRaceTime, this.GenerateLocalRaceRewards(this.globalVar.circuitRank), undefined, undefined, RaceTypeEnum.event);
+      1, segmentMeters, remainingRaceTime, this.GenerateLocalRaceRewards(this.globalVar.circuitRank), undefined, undefined, RaceTypeEnum.event, EventRaceTypeEnum.grandPrix);
   }
 
   getEventStartDateTime() {

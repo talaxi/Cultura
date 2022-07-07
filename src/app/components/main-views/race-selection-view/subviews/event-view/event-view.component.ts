@@ -27,20 +27,14 @@ export class EventViewComponent implements OnInit {
   constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private lookupService: LookupService) { }
 
   ngOnInit(): void {
-    this.globalService.getGrandPrixDetails(this.globalService.getEventStartDateTime().toString());
-    this.globalService.initialGrandPrixSetup(this.globalService.getEventStartDateTime().toString());
+    this.globalService.getGrandPrixDetails(); //??
     this.grandPrixData = this.globalService.globalVar.eventRaceData;
     this.grandPrixUnlocked = this.lookupService.isItemUnlocked("grandPrix");
     
     this.subscription = this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {
       this.setupEventTime();
       this.remainingMeters = this.grandPrixData.totalDistance - this.grandPrixData.distanceCovered;
-    });
-    
-    //TODO: this should be its own thing, event deck or something
-    var primaryDeck = this.globalService.globalVar.animalDecks.find(item => item.isPrimaryDeck);
-    if (primaryDeck !== null && primaryDeck !== undefined)
-      this.grandPrix = this.globalService.generateGrandPrixSegment(primaryDeck.selectedAnimals[0]);
+    });       
   }
 
   selectEventRace() {
@@ -51,9 +45,10 @@ export class EventViewComponent implements OnInit {
       this.grandPrixData.isRunning = true;
       //flipping that true should start the auto run in gamecheckup
       //should be basically the same time constraints as auto run but it's 1 every 3 min instead of 1-20 every 5 min 
+      this.raceSelected.emit(this.grandPrixData.currentRaceSegment);
     }
-    this.raceSelected.emit(this.grandPrix);
 
+    //view race
   }
 
   setupEventTime() {
