@@ -157,7 +157,7 @@ export class AppComponent {
     }
 
     this.handleFreeRaceTimer(deltaTime);
-    this.handleGrandPrix(deltaTime);
+    //this.handleGrandPrix(deltaTime);
   }
 
   handleGrandPrix(deltaTime: number) {
