@@ -19,7 +19,9 @@ export class GrandPrixData {
     distanceCovered: number;  
     segmentTime: number;
     totalSegments: number;
-    segmentsCompleted: number;    
+    segmentsCompleted: number;       
+    isRunning: boolean;
+    initialSetupComplete: boolean = false;
     
     constructor() {
         this.weekStartDay = 2;//tues 9 am to thurs 12 pm (noon)

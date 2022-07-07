@@ -23,7 +23,7 @@
                     </label>
                 </span>
                 <br />
-                <span [ngbPopover]="finishTrainingBeforeSwitchingPopoverText" class="checkboxOption" triggers="mouseenter:mouseleave">
+                <span [ngbPopover]="hideTipsPopoverText" class="checkboxOption" triggers="mouseenter:mouseleave">
                     <label>
                     <input type="checkbox" class="rightSpaced" id="hideTips" [(ngModel)]="hideTips"
                         (input)="hideTipsToggle()">
@@ -31,7 +31,7 @@
                     </label>
                 </span>
                 <br />
-                <span [ngbPopover]="finishTrainingBeforeSwitchingPopoverText" class="checkboxOption" triggers="mouseenter:mouseleave">
+                <span [ngbPopover]="useNumbersForCircuitRankPopoverText" class="checkboxOption" triggers="mouseenter:mouseleave">
                     <label>
                     <input type="checkbox" class="rightSpaced" id="useNumbersForCircuitRank"
                         [(ngModel)]="useNumbersForCircuitRank" (input)="useNumbersForCircuitRankToggle()">

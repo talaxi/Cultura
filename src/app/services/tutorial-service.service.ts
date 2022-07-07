@@ -51,7 +51,7 @@ export class TutorialService {
     }
     if (id === 4)
     {
-      tutorialState.tutorialText = "You've got a few options here. Circuit races are all about deciding where you stand against the competition. If you win all of the circuit races for your rank, you'll move up into the next rank which may net you some nifty rewards and open up new opportunities for your facility. You can also check out the local scene and see what other options you have. That might be a good way to get your name out there and improve your renown or maybe find some stuff you couldn't find anywhere else.\n\n" +
+      tutorialState.tutorialText = "You've got a few options here. Circuit races are all about deciding where you stand against the competition. If you win all of the circuit races for your rank, you'll move up into the next rank which may net you some nifty rewards and open up new opportunities for your facility. You can also run some free races against local competition to make some quick coin.\n\n" +
       "For now, let's see if you can make it up to the next circuit rank. It's a nice sunny day today and that might impact how your racer runs. If you hover over a race, you'll see how the terrain or weather might impact the conditions of the race. When in doubt, hovering over an item usually gives you the information you need. Whenever you're ready, start the race. Good luck!\n\n" +
       "<b>Select the race option outlined in red.</b>";
       tutorialState.associatedTab = NavigationEnum.raceselection;

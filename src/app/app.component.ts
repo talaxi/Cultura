@@ -47,7 +47,7 @@ export class AppComponent {
       this.deploymentService.setDevMode();
     else
       this.deploymentService.setProductionMode();
-    
+
     var overrideNewGame = this.deploymentService.forceStartNewGame;
     var devMode = this.deploymentService.devModeActive;
 
@@ -89,7 +89,7 @@ export class AppComponent {
     this.gameLoopService.Update();
   }
 
-  public gameCheckup(deltaTime: number): void {    
+  public gameCheckup(deltaTime: number): void {
     //update training time
     if (this.globalService.globalVar.animals === undefined || this.globalService.globalVar.animals === null) {
       return;
@@ -155,8 +155,32 @@ export class AppComponent {
         incubator.assignedTrait = null;
       }
     }
-    
+
     this.handleFreeRaceTimer(deltaTime);
+    this.handleGrandPrix(deltaTime);
+  }
+
+  handleGrandPrix(deltaTime: number) {
+    var grandPrix = this.globalService.globalVar.eventRaceData;
+    if (this.globalService.getTimeToEventRace() > 0) {
+      grandPrix.initialSetupComplete = false;
+      return;
+    }
+
+    if (!grandPrix.initialSetupComplete) //wasn't within event and now you are
+    {
+      //do initial set up
+
+      grandPrix.initialSetupComplete = true;
+    }
+
+    if (grandPrix.isRunning) {
+      //if you've entered the race
+      //do auto run
+
+      //do a 3 min segment
+      //every 3 min or after completing check up on where you are and create a new segment
+    }
   }
 
   handleFreeRaceTimer(deltaTime: number) {
@@ -177,7 +201,7 @@ export class AppComponent {
 
       while (this.globalService.globalVar.freeRaceTimePeriodCounter >= freeRaceTimePeriod &&
         autofreeRaceMaxIdleTimePeriod > 0) {
-          //console.log("Free Race Time Period Counter: " + this.globalService.globalVar.freeRaceTimePeriodCounter);
+        //console.log("Free Race Time Period Counter: " + this.globalService.globalVar.freeRaceTimePeriodCounter);
         if (this.globalService.globalVar.freeRaceTimePeriodCounter > autofreeRaceMaxIdleTimePeriod)
           this.globalService.globalVar.freeRaceTimePeriodCounter = autofreeRaceMaxIdleTimePeriod;
 

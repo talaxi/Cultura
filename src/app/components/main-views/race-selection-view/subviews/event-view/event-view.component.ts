@@ -27,6 +27,7 @@ export class EventViewComponent implements OnInit {
   constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private lookupService: LookupService) { }
 
   ngOnInit(): void {
+    this.globalService.getGrandPrixDetails(this.globalService.getEventStartDateTime().toString());
     this.globalService.initialGrandPrixSetup(this.globalService.getEventStartDateTime().toString());
     this.grandPrixData = this.globalService.globalVar.eventRaceData;
     this.grandPrixUnlocked = this.lookupService.isItemUnlocked("grandPrix");
@@ -44,6 +45,13 @@ export class EventViewComponent implements OnInit {
 
   selectEventRace() {
     //this can't actually start a race -- the race needs to be running in the background. this should just view it
+    if (this.grandPrixData.isRunning === false)
+    {
+      //do set up
+      this.grandPrixData.isRunning = true;
+      //flipping that true should start the auto run in gamecheckup
+      //should be basically the same time constraints as auto run but it's 1 every 3 min instead of 1-20 every 5 min 
+    }
     this.raceSelected.emit(this.grandPrix);
 
   }

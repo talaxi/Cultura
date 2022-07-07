@@ -30,7 +30,7 @@ export class ThemeService {
     return "";
   }
 
-  setNightTheme() {
+  setNightTheme() {    
     return this.setActiveTheme(night);
   }
 

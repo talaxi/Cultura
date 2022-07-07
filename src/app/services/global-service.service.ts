@@ -2199,6 +2199,9 @@ export class GlobalService {
       1, totalDistance, timeToComplete, this.GenerateLocalRaceRewards(this.globalVar.circuitRank), LocalRaceTypeEnum.Free);
   }
 
+  getGrandPrixDetails(eventStartDateString: string) {
+    
+  }
 
   initialGrandPrixSetup(eventStartDateString: string) {
     var grandPrix = this.globalVar.eventRaceData = new GrandPrixData();
@@ -2799,6 +2802,7 @@ export class GlobalService {
   }
 
   InitializeSettings() {
+    this.themeService.setLightTheme();
     this.globalVar.settings.set("theme", this.themeService.getActiveTheme());
     this.globalVar.settings.set("skipDrawRace", false);
     this.globalVar.settings.set("finishTrainingBeforeSwitching", true);
