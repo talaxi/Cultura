@@ -989,7 +989,7 @@ export class GlobalService {
       this.globalVar.unlockables.set("monoRace", true);
       returnVal = ["Mono Race", "A new race type has been unlocked!" +
         " Take part in a Mono Race where you run an extended race as only one course type. Progressing through this race type " +
-        "generates new interest in your facility, giving you a good reason to make upgrades. Gain Facility Level points that increase your diminishing returns max value."];
+        "generates new interest in your facility, which means it's time to make some upgrades. Gain Facility Level points from winning these races that increase your Diminishing Returns max value."];
 
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(3) + "Monkey";
     }
