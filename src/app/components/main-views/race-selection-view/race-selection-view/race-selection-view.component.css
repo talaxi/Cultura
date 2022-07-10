@@ -48,4 +48,13 @@
   .filterActive {
     font-weight: bold;
     color: var(--foreground-secondary);
+    text-decoration: underline solid Currentcolor;
+  }
+
+  .availableIcon {
+    color: var(--foreground-quaternary);
+    border-radius: 25px;
+    background: var(--background-five);
+    padding: 0 .5rem;
+    margin-right: .25rem;
   }

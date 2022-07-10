@@ -16,6 +16,7 @@ export class Race {
     raceType: RaceTypeEnum;
     localRaceType: LocalRaceTypeEnum;
     trackRaceType: TrackRaceTypeEnum;
+    eventRaceType: EventRaceTypeEnum;
     timeToComplete: number; //in seconds
     length: number; //in meters
     raceId: number;
@@ -33,7 +34,7 @@ export class Race {
         this.length = length;
         this.timeToComplete = timeToComplete;
         this.raceUI = new RaceUI();
-        this.circuitIncreaseReward = ["",""];
+        this.circuitIncreaseReward = ["", ""];
 
         if (rewards !== undefined && rewards !== null)
             this.rewards = rewards;
@@ -46,5 +47,30 @@ export class Race {
 
         if (raceType !== undefined && raceType !== null)
             this.raceType = raceType;
+
+        if (eventRaceType !== undefined && eventRaceType !== null)
+            this.eventRaceType = eventRaceType;
+    }
+
+    makeCopy(originalRace: Race) {
+        var copy = new Race(originalRace.raceLegs, originalRace.requiredRank, originalRace.isCircuitRace, originalRace.raceId, 
+            originalRace.length, originalRace.timeToComplete, originalRace.rewards, originalRace.localRaceType, 
+            originalRace.trackRaceType, originalRace.raceType, originalRace.eventRaceType);
+        
+        if (originalRace.raceUI.velocityByFrame.length > 0)
+        {
+            originalRace.raceUI.velocityByFrame.forEach(item => {
+                copy.raceUI.velocityByFrame.push(item);
+            });
+        }
+        
+        if (originalRace.raceUI.staminaPercentByFrame.length > 0)
+        {
+            originalRace.raceUI.staminaPercentByFrame.forEach(item => {
+                copy.raceUI.staminaPercentByFrame.push(item);
+            });
+        }
+
+        return copy;
     }
 }

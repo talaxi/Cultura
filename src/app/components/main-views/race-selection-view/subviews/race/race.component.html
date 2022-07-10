@@ -1,12 +1,12 @@
 <div id="raceInfo">
     <div class="bothDisplayValues" *ngIf="displayVisualRace && displayTextUpdates">
         <div class="headerInfo">
-            <div><button (click)="skipRaceAnimation()">Skip</button></div>
+            <div><button *ngIf="!grandPrixRace" (click)="skipRaceAnimation()">Skip</button></div>
             <div>Velocity: {{ velocityAtCurrentFrame }} / {{ maxSpeedAtCurrentFrame }}m/s <span
                     *ngIf="racerEffectAtCurrentFrame === burstEffect">BURST!</span></div>
             <div>Stamina: {{ staminaAtCurrentFrame }}%</div>
             <div>Position: {{ positionAtCurrentFrame }} / {{ totalRacers }}</div>
-            <div><button (click)="pauseRaceAnimation()">Pause</button></div>
+            <div><button *ngIf="!grandPrixRace" (click)="pauseRaceAnimation()">Pause</button></div>
         </div>
         <div class="updates">
             <div class="drawRaces">
@@ -22,8 +22,8 @@
     <div *ngIf="!displayVisualRace && displayTextUpdates">
         <!--Text Only-->
         <div class="individualItemHeaderInfo">
-            <div><button (click)="skipRaceAnimation()">Skip</button></div>
-            <div><button (click)="pauseRaceAnimation()">Pause</button></div>
+            <div><button *ngIf="!grandPrixRace" (click)="skipRaceAnimation()">Skip</button></div>
+            <div><button *ngIf="!grandPrixRace" (click)="pauseRaceAnimation()">Pause</button></div>
         </div>
         <div class="raceUpdates onlyText" #scrollMe [scrollTop]="scrollMe.scrollHeight"
             [innerHTML]="incrementalRaceUpdates.trim()">
@@ -32,10 +32,10 @@
     <div class="oneDisplayValue" *ngIf="displayVisualRace && !displayTextUpdates">
         <!--Draw Only-->
         <div class="individualItemHeaderInfo">
-            <div><button (click)="skipRaceAnimation()">Skip</button></div>
+            <div><button *ngIf="!grandPrixRace" (click)="skipRaceAnimation()">Skip</button></div>
             <div>Velocity: {{ velocityAtCurrentFrame }} / {{ maxSpeedAtCurrentFrame }}m/s </div>
             <div>Stamina: {{ staminaAtCurrentFrame }}%</div>
-            <div><button (click)="pauseRaceAnimation()">Pause</button></div>
+            <div><button *ngIf="!grandPrixRace" (click)="pauseRaceAnimation()">Pause</button></div>
         </div>
         <div class="drawRace onlyDraw">
             <app-draw-race [race]="selectedRace" [skip]="skipRace.asObservable()" [pause]="pauseRace.asObservable()">

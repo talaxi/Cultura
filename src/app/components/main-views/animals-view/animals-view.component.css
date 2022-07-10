@@ -1,6 +1,7 @@
 .animalsView
 {
     height: 100%;
+    overflow: hidden;
 
     background-color: var(--background-secondary);
     border-color: var(--background-tertiary);

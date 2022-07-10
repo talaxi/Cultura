@@ -10,6 +10,7 @@ export class AnimalDeck {
     isCourseOrderActive: boolean;
     isPrimaryDeck: boolean;
     autoRunFreeRace: boolean;
+    isEventDeck: boolean;
     deckNumber: number;
     isAvailable: boolean;
 
@@ -18,5 +19,6 @@ export class AnimalDeck {
         this.courseTypeOrder = [];
         this.isCourseOrderActive = false;
         this.autoRunFreeRace = false;
+        this.isEventDeck = false;
     }
 }

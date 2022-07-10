@@ -5,6 +5,9 @@
     <div *ngIf="grandPrixUnlocked">
         <div>
             {{eventRaceNotice}} {{eventRaceTimer}}
+
+            <br />
+            <br />
         </div>
         <br />
         <div id="grandPrix" *ngIf="isEventRaceAvailable">
@@ -20,16 +23,11 @@
                         {{ remainingMeters | number : '1.2-2' }} Meters Remaining
 
                         <br />
-                        <p>{{ grandPrix.isCompleted ? "Completed" : cannotRace ? "Cannot Run" : "Start" }}
+                        <p>{{ grandPrixData.isRunning ? "View Race" : "Start" }}
+                            <!--Start or View-->
                         </p>
                     </div>
                 </div>
-
-                <div>
-                    <!--make new component that is draggable and pass in the list of animals for it -->
-                    <app-animal-deck></app-animal-deck>
-                </div>
-
                 <ng-template #popContent>
                     <div class="popoverClass">
                         {{ popoverText }}
@@ -37,6 +35,10 @@
                 </ng-template>
             </div>
         </div>
+        <div>
+            <app-event-animal-deck></app-event-animal-deck>
+        </div>
+
     </div>
     <div *ngIf="!grandPrixUnlocked">
         Nothing here yet, but maybe as you climb the circuit ranks you might be invited to a new type of race.

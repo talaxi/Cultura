@@ -71,6 +71,7 @@
 }
 
 .unassign {
+  padding-top: .25rem;
   grid-area: unassign;
 }
 
@@ -79,7 +80,12 @@
 }
 
 .back {
+  padding-top: .25rem;
   grid-area: back;
+}
+
+.trainingDescription {
+  text-align: center;
 }
 
 .filterActive {

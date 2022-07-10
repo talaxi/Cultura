@@ -1,22 +1,21 @@
-.selectedAnimalView
-{
-    height: 100%;
+.selectedAnimalView {
+  height: 100%;
 
-    background-color: var(--background-secondary);
-    border-color: var(--background-tertiary);
-    color: var(--foreground-default);     
+  background-color: var(--background-secondary);
+  border-color: var(--background-tertiary);
+  color: var(--foreground-default);
 }
 
-.animalInfo 
-{
-    text-align: center;
-    grid-area: animalInfo;
+.animalInfo {
+  padding-top: .25rem;
+  text-align: center;
+  grid-area: animalInfo;
 }
 
-.back
-{
-    text-align: center;
-    grid-area: back;
+.back {
+  padding-top: .25rem;
+  text-align: center;
+  grid-area: back;
 
   justify-content: space-between;
   flex-direction: column;
@@ -27,8 +26,7 @@
   display: flex;
 }
 
-.equippable
-{
+.equippable {
   justify-content: space-between;
   flex-direction: column;
   display: flex;
@@ -41,7 +39,7 @@
   grid-template-columns: 1% 1fr 1%;
   grid-template-rows: auto;
   justify-content: stretch;
-  grid-template-areas: 
+  grid-template-areas:
     ". view .";
 }
 
@@ -52,50 +50,52 @@
 
 .filterActive {
   font-weight: bold;
+  text-decoration: underline solid Currentcolor;
   color: var(--foreground-secondary);
 }
 
-.info {    
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: auto;
-    justify-content: stretch;    
-    grid-template-areas: 
-      "equippable animalInfo back";
-  }
-  
+.info {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: auto;
+  justify-content: stretch;
+  grid-template-areas:
+    "equippable animalInfo back";
+}
+
 
 .gridContainer {
-   /* height: 100%;*/
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: auto;
-    justify-items: center;
-    justify-content: stretch;    
-    grid-template-areas: 
-      "trainingStats racingStats miscStats";
-  }
-  .trainableStats {
-    justify-self: left;
-    grid-area: trainingStats;    
-  }
+  /* height: 100%;*/
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: auto;
+  justify-items: center;
+  justify-content: stretch;
+  grid-template-areas:
+    "trainingStats racingStats miscStats";
+}
 
-  .racingStats {
-    grid-area: racingStats;    
-  }
+.trainableStats {
+  justify-self: left;
+  grid-area: trainingStats;
+}
 
-  .miscStats {
-    grid-area: miscStats;
-  }
+.racingStats {
+  grid-area: racingStats;
+}
 
-  ::ng-deep ngb-modal-backdrop {
-    z-index: 1050 !important;
-  }
+.miscStats {
+  grid-area: miscStats;
+}
+
+::ng-deep ngb-modal-backdrop {
+  z-index: 1050 !important;
+}
 
 .modalClass {
-    background-color: var(--background-secondary);
-    border-color: var(--background-tertiary);
-    color: var(--foreground-default);
+  background-color: var(--background-secondary);
+  border-color: var(--background-tertiary);
+  color: var(--foreground-default);
 }
 
 .editName {
@@ -106,8 +106,9 @@
   margin-left: 4rem;
 }
 
-.selectedEquipmentSpan, .selectedOrbSpan, .selectedItemSpan
-{
+.selectedEquipmentSpan,
+.selectedOrbSpan,
+.selectedItemSpan {
   width: 100%;
 }
 
@@ -119,7 +120,9 @@
   float: right;
 }
 
-.ability1, .ability2, .ability3 {
+.ability1,
+.ability2,
+.ability3 {
   width: 33.33%;
   display: inline-block;
 }
@@ -129,12 +132,12 @@
 }
 
 .typeContainer {
-  display:flex;
-  width:100%;
+  display: flex;
+  width: 100%;
   justify-content: space-evenly;
 }
 
-.talentTreeType {  
+.talentTreeType {
   text-decoration: underline solid transparent;
   transition: text-decoration .3s ease;
   display: inline-block;
@@ -155,8 +158,8 @@
   width: 30%;
 }
 
-.talentContent {  
-  border: 1px solid rgba(0,0,0,.1);
+.talentContent {
+  border: 1px solid rgba(0, 0, 0, .1);
 }
 
 .talentInfo {
@@ -166,7 +169,11 @@
 .talentSpacer {
   width: 50%;
   height: 5rem;
-  border-right: solid thick rgba(0,0,0,.1);
+  border-right: solid thick rgba(0, 0, 0, .1);
+}
+
+.abilityXp {
+  margin-left: 2.5rem;
 }
 
 .completedFlatlandTalentSpacer {
@@ -198,30 +205,35 @@ table {
 
 td {
   width: 25%;
-  border: 1px solid rgba(0,0,0,.1) /*var(--foreground-default)*/;
+  border: 1px solid rgba(0, 0, 0, .1)
+    /*var(--foreground-default)*/
+  ;
 }
 
 /** This assumes 2 total columns on mobile and 4 total columns otherwise **/
 @media (max-width: 650px) {
   table:last-child {
-      border-bottom: none;
-    }
-  
-    table:nth-child(-n+2) {
-      border-top: none;
-    }
-    
-    table:nth-child(2n) { 
-      border-right: none;
-    }
-  
-    table:nth-child(2n-1) { 
-      border-left: none;
-    }
+    border-bottom: none;
+  }
+
+  table:nth-child(-n+2) {
+    border-top: none;
+  }
+
+  table:nth-child(2n) {
+    border-right: none;
+  }
+
+  table:nth-child(2n-1) {
+    border-left: none;
+  }
 }
 
 
-table tr td:last-child, table tr td:nth-last-child(2), table tr td:nth-last-child(3), table tr td:nth-last-child(4) {
+table tr td:last-child,
+table tr td:nth-last-child(2),
+table tr td:nth-last-child(3),
+table tr td:nth-last-child(4) {
   border-bottom: none;
 }
 
@@ -229,10 +241,10 @@ table tr:nth-child(1) td:nth-child(-n+4) {
   border-top: none;
 }
 
-table tr td:nth-child(4n) { 
+table tr td:nth-child(4n) {
   border-right: none;
 }
 
-table tr td:nth-child(4n-3) { 
+table tr td:nth-child(4n-3) {
   border-left: none;
 }

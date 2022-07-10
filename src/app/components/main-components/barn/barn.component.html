@@ -24,8 +24,12 @@
     </div>
     <div class="unassigned" *ngIf="!this.isOccupied && !this.isLocked">
         <span>Unassigned</span>
+        <br/>
+        <em>Click to assign animal</em>
     </div>
     <div class="locked" *ngIf="this.isLocked">
         <span>Locked</span>
+        <br/>
+        <em>Click to view status</em>
     </div>
 </div>

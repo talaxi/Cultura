@@ -3,6 +3,7 @@ import { NavigationEnum } from 'src/app/models/navigation-enum.model';
 import { RaceTypeEnum } from 'src/app/models/race-type-enum.model';
 import { Race } from 'src/app/models/races/race.model';
 import { ComponentCommunicationService } from 'src/app/services/component-communication.service';
+import { GameLoopService } from 'src/app/services/game-loop/game-loop.service';
 import { GlobalService } from 'src/app/services/global-service.service';
 
 @Component({
@@ -17,11 +18,18 @@ export class RaceSelectionViewComponent implements OnInit {
   trainingTrackRace = false;
   selectedRace: Race;
   public raceTypeEnum = RaceTypeEnum;
+  newSpecialRaceAvailable = false;
+  subscription: any;
 
-  constructor(private globalService: GlobalService, private componentCommunicationService: ComponentCommunicationService) { }
+  constructor(private globalService: GlobalService, private componentCommunicationService: ComponentCommunicationService,
+    private gameLoopService: GameLoopService) { }
 
   ngOnInit(): void {
     this.componentCommunicationService.setNewView(NavigationEnum.raceselection);
+
+    this.subscription = this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {
+      this.newSpecialRaceAvailable = this.globalService.globalVar.notifications.isNewSpecialRaceAvailable;
+    });
   }
 
   /*toggleCircuitRace(toggle: boolean): void {
@@ -30,6 +38,9 @@ export class RaceSelectionViewComponent implements OnInit {
 
   changeDisplayRaceView(type: RaceTypeEnum) {
     this.displayRaceView = type;
+
+    if (type === RaceTypeEnum.special)
+      this.newSpecialRaceAvailable = this.globalService.globalVar.notifications.isNewSpecialRaceAvailable = false;
   }
 
   raceSelected(race: Race) {
@@ -37,24 +48,17 @@ export class RaceSelectionViewComponent implements OnInit {
     this.showRace = true;
   }
 
+  //this is back button not race ending
   raceFinished() {
-    if (this.selectedRace.raceType === RaceTypeEnum.event)
-    {      
-    //if this segment is complete, pull next segment
-    var primaryDeck = this.globalService.globalVar.animalDecks.find(item => item.isPrimaryDeck);
-    if (primaryDeck !== null && primaryDeck !== undefined)
-      this.selectedRace = this.globalService.generateGrandPrixSegment(primaryDeck.selectedAnimals[0]);
-
-    //if time runs out, end event
-    }
-    else
-    {
-      this.showRace = false;
-    }
-
+    this.showRace = false;
   }
 
-  trainingTrackRaceSelected(isSelected: boolean) {    
+  trainingTrackRaceSelected(isSelected: boolean) {
     this.trainingTrackRace = isSelected;
+  }
+
+  ngOnDestroy() {
+    if (this.subscription !== null && this.subscription !== undefined)
+      this.subscription.unsubscribe();
   }
 }

@@ -4,6 +4,7 @@ import { Race } from 'src/app/models/races/race.model';
 import { GameLoopService } from 'src/app/services/game-loop/game-loop.service';
 import { GlobalService } from 'src/app/services/global-service.service';
 import { LookupService } from 'src/app/services/lookup.service';
+import { RaceLogicService } from 'src/app/services/race-logic/race-logic.service';
 
 @Component({
   selector: 'app-event-view',
@@ -24,30 +25,50 @@ export class EventViewComponent implements OnInit {
   grandPrixUnlocked = false;
   subscription: any;
 
-  constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private lookupService: LookupService) { }
+  constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private lookupService: LookupService,
+    private raceLogicService: RaceLogicService) { }
 
   ngOnInit(): void {
     this.globalService.getGrandPrixDetails(); //??
     this.grandPrixData = this.globalService.globalVar.eventRaceData;
     this.grandPrixUnlocked = this.lookupService.isItemUnlocked("grandPrix");
-    
+
+    var racingAnimal = this.globalService.getGrandPrixRacingAnimal();
+    if (!this.globalService.globalVar.eventRaceData.animalData.some(item => item.isCurrentlyRacing))
+    {
+      var matchingAnimalData = this.globalService.globalVar.eventRaceData.animalData.find(item => item.associatedAnimalType == racingAnimal.type);
+      if (matchingAnimalData !== undefined)
+        matchingAnimalData.isCurrentlyRacing = true;
+    }
+
     this.subscription = this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {
       this.setupEventTime();
-      this.remainingMeters = this.grandPrixData.totalDistance - this.grandPrixData.distanceCovered;
-    });       
+      this.remainingMeters = this.globalService.globalVar.eventRaceData.totalDistance - this.globalService.globalVar.eventRaceData.distanceCovered;
+    });
   }
 
   selectEventRace() {
     //this can't actually start a race -- the race needs to be running in the background. this should just view it
-    if (this.grandPrixData.isRunning === false)
-    {
+    if (this.globalService.globalVar.eventRaceData.isRunning === false) {
       //do set up
-      this.grandPrixData.isRunning = true;
+      this.globalService.globalVar.eventRaceData.isRunning = true;
+
+      var eventDeck = this.globalService.globalVar.animalDecks.find(item => item.isEventDeck);
+      if (eventDeck === null || eventDeck === undefined)
+        return;
+
+      if (this.globalService.globalVar.eventRaceData.currentRaceSegmentCount === 0) {
+        this.globalService.globalVar.eventRaceData.currentRaceSegment = this.globalService.generateGrandPrixSegment(eventDeck.selectedAnimals[0]);        
+        this.globalService.globalVar.eventRaceData.currentRaceSegmentResult = this.raceLogicService.runRace(this.globalService.globalVar.eventRaceData.currentRaceSegment);        
+        this.globalService.globalVar.eventRaceData.currentRaceSegmentCount += 1;        
+        this.globalService.globalVar.eventRaceData.nextRaceSegment = this.globalService.generateGrandPrixSegment(eventDeck.selectedAnimals[0]);                
+      }
+
       //flipping that true should start the auto run in gamecheckup
-      //should be basically the same time constraints as auto run but it's 1 every 3 min instead of 1-20 every 5 min 
-      this.raceSelected.emit(this.grandPrixData.currentRaceSegment);
+      //should be basically the same time constraints as auto run but it's 1 every 3 min instead of 1-20 every 5 min       
     }
 
+    this.raceSelected.emit(this.globalService.globalVar.eventRaceData.currentRaceSegment);
     //view race
   }
 

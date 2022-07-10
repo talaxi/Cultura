@@ -933,11 +933,11 @@ export class LookupService {
 
     if (specializationName === "Breeding Grounds") {
       var increaseAmount = 0;
-      var modifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "trainingBreedGaugeIncrease");
+      var modifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "breedingGroundsSpecializationModifier");
       if (modifierPair !== null && modifierPair !== undefined)
         increaseAmount = modifierPair.value;
 
-      description = "For every 10 levels, gain " + increaseAmount + "% additional breed XP when completing a training.";
+      description = "For every 10 levels, gain " + (increaseAmount * 100) + "% additional breed XP when completing a training.";
     }
     else if (specializationName === "Training Facility") {
       description = "For every 10 levels up to level 200, gain 1% training time reduction. For every 10 levels after level 200, gain a .1 stat multiplier for every stat.";
@@ -1053,7 +1053,12 @@ export class LookupService {
   }*/
 
   canAnimalTrain(animal: Animal) {
+    var inIncubator = false;
     //TODO: if animal not in incubator or event run, return true
+    if (this.globalService.globalVar.incubator.assignedAnimal === animal)
+      inIncubator = true;
+
+    return inIncubator;
   }
 
   getTraitStatGainDescription(trait: AnimalTraits) {
@@ -1359,6 +1364,7 @@ export class LookupService {
       tipList.push("Don't forget to export your save regularly!");
       tipList.push("Have to recite the alphabet to figure out what your next circuit rank is? You're not alone, go to the settings to use numbers instead!");
       tipList.push("Small barns allow training for 2 hours, medium for 4 hours, and large for 8 hours. Your animals will train even when the game is not active.");
+      tipList.push("Each animal is predisposed to racing a certain way, meaning they may gain more or less racing stats from a base stat than other animals. Hover over each base stat in the Animals tab to see its modifier.");
 
       var rng = this.utilityService.getRandomInteger(0, tipList.length - 1);
       tip = tipList[rng];

@@ -21,6 +21,7 @@ export class DecksViewComponent implements OnInit {
   possibleAnimalsList: string[];
   selectedDeck: AnimalDeck;
   showAutoRaceButton: boolean;
+  showEventButton: boolean;
   newAnimalList: Animal[];
   selectedAnimalName: string;
   selectedCourseType: string;
@@ -70,6 +71,11 @@ export class DecksViewComponent implements OnInit {
       this.showAutoRaceButton = true;
     else
       this.showAutoRaceButton = false;
+
+    if (this.lookupService.isItemUnlocked("grandPrix"))
+      this.showEventButton = true;    
+    else
+      this.showEventButton = false;
   }
 
   editDeck(content: any, deck: AnimalDeck) {
@@ -232,6 +238,18 @@ export class DecksViewComponent implements OnInit {
         existingAutoRunFreeRace.autoRunFreeRace = false;
 
       selectedDeck.autoRunFreeRace = true;
+    }
+  }
+
+  setAsEventDeck(deck: AnimalDeck) {
+    var existingEventDeck = this.globalService.globalVar.animalDecks.find(item => item.isEventDeck);
+    var selectedDeck = this.globalService.globalVar.animalDecks.find(item => item.deckNumber === deck.deckNumber);
+
+    if (selectedDeck !== undefined && selectedDeck !== null) {
+      if (existingEventDeck !== undefined && existingEventDeck !== null)
+        existingEventDeck.isEventDeck = false;
+
+      selectedDeck.isEventDeck = true;
     }
   }
 

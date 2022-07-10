@@ -18,7 +18,7 @@ export class DeploymentService {
   }
 
   setDevMode() {
-    this.devModeActive = true;
+    this.devModeActive = false;
     this.forceStartNewGame = true;
     this.codeCreationMode = true;
   }

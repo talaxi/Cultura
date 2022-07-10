@@ -5,9 +5,11 @@ import { AnimalStats } from 'src/app/models/animals/animal-stats.model';
 import { Animal } from 'src/app/models/animals/animal.model';
 import { RaceVariables } from 'src/app/models/animals/race-variables.model';
 import { EquipmentEnum } from 'src/app/models/equipment-enum.model';
+import { EventRaceTypeEnum } from 'src/app/models/event-race-type-enum.model';
 import { LocalRaceTypeEnum } from 'src/app/models/local-race-type-enum.model';
 import { RaceCourseTypeEnum } from 'src/app/models/race-course-type-enum.model';
 import { RaceDesignEnum } from 'src/app/models/race-design-enum.model';
+import { RaceTypeEnum } from 'src/app/models/race-type-enum.model';
 import { RacerEffectEnum } from 'src/app/models/racer-effect-enum.model';
 import { RaceLeg } from 'src/app/models/races/race-leg.model';
 import { RacePath } from 'src/app/models/races/race-path.model';
@@ -41,8 +43,8 @@ export class RaceLogicService {
     private initializeService: InitializeService) { }
 
   runRace(race: Race, expediteRace?: boolean): RaceResult {
-    console.log("Race Info:");
-    console.log(race);
+    //console.log("Race Info:");
+    //console.log(race);
 
     this.currentBurstOpportunity = 0;
     this.currentLostFocusOpportunity = 0;
@@ -118,6 +120,12 @@ export class RaceLogicService {
 
       this.increasePersistentAbilityXp(racingAnimal);
 
+      var previousEventRaceSegmentData: number[] = [];
+      //do carry over for event race segments -- should not carry over if prep hasn't happened because animal may have switched
+      if (this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix &&
+        this.globalService.globalVar.eventRaceData.animalAlreadyPrepped)
+        previousEventRaceSegmentData = this.carryOverEventRaceSegmentData();
+
       var lastLeg = undefined;
       var nextLeg = new RaceLeg();
       //get correct color class
@@ -163,7 +171,10 @@ export class RaceLogicService {
           }
         }
 
-        this.PrepareRacingAnimal(raceResult, framesPassed, lastAnimalDisplayName, racingAnimal, completedAnimals, item, lastLeg);
+        if (!(this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix &&
+          this.globalService.globalVar.eventRaceData.animalAlreadyPrepped))
+          this.PrepareRacingAnimal(raceResult, framesPassed, lastAnimalDisplayName, racingAnimal, completedAnimals, item, lastLeg);
+
         this.prepareRacingLeg(item, racingAnimal);
         raceResult.addRaceUpdate(framesPassed, animalDisplayName + " starts their leg of the race.");
       }
@@ -189,6 +200,13 @@ export class RaceLogicService {
       var legPercentBreakpoint = 0; //used to keep up with various ability distance breakpoints
       var framesInCurrentLeg = 0;
       var previousPassedLavaBreakpoint = [false, false, false, false, false];
+
+      if (previousEventRaceSegmentData !== undefined && previousEventRaceSegmentData !== null && previousEventRaceSegmentData.length > 0)
+      {        
+        velocity = previousEventRaceSegmentData[0];
+        racingAnimal.currentStats.stamina = animalMaxStamina * previousEventRaceSegmentData[1];
+        //console.log("New Velocity: " + velocity + " New Stamina: " + racingAnimal.currentStats.stamina);
+      }
 
       if (racingAnimal.ability.name === "Nap" && racingAnimal.type === AnimalTypeEnum.Hare) {
         var distanceFromEnd = item.distance - this.lookupService.GetAbilityEffectiveAmount(racingAnimal, item.terrain.powerModifier, statLossFromExhaustion)
@@ -542,7 +560,7 @@ export class RaceLogicService {
         var doesRacerBurst = this.doesRacerBurst(racingAnimal, currentPath, this.timeToComplete, race.length, distanceCovered, modifiedAdaptabilityMs, modifiedFocusMs);
         if (doesRacerBurst) {
           racingAnimal.raceVariables.isBursting = true;
-          racingAnimal.raceVariables.remainingBurstMeters = this.getBurstDistance(racingAnimal, item.terrain.powerModifier, statLossFromExhaustion); 
+          racingAnimal.raceVariables.remainingBurstMeters = this.getBurstDistance(racingAnimal, item.terrain.powerModifier, statLossFromExhaustion);
           racingAnimal.raceVariables.burstCount += 1;
 
           if (racingAnimal.type === AnimalTypeEnum.Monkey && racingAnimal.ability.name === "Frenzy") {
@@ -855,7 +873,9 @@ export class RaceLogicService {
             buriedTreasureModifier = 1 + this.lookupService.GetAbilityEffectiveAmount(racingAnimal, item.terrain.powerModifier, statLossFromExhaustion) / 100;
           }
 
-          this.PrepareRacingAnimal(raceResult, framesPassed, lastAnimalDisplayName, racingAnimal, undefined, undefined, undefined, statLossFromExhaustion); //Reset so that stamina and such look correct on view pages
+          if (!(this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix &&
+            this.globalService.globalVar.eventRaceData.animalAlreadyPrepped))
+            this.PrepareRacingAnimal(raceResult, framesPassed, lastAnimalDisplayName, racingAnimal, undefined, undefined, undefined, statLossFromExhaustion); //Reset so that stamina and such look correct on view pages
 
           if (racingAnimal.type === AnimalTypeEnum.Gecko && racingAnimal.ability.name === "Camouflage") {
             camouflageVelocityGain = modifiedVelocity;
@@ -892,22 +912,25 @@ export class RaceLogicService {
       race.isCompleted = true;
       raceResult.wasSuccessful = true;
       raceResult.totalFramesPassed = framesPassed;
-      raceResult.distanceCovered = race.raceUI.distanceCoveredByFrame[framesPassed-1];
+      raceResult.distanceCovered = race.raceUI.distanceCoveredByFrame[framesPassed - 1];
 
       raceResult.addRaceUpdate(framesPassed, "You won the race!");
     }
     else {
       raceResult.wasSuccessful = false;
       raceResult.totalFramesPassed = framesPassed;
-      raceResult.distanceCovered = race.raceUI.distanceCoveredByFrame[framesPassed-1];
-      
+      raceResult.distanceCovered = race.raceUI.distanceCoveredByFrame[framesPassed - 1];
+
       raceResult.addRaceUpdate(framesPassed, "You lost the race...");
     }
 
-    this.racingAnimals.forEach(animal => {
-      //reset each racing animal
-      this.PrepareRacingAnimal(raceResult, framesPassed, "", animal, undefined, undefined, undefined, undefined, true);
-    });
+    if (!(this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix &&
+      this.globalService.globalVar.eventRaceData.animalAlreadyPrepped)) {
+      this.racingAnimals.forEach(animal => {
+        //reset each racing animal
+        this.PrepareRacingAnimal(raceResult, framesPassed, "", animal, undefined, undefined, undefined, undefined, true);
+      });
+    }
 
     this.globalService.globalVar.trackedStats.totalMetersRaced += distanceCovered;
 
@@ -949,8 +972,7 @@ export class RaceLogicService {
     }
   }
 
-  getBurstDistance(animal: Animal, terrainModifier: number, statLossFromExhaustion: number)
-  {
+  getBurstDistance(animal: Animal, terrainModifier: number, statLossFromExhaustion: number) {
     var breedLevelStatModifierValue = 0;
     var breedLevelStatModifier = this.globalService.globalVar.modifiers.find(item => item.text === "breedLevelStatModifier");
     if (breedLevelStatModifier !== undefined && breedLevelStatModifier !== null)
@@ -1290,6 +1312,9 @@ export class RaceLogicService {
   }
 
   PrepareRacingAnimal(raceResult: RaceResult, framesPassed: number, lastAnimalDisplayName: string, animal: Animal, completedAnimals?: Animal[], currentLeg?: RaceLeg, previousLeg?: RaceLeg, statLossFromExhaustion?: number, raceFinished?: boolean) {
+    if (this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix)
+      this.globalService.globalVar.eventRaceData.animalAlreadyPrepped = true;
+
     animal.ability.currentCooldown = animal.ability.cooldown;
     animal.ability.remainingLength = 0;
     animal.ability.totalUseCount = 0;
@@ -2044,5 +2069,17 @@ export class RaceLogicService {
     }
 
     race.raceUI.racePositionByFrame.push(currentPosition);
+  }
+
+  carryOverEventRaceSegmentData() {
+    if (this.globalService.globalVar.eventRaceData.previousRaceSegment !== undefined &&
+      this.globalService.globalVar.eventRaceData.previousRaceSegment !== null) {      
+      var previousVelocity = this.globalService.globalVar.eventRaceData.previousRaceSegment.raceUI.velocityByFrame[this.globalService.globalVar.eventRaceData.previousRaceSegment.raceUI.velocityByFrame.length - 1]  * this.frameModifier;
+      var previousStaminaPercent = this.globalService.globalVar.eventRaceData.previousRaceSegment.raceUI.staminaPercentByFrame[this.globalService.globalVar.eventRaceData.previousRaceSegment.raceUI.staminaPercentByFrame.length - 1];
+
+      return [previousVelocity, previousStaminaPercent];
+      }
+
+      return [];
   }
 }

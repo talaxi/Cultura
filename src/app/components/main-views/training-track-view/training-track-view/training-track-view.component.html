@@ -7,8 +7,8 @@
                     Each animal can run their own training track to gain rewards and bonuses you can't get anywhere else. To get each reward, you will have to beat each track at a progressively faster pace.
                 </div>
             </div>
-            <div *ngIf="animalSelected" class="back clickableText" (click)="returnToAnimalView()">
-                <span>Back</span>
+            <div *ngIf="animalSelected" class="back">
+                <button (click)="returnToAnimalView()">Back</button>
             </div>
         </div>        
         <hr />

@@ -1,4 +1,5 @@
 import { Type } from "class-transformer";
+import { AnimalEventRaceData } from "../animals/animal-event-race-data.model";
 import { RaceResult } from "./race-result.model";
 import { Race } from "./race.model";
 import { Terrain } from "./terrain.model";
@@ -27,9 +28,17 @@ export class GrandPrixData {
     currentRaceSegmentCount: number;     
     @Type(() => Race)
     currentRaceSegment: Race; 
+    @Type(() => RaceResult)
     currentRaceSegmentResult: RaceResult; 
-    isRunning: boolean;
+    @Type(() => Race)
+    nextRaceSegment: Race; 
+    @Type(() => Race)
+    previousRaceSegment: Race;
+    @Type(() => AnimalEventRaceData)
+    animalData: AnimalEventRaceData[];
+    isRunning: boolean = false;
     initialSetupComplete: boolean = false;
+    animalAlreadyPrepped: boolean = false;
     
     constructor() {
         this.weekStartDay = 2;//tues 9 am to thurs 12 pm (noon)
@@ -44,9 +53,10 @@ export class GrandPrixData {
 
         this.distanceCovered = 0;
         this.grandPrixTimeLength = 51 * 60 * 60; //51 hours
-        this.segmentTime = 180; //each segment is 180 seconds
+        this.segmentTime = 180; //each segment is 180 seconds on average
         this.segmentTimeCounter = 0;
         this.overallTimeCounter = 0;
         this.rank = "Z";
+        this.animalData = [];
     }
 }

@@ -64,12 +64,12 @@
 .gridContainer {
     height: 100%;
     display: grid;
-    grid-template-columns: 70% 15% 15%;
+    grid-template-columns: 60% 1fr 1fr 1fr;
     grid-template-rows: auto;
     justify-content: stretch;
     grid-template-areas: 
-      "deck . freeRace"
-      "deck edit primary";
+      "deck . freeRace ."
+      "deck edit primary event";
   }
 
   .deck {
@@ -79,6 +79,15 @@
   .edit {
     grid-area: edit;
     text-align: center;
+}
+
+.event {
+    grid-area: event;
+    text-align:center;
+}
+
+.eventButton {
+    width: 80%;
 }
 
 .editButton {

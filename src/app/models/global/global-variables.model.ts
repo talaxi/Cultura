@@ -13,6 +13,7 @@ import { ResourceValue } from "../resources/resource-value.model";
 import { ShopSection } from "../shop/shop-section.model";
 import { TrainingOption } from "../training/training-option.model";
 import { Tutorials } from "../tutorials.model";
+import { Notifications } from "../utility/notifications.model";
 import { Settings } from "../utility/settings.model";
 import { StringNumberPair } from "../utility/string-number-pair.model";
 import { TrackedStats } from "../utility/tracked-stats.model";
@@ -62,6 +63,8 @@ export class GlobalVariables {
     redeemedCodes: RedeemableCode[];
     @Type(() => GrandPrixData)
     eventRaceData: GrandPrixData;
+    @Type(() => Notifications)
+    notifications: Notifications;
     circuitRankUpRewardDescription: string;
     nationalRaceCountdown: number;
     userIsRacing = false;   
@@ -72,6 +75,7 @@ export class GlobalVariables {
     currentVersion: number;
     startingVersion: number;
     startDate: Date;
+
 
     constructor(existingVariables?: GlobalVariables) {
         if (existingVariables !== undefined && existingVariables !== null) {            
@@ -91,6 +95,7 @@ export class GlobalVariables {
             this.orbStats = existingVariables.orbStats;
             this.redeemedCodes = existingVariables.redeemedCodes;
             this.eventRaceData = existingVariables.eventRaceData;
+            this.notifications = existingVariables.notifications;
             this.nationalRaceCountdown = 0;
             this.autoFreeRaceCounter = 0;
             this.freeRaceCounter = 0;

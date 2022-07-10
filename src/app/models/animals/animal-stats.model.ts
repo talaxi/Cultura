@@ -43,6 +43,28 @@ export class AnimalStats {
             this.adaptability = adaptability;
     }
 
+    makeCopy(originalStats: AnimalStats) {
+        var copyStats = new AnimalStats();
+
+        copyStats.topSpeed = originalStats.topSpeed;
+        copyStats.acceleration = originalStats.acceleration;
+        copyStats.endurance = originalStats.endurance;
+        copyStats.power = originalStats.power;
+        copyStats.focus = originalStats.focus;
+        copyStats.adaptability = originalStats.adaptability;
+
+        copyStats.stamina = originalStats.stamina;
+        copyStats.maxSpeedMs = originalStats.maxSpeedMs;
+        copyStats.accelerationMs = originalStats.accelerationMs;
+        copyStats.powerMs = originalStats.powerMs;
+        copyStats.focusMs = originalStats.focusMs;
+        copyStats.adaptabilityMs = originalStats.adaptabilityMs;
+        copyStats.burstChance = originalStats.burstChance;
+        copyStats.burstDistance = originalStats.burstDistance;
+
+        return copyStats;
+    }
+
     calculateStamina(animalDefaultModifier?: number, diminishingReturnsValue?: number, orbModifier?: number): number {
         if (animalDefaultModifier === null || animalDefaultModifier === undefined)
             animalDefaultModifier = this.defaultStaminaModifier;

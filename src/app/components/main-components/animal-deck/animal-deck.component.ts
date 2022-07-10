@@ -1,6 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { AnimalDeck } from 'src/app/models/animals/animal-deck.model';
 import { Animal } from 'src/app/models/animals/animal.model';
+import { NavigationEnum } from 'src/app/models/navigation-enum.model';
+import { ComponentCommunicationService } from 'src/app/services/component-communication.service';
 import { GlobalService } from 'src/app/services/global-service.service';
 
 @Component({
@@ -12,7 +14,7 @@ export class AnimalDeckComponent implements OnInit {
   deck: AnimalDeck;
   @Input() deckNumber: number;
 
-  constructor(private globalService: GlobalService) { }
+  constructor(private globalService: GlobalService, private componentCommunicationService: ComponentCommunicationService) { }
 
   ngOnInit(): void {
     if (this.deckNumber === 0 || this.deckNumber === undefined || this.deckNumber === null) {
@@ -40,5 +42,9 @@ export class AnimalDeckComponent implements OnInit {
     }
     else
       return {};
+  }
+
+  goToDeckView() {
+    this.componentCommunicationService.setNewView(NavigationEnum.decks);
   }
 }

@@ -17,12 +17,15 @@
                         <button (click)="editDeck(content, deck)" class="editButton">Edit</button>
                     </div>
                     <div class="primary">
-                        <button (click)="setAsPrimary(deck)" class="primaryButton">Set as Primary</button>
+                        <button (click)="setAsPrimary(deck)" class="primaryButton">Set as Primary Deck</button>
                     </div>
                     <div class="autoRunFreeRace">
                         <button *ngIf="showAutoRaceButton" (click)="setAsAutoRunFreeRace(deck)"
                             class="autoRunFreeRaceButton">Auto
                             Run Free Race</button>
+                    </div>
+                    <div class="event">
+                        <button *ngIf="showEventButton" (click)="setAsEventDeck(deck)" class="eventButton">Set as Event Deck</button>
                     </div>
                 </div>
                 <hr />

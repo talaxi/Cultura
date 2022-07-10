@@ -89,7 +89,9 @@
                         [model]="autoBreedActive"></app-toggle>
                 </div>
                 <div class="back">
-                    <span class="clickableText" (click)="returnToAnimalView()">Back</span>
+                    <div>
+                        <button (click)="returnToAnimalView()">Back</button>
+                    </div>
                     <br />
                     <div *ngIf="orbIsUnlocked" class="orb">
                         <div *ngIf="selectedAnimal.equippedOrb !== undefined && selectedAnimal.equippedOrb !== null"
@@ -250,28 +252,31 @@
             </div>
             <br />
             <div class="abilities">
-                <p class="s4Heading"><span [ngbPopover]="getAbilityPopover()" triggers="mouseenter:mouseleave"
-                        popoverClass="popoverClass">Abilities</span></p>
+                <p><span class="s4Heading" [ngbPopover]="getAbilityPopover()" triggers="mouseenter:mouseleave"
+                        popoverClass="popoverClass">Abilities</span>
+                        <br/>
+                    <span>
+                        Your animal will use the ability you select below.
+                    </span></p>
                 <div>
-                    <span class="ability1 clickableText" (click)="selectAbility(ability1)"
+                    <span class="ability1 s5Heading clickableText" (click)="selectAbility(ability1)"
                         [class.filterActive]="selectedAnimal.ability.name === ability1.name">{{ ability1.name }} </span>
-                    <span *ngIf="ability2.isAbilityPurchased" class="ability2 clickableText"
+                    <span *ngIf="ability2.isAbilityPurchased" class="ability2 s5Heading clickableText"
                         (click)="selectAbility(ability2)"
                         [class.filterActive]="selectedAnimal.ability.name === ability2.name">{{ ability2.name }} </span>
-                    <span *ngIf="ability3.isAbilityPurchased" class="ability3 clickableText"
+                    <span *ngIf="ability3.isAbilityPurchased" class="ability3 s5Heading clickableText"
                         (click)="selectAbility(ability3)"
                         [class.filterActive]="selectedAnimal.ability.name === ability3.name">{{ ability3.name }} </span>
                     <br />
                     <br />
                     <p>
                         <span [ngbPopover]="abilityLevelPopoverContent" triggers="mouseenter:mouseleave"
-                            popoverClass="popoverClass">Level {{ selectedAbility.abilityLevel }} <span
+                            popoverClass="popoverClass">Level {{ selectedAbility.abilityLevel }} <span class="abilityXp"><span
                                 *ngIf="!abilityLevelMaxedOut">{{selectedAbility.abilityXp}} /
                                 {{selectedAbility.abilityMaxXp}} XP</span> <span
-                                *ngIf="abilityLevelMaxedOut">MAX</span></span>
+                                *ngIf="abilityLevelMaxedOut">MAX</span></span></span>
                         <br />
-                        <span [innerHTML]="longDescription"></span>
-                        <!--{{ longDescription }}-->
+                        <span [innerHTML]="longDescription"></span>                        
                     </p>
                 </div>
             </div>

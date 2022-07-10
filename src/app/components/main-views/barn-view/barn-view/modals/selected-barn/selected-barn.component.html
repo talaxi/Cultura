@@ -2,7 +2,8 @@
     <div class="infoText">
         <div class="infoGridContainer">
             <div class="unassign">
-                <span  class="clickableText" (click)="unassignAnimal()">Unassign</span>
+                <button (click)="unassignAnimal()">Unassign</button>
+                <!--<span  class="clickableText" (click)="unassignAnimal()">Unassign</span>-->
                 <br />
                 <br />
                 <div *ngIf="barnSpecializationsUnlocked">
@@ -19,15 +20,15 @@
             <div class="info">
                 <span> {{ this.barnName }}</span>
                 <br />
-                <div *ngIf="this.associatedAnimal.name !== this.associatedAnimal.getAnimalType()" [ngClass]="colorConditional" class="keyword clickableText"
-                    (click)="goToAnimal()">
+                <div *ngIf="this.associatedAnimal.name !== this.associatedAnimal.getAnimalType()"
+                    [ngClass]="colorConditional" class="keyword clickableText" (click)="goToAnimal()">
                     <span *ngIf="this.associatedAnimal.name !== this.associatedAnimal.getAnimalType()">{{
                         this.associatedAnimal.name }}</span>
                     <br />
                     <span>{{ this.associatedAnimal.getAnimalType() }}</span>
                 </div>
-                <div *ngIf="this.associatedAnimal.name === this.associatedAnimal.getAnimalType()"
-                    (click)="goToAnimal()" [ngClass]="colorConditional" class="clickableText keyword">
+                <div *ngIf="this.associatedAnimal.name === this.associatedAnimal.getAnimalType()" (click)="goToAnimal()"
+                    [ngClass]="colorConditional" class="clickableText keyword">
                     <span>{{ this.associatedAnimal.getAnimalType() }}</span>
                 </div>
                 <div>
@@ -48,11 +49,12 @@
                 </div>
             </div>
             <div class="back">
-                <span (click)="returnToBarnView()" class="clickableText">Back</span>
+                <button (click)="returnToBarnView()">Back</button>
+                <!--<span (click)="returnToBarnView()" class="clickableText">Back</span>-->
                 <br />
                 <br />
                 <br />
-                <div *ngIf="coachingUnlocked">                    
+                <div *ngIf="coachingUnlocked">
                     <span>
                         <button (click)="goToCoaching()">Coach</button>
                     </span>
@@ -70,10 +72,12 @@
             <br />
         </div>
         <br />
-        <br />
         <div class="changeTrainingHeader">
             <span class="s4Heading" (click)="resetFilters()">Change Training</span>
+            <br />
+            <span class="trainingDescription">Click an option below to start training.</span>
         </div>
+        <br />
         <div class="filterGridContainer">
             <div class="facilitySizeFilter clickableText">
                 <span (click)="toggleFacilityFilter('Small')" id="smallFilter" [class.filterActive]="filterSmall">Small
@@ -121,14 +125,15 @@
                 <br />
                 <span>Unassigned</span>
             </div>
-            <div class="back clickableText" (click)="returnToBarnView()">
-                <span>Back</span>
-            </div>
+            <div class="back">
+            <button (click)="returnToBarnView()">Back</button>
+        </div>
         </div>
         <hr />
         <br />
-        <br />
         <span>Assign Animal</span>
+        <br />
+        <br />
         <app-animal-list [availableAnimals]="availableAnimals" (selectedAnimal)="assignAnimal($event)">
         </app-animal-list>
     </div>
@@ -142,12 +147,11 @@
                 <br />
                 <span>Locked</span>
             </div>
-            <div class="back clickableText" (click)="returnToBarnView()">
-                <span>Back</span>
+            <div class="back">
+                <button (click)="returnToBarnView()">Back</button>
             </div>
         </div>
         <hr />
-        <br />
         <br />
         <div class="purchaseBarn">
             <span>Purchase Barn</span>

@@ -1,8 +1,10 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
+import { EventRaceTypeEnum } from 'src/app/models/event-race-type-enum.model';
 import { LocalRaceTypeEnum } from 'src/app/models/local-race-type-enum.model';
 import { RaceCourseTypeEnum } from 'src/app/models/race-course-type-enum.model';
 import { RaceDesignEnum } from 'src/app/models/race-design-enum.model';
+import { RaceTypeEnum } from 'src/app/models/race-type-enum.model';
 import { RacerEffectEnum } from 'src/app/models/racer-effect-enum.model';
 import { RaceLeg } from 'src/app/models/races/race-leg.model';
 import { RacePath } from 'src/app/models/races/race-path.model';
@@ -64,6 +66,10 @@ export class DrawRaceComponent implements OnInit {
   //leg specific data
   mountainClimbPercent = .5; //what percentage of mountain is going up vs going down
 
+  //event specific data
+  eventViewStartFrame = 0;
+  //lastFrame = 0;  
+  lastEventSegment = this.globalService.globalVar.eventRaceData.currentRaceSegmentCount;
 
   constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private utilityService: UtilityService,
     private lookupService: LookupService, private themeService: ThemeService) { }
@@ -80,6 +86,10 @@ export class DrawRaceComponent implements OnInit {
   }
 
   ngAfterViewInit() {
+    if (this.race.raceType === RaceTypeEnum.event && this.race.eventRaceType === EventRaceTypeEnum.grandPrix) {
+      this.eventViewStartFrame = Math.round(this.globalService.globalVar.eventRaceData.segmentTimeCounter * this.frameModifier);
+    }
+
     this.totalLegs = this.race.raceLegs.length;
     this.setupCanvas();
     this.canvasXDistanceScale = this.canvasWidth / this.race.length;
@@ -88,6 +98,7 @@ export class DrawRaceComponent implements OnInit {
     context.lineWidth = 6;
 
     var currentTime = 0;
+    //var eventFrameTimeCounter = 0;
 
     this.mountainClimbPercent = this.utilityService.getRandomNumber(.3, .7);
     var effectiveTimeToComplete = this.race.raceUI.timeToCompleteByFrame[this.race.raceUI.timeToCompleteByFrame.length - 1];
@@ -101,21 +112,44 @@ export class DrawRaceComponent implements OnInit {
       if (!this.pauseRace) {
         //keep up with current time
         currentTime += deltaTime;
+
+        if (this.race.raceType === RaceTypeEnum.event && this.race.eventRaceType === EventRaceTypeEnum.grandPrix) {
+
+          if (this.globalService.globalVar.eventRaceData.currentRaceSegmentCount > this.lastEventSegment) {
+            this.eventViewStartFrame = 0;
+            this.currentRaceFrame = 0;
+            this.race = this.globalService.globalVar.eventRaceData.currentRaceSegment;            
+          }
+
+          this.lastEventSegment = this.globalService.globalVar.eventRaceData.currentRaceSegmentCount;
+        }
+
+
         this.currentRaceFrame += 1;
+      }
+
+      var ignoreOverview = false;
+      if (this.race.raceType === RaceTypeEnum.event && this.race.eventRaceType === EventRaceTypeEnum.grandPrix) {
+        //don't show race end unless the entire event is over
+
+        if (this.globalService.getRemainingEventRaceTime() > 0)
+          ignoreOverview = true;
       }
 
       //Two modes: Full Overview (shown at the very beginning of the race and then final view after race ends) and
       //Race Mode (keeps up with your animal as it progresses through each section)      
-      //if (currentTime >= effectiveTimeToComplete || this.isRaceFinished || this.skipRace)
-      if (this.currentRaceFrame >= effectiveTimeToComplete * this.frameModifier || this.isRaceFinished || this.skipRace)
+
+      if ((this.currentRaceFrame >= effectiveTimeToComplete * this.frameModifier || this.isRaceFinished || this.skipRace) &&
+        !ignoreOverview) {
         this.displayOverview(context, true);
+      }
       else {
         this.displayRace(context, currentTime);
       }
 
       var endTime = performance.now();
-      if (endTime - startTime > 16.7)
-        console.log(`Call to Draw took ${endTime - startTime} milliseconds`);
+      //if (endTime - startTime > 16.7)
+      //console.log(`Call to Draw took ${endTime - startTime} milliseconds`);
     });
   }
 
@@ -308,11 +342,38 @@ export class DrawRaceComponent implements OnInit {
     var yRaceModeModifier = 10;
     this.totalRaceModeXDistance = this.race.length * xRaceModeModifier;
 
-    //var currentFrame = Math.round(currentTime * this.frameModifier);
-    var currentFrame = this.currentRaceFrame;
+    var currentFrame = 0;
+    var raceLegs: RaceLeg[] = [];
+    this.race.raceLegs.forEach(leg => {
+      raceLegs.push(leg);
+    });
+
+    var isGrandPrix = false;
+
+    if (this.race.raceType === RaceTypeEnum.event && this.race.eventRaceType === EventRaceTypeEnum.grandPrix) {
+      //currentFrame = this.currentRaceFrame + this.eventViewStartFrame;
+      isGrandPrix = true;
+      var currentFrame = Math.round(this.globalService.globalVar.eventRaceData.segmentTimeCounter * this.frameModifier);
+      //console.log(currentFrame + " vs " + this.globalService.globalVar.eventRaceData.currentRaceSegmentResult.totalFramesPassed + " -- " + this.globalService.globalVar.eventRaceData.segmentTimeCounter);
+      //console.log(this.race.raceUI.distanceCoveredByFrame[currentFrame] + " vs " + this.race.length + " -- " + this.race.raceUI.distanceCoveredByFrame.length);
+
+      raceLegs.push(this.globalService.globalVar.eventRaceData.nextRaceSegment.raceLegs[0]);
+    }
+    else
+      currentFrame = this.currentRaceFrame;
 
     var currentDistanceTraveled = this.race.raceUI.distanceCoveredByFrame[currentFrame];
     var currentYDistanceTraveled = 0;
+
+    if (isGrandPrix) {
+      if (this.globalService.globalVar.eventRaceData.previousRaceSegment !== undefined) {        
+        raceLegs.unshift(this.globalService.globalVar.eventRaceData.previousRaceSegment.raceLegs[0]);
+        //console.log("Before: " + currentDistanceTraveled);
+        currentDistanceTraveled += raceLegs[0].distance;
+        //this.lastPathEndingX = raceLegs[0].distance * this.canvasWidth * xRaceModeModifier;
+        //console.log("After: " + currentDistanceTraveled);
+      }
+    }
 
     this.averageDistancePerSecond = this.race.length / this.race.raceUI.timeToCompleteByFrame[currentFrame];
 
@@ -320,7 +381,7 @@ export class DrawRaceComponent implements OnInit {
     var previousLegDistance = 0;
     var foundLeg = false;
     var legCounter = 0;
-    this.race.raceLegs.forEach(leg => {
+    raceLegs.forEach(leg => {
       if (!foundLeg) {
         if (currentDistanceTraveled >= legPinpointDistance && currentDistanceTraveled < legPinpointDistance + leg.distance) {
           //we are in this leg
@@ -328,14 +389,17 @@ export class DrawRaceComponent implements OnInit {
           this.currentLeg = leg;
         }
 
-        if (!foundLeg)
+        if (!foundLeg) {
           previousLegDistance += leg.distance;
+          legCounter += 1;
+        }
       }
 
       legPinpointDistance += leg.distance;
     });
 
     var currentDistanceInLeg = currentDistanceTraveled - previousLegDistance;
+    //console.log("Current Leg: " + legCounter + " Current Leg Distance: " + currentDistanceInLeg + " LastX: " + this.lastPathEndingX);
     var currentCrevasseDistance = 0;
     //handle translating screen up and down with Mountain race course type
     if (this.currentLeg.courseType === RaceCourseTypeEnum.Mountain) {
@@ -430,11 +494,12 @@ export class DrawRaceComponent implements OnInit {
 
     this.visibleDistanceXLeft = xDistanceOffset;
     this.visibleDistanceXRight = xDistanceOffset + (this.canvasWidth);
-    //console.log("Visible X Distance: " + this.visibleDistanceXLeft + " , " + this.visibleDistanceXRight);
+    //console.log("Visible X Distance: " + this.visibleDistanceXLeft + " , " + this.visibleDistanceXRight);    
 
     context.globalCompositeOperation = "source-over";
 
-    if (currentDistanceTraveled >= this.race.length || currentFrame > this.race.raceUI.distanceCoveredByFrame.length) {
+    if ((currentDistanceTraveled >= this.race.length || currentFrame > this.race.raceUI.distanceCoveredByFrame.length) &&
+      !isGrandPrix) {
       this.isRaceFinished = true;
       return;
     }
@@ -444,7 +509,7 @@ export class DrawRaceComponent implements OnInit {
     var legDistanceCompleted = 0;
     var pathCounter = 0;
 
-    this.race.raceLegs.forEach(leg => {
+    raceLegs.forEach(leg => {
       if (leg.pathData !== undefined && leg.pathData.length !== 0) {
         pathCounter = 0;
 
@@ -517,10 +582,10 @@ export class DrawRaceComponent implements OnInit {
 
     var percentOfVisibleDistance = 0;
     var legScaledEndPoint = previousLegDistance * this.canvasXDistanceScale * xRaceModeModifier;
-    var currentLegIndex = this.race.raceLegs.indexOf(this.currentLeg);
+    var currentLegIndex = raceLegs.indexOf(this.currentLeg);
     var previousLeg = null;
     if (currentLegIndex > 0)
-      previousLeg = this.race.raceLegs[currentLegIndex - 1];
+      previousLeg = raceLegs[currentLegIndex - 1];
 
     if (previousLeg !== undefined && previousLeg !== null &&
       legScaledEndPoint >= this.visibleDistanceXLeft && legScaledEndPoint <= this.visibleDistanceXRight) {
@@ -534,11 +599,11 @@ export class DrawRaceComponent implements OnInit {
       context.fillRect((this.canvasWidth * percentOfVisibleDistance), 0, (this.canvasWidth / 2) - (this.canvasWidth * percentOfVisibleDistance), this.canvasHeight);
     }
     else {
-      context.fillStyle = this.getAnimalDistanceColor(currentDistanceTraveled);
+      context.fillStyle = this.getAnimalDistanceColor(currentDistanceTraveled, raceLegs);
       context.fillRect(0, 0, this.canvasWidth / 2, this.canvasHeight);
     }
 
-    var racerColor = this.getAnimalRacerColor(currentDistanceTraveled);
+    var racerColor = this.getAnimalRacerColor(currentDistanceTraveled, raceLegs);
     if (this.race.raceUI.racerEffectByFrame[currentFrame] === RacerEffectEnum.LostFocus ||
       this.race.raceUI.racerEffectByFrame[currentFrame] === RacerEffectEnum.LostStamina ||
       this.race.raceUI.racerEffectByFrame[currentFrame] === RacerEffectEnum.Stumble) {
@@ -585,14 +650,14 @@ export class DrawRaceComponent implements OnInit {
         this.drawRacer(context, moneyMarkDistanceScaled, "gold");
       }
     }
-    else {      
+    else {
       //only need 11 racers as the average distance is already drawn above
       var totalRacers = 11;
       var trackPaceModifierValue = .25;
       var trackPaceModifierValuePair = this.globalService.globalVar.modifiers.find(item => item.text === "trainingTrackPaceModifier");
       if (trackPaceModifierValuePair !== undefined)
-        trackPaceModifierValue = trackPaceModifierValuePair.value;  
-      
+        trackPaceModifierValue = trackPaceModifierValuePair.value;
+
       for (var j = 0; j < totalRacers; j++) {
         var paceModifier = 1 + (trackPaceModifierValue * (j + 1));
         var racerDistancePerSecond = this.race.length / (this.race.raceUI.timeToCompleteByFrame[currentFrame] / paceModifier);
@@ -604,14 +669,14 @@ export class DrawRaceComponent implements OnInit {
       }
     }
 
-    this.drawBreakpoints(context, xRaceModeModifier);
+    this.drawBreakpoints(context, xRaceModeModifier, raceLegs);
 
-    if (this.race.raceLegs.some(item => item.courseType === RaceCourseTypeEnum.Volcanic)) {
+    if (raceLegs.some(item => item.courseType === RaceCourseTypeEnum.Volcanic)) {
       var volcanicStartDistance = 0;
       var volcanicFound = false;
-      this.race.raceLegs.forEach(leg => {
+      raceLegs.forEach(leg => {
         //get volcano start point
-        if (this.race.raceLegs.some(item => item.courseType === RaceCourseTypeEnum.Volcanic)) {
+        if (raceLegs.some(item => item.courseType === RaceCourseTypeEnum.Volcanic)) {
           if (leg.courseType !== RaceCourseTypeEnum.Volcanic && !volcanicFound)
             volcanicStartDistance += leg.distance;
 
@@ -621,7 +686,7 @@ export class DrawRaceComponent implements OnInit {
       });
 
       var volcanoDistance = 0;
-      volcanoDistance = this.race.raceLegs.find(item => item.courseType === RaceCourseTypeEnum.Volcanic)!.distance;
+      volcanoDistance = raceLegs.find(item => item.courseType === RaceCourseTypeEnum.Volcanic)!.distance;
 
       var existingContentDestinationType = context.globalCompositeOperation;
       context.globalCompositeOperation = "destination-over";
@@ -635,12 +700,16 @@ export class DrawRaceComponent implements OnInit {
     }
   }
 
-  getAnimalDistanceColor(currentDistanceTraveled: number) {
+  getAnimalDistanceColor(currentDistanceTraveled: number, raceLegs?: RaceLeg[]) {
     var color = "";
     var totalDistance = 0;
-    this.race.raceLegs.forEach(leg => {
+
+    if (raceLegs === undefined || raceLegs === null)
+      raceLegs = this.race.raceLegs;
+
+    raceLegs.forEach(leg => {
       if (currentDistanceTraveled >= totalDistance && currentDistanceTraveled < totalDistance + leg.distance) {
-        //we are in this leg
+        //we are in this leg        
         if (leg.courseType === RaceCourseTypeEnum.Flatland)
           color = "#7d3f00";//"#8f1c14";
         if (leg.courseType === RaceCourseTypeEnum.Mountain) {
@@ -692,10 +761,14 @@ export class DrawRaceComponent implements OnInit {
     return color;
   }
 
-  getAnimalRacerColor(currentDistanceTraveled: number) {
+  getAnimalRacerColor(currentDistanceTraveled: number, raceLegs?: RaceLeg[]) {
     var color = "";
     var totalDistance = 0;
-    this.race.raceLegs.forEach(leg => {
+
+    if (raceLegs === undefined || raceLegs === null)
+      raceLegs = this.race.raceLegs;
+
+    raceLegs.forEach(leg => {
       if (currentDistanceTraveled >= totalDistance && currentDistanceTraveled < totalDistance + leg.distance) {
         //we are in this leg
         if (leg.courseType === RaceCourseTypeEnum.Flatland)
@@ -744,7 +817,7 @@ export class DrawRaceComponent implements OnInit {
     if (count === 7)
       color = "#aeb85a";
     if (count === 8)
-      color = "#ffffff";    
+      color = "#ffffff";
     if (count === 9)
       color = "#01253b";
     if (count === 10)
@@ -797,13 +870,17 @@ export class DrawRaceComponent implements OnInit {
     }
   }
 
-  drawBreakpoints(context: any, xRaceModeModifier: number): void {
+  drawBreakpoints(context: any, xRaceModeModifier: number, raceLegs?: RaceLeg[]): void {
     var distanceSum = 0;
-    for (var i = 0; i < this.race.raceLegs.length; i++) {
-      var leg = this.race.raceLegs[i];
+
+    if (raceLegs === undefined || raceLegs === null)
+      raceLegs = this.race.raceLegs;
+
+    for (var i = 0; i < raceLegs.length; i++) {
+      var leg = raceLegs[i];
       var nextLeg = null;
-      if (i < this.race.raceLegs.length - 1)
-        nextLeg = this.race.raceLegs[i + 1];
+      if (i < raceLegs.length - 1)
+        nextLeg = raceLegs[i + 1];
 
       var percentOfVisibleDistance = 0;
       var legScaledEndPoint = (distanceSum + leg.distance) * this.canvasXDistanceScale * xRaceModeModifier;
@@ -1650,9 +1727,9 @@ export class DrawRaceComponent implements OnInit {
     //lava
     var originalFillColor = context.fillStyle;
     //lava gradient
-    var grd = context.createLinearGradient(0,0,this.canvasWidth,this.canvasHeight);
-    grd.addColorStop(0,"red");
-    grd.addColorStop(1,"orange");
+    var grd = context.createLinearGradient(0, 0, this.canvasWidth, this.canvasHeight);
+    grd.addColorStop(0, "red");
+    grd.addColorStop(1, "orange");
     context.fillStyle = grd;
 
     //lava top fill
@@ -1843,13 +1920,17 @@ export class DrawRaceComponent implements OnInit {
     this.skipSubscription.unsubscribe();
     this.pauseSubscription.unsubscribe();
     this.globalService.globalVar.userIsRacing = false;
-    this.race.raceUI.distanceCoveredByFrame = [];
-    this.race.raceUI.lavaFallPercentByFrame = [];
-    this.race.raceUI.maxSpeedByFrame = [];
-    this.race.raceUI.racerEffectByFrame = [];
-    this.race.raceUI.staminaPercentByFrame = [];
-    this.race.raceUI.timeToCompleteByFrame = [];
-    this.race.raceUI.yAdjustmentByFrame = [];
-    this.race.raceUI.velocityByFrame = [];
+
+    if (this.race.raceType !== RaceTypeEnum.event) {
+      this.race.raceUI.staminaPercentByFrame = [];
+      this.race.raceUI.timeToCompleteByFrame = [];
+      this.race.raceUI.yAdjustmentByFrame = [];
+      this.race.raceUI.velocityByFrame = [];
+      this.race.raceUI.distanceCoveredByFrame = [];
+      this.race.raceUI.lavaFallPercentByFrame = [];
+      this.race.raceUI.maxSpeedByFrame = [];
+      this.race.raceUI.racerEffectByFrame = [];
+    }
+
   }
 }

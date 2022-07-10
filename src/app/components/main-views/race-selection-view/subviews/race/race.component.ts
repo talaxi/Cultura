@@ -8,10 +8,12 @@ import { AnimalStats } from 'src/app/models/animals/animal-stats.model';
 import { Animal } from 'src/app/models/animals/animal.model';
 import { RaceVariables } from 'src/app/models/animals/race-variables.model';
 import { EquipmentEnum } from 'src/app/models/equipment-enum.model';
+import { EventRaceTypeEnum } from 'src/app/models/event-race-type-enum.model';
 import { LocalRaceTypeEnum } from 'src/app/models/local-race-type-enum.model';
 import { RaceCourseTypeEnum } from 'src/app/models/race-course-type-enum.model';
 import { RaceDesignEnum } from 'src/app/models/race-design-enum.model';
 import { RaceDisplayInfoEnum } from 'src/app/models/race-display-info-enum.model';
+import { RaceTypeEnum } from 'src/app/models/race-type-enum.model';
 import { RacerEffectEnum } from 'src/app/models/racer-effect-enum.model';
 import { RaceLeg } from 'src/app/models/races/race-leg.model';
 import { RacePath } from 'src/app/models/races/race-path.model';
@@ -53,9 +55,11 @@ export class RaceComponent implements OnInit {
   positionAtCurrentFrame: any;
   totalRacers: number;
   frameByFrameSubscription: any;
+  updateSubscription: any;
   displayVisualRace = true;
   displayTextUpdates = true;
   burstEffect = RacerEffectEnum.Burst;
+  grandPrixRace: boolean = false;
 
   constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private utilityService: UtilityService,
     private lookupService: LookupService, private initializeService: InitializeService, private modalService: NgbModal,
@@ -76,8 +80,15 @@ export class RaceComponent implements OnInit {
       this.displayTextUpdates = true;
     }
 
-    var raceResult = this.raceLogicService.runRace(this.selectedRace);
-    
+    if (this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix)
+      this.grandPrixRace = true;
+
+    var raceResult = new RaceResult();
+    if (!this.grandPrixRace)
+      raceResult = this.raceLogicService.runRace(this.selectedRace);
+    else
+      raceResult = this.globalService.globalVar.eventRaceData.currentRaceSegmentResult;
+
     this.setupDisplayRewards(this.selectedRace);
     this.displayRaceUpdates(raceResult);
     this.getFrameByFrameStats();
@@ -89,53 +100,85 @@ export class RaceComponent implements OnInit {
   ngOnDestroy() {
     if (this.frameByFrameSubscription !== null && this.frameByFrameSubscription !== undefined)
       this.frameByFrameSubscription.unsubscribe();
+
+    if (this.updateSubscription !== null && this.updateSubscription !== undefined)
+      this.updateSubscription.unsubscribe();
+
     this.raceFinished.emit(true);
   }
 
-  displayRaceUpdates(raceResult: RaceResult): void {
-    var raceUpdates = raceResult.raceUpdates;
+  displayRaceUpdates(raceResult: RaceResult): void {    
+    var raceUpdates = raceResult.raceUpdates;    
     var currentTime = 0;
     this.incrementalRaceUpdates = "";
     var framesPassed = 0;
-    var subscription = this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {      
-      
+
+    var eventViewStartFrame = 0;
+    var lastEventSegment = this.globalService.globalVar.eventRaceData.currentRaceSegmentCount;
+
+    var subscription = this.updateSubscription = this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {
+
       //var startTime = performance.now();
-      if (!this.racePaused)
-      {
+      if (!this.racePaused) {
         currentTime += deltaTime;
+
+        if (this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix) {          
+          /*if (this.globalService.globalVar.eventRaceData.currentRaceSegmentCount > lastEventSegment) {
+            eventViewStartFrame = 0;
+            framesPassed = 0;
+            this.selectedRace = this.globalService.globalVar.eventRaceData.currentRaceSegment;
+            raceUpdates = this.globalService.globalVar.eventRaceData.currentRaceSegmentResult.raceUpdates;   
+            console.log(raceUpdates);         
+          }*/
+
+          lastEventSegment = this.globalService.globalVar.eventRaceData.currentRaceSegmentCount;
+        }
+
         framesPassed += 1;
       }
       //TODO: if you hit the back button then this is delayed -- needs to be considered like skipping.
       //run a race that will rank you up, hit back, and wait and you should see this
-      if (raceUpdates.length === 0 || this.raceSkipped) //also check if skip button pressed/setting to auto skip is checked
-      {
-        if (this.raceSkipped) {
-          raceUpdates.forEach(update => {
-            this.incrementalRaceUpdates += this.sanitizer.sanitize(SecurityContext.HTML, this.sanitizer.bypassSecurityTrustHtml(update.text + "\n"));
-          });
+
+      if (!(this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix)) {
+        if (raceUpdates.length === 0 || this.raceSkipped) //also check if skip button pressed/setting to auto skip is checked
+        {
+          if (this.raceSkipped) {
+            raceUpdates.forEach(update => {
+              this.incrementalRaceUpdates += this.sanitizer.sanitize(SecurityContext.HTML, this.sanitizer.bypassSecurityTrustHtml(update.text + "\n"));
+            });
+          }
+
+          if (raceResult.wasSuccessful) {
+            this.displayResults = true;
+
+            if (this.selectedRace.circuitIncreaseReward !== null && this.selectedRace.circuitIncreaseReward !== undefined &&
+              this.selectedRace.circuitIncreaseReward[0] !== "")
+              this.modalService.open(this.circuitRewardModal, { ariaLabelledBy: 'modal-basic-title', size: 'lg' });
+          }
+
+          subscription.unsubscribe();
+          return;
         }
-
-        if (raceResult.wasSuccessful) {
-          this.displayResults = true;
-
-          if (this.selectedRace.circuitIncreaseReward !== null && this.selectedRace.circuitIncreaseReward !== undefined &&
-             this.selectedRace.circuitIncreaseReward[0] !== "")
-            this.modalService.open(this.circuitRewardModal, { ariaLabelledBy: 'modal-basic-title', size: 'lg' });
-        }
-
-        subscription.unsubscribe();
-        return;
       }
 
       //if ((currentTime * this.frameModifier) >= raceUpdates[0].value) {
+      if (this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix) {
+        //console.log((this.globalService.globalVar.eventRaceData.segmentTimeCounter * this.frameModifier) + " vs " + raceUpdates[0].value);
+        if ((this.globalService.globalVar.eventRaceData.segmentTimeCounter * this.frameModifier) >= raceUpdates[0].value) {
+          this.incrementalRaceUpdates += this.sanitizer.sanitize(SecurityContext.HTML, this.sanitizer.bypassSecurityTrustHtml(raceUpdates[0].text + "\n"));
+          raceUpdates.shift();
+        }
+      }
+      else {
         if (framesPassed >= raceUpdates[0].value) {
-        this.incrementalRaceUpdates += this.sanitizer.sanitize(SecurityContext.HTML, this.sanitizer.bypassSecurityTrustHtml(raceUpdates[0].text + "\n"));
-        raceUpdates.shift();
+          this.incrementalRaceUpdates += this.sanitizer.sanitize(SecurityContext.HTML, this.sanitizer.bypassSecurityTrustHtml(raceUpdates[0].text + "\n"));
+          raceUpdates.shift();
+        }
       }
 
       //var endTime = performance.now();
       //if (endTime - startTime > 16.7)
-        //console.log(`Call to Update took ${endTime - startTime} milliseconds`);
+      //console.log(`Call to Update took ${endTime - startTime} milliseconds`);
     });
   }
 
@@ -158,7 +201,7 @@ export class RaceComponent implements OnInit {
 
     if (this.rewardCells.length !== 0)
       this.rewardRows.push(this.rewardCells);
-  }  
+  }
 
   goToRaceSelection(): void {
     this.raceFinished.emit(true);
@@ -178,35 +221,66 @@ export class RaceComponent implements OnInit {
     var currentTime = 0;
     this.totalRacers = this.lookupService.getTotalRacersByRace(this.selectedRace);
     var framesPassed = 0;
+    var eventViewStartFrame = 0;
+    var lastEventSegment = this.globalService.globalVar.eventRaceData.currentRaceSegmentCount;
 
-    this.frameByFrameSubscription = this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {   
+    this.frameByFrameSubscription = this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {
       //var startTime = performance.now();   
-      if (!this.racePaused)
-      {
+      if (!this.racePaused) {
         currentTime += deltaTime;
+
+        if (this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix) {
+          /*if (this.globalService.globalVar.eventRaceData.currentRaceSegmentCount > lastEventSegment) {
+            eventViewStartFrame = 0;
+            framesPassed = 0;
+            this.selectedRace = this.globalService.globalVar.eventRaceData.currentRaceSegment;
+          }*/
+
+          lastEventSegment = this.globalService.globalVar.eventRaceData.currentRaceSegmentCount;
+        }
+
         framesPassed += 1;
       }
-      var currentFrame = framesPassed;
 
-      if (this.selectedRace.raceUI.velocityByFrame.length <= currentFrame || this.raceSkipped) {
-        var lastFrameCount = this.selectedRace.raceUI.velocityByFrame.length - 1;
-        this.velocityAtCurrentFrame = (this.selectedRace.raceUI.velocityByFrame[lastFrameCount] * this.frameModifier).toFixed(2); //needs to be m/s
-        this.staminaAtCurrentFrame = (this.selectedRace.raceUI.staminaPercentByFrame[lastFrameCount] * 100).toFixed(2);
-        this.maxSpeedAtCurrentFrame = this.selectedRace.raceUI.maxSpeedByFrame[lastFrameCount].toFixed(2);
-        this.racerEffectAtCurrentFrame = this.selectedRace.raceUI.racerEffectByFrame[lastFrameCount];
-        this.positionAtCurrentFrame = this.utilityService.ordinalSuffixOf(this.selectedRace.raceUI.racePositionByFrame[lastFrameCount]);
+      var currentFrame = 0;
+      if (this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix) {
+        currentFrame = Math.round(this.globalService.globalVar.eventRaceData.segmentTimeCounter * this.frameModifier);
       }
-      else {
-        this.velocityAtCurrentFrame = (this.selectedRace.raceUI.velocityByFrame[currentFrame] * this.frameModifier).toFixed(2);
-        this.staminaAtCurrentFrame = (this.selectedRace.raceUI.staminaPercentByFrame[currentFrame] * 100).toFixed(2);
-        this.maxSpeedAtCurrentFrame = this.selectedRace.raceUI.maxSpeedByFrame[currentFrame].toFixed(2);
-        this.racerEffectAtCurrentFrame = this.selectedRace.raceUI.racerEffectByFrame[currentFrame];
-        this.positionAtCurrentFrame = this.utilityService.ordinalSuffixOf(this.selectedRace.raceUI.racePositionByFrame[currentFrame]);
+      else
+        currentFrame = framesPassed;
+
+      /*console.log("start");
+      console.log(this.selectedRace.raceUI.velocityByFrame[currentFrame]);
+      console.log(this.selectedRace.raceUI.staminaPercentByFrame[currentFrame]);
+      console.log(this.selectedRace.raceUI.maxSpeedByFrame[currentFrame]);
+      console.log(this.selectedRace.raceUI.racerEffectByFrame[currentFrame]);
+      console.log(this.selectedRace.raceUI.racePositionByFrame[currentFrame]);
+      console.log("end");*/
+
+      try {
+        if (this.selectedRace.raceUI.velocityByFrame.length <= currentFrame || this.raceSkipped) {
+          var lastFrameCount = this.selectedRace.raceUI.velocityByFrame.length - 1;
+          this.velocityAtCurrentFrame = (this.selectedRace.raceUI.velocityByFrame[lastFrameCount] * this.frameModifier).toFixed(2); //needs to be m/s
+          this.staminaAtCurrentFrame = (this.selectedRace.raceUI.staminaPercentByFrame[lastFrameCount] * 100).toFixed(2);
+          this.maxSpeedAtCurrentFrame = this.selectedRace.raceUI.maxSpeedByFrame[lastFrameCount].toFixed(2);
+          this.racerEffectAtCurrentFrame = this.selectedRace.raceUI.racerEffectByFrame[lastFrameCount];
+          this.positionAtCurrentFrame = this.utilityService.ordinalSuffixOf(this.selectedRace.raceUI.racePositionByFrame[lastFrameCount]);
+        }
+        else {
+          this.velocityAtCurrentFrame = (this.selectedRace.raceUI.velocityByFrame[currentFrame] * this.frameModifier).toFixed(2);
+          this.staminaAtCurrentFrame = (this.selectedRace.raceUI.staminaPercentByFrame[currentFrame] * 100).toFixed(2);
+          this.maxSpeedAtCurrentFrame = this.selectedRace.raceUI.maxSpeedByFrame[currentFrame].toFixed(2);
+          this.racerEffectAtCurrentFrame = this.selectedRace.raceUI.racerEffectByFrame[currentFrame];
+          this.positionAtCurrentFrame = this.utilityService.ordinalSuffixOf(this.selectedRace.raceUI.racePositionByFrame[currentFrame]);
+        }
+      }
+      catch {
+        console.log("error");
       }
 
       //var endTime = performance.now();
       //if (endTime - startTime > 16.7)
-        //console.log(`Call to FrameByFrame took ${endTime - startTime} milliseconds`);
+      //console.log(`Call to FrameByFrame took ${endTime - startTime} milliseconds`);
     });
   }
 }

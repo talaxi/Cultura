@@ -29,7 +29,6 @@ export class AppComponent {
   constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private lookupService: LookupService,
     private specializationService: SpecializationService, private themeService: ThemeService, private raceLogicService: RaceLogicService,
     private deploymentService: DeploymentService, private versionControlService: VersionControlService) {
-
   }
 
   ngOnInit() {
@@ -42,7 +41,6 @@ export class AppComponent {
       this.loadStartup();
     }
 
-    //PURELY for testing, should be false when deployed
     if (environment.devEnvironment)
       this.deploymentService.setDevMode();
     else
@@ -56,7 +54,7 @@ export class AppComponent {
 
     if (devMode) {
       this.globalService.globalVar.tutorials.tutorialCompleted = true;
-      this.globalService.devModeInitialize(80);
+      this.globalService.devModeInitialize(15);
     }
 
     this.versionControlService.updatePlayerVersion();
@@ -161,55 +159,67 @@ export class AppComponent {
   }
 
   handleGrandPrix(deltaTime: number) {
-    var grandPrix = this.globalService.globalVar.eventRaceData;
     if (this.globalService.getTimeToEventRace() > 0) {
-      grandPrix.initialSetupComplete = false;
+      this.globalService.globalVar.eventRaceData.initialSetupComplete = false;
       return;
     }
 
-    if (!grandPrix.initialSetupComplete) //wasn't within event and now you are
+    if (!this.globalService.globalVar.eventRaceData.initialSetupComplete) //wasn't within event and now you are
     {
       //do initial set up
-      this.globalService.initialGrandPrixSetup();
-      grandPrix.initialSetupComplete = true;
+      this.globalService.initialGrandPrixSetup();      
+      this.globalService.globalVar.eventRaceData.initialSetupComplete = true;
     }
 
-    if (grandPrix.isRunning) {
-      //if you've entered the race
-      //do auto run
-      //create event race segment, save it in data
-      //TODO: this should be its own thing, event deck or something
-      var eventDeck = this.globalService.globalVar.animalDecks.find(item => item.isPrimaryDeck);
+    if (this.globalService.globalVar.eventRaceData.isRunning) {
+      var eventDeck = this.globalService.globalVar.animalDecks.find(item => item.isEventDeck);
       if (eventDeck === null || eventDeck === undefined)
         return;
 
-      if (grandPrix.currentRaceSegmentCount === 0)
-      {
-        grandPrix.currentRaceSegment = this.globalService.generateGrandPrixSegment(eventDeck.selectedAnimals[0]);
-        grandPrix.currentRaceSegmentResult = this.raceLogicService.runRace(grandPrix.currentRaceSegment);
-        grandPrix.currentRaceSegmentCount += 1;
-      }
+      this.globalService.globalVar.eventRaceData.segmentTimeCounter += deltaTime;
+      this.globalService.globalVar.eventRaceData.overallTimeCounter += deltaTime;
 
-      grandPrix.segmentTimeCounter += deltaTime;
-      grandPrix.overallTimeCounter += deltaTime;
-      
       //do we even need to check if it was successful? totalframes will be right either way
       //if (grandPrix.currentRaceSegmentResult.wasSuccessful)
       //{
-        var timeToComplete = grandPrix.currentRaceSegmentResult.totalFramesPassed / 60; //framemodifier
+      var timeToComplete = this.globalService.globalVar.eventRaceData.currentRaceSegmentResult.totalFramesPassed / 60; //framemodifier
 
-        if (grandPrix.segmentTimeCounter >= timeToComplete)
-        {
-          grandPrix.currentRaceSegment = this.globalService.generateGrandPrixSegment(eventDeck.selectedAnimals[0]);
-          grandPrix.currentRaceSegmentResult = this.raceLogicService.runRace(grandPrix.currentRaceSegment);
-          grandPrix.currentRaceSegmentCount += 1;
-          grandPrix.segmentTimeCounter -= timeToComplete;
-          grandPrix.distanceCovered += grandPrix.currentRaceSegmentResult.distanceCovered;
-        }
+      //console.log(this.globalService.globalVar.eventRaceData.segmentTimeCounter);
+      if (this.globalService.globalVar.eventRaceData.segmentTimeCounter >= timeToComplete) {
+        this.globalService.globalVar.eventRaceData.previousRaceSegment = this.globalService.globalVar.eventRaceData.currentRaceSegment.makeCopy(this.globalService.globalVar.eventRaceData.currentRaceSegment);
+        //console.log("Previous Data: ");
+        //console.log(this.globalService.globalVar.eventRaceData.previousRaceSegment);
+        this.globalService.globalVar.eventRaceData.currentRaceSegment = this.globalService.globalVar.eventRaceData.nextRaceSegment.makeCopy(this.globalService.globalVar.eventRaceData.nextRaceSegment);
+        //console.log("Run next race");
+        this.globalService.globalVar.eventRaceData.currentRaceSegmentResult = this.raceLogicService.runRace(this.globalService.globalVar.eventRaceData.currentRaceSegment);
+        this.globalService.globalVar.eventRaceData.currentRaceSegmentCount += 1;
+        this.globalService.globalVar.eventRaceData.segmentTimeCounter -= timeToComplete;
+        this.globalService.globalVar.eventRaceData.distanceCovered += this.globalService.globalVar.eventRaceData.currentRaceSegmentResult.distanceCovered;
+
+        this.checkForEventRelayAnimal();
+        var racingAnimal = this.globalService.getGrandPrixRacingAnimal();
+        
+        this.globalService.globalVar.eventRaceData.nextRaceSegment = this.globalService.generateGrandPrixSegment(racingAnimal);        
+      }
       //}
       //do a 3 min segment
       //every 3 min or after completing check up on where you are and create a new segment
     }
+  }
+
+  checkForEventRelayAnimal() {   
+    if (this.globalService.globalVar.eventRaceData.animalData.some(animal => animal.isSetToRelay))
+    {
+    this.globalService.globalVar.eventRaceData.animalData.forEach(data => {
+      data.isCurrentlyRacing = false;
+      if (data.isSetToRelay)
+      {
+        data.isCurrentlyRacing = true;
+        data.isSetToRelay = false;
+      }
+    });
+    //if (anim)
+  }
   }
 
   handleFreeRaceTimer(deltaTime: number) {

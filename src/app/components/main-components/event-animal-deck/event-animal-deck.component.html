@@ -1,0 +1,32 @@
+<div>
+    <strong class="clickableText" (click)="goToDeckView()">{{deck.name}}</strong>
+    <br />
+    <div class="flex">
+        <div class="eventAnimal" *ngFor="let animal of deck.selectedAnimals; let i = index;">
+            <span class="coloredText" [ngClass]="getColorClass(animal)">{{animal.name}}</span>
+            <br />
+            <span>Morale: {{ getMorale(animal) }}</span>
+            <br />
+            <span>Exhaustion: {{ getExhaustion(animal) }}</span>
+            <br />
+            <br />
+            <div  *ngIf="!eventHasStarted()">
+                <span *ngIf="isCurrentlyRacing(animal)" class="keyword">
+                    Will Start Race
+                </span>
+                <span *ngIf="!isCurrentlyRacing(animal)">
+                    <button *ngIf="!isSetToRelay(animal)" (click)="chooseToStartRace(animal)">Choose To Start Race</button>                    
+                </span>
+            </div>
+            <div *ngIf="eventHasStarted()">
+                <span *ngIf="isCurrentlyRacing(animal)" class="keyword">
+                    Currently Racing
+                </span>
+                <span *ngIf="!isCurrentlyRacing(animal)">
+                    <button *ngIf="!isSetToRelay(animal)" (click)="relayAnimal(animal)">Relay</button>
+                    <span *ngIf="isSetToRelay(animal)">Set To Relay</span>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>

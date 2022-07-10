@@ -12,6 +12,7 @@ import { DeploymentService } from 'src/app/services/utility/deployment.service';
 import { LookupService } from 'src/app/services/lookup.service';
 import { NavigationEnum } from 'src/app/models/navigation-enum.model';
 import { ComponentCommunicationService } from 'src/app/services/component-communication.service';
+import { VersionControlService } from 'src/app/services/version-control.service';
 declare var LZString: any;
 
 @Component({
@@ -37,7 +38,7 @@ export class SettingsViewComponent implements OnInit {
 
   constructor(private globalService: GlobalService, private themeService: ThemeService, private lookupService: LookupService,
     private codeRedemptionService: CodeRedemptionService, private codeCreationService: CodeCreationService, private deploymentService: DeploymentService,
-    private componentCommunicationService: ComponentCommunicationService) { }
+    private componentCommunicationService: ComponentCommunicationService, private versionControlService: VersionControlService) { }
 
   ngOnInit(): void {
     this.componentCommunicationService.setNewView(NavigationEnum.settings);
@@ -95,7 +96,8 @@ export class SettingsViewComponent implements OnInit {
     if (confirm("This will overwrite your existing game data. Continue?")) {
       var decompressedData = LZString.decompressFromBase64(this.importExportValue);
       var loadDataJson = <GlobalVariables>JSON.parse(decompressedData);
-      this.globalService.globalVar = plainToInstance(GlobalVariables, loadDataJson);            
+      this.globalService.globalVar = plainToInstance(GlobalVariables, loadDataJson);        
+      this.versionControlService.updatePlayerVersion();         
     }
   }
 
