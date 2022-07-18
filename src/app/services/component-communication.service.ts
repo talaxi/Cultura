@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Animal } from '../models/animals/animal.model';
 import { NavigationEnum } from '../models/navigation-enum.model';
+import { ShopsEnum } from '../models/shops-enum.model';
 
 @Injectable({
   providedIn: 'root'
@@ -10,11 +11,13 @@ export class ComponentCommunicationService {
   switchView: BehaviorSubject<NavigationEnum>;
   selectAnimalView: BehaviorSubject<Animal>;
   selectBarnView: BehaviorSubject<number>;
+  selectShopView: BehaviorSubject<ShopsEnum>;
 
   constructor() {
     this.switchView = new BehaviorSubject<NavigationEnum>(NavigationEnum.barn);
     this.selectAnimalView = new BehaviorSubject<Animal>(new Animal());
     this.selectBarnView = new BehaviorSubject<number>(0);
+    this.selectShopView = new BehaviorSubject<ShopsEnum>(ShopsEnum.regular);
   }
 
   setNewView(newValue: NavigationEnum): void {
@@ -37,8 +40,7 @@ export class ComponentCommunicationService {
     return this.selectAnimalView.asObservable();
   }
 
-  setBarnView(newView: NavigationEnum, newBarnNumber: number) {
-    //console.log("Old #: " + this.selectBarnView.value + " New #: " + newBarnNumber);
+  setBarnView(newView: NavigationEnum, newBarnNumber: number) {    
     if (newBarnNumber !== this.selectBarnView.value)
       this.selectBarnView.next(newBarnNumber);
     if (newView !== this.switchView.value)
@@ -47,5 +49,16 @@ export class ComponentCommunicationService {
 
   getBarnView(): Observable<number> {
     return this.selectBarnView.asObservable();
+  }
+
+  setShopView(newView: NavigationEnum, newShop: ShopsEnum) {
+    if (newShop !== this.selectShopView.value)
+      this.selectShopView.next(newShop);
+    if (newView !== this.switchView.value)
+      this.switchView.next(newView);
+  }
+
+  getShopView(): Observable<ShopsEnum> {
+    return this.selectShopView.asObservable();
   }
 }

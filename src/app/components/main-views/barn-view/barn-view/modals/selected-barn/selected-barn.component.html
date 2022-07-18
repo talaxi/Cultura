@@ -75,7 +75,7 @@
         <div class="changeTrainingHeader">
             <span class="s4Heading" (click)="resetFilters()">Change Training</span>
             <br />
-            <span class="trainingDescription">Click an option below to start training.</span>
+            <span class="trainingDescription"><em>Click an option below to start training.</em></span>
         </div>
         <br />
         <div class="filterGridContainer">
@@ -110,8 +110,8 @@
             <app-training-list *ngIf="associatedAnimal.canTrain" [availableTrainingOptions]="availableTrainings"
                 (selectedTrainingOption)="selectNewTraining($event)">
             </app-training-list>
-            <div *ngIf="!associatedAnimal.canTrain">
-                This animal is currently in incubation and cannot train. Check back after incubation finishes.
+            <div *ngIf="!associatedAnimal.canTrain" class="keyword">
+                This animal is currently busy and cannot train.
             </div>
         </div>
     </div>
@@ -157,7 +157,7 @@
             <span>Purchase Barn</span>
             <br />
             <br />
-            <span class="price">{{ barn.purchasePrice }} Coins</span>
+            <span class="price resourceKeyword">{{ barn.purchasePrice }} Coins</span>
             <br />
             <button id="purchaseButton" [disabled]="!canPurchaseBarn()" (click)="purchaseBarn()">Buy</button>
         </div>

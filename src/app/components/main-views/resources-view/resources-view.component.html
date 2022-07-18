@@ -5,7 +5,7 @@
         <p *ngFor="let resource of resources;">
             <span ngbPopover="{{ this.getPopover(resource.name, resource.itemType) }}"
             triggers="mouseenter:mouseleave" popoverClass="popoverClass" class="screenMarginLeft">
-            {{ resource.name }} <span class="rightAligned">x {{ resource.amount }}</span>
+            <span class="resourceKeyword">{{ resource.name }}</span> <span class="rightAligned"> x {{ resource.amount }}</span>
             <hr class="miniHr" />
         </span>
         </p>
@@ -16,7 +16,7 @@
         <p *ngFor="let progression of progressionResources;">
             <span ngbPopover="{{ this.getPopover(progression.name, progression.itemType) }}"
             triggers="mouseenter:mouseleave" popoverClass="popoverClass" class="screenMarginLeft">
-            {{ progression.name }} <span class="rightAligned">x {{ progression.amount }}</span>
+            <span class='progressionKeyword'>{{ progression.name }}</span> <span class="rightAligned"> x {{ progression.amount }}</span>
             <hr class="miniHr" />
         </span>
         </p>
@@ -27,7 +27,7 @@
         <p *ngFor="let specialty of specialtyItems;">            
             <span ngbPopover="{{ this.getPopover(specialty.name, specialty.itemType) }}"
             triggers="mouseenter:mouseleave" popoverClass="popoverClass" class="screenMarginLeft">
-            {{ specialty.name }} <span class="rightAligned">x {{ specialty.amount }}</span>
+            <span class='specialityKeyword'>{{ specialty.name }}</span> <span class="rightAligned"> x {{ specialty.amount }}</span>
             <hr class="miniHr" />
         </span>
         </p>
@@ -38,7 +38,7 @@
         <p *ngFor="let item of equipment;">
             <span ngbPopover="{{ this.getPopover(item.name, item.itemType) }}"
             triggers="mouseenter:mouseleave" popoverClass="popoverClass" class="screenMarginLeft">
-            {{ item.name }} <span class="rightAligned">x {{ item.amount }}</span>
+            <span class='equipmentKeyword'>{{ item.name }}</span> <span class="rightAligned"> x {{ item.amount }}</span>
             <hr class="miniHr" />
         </span>
         </p>

@@ -15,6 +15,10 @@
   text-align: center;
 }
 
+.tokenShopColor {
+  background-color: var(--tokenShopColor) !important;
+}
+
 .sectionHeaderText
 {
   color: var(--foreground-quaternary);

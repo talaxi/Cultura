@@ -122,6 +122,12 @@
   --waterSubcolor: #16148f;
   --tundraSubcolor: #28809c;
   --volanicSubcolor: #8f1a1a;
+
+  --tokenShopColor: #d7700e;
+  --resourceKeywordColor: #822B03;
+  --progressionKeywordColor: #501da8;
+  --specialityKeywordColor: #000000;
+  --equipmentKeywordColor: #2C6854;
 }
 
 body {
@@ -192,6 +198,26 @@ h1 {
   font-weight: 550;
 }
 
+.resourceKeyword {
+  font-weight: 550;
+  color: var(--resourceKeywordColor);
+}
+
+.progressionKeyword {
+  font-weight: 550;
+  color: var(--progressionKeywordColor);
+}
+
+.specialityKeyword {
+  font-weight: 550;
+  color: var(--specialityKeywordColor);
+}
+
+.equipmentKeyword {
+  font-weight: 550;
+  color: var(--equipmentKeywordColor);
+}
+
 .crossed {
   text-decoration: line-through;
 }
@@ -248,6 +274,16 @@ button:active:enabled {
   user-select: none;
 }
 
+.helpText {
+  cursor: help;
+
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
 .flatlandColor {
   color: var(--flatlandColor);
   /*#eb3023;   */
@@ -287,4 +323,12 @@ button:active:enabled {
 
 .volanicSubcolor {
   color: var(--volcanicSubcolor);
+}
+
+.tokenShopColor {
+  color: var(--tokenShopColor);
+}
+
+.versionListMargin {
+  margin-left: 2.5rem;
 }

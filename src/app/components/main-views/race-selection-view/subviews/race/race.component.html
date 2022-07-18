@@ -19,7 +19,7 @@
             </div>
         </div>
     </div>
-    <div *ngIf="!displayVisualRace && displayTextUpdates">
+    <div class="oneDisplayValue" *ngIf="!displayVisualRace && displayTextUpdates">
         <!--Text Only-->
         <div class="individualItemHeaderInfo">
             <div><button *ngIf="!grandPrixRace" (click)="skipRaceAnimation()">Skip</button></div>
@@ -40,8 +40,10 @@
         <div class="drawRace onlyDraw">
             <app-draw-race [race]="selectedRace" [skip]="skipRace.asObservable()" [pause]="pauseRace.asObservable()">
             </app-draw-race>
+            <br/>
         </div>
     </div>
+    <br *ngIf="displayVisualRace && !displayTextUpdates" />
     <div class="results" *ngIf="displayResults">
         <span class="s4Heading">Rewards</span>
         <div class="rewards">

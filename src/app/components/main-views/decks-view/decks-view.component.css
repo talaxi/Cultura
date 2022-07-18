@@ -36,15 +36,18 @@
     color: var(--foreground-default);
 }
 
-.raceType {
-    width: 20%;
+.raceType {    
     text-decoration: underline solid transparent;
     transition: text-decoration .3s ease;
     display: inline-block;
 }
 
-.animalOption {
-    width: 33.33%;
+.animalContainer {
+    display: flex;
+    justify-content: space-around;
+}
+
+.animalOption {    
     display: inline-block;
 }
 
@@ -59,6 +62,8 @@
 
 .typeContainer {
     width: 100%;
+    display: flex;
+    justify-content: space-around;
 }
 
 .gridContainer {

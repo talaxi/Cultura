@@ -44,6 +44,8 @@ export class GlobalVariables {
     modifiers: StringNumberPair[];
     @Type(() => ShopSection)
     shop: ShopSection[];
+    @Type(() => ShopSection)
+    tokenShop: ShopSection[];
     renownLevel: number;
     @Type(() => AnimalDeck)
     animalDecks: AnimalDeck[];
@@ -88,6 +90,7 @@ export class GlobalVariables {
             this.resources = existingVariables.resources;
             this.modifiers = existingVariables.modifiers;
             this.shop = existingVariables.shop;
+            this.tokenShop = existingVariables.tokenShop;
             this.animalDecks = existingVariables.animalDecks;
             this.incubator = existingVariables.incubator;
             this.trackedStats = existingVariables.trackedStats;

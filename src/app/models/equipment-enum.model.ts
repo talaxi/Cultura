@@ -10,5 +10,9 @@ export enum EquipmentEnum {
   quickSnack,
   blinders,
   pendant,
-  carrotOnAStick
+  carrotOnAStick,
+  scaryMask,
+  runningShoes,
+  incense,
+  athleticTape
 }

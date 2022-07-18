@@ -44,7 +44,6 @@ import { ThemeService } from './theme/theme.service';
 import { IncubatorTraitsComponent } from './components/main-views/incubator-view/subviews/incubator-traits/incubator-traits.component';
 import { TraitListComponent } from './components/main-components/trait-list/trait-list.component';
 import { TraitOptionComponent } from './components/main-components/trait-option/trait-option.component';
-import { TalentsViewComponent } from './components/main-views/talents-view/talents-view.component';
 import { FaqViewComponent } from './components/main-views/faq-view/faq-view.component';
 import { StatsViewComponent } from './components/main-views/stats-view/stats-view.component';
 import { TrainingTrackViewComponent } from './components/main-views/training-track-view/training-track-view/training-track-view.component';
@@ -53,6 +52,7 @@ import { CoachingComponent } from './components/main-views/barn-view/barn-view/m
 import { EventViewComponent } from './components/main-views/race-selection-view/subviews/event-view/event-view.component';
 import { TalentComponent } from './components/main-components/talent/talent.component';
 import { EventAnimalDeckComponent } from './components/main-components/event-animal-deck/event-animal-deck.component';
+import { TokenShopViewComponent } from './components/main-views/shop-view/subviews/token-shop-view/token-shop-view.component';
 
 @NgModule({
   declarations: [
@@ -64,7 +64,7 @@ import { EventAnimalDeckComponent } from './components/main-components/event-ani
     BarnComponent,
     BarnViewComponent,
     RaceSelectionViewComponent,    
-    SelectedBarnComponent, ProgressBarComponent, CircuitViewComponent, LocalViewComponent, RaceComponent, AnimalsViewComponent, ShopViewComponent, ResourcesViewComponent, SettingsViewComponent, AnimalComponent, AnimalListComponent, SelectedAnimalComponent, DrawRaceComponent, TrainingListComponent, TrainingOptionComponent, ShoppingListComponent, ShoppingItemComponent, AnimalDeckComponent, DecksViewComponent, RaceDescriptionComponent, ToggleComponent, IncubatorViewComponent, IncubatorTraitsComponent, TraitListComponent, TraitOptionComponent, TalentsViewComponent, FaqViewComponent, StatsViewComponent, TrainingTrackViewComponent, TrainingTrackRaceViewComponent, CoachingComponent, EventViewComponent, TalentComponent, EventAnimalDeckComponent
+    SelectedBarnComponent, ProgressBarComponent, CircuitViewComponent, LocalViewComponent, RaceComponent, AnimalsViewComponent, ShopViewComponent, ResourcesViewComponent, SettingsViewComponent, AnimalComponent, AnimalListComponent, SelectedAnimalComponent, DrawRaceComponent, TrainingListComponent, TrainingOptionComponent, ShoppingListComponent, ShoppingItemComponent, AnimalDeckComponent, DecksViewComponent, RaceDescriptionComponent, ToggleComponent, IncubatorViewComponent, IncubatorTraitsComponent, TraitListComponent, TraitOptionComponent, FaqViewComponent, StatsViewComponent, TrainingTrackViewComponent, TrainingTrackRaceViewComponent, CoachingComponent, EventViewComponent, TalentComponent, EventAnimalDeckComponent, TokenShopViewComponent
   ],
   imports: [
     BrowserModule,

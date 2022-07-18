@@ -99,93 +99,12 @@ export class SelectedBarnComponent implements OnInit {
 
   ngOnInit(): void {
     this.handleTutorial();
-    this.specializationOptions = this.lookupService.getAllBarnSpecializations();
-    this.upgradeText = "Upgrade";
-    this.barnSpecializationsUnlocked = this.lookupService.isItemUnlocked("barnSpecializations");
-    this.coachingUnlocked = this.lookupService.isItemUnlocked("coaching");
 
     if (this.selectedBarnNumber > 0 && this.selectedBarnNumber <= this.globalService.globalVar.barns.length + 1) {
       var globalBarn = this.globalService.globalVar.barns.find(item => item.barnNumber === this.selectedBarnNumber);
 
-      if (globalBarn !== undefined) {
-        this.barn = globalBarn;
-        this.barnName = this.lookupService.getBarnName(globalBarn);
-        this.getSizeValue();
-        this.totalBarnStatsPopover = this.getTotalBarnStatsPopover();
-        this.upgradeBarnPopover = this.getUpgradeBarnPopover();
-        this.buildBiggerBarnPopover = this.getBuildLargerBarnPopover();
-        this.canUpgrade = this.canUpgradeBarn(this.lookupService.getResourcesForBarnUpgrade(this.barn.barnUpgrades.barnLevel));
-        this.canBuild = this.canBuildLargerBarn();
-
-        if (this.barn.barnUpgrades.barnLevel === 9)
-          this.upgradeText = "Specialize";
-
-        var associatedAnimal = this.globalService.globalVar.animals.find(item => item.associatedBarnNumber == this.selectedBarnNumber);
-
-        if (associatedAnimal !== undefined && associatedAnimal !== null) {
-          this.animalAssigned = true;
-          this.associatedAnimal = associatedAnimal;
-          this.associatedAnimalName = associatedAnimal.name;
-          this.existingTraining = associatedAnimal.currentTraining;
-
-          this.colorConditional = {
-            'flatlandColor': associatedAnimal.getRaceCourseType() === 'Flatland',
-            'mountainColor': associatedAnimal.getRaceCourseType() === 'Mountain',
-            'waterColor': associatedAnimal.getRaceCourseType() === 'Ocean',
-            'tundraColor': associatedAnimal.getRaceCourseType() === 'Tundra',
-            'volcanicColor': associatedAnimal.getRaceCourseType() === 'Volcanic'
-          };
-
-          this.availableTrainings = this.GetAvailableTrainingOptions(associatedAnimal);
-
-          if (this.existingTraining !== undefined && this.existingTraining !== null) {
-            var selectedTraining = this.availableTrainings.find(item => this.existingTraining?.trainingName === item.trainingName);
-            if (selectedTraining !== null && selectedTraining !== undefined)
-              selectedTraining.isSelected = true;
-          }
-        }
-        else {
-          this.animalAssigned = false;
-          this.availableAnimals = this.GetAvailableAnimalOptions();
-        }
-
-        this.componentCommunicationService.setBarnView(NavigationEnum.barn, 0);
-
-        this.subscription = this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {
-          if (!this.barn.isLocked) {
-            var associatedAnimal = this.globalService.globalVar.animals.find(item => item.associatedBarnNumber == this.selectedBarnNumber);
-            if (associatedAnimal === undefined || associatedAnimal === null) {
-              //any game loop logic needed for an empty barn
-            }
-            else {
-              //UI updates          
-              if (associatedAnimal.currentTraining === undefined || associatedAnimal.currentTraining === null) {
-                if (this.existingTraining !== null) {
-                  var selectedTraining = this.availableTrainings.find(item => this.existingTraining?.trainingName === item.trainingName);
-                  if (selectedTraining !== null && selectedTraining !== undefined)
-                    selectedTraining.isSelected = false;
-
-                  this.existingTraining = null;
-                }
-                return;
-              }
-              if (associatedAnimal.currentTraining !== this.existingTraining)
-                this.existingTraining = associatedAnimal.currentTraining;
-
-              if (this.trainingProgressBarPercent >= 100) {
-                this.trainingProgressBarPercent = 100;
-              }
-
-              this.trainingProgressBarPercent = ((associatedAnimal.currentTraining.timeTrained / associatedAnimal.currentTraining.timeToComplete) * 100);
-            }
-          }
-        });
-      }
-
-    }
-    else {
-      //console.log("Can't find barn");
-      alert("You've run into an error! Please try again. If you have the time, please export your data under the Settings tab and send me the data and any relevant info at CulturaIdle@gmail.com. Thank you!");
+      if (globalBarn !== null && globalBarn !== undefined)
+        this.resetSelectedBarnInfo(globalBarn);
     }
   }
 
@@ -485,7 +404,7 @@ export class SelectedBarnComponent implements OnInit {
     var canBuy = this.canUpgradeBarn(requiredResources);
 
     if (!canBuy) {
-      alert("You've run into an error! Please try again. If you have the time, please export your data under the Settings tab and send me the data and any relevant info at CulturaIdle@gmail.com. Thank you!");
+      alert("You don't have the required resources to upgrade your barn.");
       return;
     }
 
@@ -522,6 +441,10 @@ export class SelectedBarnComponent implements OnInit {
       this.totalBarnStatsPopover = this.getTotalBarnStatsPopover();
       this.upgradeBarnPopover = this.getUpgradeBarnPopover();
     }
+
+    this.upgradeText = "Upgrade";
+    if (this.barn.barnUpgrades.barnLevel === 9)
+      this.upgradeText = "Specialize";
 
     this.canUpgrade = this.canUpgradeBarn(this.lookupService.getResourcesForBarnUpgrade(this.barn.barnUpgrades.barnLevel));
     this.canBuild = this.canBuildLargerBarn();
@@ -648,6 +571,12 @@ export class SelectedBarnComponent implements OnInit {
     }
     this.totalBarnStatsPopover = this.getTotalBarnStatsPopover();
     this.upgradeBarnPopover = this.getUpgradeBarnPopover();
+    this.canUpgrade = this.canUpgradeBarn(this.lookupService.getResourcesForBarnUpgrade(this.barn.barnUpgrades.barnLevel));
+    this.canBuild = this.canBuildLargerBarn();
+
+    this.upgradeText = "Upgrade";
+    if (this.barn.barnUpgrades.barnLevel === 9)
+      this.upgradeText = "Specialize";
 
     this.modalService.dismissAll();
   }
@@ -677,6 +606,7 @@ export class SelectedBarnComponent implements OnInit {
     this.specializationOptions = this.lookupService.getAllBarnSpecializations();
     this.upgradeText = "Upgrade";
     this.barnSpecializationsUnlocked = this.lookupService.isItemUnlocked("barnSpecializations");
+    this.coachingUnlocked = this.lookupService.isItemUnlocked("coaching");
     this.selectedBarnNumber = newBarn.barnNumber;
 
     if (this.selectedBarnNumber > 0 && this.selectedBarnNumber <= this.globalService.globalVar.barns.length + 1) {

@@ -1,0 +1,21 @@
+.shopView
+{
+    height: 100%;
+
+    background-color: var(--background-secondary);
+    border-color: var(--background-tertiary);
+    color: var(--foreground-default);    
+}
+
+.filterActive {
+    font-weight: bold;
+    color: var(--foreground-secondary);    
+}
+
+.infoText {
+    text-align: center;
+}
+
+.centered {
+  text-align: center;
+}

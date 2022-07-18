@@ -33,11 +33,14 @@ export class CoachingComponent implements OnInit {
   getNewPath: boolean = false;
   currentPathType: CoachingCourseTypeEnum;
   animalDisplayName: string;
+  successfulAttemptStreak: number;
 
   constructor(private gameLoopService: GameLoopService, private globalService: GlobalService, private themeService: ThemeService,
     private utilityService: UtilityService) { }
 
   ngOnInit(): void {
+    this.successfulAttemptStreak = 0;
+
     if (this.selectedBarnNumber > 0 && this.selectedBarnNumber <= this.globalService.globalVar.barns.length + 1) {
       var globalBarn = this.globalService.globalVar.barns.find(item => item.barnNumber === this.selectedBarnNumber);
 
@@ -616,7 +619,8 @@ export class CoachingComponent implements OnInit {
     this.activePoints = [];
     this.currentX = 0;
     this.currentY = 0;
-    this.isPointerDown = false;
+    this.isPointerDown = false;    
+    this.successfulAttemptStreak += 1;
     this.getReward(this.currentPathType);
     this.associatedAnimal.trackedAnimalStats.successfulCoachingAttempts += 1;
     this.currentPathType = this.getRandomPathType(this.currentPathType);
@@ -625,29 +629,50 @@ export class CoachingComponent implements OnInit {
   getReward(pathType: CoachingCourseTypeEnum) {
     var statGainAmount = 1;
 
+      var whistle = this.globalService.globalVar.resources.find(item => item.name === "Whistle");
+      
+      if (whistle !== undefined && whistle !== null && whistle.amount > 0) {        
+        var whistleStatGainModifier = this.globalService.globalVar.modifiers.find(item => item.text === "whistleModifier");
+        if (whistleStatGainModifier !== undefined && whistleStatGainModifier !== null)
+          statGainAmount = whistleStatGainModifier.value;
+      }
+
+      var goldenWhistle = this.globalService.globalVar.resources.find(item => item.name === "Golden Whistle");
+      if (goldenWhistle !== undefined && goldenWhistle !== null && goldenWhistle.amount > 0) {
+        var goldenWhistleStatGainModifier = this.globalService.globalVar.modifiers.find(item => item.text === "goldenWhistleModifier");
+        if (goldenWhistleStatGainModifier !== undefined && goldenWhistleStatGainModifier !== null)
+          statGainAmount = goldenWhistleStatGainModifier.value;
+      }    
+
     if (pathType === CoachingCourseTypeEnum.speed) {
-      this.associatedAnimal.currentStats.topSpeed += 1;
+      this.associatedAnimal.currentStats.topSpeed += statGainAmount;
       this.incrementalCoachingUpdates += this.animalDisplayName + " completes the course and gains " + statGainAmount + " speed. (" + this.associatedAnimal.currentStats.topSpeed.toFixed(2) + ")\n";
     }
     if (pathType === CoachingCourseTypeEnum.acceleration) {
-      this.associatedAnimal.currentStats.acceleration += 1;
+      this.associatedAnimal.currentStats.acceleration += statGainAmount;
       this.incrementalCoachingUpdates += this.animalDisplayName + " completes the course and gains " + statGainAmount + " acceleration. (" + this.associatedAnimal.currentStats.acceleration.toFixed(2) + ")\n";
     }
     if (pathType === CoachingCourseTypeEnum.endurance) {
-      this.associatedAnimal.currentStats.endurance += 1;
+      this.associatedAnimal.currentStats.endurance += statGainAmount;
       this.incrementalCoachingUpdates += this.animalDisplayName + " completes the course and gains " + statGainAmount + " endurance. (" + this.associatedAnimal.currentStats.endurance.toFixed(2) + ")\n";
     }
     if (pathType === CoachingCourseTypeEnum.power) {
-      this.associatedAnimal.currentStats.power += 1;
+      this.associatedAnimal.currentStats.power += statGainAmount;
       this.incrementalCoachingUpdates += this.animalDisplayName + " completes the course and gains " + statGainAmount + " power. (" + this.associatedAnimal.currentStats.power.toFixed(2) + ")\n";
     }
     if (pathType === CoachingCourseTypeEnum.focus) {
-      this.associatedAnimal.currentStats.focus += 1;
+      this.associatedAnimal.currentStats.focus += statGainAmount;
       this.incrementalCoachingUpdates += this.animalDisplayName + " completes the course and gains " + statGainAmount + " focus. (" + this.associatedAnimal.currentStats.focus.toFixed(2) + ")\n";
     }
     if (pathType === CoachingCourseTypeEnum.adaptability) {
-      this.associatedAnimal.currentStats.adaptability += 1;
+      this.associatedAnimal.currentStats.adaptability += statGainAmount;
       this.incrementalCoachingUpdates += this.animalDisplayName + " completes the course and gains " + statGainAmount + " adaptability. (" + this.associatedAnimal.currentStats.adaptability.toFixed(2) + ")\n";
+    }
+
+    if (this.successfulAttemptStreak % 5 === 0)
+    {
+      this.globalService.increaseAbilityXp(this.associatedAnimal, statGainAmount);
+      this.incrementalCoachingUpdates += this.animalDisplayName + " also gains " + statGainAmount + " XP towards their ability " + this.associatedAnimal.ability.name + "!\n";
     }
 
     this.globalService.calculateAnimalRacingStats(this.associatedAnimal);

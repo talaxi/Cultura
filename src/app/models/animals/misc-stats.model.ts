@@ -6,6 +6,12 @@ export class MiscStats {
     diminishingReturnsBonus: number;
     bonusTalents: number;
 
+    bonusTrainingBreedXpCertificateCount: number;
+    bonusCircuitBreedXpCertificateCount: number;
+    bonusLocalBreedXpCertificateCount: number;
+    bonusDiminishingReturnsCertificateCount: number;
+    certificateUseCap: number;
+
     constructor() {        
         this.bonusBreedXpGainFromLocalRaces = 0;
         this.bonusBreedXpGainFromCircuitRaces = 0;
@@ -13,5 +19,11 @@ export class MiscStats {
         this.trainingTimeReduction = 0;
         this.diminishingReturnsBonus = 0;
         this.bonusTalents = 0;
+
+        this.bonusTrainingBreedXpCertificateCount = 0;
+        this.bonusCircuitBreedXpCertificateCount = 0;
+        this.bonusLocalBreedXpCertificateCount = 0;
+        this.bonusDiminishingReturnsCertificateCount = 0;
+        this.certificateUseCap = 30;
     }
 }

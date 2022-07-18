@@ -10,11 +10,11 @@
             </span>
         </div>
         <div class="coins keyword">
-            <span>Coins: {{ coinCount }}</span>
+            <span>Coins: {{ coinCount | number }}</span>
 
         </div>
         <div class="medals keyword">
-            <span>Medals: {{ medalCount }}</span>
+            <span>Medals: {{ medalCount | number }}</span>
         </div>
 
         <div class="menu keyword">
@@ -30,8 +30,7 @@
     </div>
 
     <ng-template #latestVersionChangesContent>
-        <div class="popoverClass">
-            {{ latestVersionChanges }}
+        <div class="popoverClass" [innerHTML]="getSanitizedHtml(latestVersionChanges)">            
         </div>
     </ng-template>
 
@@ -44,15 +43,18 @@
             <div *ngIf="changeLog.length > 0">
                 <div class="modal-body">
                     <div class="itemContainer">
-                        <p *ngFor="let change of changeLog; let i = index">
-                            <span class="s4Heading">Version {{ allVersions[i]  | number : '1.2-2' }}</span>
+                        <div *ngFor="let change of changeLog; let i = index">
+                            <div class="flexDiv">
+                                <span class="s4Heading">Version {{ allVersions[i] | number : '1.2-2' }}</span>
+                                <span> {{versionControlService.getDateForVersion(allVersions[i])}}</span>
+                            </div>
                             <br />
                             <br />
-                            {{change}}
+                            <div [innerHTML]="getSanitizedHtml(change)"></div>                     
                             <span>
-                            <hr/>
+                                <hr />
                             </span>
-                        </p>
+                        </div>
                     </div>
                 </div>
             </div>

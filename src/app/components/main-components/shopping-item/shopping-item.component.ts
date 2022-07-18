@@ -18,17 +18,20 @@ export class ShoppingItemComponent implements OnInit {
   longDescription: string;
   purchaseResourcesRequired: string;
   canAffordItem = true;
+  displayNumberPurchasing = false;
+  displayName = "";
+  colorConditional: any;
 
   constructor(private globalService: GlobalService, private lookupService: LookupService) { }
 
-  ngOnInit(): void {    
+  ngOnInit(): void {
     if (this.selectedItem.type === ShopItemTypeEnum.Ability) {
       this.shortDescription = this.lookupService.getAnimalAbilityDescription(true, this.selectedItem.additionalIdentifier);
       this.longDescription = this.lookupService.getAnimalAbilityDescription(false, this.selectedItem.additionalIdentifier);
     }
     else if (this.selectedItem.type === ShopItemTypeEnum.Specialty) {
-      this.shortDescription = this.lookupService.getSpecialtyItemDescription(this.selectedItem.name); 
-      
+      this.shortDescription = this.lookupService.getSpecialtyItemDescription(this.selectedItem.name);
+
       if (this.shortDescription === "")
         this.shortDescription = this.selectedItem.shortDescription;
     }
@@ -37,16 +40,78 @@ export class ShoppingItemComponent implements OnInit {
       this.longDescription = this.selectedItem.longDescription;
     }
 
+    this.displayName = this.selectedItem.name;
+
+    if (this.selectedItem.type === ShopItemTypeEnum.Animal) {
+      var animal = this.globalService.globalVar.animals.find(item => item.name === this.selectedItem.name);
+
+      if (animal !== undefined) {
+        this.colorConditional = {
+          'flatlandColor': animal.getRaceCourseType() === 'Flatland',
+          'mountainColor': animal.getRaceCourseType() === 'Mountain',
+          'waterColor': animal.getRaceCourseType() === 'Ocean',
+          'tundraColor': animal.getRaceCourseType() === 'Tundra',
+          'volcanicColor': animal.getRaceCourseType() === 'Volcanic'
+        };
+      }
+    }
+
+    if (this.selectedItem.type === ShopItemTypeEnum.Ability) {
+      var animalType = this.selectedItem.name.split(' ')[0].trim();
+
+      if (animalType !== "") {
+        var animal = this.globalService.globalVar.animals.find(animal => animal.getAnimalType() === animalType);
+        if (animal !== undefined) {
+          this.colorConditional = {
+            'flatlandColor': animal.getRaceCourseType() === 'Flatland',
+            'mountainColor': animal.getRaceCourseType() === 'Mountain',
+            'waterColor': animal.getRaceCourseType() === 'Ocean',
+            'tundraColor': animal.getRaceCourseType() === 'Tundra',
+            'volcanicColor': animal.getRaceCourseType() === 'Volcanic'
+          };
+        }
+      }
+    }
+
+    if (this.selectedItem.type === ShopItemTypeEnum.Food && this.selectedItem.numberPurchasing === 1) {
+      if (this.displayName === "Apples")
+        this.displayName = "Apple";
+      if (this.displayName === "Oranges")
+        this.displayName = "Orange";
+      if (this.displayName === "Bananas")
+        this.displayName = "Banana";
+      if (this.displayName === "Strawberries")
+        this.displayName = "Strawberry";
+      if (this.displayName === "Carrots")
+        this.displayName = "Carrot";
+      if (this.displayName === "Turnips")
+        this.displayName = "Turnip";
+      if (this.displayName === "Mangoes")
+        this.displayName = "Mango";
+    }
+
+    if (this.selectedItem.type === ShopItemTypeEnum.Food || this.selectedItem.type === ShopItemTypeEnum.Resources) {
+      this.displayNumberPurchasing = true;
+    }
+
     this.selectedItem.purchasePrice.forEach(resource => {
-      this.purchaseResourcesRequired = resource.amount + " " + resource.name + ", ";
+      var displayName = resource.name;
+
+      if (resource.amount === 1) {
+        if (displayName === "Tokens")
+          displayName = "Token";
+        if (displayName === "Medals")
+          displayName = "Medal";
+      }
+
+      this.purchaseResourcesRequired = resource.amount.toLocaleString() + " " + displayName + ", ";
 
       var currentAmount = this.lookupService.getResourceByName(resource.name);
       if (currentAmount < resource.amount)
         this.canAffordItem = false;
     });
-    
-    if (this.purchaseResourcesRequired.length > 0)
-    {            
+
+    if (this.purchaseResourcesRequired.length > 0) {
       this.purchaseResourcesRequired = this.purchaseResourcesRequired.substring(0, this.purchaseResourcesRequired.length - 2);
     }
   }
@@ -72,6 +137,12 @@ export class ShoppingItemComponent implements OnInit {
       }
       if (this.selectedItem.type === ShopItemTypeEnum.Equipment) {
         this.buyEquipment();
+      }
+      if (this.selectedItem.type === ShopItemTypeEnum.Consumable) {
+        this.buyConsumable();
+      }
+      if (this.selectedItem.type === ShopItemTypeEnum.Resources) {
+        this.buyResources();
       }
 
       this.itemPurchased.emit(this.selectedItem);
@@ -102,11 +173,9 @@ export class ShoppingItemComponent implements OnInit {
       this.selectedItem.amountPurchased = 1;
 
       var associatedAbilitySection = this.globalService.globalVar.shop.find(item => item.name === "Abilities");
-      if (associatedAbilitySection !== undefined && associatedAbilitySection !== null)
-      {
+      if (associatedAbilitySection !== undefined && associatedAbilitySection !== null) {
         var associatedAbilities = associatedAbilitySection.itemList.filter(item => item.name.split(' ')[0] === animal?.getAnimalType());
-        if (associatedAbilities !== undefined && associatedAbilities !== null && associatedAbilities.length > 0)
-        {
+        if (associatedAbilities !== undefined && associatedAbilities !== null && associatedAbilities.length > 0) {
           associatedAbilities.forEach(ability => {
             ability.isAvailable = true;
           })
@@ -136,27 +205,38 @@ export class ShoppingItemComponent implements OnInit {
   }
 
   buyFood() {
+    if (this.selectedItem.numberPurchasing === undefined || this.selectedItem.numberPurchasing === null)
+      this.selectedItem.numberPurchasing = 1;
+
     if (this.globalService.globalVar.resources !== undefined && this.globalService.globalVar.resources !== null) {
       if (this.globalService.globalVar.resources.some(x => x.name === this.selectedItem.name)) {
         var globalResource = this.globalService.globalVar.resources.find(x => x.name === this.selectedItem.name);
         if (globalResource !== null && globalResource !== undefined) {
-          globalResource.amount += 1;
+          globalResource.amount += this.selectedItem.numberPurchasing;
         }
       }
       else
-        this.globalService.globalVar.resources.push(new ResourceValue(this.selectedItem.name, 1, ShopItemTypeEnum.Food));
+        this.globalService.globalVar.resources.push(new ResourceValue(this.selectedItem.name, this.selectedItem.numberPurchasing, ShopItemTypeEnum.Food));
     }
   }
 
   buySpecialty() {
     this.selectedItem.amountPurchased += 1;
 
-    if (this.selectedItem.name === "National Races")
-    {
+    if (this.selectedItem.name === "Whistle") {
+      var specialtyShop = this.globalService.globalVar.shop.find(item => item.name === "Specialty");
+      if (specialtyShop !== undefined && specialtyShop !== null) {
+        var goldenWhistle = specialtyShop.itemList.find(item => item.name === "Golden Whistle");
+
+        if (goldenWhistle !== undefined && goldenWhistle !== null)
+          goldenWhistle.isAvailable = true;
+      }
+    }
+
+    if (this.selectedItem.name === "National Races") {
       this.globalService.globalVar.nationalRaceCountdown = 0;
       var specialtyShop = this.globalService.globalVar.shop.find(item => item.name === "Specialty");
-      if (specialtyShop !== undefined && specialtyShop !== null)
-      {
+      if (specialtyShop !== undefined && specialtyShop !== null) {
         var internationalRaces = specialtyShop.itemList.find(item => item.name === "International Races");
 
         if (internationalRaces !== undefined && internationalRaces !== null)
@@ -164,47 +244,39 @@ export class ShoppingItemComponent implements OnInit {
       }
     }
 
-    if (this.selectedItem.name === "Incubator Upgrade Lv1")
-    {
+    if (this.selectedItem.name === "Incubator Upgrade Lv1") {
       var specialtyShop = this.globalService.globalVar.shop.find(item => item.name === "Specialty");
-      if (specialtyShop !== undefined && specialtyShop !== null)
-      {
+      if (specialtyShop !== undefined && specialtyShop !== null) {
         var nextUpgrade = specialtyShop.itemList.find(item => item.name === "Incubator Upgrade Lv2");
 
         if (nextUpgrade !== undefined && nextUpgrade !== null)
-        nextUpgrade.isAvailable = true;
+          nextUpgrade.isAvailable = true;
       }
     }
 
-    if (this.selectedItem.name === "Incubator Upgrade Lv2")
-    {
+    if (this.selectedItem.name === "Incubator Upgrade Lv2") {
       var specialtyShop = this.globalService.globalVar.shop.find(item => item.name === "Specialty");
-      if (specialtyShop !== undefined && specialtyShop !== null)
-      {
+      if (specialtyShop !== undefined && specialtyShop !== null) {
         var nextUpgrade = specialtyShop.itemList.find(item => item.name === "Incubator Upgrade Lv3");
 
         if (nextUpgrade !== undefined && nextUpgrade !== null)
-        nextUpgrade.isAvailable = true;
+          nextUpgrade.isAvailable = true;
       }
     }
 
-    if (this.selectedItem.name === "Incubator Upgrade Lv3")
-    {
+    if (this.selectedItem.name === "Incubator Upgrade Lv3") {
       var specialtyShop = this.globalService.globalVar.shop.find(item => item.name === "Specialty");
-      if (specialtyShop !== undefined && specialtyShop !== null)
-      {
+      if (specialtyShop !== undefined && specialtyShop !== null) {
         var nextUpgrade = specialtyShop.itemList.find(item => item.name === "Incubator Upgrade Lv4");
 
         if (nextUpgrade !== undefined && nextUpgrade !== null)
-        nextUpgrade.isAvailable = true;
+          nextUpgrade.isAvailable = true;
       }
     }
 
-    if (this.selectedItem.name === "Team Manager" && this.selectedItem.amountPurchased === 1)
-    {
+    if (this.selectedItem.name === "Team Manager" && this.selectedItem.amountPurchased === 1) {
       var primaryDeck = this.globalService.globalVar.animalDecks.find(item => item.isPrimaryDeck);
-      if (primaryDeck !== null && primaryDeck !== undefined)
-      {
+      if (primaryDeck !== null && primaryDeck !== undefined) {
         primaryDeck.autoRunFreeRace = true;
       }
     }
@@ -220,12 +292,11 @@ export class ShoppingItemComponent implements OnInit {
         this.globalService.globalVar.resources.push(new ResourceValue(this.selectedItem.name, 1, ShopItemTypeEnum.Specialty));
     }
 
-    if (this.selectedItem.quantityMultiplier !== null && this.selectedItem.quantityMultiplier !== undefined && this.selectedItem.quantityMultiplier > 0)
-    {
+    if (this.selectedItem.quantityMultiplier !== null && this.selectedItem.quantityMultiplier !== undefined && this.selectedItem.quantityMultiplier > 0) {
       this.selectedItem.purchasePrice.forEach(price => {
         //var basePrice = this.selectedItem.basePurchasePrice.find(item => item.name === price.name);
         //if (basePrice !== undefined && basePrice !== null)
-          //price.amount = basePrice?.amount * (this.selectedItem.quantityMultiplier * this.selectedItem.amountPurchased);
+        //price.amount = basePrice?.amount * (this.selectedItem.quantityMultiplier * this.selectedItem.amountPurchased);
         //else
 
         if (this.selectedItem.quantityAdditive !== undefined && this.selectedItem.quantityAdditive !== null && this.selectedItem.quantityAdditive > 0)
@@ -256,6 +327,9 @@ export class ShoppingItemComponent implements OnInit {
   }
 
   buyEquipment() {
+    if (this.selectedItem.numberPurchasing === undefined || this.selectedItem.numberPurchasing === null)
+      this.selectedItem.numberPurchasing = 1;
+
     this.selectedItem.amountPurchased += 1;
 
     if (this.globalService.globalVar.resources !== undefined && this.globalService.globalVar.resources !== null) {
@@ -267,6 +341,38 @@ export class ShoppingItemComponent implements OnInit {
       }
       else
         this.globalService.globalVar.resources.push(new ResourceValue(this.selectedItem.name, 1, ShopItemTypeEnum.Equipment));
+    }
+  }
+
+  buyConsumable() {
+    if (this.selectedItem.numberPurchasing === undefined || this.selectedItem.numberPurchasing === null)
+      this.selectedItem.numberPurchasing = 1;
+
+    if (this.globalService.globalVar.resources !== undefined && this.globalService.globalVar.resources !== null) {
+      if (this.globalService.globalVar.resources.some(x => x.name === this.selectedItem.name)) {
+        var globalResource = this.globalService.globalVar.resources.find(x => x.name === this.selectedItem.name);
+        if (globalResource !== null && globalResource !== undefined) {
+          globalResource.amount += this.selectedItem.numberPurchasing;
+        }
+      }
+      else
+        this.globalService.globalVar.resources.push(new ResourceValue(this.selectedItem.name, this.selectedItem.numberPurchasing, ShopItemTypeEnum.Consumable));
+    }
+  }
+
+  buyResources() {
+    if (this.selectedItem.numberPurchasing === undefined || this.selectedItem.numberPurchasing === null)
+      this.selectedItem.numberPurchasing = 1;
+
+    if (this.globalService.globalVar.resources !== undefined && this.globalService.globalVar.resources !== null) {
+      if (this.globalService.globalVar.resources.some(x => x.name === this.selectedItem.name)) {
+        var globalResource = this.globalService.globalVar.resources.find(x => x.name === this.selectedItem.name);
+        if (globalResource !== null && globalResource !== undefined) {
+          globalResource.amount += this.selectedItem.numberPurchasing;
+        }
+      }
+      else
+        this.globalService.globalVar.resources.push(new ResourceValue(this.selectedItem.name, this.selectedItem.numberPurchasing, ShopItemTypeEnum.Resources));
     }
   }
 }

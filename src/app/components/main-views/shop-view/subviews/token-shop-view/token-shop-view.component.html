@@ -1,0 +1,18 @@
+<div class="shopView">
+    <div class="infoText">
+        <div class="infoGridContainer">
+            <div class="info">
+                <h2>Token Shop</h2>
+            </div>
+        </div>                
+    </div>
+    <br/>
+    <div class="shopSection" *ngFor="let section of sections;">
+        <app-shopping-list [section]="section" [shopType]="shopType"></app-shopping-list>
+    </div>
+    <br/>
+    <div *ngIf="highestTierUnlocked < maxTiers" class="centered">
+        <hr/>
+        <em>Next tier unlocked at {{ lookupService.getRenownRequiredForEventShopTier(highestTierUnlocked+1) }} <span class='progressionKeyword'>Renown</span></em>
+    </div>
+</div>

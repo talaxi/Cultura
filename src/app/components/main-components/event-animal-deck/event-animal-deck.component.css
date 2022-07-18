@@ -2,3 +2,11 @@
     display: flex;
     justify-content: space-evenly;
 }
+
+.deckName {
+    text-align: center;
+}
+
+.eventAnimal {
+    flex: 1;
+}

@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Output, OnInit } from '@angular/core';
 import { AnimalTypeEnum } from 'src/app/models/animal-type-enum.model';
 import { Animal } from 'src/app/models/animals/animal.model';
+import { ShopsEnum } from 'src/app/models/shops-enum.model';
 import { ComponentCommunicationService } from 'src/app/services/component-communication.service';
 import { GameLoopService } from 'src/app/services/game-loop/game-loop.service';
 import { GlobalService } from 'src/app/services/global-service.service';
@@ -54,6 +55,11 @@ export class NavigationComponent implements OnInit {
   }
 
   switchView(selectedView: NavigationEnum) {
+    if (this.selectedNavigation === NavigationEnum.shop)
+    {
+      this.componentCommunicationService.setShopView(NavigationEnum.shop, ShopsEnum.regular);
+    }
+    
     this.viewChanged.emit(selectedView);
     this.selectedNavigation = selectedView;
 

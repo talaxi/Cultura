@@ -102,7 +102,7 @@ export class SelectedAnimalComponent implements OnInit {
   constructor(private lookupService: LookupService, private modalService: NgbModal, private globalService: GlobalService,
     private componentCommunicationService: ComponentCommunicationService) { }
 
-  ngOnInit(): void {    
+  ngOnInit(): void {
     this.handleIntroTutorial();
     this.resetSelectedAnimalInfo(this.selectedAnimal);
     this.breedDescriptionPopover = "When your Breed XP reaches the max, you can Breed your animal. This will reset your base stats, but it will also increase the amount that your base stats contribute to your racing stats.";
@@ -140,7 +140,7 @@ export class SelectedAnimalComponent implements OnInit {
     this.abilityLevelMaxedOut = this.isAbilityLevelMaxedOut();
   }
 
-  editName(): void {        
+  editName(): void {
     if (this.newName.length <= 50 && this.newName.length >= 1) {
       this.selectedAnimal.name = this.newName;
       this.editingName = false;
@@ -158,8 +158,8 @@ export class SelectedAnimalComponent implements OnInit {
 
   updateItemsList() {
     this.usableItemsList = [];
-    //add food to list
-    this.globalService.globalVar.resources.filter(item => item.itemType === ShopItemTypeEnum.Food && item.amount > 0).forEach(food => {
+    //add food to list    
+    this.globalService.globalVar.resources.filter(item => (item.itemType === ShopItemTypeEnum.Food || item.itemType === ShopItemTypeEnum.Consumable) && item.amount > 0).forEach(food => {
       if (food !== undefined) {
         this.usableItemsList.push(food);
       }
@@ -171,13 +171,13 @@ export class SelectedAnimalComponent implements OnInit {
   updateEquipmentList() {
     this.equipmentList = [];
     //add equipment to list
-    this.globalService.globalVar.resources .filter(item => item.itemType === ShopItemTypeEnum.Equipment && !this.lookupService.isEquipmentItemAnOrb(item.name))
-    .forEach(equipment => {
-      if (equipment !== undefined) {
-        var modifiedEquipment = equipment.makeCopy(equipment);
-        this.equipmentList.push(modifiedEquipment);
-      }
-    });
+    this.globalService.globalVar.resources.filter(item => item.itemType === ShopItemTypeEnum.Equipment && !this.lookupService.isEquipmentItemAnOrb(item.name))
+      .forEach(equipment => {
+        if (equipment !== undefined) {
+          var modifiedEquipment = equipment.makeCopy(equipment);
+          this.equipmentList.push(modifiedEquipment);
+        }
+      });
 
     this.setupDisplayEquipment();
   }
@@ -185,13 +185,13 @@ export class SelectedAnimalComponent implements OnInit {
   updateOrbList() {
     this.orbList = [];
     //add equipment to list
-    this.globalService.globalVar.resources .filter(item => item.itemType === ShopItemTypeEnum.Equipment && this.lookupService.isEquipmentItemAnOrb(item.name))
-    .forEach(orb => {
-      if (orb !== undefined) {
-        var modifiedOrb = orb.makeCopy(orb);
-        this.orbList.push(modifiedOrb);
-      }
-    });
+    this.globalService.globalVar.resources.filter(item => item.itemType === ShopItemTypeEnum.Equipment && this.lookupService.isEquipmentItemAnOrb(item.name))
+      .forEach(orb => {
+        if (orb !== undefined) {
+          var modifiedOrb = orb.makeCopy(orb);
+          this.orbList.push(modifiedOrb);
+        }
+      });
 
     this.setupDisplayEquipment();
   }
@@ -257,30 +257,34 @@ export class SelectedAnimalComponent implements OnInit {
 
   openItemModal(content: any) {
     this.setupDisplayItems();
-    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'lg' });
+    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
   }
 
   openEquipmentModal(content: any) {
     this.setupDisplayEquipment();
-    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'lg' });
+    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
   }
 
   openOrbModal(content: any) {
     this.setupDisplayOrbs();
-    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'lg' });
+    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
   }
 
   useItem() {
     var globalResource = this.globalService.globalVar.resources.find(item => item.name === this.selectedItem.name && item.itemType === this.selectedItem.itemType);
-    if (globalResource === undefined)
-    {
+    if (globalResource === undefined) {
       alert("You've run into an error! Please try again. If you have the time, please export your data under the Settings tab and send me the data and any relevant info at CulturaIdle@gmail.com. Thank you!");
       return;
     }
 
-    if (globalResource.amount < this.selectedItemQuantity)
-    {
+    if (globalResource.amount < this.selectedItemQuantity) {
       alert("You don't have that many " + globalResource.name + "!");
+      return;
+    }
+
+    if (this.selectedItem.itemType === ShopItemTypeEnum.Consumable && this.selectedItem.name.includes("Certificate") &&
+      this.lookupService.isAmountMoreThanCertificateCap(this.selectedItemQuantity, this.selectedAnimal, this.selectedItem.name)) {
+      alert("This amount will exceed the amount of these certificates you can give your animal.");
       return;
     }
 
@@ -308,6 +312,25 @@ export class SelectedAnimalComponent implements OnInit {
           increaseStats.adaptability = this.selectedItemQuantity;
 
         this.selectedAnimal.increaseStats(increaseStats);
+        this.globalService.calculateAnimalRacingStats(this.selectedAnimal);
+      }
+    }
+    else if (this.selectedItem.itemType === ShopItemTypeEnum.Consumable) {
+      if (this.selectedItem.name === "Free Race Breed XP Gain Certificate") {
+        this.selectedAnimal.miscStats.bonusBreedXpGainFromLocalRaces += +this.selectedItemQuantity;
+        this.selectedAnimal.miscStats.bonusLocalBreedXpCertificateCount += +this.selectedItemQuantity;
+      }
+      if (this.selectedItem.name === "Circuit Race Breed XP Gain Certificate") {
+        this.selectedAnimal.miscStats.bonusBreedXpGainFromCircuitRaces += +(this.selectedItemQuantity * 2);
+        this.selectedAnimal.miscStats.bonusCircuitBreedXpCertificateCount += +(this.selectedItemQuantity * 2);
+      }
+      if (this.selectedItem.name === "Training Breed XP Gain Certificate") {
+        this.selectedAnimal.miscStats.bonusBreedXpGainFromTraining += +this.selectedItemQuantity;
+        this.selectedAnimal.miscStats.bonusTrainingBreedXpCertificateCount += +this.selectedItemQuantity;
+      }
+      if (this.selectedItem.name === "Diminishing Returns Increase Certificate") {
+        this.selectedAnimal.miscStats.diminishingReturnsBonus += +this.selectedItemQuantity;
+        this.selectedAnimal.miscStats.bonusDiminishingReturnsCertificateCount += +this.selectedItemQuantity;
         this.globalService.calculateAnimalRacingStats(this.selectedAnimal);
       }
     }
@@ -340,11 +363,11 @@ export class SelectedAnimalComponent implements OnInit {
     this.modalService.dismissAll();
   }
 
-  selectOrb(item: ResourceValue) {    
+  selectOrb(item: ResourceValue) {
     this.selectedOrb = item;
   }
 
-  unequipOrb() {    
+  unequipOrb() {
     this.selectedAnimal.equippedOrb = null;
     this.globalService.calculateAnimalRacingStats(this.selectedAnimal);
   }
@@ -433,7 +456,7 @@ export class SelectedAnimalComponent implements OnInit {
       return;
     }
 
-    this.selectedAnimal.talentTree.talentTreeType = this.lookupService.convertTalentTreeNameToEnum(this.selectedTalentTree);    
+    this.selectedAnimal.talentTree.talentTreeType = this.lookupService.convertTalentTreeNameToEnum(this.selectedTalentTree);
   }
 
   resetSelectedAnimalInfo(newAnimal: Animal) {
@@ -512,8 +535,7 @@ export class SelectedAnimalComponent implements OnInit {
     else
       this.assignedBarnName = "Assigned to: " + this.lookupService.getBarnName(assignedBarn);
 
-    if (this.areTalentsAvailable)
-    {
+    if (this.areTalentsAvailable) {
       this.talentTreeOptions = this.lookupService.getTalentTreeNames();
       this.availableTalentPoints = this.lookupService.getTalentPointsAvailableToAnimal(this.selectedAnimal);
     }

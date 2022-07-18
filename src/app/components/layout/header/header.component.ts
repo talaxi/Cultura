@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, SecurityContext } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NavigationEnum } from 'src/app/models/navigation-enum.model';
 import { ComponentCommunicationService } from 'src/app/services/component-communication.service';
@@ -21,8 +22,8 @@ export class HeaderComponent implements OnInit {
   allVersions: number[];
 
   constructor(private lookupService: LookupService, private gameLoopService: GameLoopService, private globalService: GlobalService,
-    private componentCommunicationService: ComponentCommunicationService, private versionControlService: VersionControlService,
-    private modalService: NgbModal) { }
+    private componentCommunicationService: ComponentCommunicationService, public versionControlService: VersionControlService,
+    private modalService: NgbModal, public sanitizer: DomSanitizer) { }
 
   ngOnInit(): void {
     this.version = this.globalService.globalVar.currentVersion.toFixed(2);
@@ -38,11 +39,15 @@ export class HeaderComponent implements OnInit {
     });
   }
 
+  getSanitizedHtml(text: string) {
+    return this.sanitizer.sanitize(SecurityContext.HTML, this.sanitizer.bypassSecurityTrustHtml(text));
+  }
+
   changeView(newView: NavigationEnum) {    
     this.componentCommunicationService.setNewView(newView);
   }
 
   openChangeLog(content: any) {
-    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'lg' });
+    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
   }
 }

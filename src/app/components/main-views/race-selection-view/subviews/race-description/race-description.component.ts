@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { Animal } from 'src/app/models/animals/animal.model';
 import { LocalRaceTypeEnum } from 'src/app/models/local-race-type-enum.model';
 import { RaceCourseTypeEnum } from 'src/app/models/race-course-type-enum.model';
 import { RaceLeg } from 'src/app/models/races/race-leg.model';
@@ -18,6 +19,7 @@ export class RaceDescriptionComponent implements OnInit {
   cannotRace: boolean;
   popoverText: string;
   missingRacers: RaceCourseTypeEnum[] = [];
+  busyRacers: Animal[] = [];
 
   constructor(private globalService: GlobalService, private lookupService: LookupService) { }
 
@@ -35,6 +37,13 @@ export class RaceDescriptionComponent implements OnInit {
           this.cannotRace = true;
           this.missingRacers.push(leg.courseType);
         }
+        else {
+          var selectedAnimal = selectedDeck?.selectedAnimals.find(item => item.raceCourseType === leg.courseType);          
+          if (selectedAnimal !== undefined && !this.lookupService.canAnimalRace(selectedAnimal)) {
+            this.cannotRace = true;            
+            this.busyRacers.push(selectedAnimal);
+          }
+        }
       }
     });
 
@@ -43,6 +52,7 @@ export class RaceDescriptionComponent implements OnInit {
 
     if (this.race.localRaceType === LocalRaceTypeEnum.Free && this.lookupService.getRemainingFreeRacesPerPeriod() <= 0)
       this.cannotRace = true;
+
 
     if (this.cannotRace)
       this.popoverText = this.getErrorPopoverText();
@@ -81,6 +91,9 @@ export class RaceDescriptionComponent implements OnInit {
     if (selectedDeck.selectedAnimals.some(item => item.raceCourseType === leg.courseType))
       hasRacer = true;
 
+    if (this.busyRacers.some(item => item.raceCourseType === leg.courseType))
+      hasRacer = false;
+
     return hasRacer;
   }
 
@@ -89,6 +102,10 @@ export class RaceDescriptionComponent implements OnInit {
 
     this.missingRacers.forEach(racer => {
       popoverText += "-Missing " + RaceCourseTypeEnum[racer] + " racer\n";
+    });
+
+    this.busyRacers.forEach(racer => {
+      popoverText += "-" + racer.name + " is active in another race\n";
     });
 
     if (this.race.isCompleted)

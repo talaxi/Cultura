@@ -70,7 +70,7 @@ export class LocalViewComponent implements OnInit {
 
     this.areMonoRacesAvailable = this.lookupService.isItemUnlocked("monoRace");
     this.areDuoRacesAvailable = this.lookupService.isItemUnlocked("duoRace");
-    this.areRainbowRacesAvailable = this.lookupService.isItemUnlocked("rainbowRace");   
+    this.areRainbowRacesAvailable = this.lookupService.isItemUnlocked("rainbowRace");
   }
 
   getNextAvailableSpecialRace(raceType: LocalRaceTypeEnum) {
@@ -105,7 +105,12 @@ export class LocalViewComponent implements OnInit {
     race.raceLegs.forEach(leg => {
       if (!racingAnimals?.selectedAnimals.some(item => item.raceCourseType === leg.courseType))
         canRace = false;
-    });    
+
+      var selectedAnimal = racingAnimals?.selectedAnimals.find(item => item.raceCourseType === leg.courseType);
+      if (selectedAnimal !== undefined && !this.lookupService.canAnimalRace(selectedAnimal)) {
+        canRace = false;
+      }
+    });
 
     if (canRace) {
       /* bubble back up to race selection with the chosen race, over there show the race occur */

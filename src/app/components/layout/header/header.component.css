@@ -68,6 +68,11 @@
   white-space: pre-line;
 }
 
+.flexDiv {
+  display: flex;
+  justify-content: space-between;
+}
+
 @media (max-width: 800px) {
   .gridContainer {
     display: grid;

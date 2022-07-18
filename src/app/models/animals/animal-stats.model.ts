@@ -180,10 +180,6 @@ export class AnimalStats {
     }
 
     calculateBurstChance(breedLevelStatModifier: number, modifiedFocusMs?: number, modifiedAdaptabilityMs?: number): number {
-        /*if (modifiedFocusMs !== null && modifiedFocusMs !== undefined &&
-            modifiedAdaptabilityMs !== null && modifiedAdaptabilityMs !== undefined)
-            statTotal = modifiedAdaptabilityMs + modifiedFocusMs;
-*/
         var focusTotal = this.focus;
         var adaptabilityTotal = this.adaptability;
         if (modifiedFocusMs !== null && modifiedFocusMs !== undefined) {

@@ -1,6 +1,7 @@
 import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 import { ShopItem } from 'src/app/models/shop/shop-item.model';
 import { ShopSection } from 'src/app/models/shop/shop-section.model';
+import { ShopsEnum } from 'src/app/models/shops-enum.model';
 import { GlobalService } from 'src/app/services/global-service.service';
 
 @Component({
@@ -10,14 +11,19 @@ import { GlobalService } from 'src/app/services/global-service.service';
 })
 export class ShoppingListComponent implements OnInit {
   @Input() section: ShopSection;
+  @Input() shopType: ShopsEnum;
   itemsRows: ShopItem[][];
   itemsCells: ShopItem[];
   screenHeight: number;
   screenWidth: number;
+  public shopsEnum = ShopsEnum;
 
   constructor(private globalService: GlobalService) { }
 
   ngOnInit(): void {    
+    if (this.shopType === undefined || this.shopType === null)
+      this.shopType = ShopsEnum.regular;
+
     this.setupDisplayItems();
   }
 

@@ -26,8 +26,17 @@ export interface Theme {
       "--error-dark": "#800600",
       "--error-light": "#FFCECC",
         
+      "--flatlandColor": "#c66900",
+      "--mountainColor": "#279113",
       "--waterColor": "#0000ff",
       "--waterSubcolor": "#16148f",
+      "--tundraColor": "#1ca1c9",
+      "--volcanicColor": "#d92525",
+      
+      "--resourceKeywordColor": "#822B03",
+      "--progressionKeywordColor": "#8105fc",
+      "--specialityKeywordColor": "#050efc",
+      "--equipmentKeywordColor": "#1B7F02",
   
       "--background-tertiary-shadow": "0 1px 3px 0 rgba(92, 125, 153, 0.5)"
     }
@@ -56,9 +65,17 @@ export interface Theme {
       "--error-dark": "#800600",
       "--error-light": "#FFCECC",
 
+      "--flatlandColor": "#BF6200",
+      "--mountainColor": "#228D0F",
       "--waterColor": "#0000ff",
       "--waterSubcolor": "#16148f",
-      "--tundraColor": "#1a83b0",
+      "--tundraColor": "#266A80",
+      "--volcanicColor": "#C70604",
+      
+      "--resourceKeywordColor": "#822B03",
+      "--progressionKeywordColor": "#501da8",
+      "--specialityKeywordColor": "#064064",
+      "--equipmentKeywordColor": "#2C6854",
   
       "--background-tertiary-shadow": "0 1px 3px 0 rgba(92, 125, 153, 0.5)"
     }
@@ -87,8 +104,17 @@ export interface Theme {
       "--error-dark": "#800600",
       "--error-light": "#FFCECC",
   
+      "--flatlandColor": "#c66900",
+      "--mountainColor": "#279113",
       "--waterColor": "#0000ff",
-      "--waterSubcolor": "#16148f",
+      "--waterSubcolor": "#16148f",      
+      "--tundraColor": "#1ca1c9",
+      "--volcanicColor": "#d92525",
+      
+      "--resourceKeywordColor": "#822B03",
+      "--progressionKeywordColor": "#501da8",
+      "--specialityKeywordColor": "#000000",
+      "--equipmentKeywordColor": "#2C6854",
 
       "--background-tertiary-shadow": "0 1px 3px 0 rgba(92, 125, 153, 0.5)"
     }
@@ -117,9 +143,17 @@ export interface Theme {
       "--error-dark": "#800600",
       "--error-light": "#FFCECC",
 
-      "--waterColor": "#7463f7",
+      "--flatlandColor": "#E18B07",
+      "--mountainColor": "#30b001",
+      "--waterColor": "#9289CF",
       "--waterSubcolor": "#5044ab",
-      "--tundraColor": "#1ca1c9",
+      "--tundraColor": "#019DDE",
+      "--volcanicColor": "#E56C6E",
+      
+      "--resourceKeywordColor": "#EAAD91",
+      "--progressionKeywordColor": "#ABB5DC",
+      "--specialityKeywordColor": "#5DBDF6",
+      "--equipmentKeywordColor": "#83C2A6",
   
       "--background-tertiary-shadow": "0 1px 3px 0 rgba(8, 9, 10, 0.5)"
     }

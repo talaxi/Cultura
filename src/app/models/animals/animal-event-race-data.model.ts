@@ -8,7 +8,8 @@ export class AnimalEventRaceData {
     isSetToRelay: boolean;
 
     constructor(type: AnimalTypeEnum) {
-        this.exhaustionStatReduction = 0;
+        this.exhaustionStatReduction = 1;
+        this.morale = 1;
         this.associatedAnimalType = type;
         this.isCurrentlyRacing = false;
         this.isSetToRelay = false;

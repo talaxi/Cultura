@@ -70,6 +70,7 @@ export class DrawRaceComponent implements OnInit {
   eventViewStartFrame = 0;
   //lastFrame = 0;  
   lastEventSegment = this.globalService.globalVar.eventRaceData.currentRaceSegmentCount;
+  newSegment = false;
 
   constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private utilityService: UtilityService,
     private lookupService: LookupService, private themeService: ThemeService) { }
@@ -101,6 +102,14 @@ export class DrawRaceComponent implements OnInit {
     //var eventFrameTimeCounter = 0;
 
     this.mountainClimbPercent = this.utilityService.getRandomNumber(.3, .7);
+    if (this.race.raceType === RaceTypeEnum.event && this.race.eventRaceType === EventRaceTypeEnum.grandPrix) {
+      if (this.globalService.globalVar.eventRaceData.mountainClimbPercent === 0)
+        this.globalService.globalVar.eventRaceData.mountainClimbPercent = this.mountainClimbPercent;
+      else
+        this.mountainClimbPercent = this.globalService.globalVar.eventRaceData.mountainClimbPercent;
+    }
+
+
     var effectiveTimeToComplete = this.race.raceUI.timeToCompleteByFrame[this.race.raceUI.timeToCompleteByFrame.length - 1];
 
     this.subscription = this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {
@@ -118,8 +127,11 @@ export class DrawRaceComponent implements OnInit {
           if (this.globalService.globalVar.eventRaceData.currentRaceSegmentCount > this.lastEventSegment) {
             this.eventViewStartFrame = 0;
             this.currentRaceFrame = 0;
-            this.race = this.globalService.globalVar.eventRaceData.currentRaceSegment;            
+            this.race = this.globalService.globalVar.eventRaceData.currentRaceSegment;
+            this.newSegment = true;
           }
+          else
+            this.newSegment = false;
 
           this.lastEventSegment = this.globalService.globalVar.eventRaceData.currentRaceSegmentCount;
         }
@@ -319,7 +331,8 @@ export class DrawRaceComponent implements OnInit {
 
       context.strokeStyle = "dimgray";
 
-      this.drawBackgroundVolcano(context, 0, volcanicStartDistance, volcanicStartDistance + volcanoDistance, 1, 1);
+      if (this.race.raceUI.lavaFallPercentByFrame.length > 0)
+        this.drawBackgroundVolcano(context, 0, volcanicStartDistance, volcanicStartDistance + volcanoDistance, 1, 1);
 
       context.globalCompositeOperation = existingContentDestinationType;
     }
@@ -366,7 +379,7 @@ export class DrawRaceComponent implements OnInit {
     var currentYDistanceTraveled = 0;
 
     if (isGrandPrix) {
-      if (this.globalService.globalVar.eventRaceData.previousRaceSegment !== undefined) {        
+      if (this.globalService.globalVar.eventRaceData.previousRaceSegment !== undefined) {
         raceLegs.unshift(this.globalService.globalVar.eventRaceData.previousRaceSegment.raceLegs[0]);
         //console.log("Before: " + currentDistanceTraveled);
         currentDistanceTraveled += raceLegs[0].distance;
@@ -375,7 +388,11 @@ export class DrawRaceComponent implements OnInit {
       }
     }
 
-    this.averageDistancePerSecond = this.race.length / this.race.raceUI.timeToCompleteByFrame[currentFrame];
+    if (this.race.raceType === RaceTypeEnum.event && this.race.eventRaceType === EventRaceTypeEnum.grandPrix)
+      this.averageDistancePerSecond = this.globalService.globalVar.eventRaceData.totalDistance / this.globalService.globalVar.eventRaceData.grandPrixTimeLength;
+    else
+      this.averageDistancePerSecond = this.race.length / this.race.raceUI.timeToCompleteByFrame[currentFrame];
+    //console.log("ADPS: " + this.averageDistancePerSecond + " Length: " + this.race.length + " TTC: " + this.race.raceUI.timeToCompleteByFrame[currentFrame]);
 
     var legPinpointDistance = 0;
     var previousLegDistance = 0;
@@ -450,10 +467,32 @@ export class DrawRaceComponent implements OnInit {
         currentYDistanceTraveled = goingUpTotal - (currentDistanceInLeg - goingUpTotal) + currentCrevasseDistance;
 
       this.mountainEndingY = currentYDistanceTraveled;
+
+      //console.log("Current Y Dist Traveled: " + currentYDistanceTraveled + " Saved Y: " + this.globalService.globalVar.eventRaceData.mountainEndingY +
+      //"GoingUpCalc: " + goingUpCalculatedTotal + " OffsetPathDistance: " + offsetPathDistance + "Dist In Leg: " + currentDistanceInLeg + " UpTotal: " + goingUpTotal);
+
+      //console.log(currentFrame + " vs " + this.globalService.globalVar.eventRaceData.currentRaceSegmentResult.totalFramesPassed + ": " + currentYDistanceTraveled);
+      if (this.race.raceType === RaceTypeEnum.event && this.race.eventRaceType === EventRaceTypeEnum.grandPrix &&
+        currentFrame === this.globalService.globalVar.eventRaceData.currentRaceSegmentResult.totalFramesPassed - 2) {
+        this.globalService.globalVar.eventRaceData.mountainEndingY = currentYDistanceTraveled;
+      }
     }
 
     //if the above code is skipped, set Y equal to what mountain ended on
+    if (!this.race.raceLegs.some(item => item.courseType === RaceCourseTypeEnum.Mountain))
+      this.mountainEndingY = 0;    
+
     currentYDistanceTraveled = this.mountainEndingY;
+    if (this.race.raceType === RaceTypeEnum.event && this.race.eventRaceType === EventRaceTypeEnum.grandPrix) {      
+      currentYDistanceTraveled += this.globalService.globalVar.eventRaceData.mountainEndingY;
+      if (this.globalService.globalVar.eventRaceData.previousRaceSegment !== null &&
+        this.globalService.globalVar.eventRaceData.previousRaceSegment !== undefined &&
+        this.currentLeg.courseType !== RaceCourseTypeEnum.Mountain &&
+        this.globalService.globalVar.eventRaceData.previousRaceSegment.raceLegs[0].courseType !== RaceCourseTypeEnum.Mountain) {
+        currentYDistanceTraveled = 0;
+      }
+    }
+    //console.log("Current Y Dist Traveled: " + currentYDistanceTraveled + " Saved Y: " + this.globalService.globalVar.eventRaceData.mountainEndingY + " Mountain Ending Y: " + this.mountainEndingY);
 
     if (this.currentLeg.courseType === RaceCourseTypeEnum.Volcanic && !this.pauseRace) {
       //add to currentYDistanceTraveled here as necessary
@@ -513,6 +552,9 @@ export class DrawRaceComponent implements OnInit {
       if (leg.pathData !== undefined && leg.pathData.length !== 0) {
         pathCounter = 0;
 
+        if (this.race.raceType === RaceTypeEnum.event && this.race.eventRaceType === EventRaceTypeEnum.grandPrix)
+          mountainLegDistance = 0;
+
         leg.pathData.forEach(path => {
           if (leg.courseType === RaceCourseTypeEnum.Flatland) {
             //context.lineCap = "round";
@@ -526,6 +568,12 @@ export class DrawRaceComponent implements OnInit {
           else if (leg.courseType === RaceCourseTypeEnum.Mountain) {
             //context.lineCap = "round";
             var goingUp = mountainLegDistance < leg.distance * this.mountainClimbPercent;
+            /*if (this.globalService.globalVar.eventRaceData.currentRaceSegmentCount === 2)
+            {
+              console.log("Direction: " + goingUp);
+              console.log(mountainLegDistance + " < " + leg.distance + " * " + this.mountainClimbPercent);
+            }*/
+
             if (path.routeDesign === RaceDesignEnum.Regular) {
               this.drawRegularMountainOverview(context, path, xRaceModeModifier, yRaceModeModifier, goingUp, xDistanceOffset, yDistanceOffset);
             }
@@ -631,7 +679,13 @@ export class DrawRaceComponent implements OnInit {
     //draw additional racers
     //average speed
     var averageDistance = (this.averageDistancePerSecond / this.frameModifier) * currentFrame;
+    if (this.race.raceType === RaceTypeEnum.event && this.race.eventRaceType === EventRaceTypeEnum.grandPrix) {
+      var timePassed = this.globalService.globalVar.eventRaceData.grandPrixTimeLength - this.globalService.getRemainingEventRaceTime();
+      var averageDistancePassed = this.averageDistancePerSecond * timePassed;
+      averageDistance += averageDistancePassed;
+    }
 
+    //console.log("Racer at " + averageDistance + " You're at " + (currentDistanceTraveled + this.globalService.globalVar.eventRaceData.distanceCovered));
     var averageDistanceScaled = (averageDistance * this.canvasXDistanceScale * xRaceModeModifier);
     this.drawRacer(context, averageDistanceScaled, "black");
 
@@ -694,7 +748,8 @@ export class DrawRaceComponent implements OnInit {
       context.strokeStyle = "dimgray";
 
       //Draw background effects -- not covered by other racers
-      this.drawBackgroundVolcano(context, currentFrame, volcanicStartDistance, volcanicStartDistance + volcanoDistance, xRaceModeModifier, yRaceModeModifier, xDistanceOffset, yDistanceOffset);
+      if (this.race.raceUI.lavaFallPercentByFrame.length > 0)
+        this.drawBackgroundVolcano(context, currentFrame, volcanicStartDistance, volcanicStartDistance + volcanoDistance, xRaceModeModifier, yRaceModeModifier, xDistanceOffset, yDistanceOffset);
 
       context.globalCompositeOperation = existingContentDestinationType;
     }
@@ -771,24 +826,46 @@ export class DrawRaceComponent implements OnInit {
     raceLegs.forEach(leg => {
       if (currentDistanceTraveled >= totalDistance && currentDistanceTraveled < totalDistance + leg.distance) {
         //we are in this leg
-        if (leg.courseType === RaceCourseTypeEnum.Flatland)
-          color = "#c66900";//"#eb3023";
+        if (leg.courseType === RaceCourseTypeEnum.Flatland) {
+          if (this.themeService.getActiveThemeName() === "night")
+            color = "#E18B07";
+          else if (this.themeService.getActiveThemeName() === "light")
+            color = "#c66900";
+          else
+            color = "#c66900";
+        }
         if (leg.courseType === RaceCourseTypeEnum.Mountain) {
-          //if (this.themeService.getActiveThemeName() === "light")
-          color = "#279113";
-          //else
-          //color = "#A1DB97";
+          if (this.themeService.getActiveThemeName() === "night")
+            color = "#30b001";
+          else if (this.themeService.getActiveThemeName() === "light")
+            color = "#279113";
+          else
+            color = "#279113";
         }
         if (leg.courseType === RaceCourseTypeEnum.Ocean) {
           if (this.themeService.getActiveThemeName() === "night")
-            color = "#7463f7";
+            color = "#9289CF";
+          else if (this.themeService.getActiveThemeName() === "light")
+            color = "#0000FF";
           else
             color = "#0000FF";
         }
-        if (leg.courseType === RaceCourseTypeEnum.Tundra)
-          color = "#1CA1C9";
-        if (leg.courseType === RaceCourseTypeEnum.Volcanic)
-          color = "#D92525";
+        if (leg.courseType === RaceCourseTypeEnum.Tundra) {
+          if (this.themeService.getActiveThemeName() === "night")
+            color = "#019DDE";
+          else if (this.themeService.getActiveThemeName() === "light")
+            color = "#1CA1C9";
+          else
+            color = "#1CA1C9";
+        }
+        if (leg.courseType === RaceCourseTypeEnum.Volcanic) {
+          if (this.themeService.getActiveThemeName() === "night")
+            color = "#E56C6E";
+          else if (this.themeService.getActiveThemeName() === "light")
+            color = "#D92525";
+          else
+            color = "#D92525";
+        }
       }
 
       totalDistance += leg.distance;
@@ -1075,9 +1152,11 @@ export class DrawRaceComponent implements OnInit {
 
     if (goingUp) {
       context.lineTo(this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY - verticalLength + yDistanceOffset);
+      //console.log("From " + (this.lastPathEndingY + yDistanceOffset) + " to " + (this.lastPathEndingY - verticalLength + yDistanceOffset));
     }
     else {
       context.lineTo(this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY + verticalLength + yDistanceOffset);
+      //console.log("From " + (this.lastPathEndingY + yDistanceOffset) + " to " + (this.lastPathEndingY + verticalLength + yDistanceOffset));
     }
     context.stroke();
 
@@ -1931,6 +2010,8 @@ export class DrawRaceComponent implements OnInit {
       this.race.raceUI.maxSpeedByFrame = [];
       this.race.raceUI.racerEffectByFrame = [];
     }
-
+    
+    //if (this.globalService.globalVar.eventRaceData !== null && this.globalService.globalVar.eventRaceData !== undefined)
+    //this.globalService.globalVar.eventRaceData.mountainEndingY = 0;
   }
 }

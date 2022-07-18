@@ -1,25 +1,33 @@
-<div class="item" *ngIf="longDescription !== '' && longDescription !== undefined && longDescription !== null" [ngbPopover]="longDescriptionContent"
-triggers="mouseenter:mouseleave" popoverClass="popoverClass">
-    {{ selectedItem.name }} <em *ngIf="selectedItem.totalShopQuantity > 1">({{ selectedItem.totalShopQuantity - selectedItem.amountPurchased }} left)</em>
-    <br />
-    <br />
-    <span [innerHTML]="shortDescription"></span>    
-    <br />
-    <br />
-    {{ purchaseResourcesRequired }}
-    <br/>
-    <button (click)="BuyItem()" [disabled]="!canAffordItem">Buy</button>
-</div>
-
-<div class="item" *ngIf="longDescription === '' || longDescription === undefined || longDescription === null">
-    {{ selectedItem.name }} <em *ngIf="selectedItem.totalShopQuantity > 1">({{ selectedItem.totalShopQuantity - selectedItem.amountPurchased }} left)</em>
+<div class="item" *ngIf="longDescription !== '' && longDescription !== undefined && longDescription !== null"
+    [ngbPopover]="longDescriptionContent" triggers="mouseenter:mouseleave" popoverClass="popoverClass">
+    <span [ngClass]="colorConditional" class="keyword"><span *ngIf="displayNumberPurchasing">{{ selectedItem.numberPurchasing }} </span> {{
+        displayName }}</span> <em *ngIf="selectedItem.totalShopQuantity > 1"> ({{ selectedItem.totalShopQuantity -
+        selectedItem.amountPurchased }} left)</em>
     <br />
     <br />
     <span [innerHTML]="shortDescription"></span>
     <br />
     <br />
-    {{ purchaseResourcesRequired }}
-    <br/>
+    <div class="resourceKeyword">
+        {{ purchaseResourcesRequired }}
+    </div>
+    <br />
+    <button (click)="BuyItem()" [disabled]="!canAffordItem">Buy</button>
+</div>
+
+<div class="item" *ngIf="longDescription === '' || longDescription === undefined || longDescription === null">
+    <span [ngClass]="colorConditional" class="keyword"><span *ngIf="displayNumberPurchasing">{{ selectedItem.numberPurchasing }} </span>{{
+        displayName }}</span> <em *ngIf="selectedItem.totalShopQuantity > 1"> ({{ selectedItem.totalShopQuantity -
+        selectedItem.amountPurchased }} left)</em>
+    <br />
+    <br />
+    <span [innerHTML]="shortDescription"></span>
+    <br />
+    <br />
+    <div class="resourceKeyword">
+        {{ purchaseResourcesRequired }}
+    </div>
+    <br />
     <button (click)="BuyItem()" [disabled]="!canAffordItem">Buy</button>
 </div>
 

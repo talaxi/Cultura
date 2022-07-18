@@ -7,5 +7,6 @@ export enum ShopItemTypeEnum {
     Equipment,
     Resources,
     Progression,
+    Consumable,
     Other
   }

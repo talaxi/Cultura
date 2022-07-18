@@ -73,4 +73,8 @@ export class Race {
 
         return copy;
     }
+
+    reduceExportSize() {
+        this.raceUI = new RaceUI();
+    }
 }

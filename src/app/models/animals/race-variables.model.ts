@@ -30,6 +30,7 @@ export class RaceVariables {
 
     //equipment effects
     headbandStumblePreventionCount: number;
+    scaryMaskEffectOccurred: boolean;
 
     constructor() {
         this.metersSinceLostFocus = 0;
@@ -55,5 +56,6 @@ export class RaceVariables {
         this.icyCurrentDirectionUp = true;
 
         this.headbandStumblePreventionCount = 0;
+        this.scaryMaskEffectOccurred = false;
     }
 }

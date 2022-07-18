@@ -5,22 +5,36 @@
     <div *ngIf="grandPrixUnlocked">
         <div>
             {{eventRaceNotice}} {{eventRaceTimer}}
-
+            <br />
+            <div [ngbPopover]="bonusTimeContent" triggers="mouseenter:mouseleave" popoverClass="popoverClass"
+                *ngIf="bonusTime !== ''" class="clickableText" (click)="selectEventRace()">Bonus Time: {{bonusTime}}
+                <br />
+            </div>
+            <button (click)="goToTokenShop()">Token Shop</button>
             <br />
             <br />
         </div>
         <br />
         <div id="grandPrix" *ngIf="isEventRaceAvailable">
-            <div (click)="selectEventRace()">
+            <div>
                 <span class="s4Heading">Grand Prix <strong>{{ grandPrixData.rank }}</strong> </span>
                 <br />
-                <div class="raceDescription">
+                <span class="helpText" (click)="openRewardsModal(grandPrixRewardModal)">{{
+                    globalService.globalVar.eventRaceData.remainingRewards }} / {{
+                    globalService.globalVar.eventRaceData.totalRewards }} rewards remaining</span>
+                <br />
+                <button type="button" (click)="openInfoModal(grandPrixInfoModal)">Grand Prix Info</button>
+                <br />
+                <br />
+                <div (click)="selectEventRace()" class="raceDescription">
                     <div class="clickableText" [ngbPopover]="popContent" [disablePopover]="popoverText === ''"
                         triggers="mouseenter:mouseleave" popoverClass="popoverClass">
-                        <span class='keyword'>{{ grandPrixData.totalDistance | number : '1.2-2' }} {{
-                            grandPrixData.raceTerrain.getTerrainType() }} Meters</span>
+                        <span><span  class='keyword'>Forecast:</span> {{ grandPrixData.weatherCluster === undefined ? "Unknown" :
+                            lookupService.getWeatherClusterFromEnum(grandPrixData.weatherCluster) }}</span>
                         <br />
-                        {{ remainingMeters | number : '1.2-2' }} Meters Remaining
+                        <span class='keyword'>{{ grandPrixData.totalDistance | number : '1.' }} Meters Total</span>
+                        <br />
+                        {{ remainingMeters | number : '1.' }} Meters Remaining
 
                         <br />
                         <p>{{ grandPrixData.isRunning ? "View Race" : "Start" }}
@@ -44,3 +58,85 @@
         Nothing here yet, but maybe as you climb the circuit ranks you might be invited to a new type of race.
     </div>
 </div>
+
+<ng-template #grandPrixRewardModal let-modal>
+    <div class="modalClass">
+        <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">Grand Prix Rewards</h4>
+            <button type="button" aria-label="Close" (click)="modal.dismiss()">X</button>
+        </div>
+        <div class="modal-body">
+            <div>
+                The further you go in the Grand Prix invitational, the more rewards you'll receive. Every {{
+                coinRewardInterval | number: '1.' }} meters, you'll receive {{ coinRewardAmount }} Coins.
+                Every {{ renownRewardInterval | number: '1.' }} meters, you'll receive {{ renownRewardAmount }} Renown.
+                Also, you'll be able to obtain rare tokens that can be spent on rare upgrades.
+                <br />
+                <br />
+                Distance Covered: {{(grandPrixData.totalDistance - remainingMeters).toFixed(0) | number: '1.'}} /
+                {{grandPrixData.totalDistance | number: '1.'}}
+                <br />
+                <br />
+                <div class="rewards" [innerHTML]="getGrandPrixCoinRewardsPopover()"></div>
+                <div class="rewards" [innerHTML]="getGrandPrixRenownRewardsPopover()"></div>
+                <div class="rewards" [innerHTML]="getGrandPrixTokenRewardsPopover()"></div>
+            </div>
+
+        </div>
+        <div class="buttonSpacing">
+            <button type="button" (click)="modal.dismiss()">Close</button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #grandPrixInfoModal let-modal>
+    <div class="modalClass">
+        <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">Grand Prix Info</h4>
+            <button type="button" aria-label="Close" (click)="modal.dismiss()">X</button>
+        </div>
+        <div class="modal-body">
+            <div>
+                You've been invited to the <span class='keyword'>Grand Prix</span> invitational, which is a marathon style race that runs for 51
+                hours twice a week. You can start the race at any time during the start and stop point of the Grand
+                Prix. The weekly start and end times are:
+                <br />
+                <br />
+                <span class='keyword'>Weekday Marathon</span> - {{weekDayGrandPrixTimeSpan}}
+                <br/>
+                <span class='keyword'>Weekend Marathon</span> - {{weekEndGrandPrixTimeSpan}}
+                <br />
+                <br />
+                To run in the Grand Prix, animals must be at least Breed Level 75. The animals in your event deck will be shown below along with their current morale and
+                energy. 
+                <br />
+                <br />
+                <span class='keyword'>Morale</span> - This affects how much your stats reduce when running out of stamina. By default, your stats will reduce by 90% while Morale is at 100%. Morale can range from 50% to 300%.
+                <br/>
+                <span class='keyword'>Energy</span> - The percent your stats are currently at from their maximum. This is increased slightly over time while a racer is not racing.
+                <br/>
+                <span class='keyword'>*Note that these values have no impact on any race other than the Grand Prix.</span>
+                <br />
+                <br />
+                Maintain your morale and energy to get the most out of your racing animals. You can Relay to another
+                animal in your event deck at any point, although the Relay will only occur after the completion of the
+                current race leg.
+                <br />
+                <br />
+                Race as far as you can to gain <span class='resourceKeyword'>Coins</span>, <span class='progressionKeyword'>Renown</span>, and the unique resource <span class='resourceKeyword'>Tokens</span>. Click '<em>Rewards</em>' to
+                track your progress on gaining rewards.
+            </div>
+
+        </div>
+        <div class="buttonSpacing">
+            <button type="button" (click)="modal.dismiss()">Close</button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #bonusTimeContent>
+    <div class="popoverClass">
+        Bonus Time is accrued from effects that delay competitors or extend the length of a race. Once the Grand Prix
+        event time ends, any bonus time will continue to play out before your entry to the Grand Prix ends.
+    </div>
+</ng-template>

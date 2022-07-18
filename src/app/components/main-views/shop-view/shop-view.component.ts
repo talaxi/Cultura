@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NavigationEnum } from 'src/app/models/navigation-enum.model';
 import { ShopSection } from 'src/app/models/shop/shop-section.model';
+import { ShopsEnum } from 'src/app/models/shops-enum.model';
 import { ComponentCommunicationService } from 'src/app/services/component-communication.service';
 import { GlobalService } from 'src/app/services/global-service.service';
 
@@ -17,12 +18,19 @@ export class ShopViewComponent implements OnInit {
   filterFood = false;
   filterSpecialty = false;
   filterAbilities = false;
+  activeShopView: ShopsEnum;
+  ShopsEnum = ShopsEnum;
+  subscription: any;
 
   constructor(private globalService: GlobalService, private componentCommunicationService: ComponentCommunicationService) { }
 
   ngOnInit(): void {
     this.componentCommunicationService.setNewView(NavigationEnum.shop);
     this.getShopOptions();
+
+    this.subscription = this.componentCommunicationService.getShopView().subscribe((value) => {      
+      this.activeShopView = value;      
+    });
   }
 
   getShopOptions() {
@@ -93,5 +101,10 @@ export class ShopViewComponent implements OnInit {
     this.filterSpecialty = false;
     this.filterTrainings = false;
     this.getShopOptions();
+  }
+
+  ngOnDestroy() {
+    if (this.subscription !== null && this.subscription !== undefined)
+      this.subscription.unsubscribe();
   }
 }

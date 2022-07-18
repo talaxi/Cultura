@@ -11,15 +11,19 @@ import { BarnUpgrades } from '../models/barns/barn-upgrades.model';
 import { Barn } from '../models/barns/barn.model';
 import { LocalRaceTypeEnum } from '../models/local-race-type-enum.model';
 import { RaceCourseTypeEnum } from '../models/race-course-type-enum.model';
+import { GrandPrixData } from '../models/races/event-race-data.model';
 import { RaceLeg } from '../models/races/race-leg.model';
 import { Race } from '../models/races/race.model';
+import { RelayEffect } from '../models/races/relay-effect.model';
 import { Terrain } from '../models/races/terrain.model';
+import { RelayEffectEnum } from '../models/relay-effect-enum.model';
 import { ResourceValue } from '../models/resources/resource-value.model';
 import { ShopItemTypeEnum } from '../models/shop-item-type-enum.model';
 import { TalentTreeTypeEnum } from '../models/talent-tree-type-enum.model';
 import { TerrainTypeEnum } from '../models/terrain-type-enum.model';
 import { TrackRaceTypeEnum } from '../models/track-race-type-enum.model';
 import { TrainingOption } from '../models/training/training-option.model';
+import { WeatherEnum } from '../models/weather-enum.model';
 import { GlobalService } from './global-service.service';
 import { UtilityService } from './utility/utility.service';
 
@@ -373,7 +377,7 @@ export class LookupService {
       return "Rare currency gained from improving your circuit rank and winning certain special races.";
     else if (name === "Renown") {
       var currentRenown = this.getRenown();
-      return "Increases Coins gained from races by " + currentRenown + "%. Increase total number of free races available per reset period by 1 for every 100 renown for a total of " + this.getTotalFreeRacesPerPeriod() + ". Complete circuit or local races to get your name out there and raise your renown.";
+      return "Increases Coins gained from races by " + currentRenown + "%. Increase total number of free races available per reset period by 1 for every 100 renown for a total of " + this.getTotalFreeRacesPerPeriod() + ". Complete circuit or free races to get your name out there and raise your renown.";
     }
     else if (name === "Facility Level") {
       var diminishingReturnsThreshold = this.getDiminishingReturnsThreshold();
@@ -406,6 +410,15 @@ export class LookupService {
     return itemList;
   }
 
+  getCourseTypeFromAnimalType(type: AnimalTypeEnum) {
+    var animal = this.globalService.globalVar.animals.find(item => item.type === type);
+    if (animal !== undefined) {
+      return animal.raceCourseType;
+    }
+
+    return -1;
+  }
+
   getAllBarnSpecializations() {
     var itemList = [];
     itemList.push("Breeding Grounds");
@@ -424,15 +437,15 @@ export class LookupService {
       rewards.push("- 50 Coins");
       rewards.push("- +1 Bonus Breed XP Gain From Training");
       rewards.push("- 50 Coins");
-      rewards.push("- +1 Bonus Breed XP Gain From Local Races");
+      rewards.push("- +1 Bonus Breed XP Gain From Free Races");
       rewards.push("- 50 Coins");
       rewards.push("- +1 Bonus Breed XP Gain From Training");
       rewards.push("- 50 Coins");
-      rewards.push("- +1 Bonus Breed XP Gain From Local Races");
+      rewards.push("- +1 Bonus Breed XP Gain From Free Races");
       rewards.push("- 50 Coins");
       rewards.push("- +1 Bonus Breed XP Gain From Training");
       rewards.push("- 50 Coins");
-      rewards.push("- +1 Bonus Breed XP Gain From Local Races");
+      rewards.push("- +1 Bonus Breed XP Gain From Free Races");
     }
     else if (type === TrackRaceTypeEnum.intermediate) {
       rewards.push("- 200 Coins");
@@ -444,12 +457,12 @@ export class LookupService {
       rewards.push("- 200 Coins");
       rewards.push("- +2 Bonus Breed XP Gain From Training");
       rewards.push("- 1 Medal");
-      rewards.push("- +2 Bonus Breed XP Gain From Local Races");
+      rewards.push("- +2 Bonus Breed XP Gain From Free Races");
       rewards.push("- +1% Training Time Reduction");
       rewards.push("- +3 Diminishing Returns per Facility Level");
     }
     else if (type === TrackRaceTypeEnum.master) {
-      rewards.push("- +5 Bonus Breed XP Gain From Local Races");
+      rewards.push("- +5 Bonus Breed XP Gain From Free Races");
       rewards.push("- +2 Diminishing Returns per Facility Level");
       rewards.push("- +1% Training Time Reduction");
       rewards.push("- 1000 Coins");
@@ -464,6 +477,43 @@ export class LookupService {
     }
 
     return rewards;
+  }
+
+  getGrandPrixTokenRewards() {
+    var rewards: string[] = [];
+
+    rewards.push("50,000,000 meters - +1 Token");
+    rewards.push("100,000,000 meters - +1 Token");
+    rewards.push("250,000,000 meters - +2 Tokens");
+    rewards.push("500,000,000 meters - +3 Tokens");
+
+    return rewards;
+  }
+
+  getRenownRequiredForEventShopTier(tier: number) {
+    if (tier === 1)
+      return 0;
+    if (tier === 2)
+      return 200;
+    else if (tier > 2)
+      return (tier - 2) * 500;
+
+    return -1;
+  }
+
+  getHighestEventShopTierUnlocked() {
+    var tier = 1;
+    var renown = this.getRenown();
+
+    var renownPerTier = 500;
+
+    if (renown > 200)
+      tier = 2;
+
+    if (renown > renownPerTier)
+      tier = Math.floor(renown / renownPerTier) + 2;
+
+    return tier;
   }
 
   isItemUnlocked(name: string) {
@@ -779,7 +829,7 @@ export class LookupService {
           return "Every time you make it through a path without drifting, gain <span class='keyword'>" + effectiveAmountDisplay + "</span>% Max Speed. Passive.";
         }
         if (abilityName === "Cold Blooded") {
-          return "Increase Stamina and Focus Distance by 0-50% depending on how close to the center of the volcano you are. Focus Distance boost lasts <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. " + cooldownDisplay + " second cooldown.";
+          return "Increase Stamina and Focus Distance by 0-30% depending on how close to the center of the volcano you are. Focus Distance boost lasts <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. " + cooldownDisplay + " second cooldown.";
         }
         if (abilityName === "Burrow") {
           return "Go underground for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters, dodging lava fall and preventing stumbles. " + cooldownDisplay + " second cooldown.";
@@ -1052,13 +1102,56 @@ export class LookupService {
     
   }*/
 
-  canAnimalTrain(animal: Animal) {
-    var inIncubator = false;
-    //TODO: if animal not in incubator or event run, return true
-    if (this.globalService.globalVar.incubator.assignedAnimal === animal)
-      inIncubator = true;
+  relayEffectTypeStacksEffectiveness(type: RelayEffectEnum) {
+    var stacks = false;
+    if (type === RelayEffectEnum.bigBrain || type === RelayEffectEnum.herdMentality || type === RelayEffectEnum.deepBreathing)
+      stacks = true;
 
-    return inIncubator;
+    return stacks;
+  }
+
+  relayEffectPersistsEventSegments(type: RelayEffectEnum) {
+    var stacks = false;
+    if (type === RelayEffectEnum.bigBrain || type === RelayEffectEnum.redBaton || type === RelayEffectEnum.blueBaton
+      || type === RelayEffectEnum.greenBaton || type === RelayEffectEnum.orangeBaton || type === RelayEffectEnum.violetBaton
+      || type === RelayEffectEnum.yellowBaton)
+      stacks = true;
+
+    return stacks;
+  }
+
+  getBreedLevelRequiredForGrandPrix() {
+    var grandPrixBreedLevelRequired = 50;
+    var grandPrixBreedLevelRequiredPair = this.globalService.globalVar.modifiers.find(item => item.text === "grandPrixBreedLevelRequiredModifier");
+    if (grandPrixBreedLevelRequiredPair !== null && grandPrixBreedLevelRequiredPair !== undefined)
+      grandPrixBreedLevelRequired = grandPrixBreedLevelRequiredPair.value;
+
+    return grandPrixBreedLevelRequired;
+  }
+
+  canAnimalTrain(animal: Animal) {
+    var canAnimalTrain = true;
+
+    if (this.globalService.globalVar.incubator.assignedAnimal === animal)
+      canAnimalTrain = false;
+
+    var grandPrixRacingAnimal = this.globalService.getCurrentlyActiveGrandPrixRacingAnimal();
+    if (animal.type === grandPrixRacingAnimal.type)
+      canAnimalTrain = false;
+
+    return canAnimalTrain;
+  }
+
+  canAnimalRace(animal: Animal) {
+    var canAnimalTrain = true;
+
+    var grandPrixRacingAnimal = this.globalService.getCurrentlyActiveGrandPrixRacingAnimal();
+
+    if (animal.type === grandPrixRacingAnimal.type)
+      canAnimalTrain = false;
+
+
+    return canAnimalTrain;
   }
 
   getTraitStatGainDescription(trait: AnimalTraits) {
@@ -1107,6 +1200,16 @@ export class LookupService {
     if (nationalRaceCountNeededModifier !== undefined && nationalRaceCountNeededModifier !== null)
       nationalRaceCountNeeded = nationalRaceCountNeededModifier.value;
 
+    var whistleStatGain = 5;
+    var whistleStatGainModifier = this.globalService.globalVar.modifiers.find(item => item.text === "whistleModifier");
+    if (whistleStatGainModifier !== undefined && whistleStatGainModifier !== null)
+      whistleStatGain = whistleStatGainModifier.value;
+
+    var goldenWhistleStatGain = 5;
+    var goldenWhistleStatGainModifier = this.globalService.globalVar.modifiers.find(item => item.text === "goldenWhistleModifier");
+    if (goldenWhistleStatGainModifier !== undefined && goldenWhistleStatGainModifier !== null)
+      goldenWhistleStatGain = goldenWhistleStatGainModifier.value;
+
 
     if (itemName === "Stopwatch")
       description = "Reduce training time by 5%";
@@ -1134,11 +1237,41 @@ export class LookupService {
       description = "When breeding, permanently increase racing stat gain from base stat by .1% of positive trait value <em>(up to 5%)</em>";
     else if (itemName === "Incubator Upgrade Lv4")
       description = "When breeding, permanently increase racing stat gain from base stat by .1% of positive trait value <em>(up to 10%)</em>";
+    else if (itemName === "Whistle")
+      description = "Gain +" + whistleStatGain + " to a stat instead of +1 after a successful coaching attempt";
+    else if (itemName === "Golden Whistle")
+      description = "Gain +" + goldenWhistleStatGain + " to a stat instead of +" + whistleStatGain + " after a successful coaching attempt";
 
     var sanitized = this.sanitizer.sanitize(SecurityContext.HTML, this.sanitizer.bypassSecurityTrustHtml(description));
     if (sanitized !== null)
       description = sanitized;
     return description;
+  }
+
+  getWeatherClusterFromEnum(weatherCluster: WeatherEnum) {
+    var text = "";
+
+    if (weatherCluster === WeatherEnum.clearSkies)
+      text = "Clear Skies";
+    else if (weatherCluster === WeatherEnum.inclementWeather)
+      text = "Inclement Weather";
+    else if (weatherCluster === WeatherEnum.coldSpell)
+      text = "Cold Spell";
+
+    return text;
+  }
+
+  getWeatherClusterDescription(weatherCluster: WeatherEnum) {
+    var text = "";
+
+    if (weatherCluster === WeatherEnum.clearSkies)
+      text = "Race terrain shifts between Sunny, Torrid, and Ashfall. \n Flatland and Volcanic Morale increased by 20%.";
+    else if (weatherCluster === WeatherEnum.inclementWeather)
+      text = "Race terrain shifts between Rainy, Stormy, Maelstrom, and Hailstorm. \n Ocean Morale increased by 20%.";
+    else if (weatherCluster === WeatherEnum.coldSpell)
+      text = "Race terrain shifts between Sunny, Snowfall, and Hailstorm. \n Tundra and Mountain Morale increased by 20%.";
+
+    return text;
   }
 
   topSpeedPopover(animal: Animal): string {
@@ -1355,6 +1488,88 @@ export class LookupService {
     return popover;
   }
 
+  isAmountMoreThanCertificateCap(selectedAmount: number, selectedAnimal: Animal, certificateName: string) {
+    var isAmountMoreThanCap = false;
+    selectedAmount = +selectedAmount;
+
+    if (certificateName === "Free Race Breed XP Gain Certificate") {
+      if (selectedAnimal.miscStats.bonusLocalBreedXpCertificateCount + selectedAmount > selectedAnimal.miscStats.certificateUseCap)
+      {
+        isAmountMoreThanCap = true;
+      }
+    }
+    if (certificateName === "Circuit Race Breed XP Gain Certificate") {
+      if (selectedAnimal.miscStats.bonusCircuitBreedXpCertificateCount + selectedAmount > selectedAnimal.miscStats.certificateUseCap)
+      {
+        isAmountMoreThanCap = true;
+      }
+    }
+    if (certificateName === "Training Breed XP Gain Certificate") {      
+      if (selectedAnimal.miscStats.bonusTrainingBreedXpCertificateCount + selectedAmount > selectedAnimal.miscStats.certificateUseCap)
+      {
+        isAmountMoreThanCap = true;
+      }
+    }
+    if (certificateName === "Diminishing Returns Increase Certificate") {
+      if (selectedAnimal.miscStats.bonusDiminishingReturnsCertificateCount + selectedAmount > selectedAnimal.miscStats.certificateUseCap)
+      {
+        isAmountMoreThanCap = true;
+      }     
+    }
+
+    return isAmountMoreThanCap;
+  }
+
+  getAnimalMorale(type: AnimalTypeEnum) {
+    if (this.globalService.globalVar.eventRaceData === undefined || this.globalService.globalVar.eventRaceData === null ||
+      this.globalService.globalVar.eventRaceData.animalData === undefined || this.globalService.globalVar.eventRaceData.animalData === null ||
+      this.globalService.globalVar.eventRaceData.animalData.length === 0)
+      return 0;
+
+    var affectedAnimalData = this.globalService.globalVar.eventRaceData.animalData.find(item => item.associatedAnimalType === type);
+    if (affectedAnimalData === null || affectedAnimalData === undefined)
+      return 0;
+
+    return affectedAnimalData.morale;
+  }
+
+  changeGrandPrixMorale(type: AnimalTypeEnum, change: number) {
+    if (this.globalService.globalVar.eventRaceData === undefined || this.globalService.globalVar.eventRaceData === null ||
+      this.globalService.globalVar.eventRaceData.animalData === undefined || this.globalService.globalVar.eventRaceData.animalData === null ||
+      this.globalService.globalVar.eventRaceData.animalData.length === 0)
+      return;
+
+    var affectedAnimalData = this.globalService.globalVar.eventRaceData.animalData.find(item => item.associatedAnimalType === type);
+    if (affectedAnimalData === null || affectedAnimalData === undefined)
+      return;
+
+    affectedAnimalData.morale += change;
+
+    if (affectedAnimalData.morale >= 3)
+      affectedAnimalData.morale = 3;
+
+    if (affectedAnimalData.morale <= .5)
+      affectedAnimalData.morale = .5;
+  }
+
+  getWeekDayGrandPrixTimeSpan() {
+    var grandPrix = new GrandPrixData();
+
+    var startTimeText = this.utilityService.getDayOfWeekFromNumber(grandPrix.weekStartDay) + " " + this.utilityService.getAmPmTimeFromHours(grandPrix.weekStartHour)
+      + " to " + this.utilityService.getDayOfWeekFromNumber(grandPrix.weekEndDay) + " " + this.utilityService.getAmPmTimeFromHours(grandPrix.weekEndHour);
+
+    return startTimeText;
+  }
+
+  getWeekEndGrandPrixTimeSpan() {
+    var grandPrix = new GrandPrixData();
+
+    var startTimeText = this.utilityService.getDayOfWeekFromNumber(grandPrix.weekendStartDay) + " " + this.utilityService.getAmPmTimeFromHours(grandPrix.weekendStartHour)
+      + " to " + this.utilityService.getDayOfWeekFromNumber(grandPrix.weekendEndDay) + " " + this.utilityService.getAmPmTimeFromHours(grandPrix.weekendEndHour);
+
+    return startTimeText;
+  }
+
   getRandomTip() {
     var tip = "";
     var tipList = [];
@@ -1365,6 +1580,7 @@ export class LookupService {
       tipList.push("Have to recite the alphabet to figure out what your next circuit rank is? You're not alone, go to the settings to use numbers instead!");
       tipList.push("Small barns allow training for 2 hours, medium for 4 hours, and large for 8 hours. Your animals will train even when the game is not active.");
       tipList.push("Each animal is predisposed to racing a certain way, meaning they may gain more or less racing stats from a base stat than other animals. Hover over each base stat in the Animals tab to see its modifier.");
+      tipList.push("Can't quite finish a close race and don't want to breed? Burst Chance and Distance are not affected by Diminishing Returns, so you can continue to increase those stats to try and push you over the edge!")
 
       var rng = this.utilityService.getRandomInteger(0, tipList.length - 1);
       tip = tipList[rng];
@@ -1387,6 +1603,13 @@ export class LookupService {
 
   getRemainingFreeRacesPerPeriod() {
     return this.getTotalFreeRacesPerPeriod() - this.globalService.globalVar.freeRaceCounter;
+  }
+
+  getRelayEffectFromListByType(relayEffects: RelayEffect[], type: RelayEffectEnum) {
+    if (relayEffects === undefined || relayEffects === null || relayEffects.length === 0)
+      return undefined;
+
+    return relayEffects.find(item => item.effectType === type);
   }
 
   isEquipmentItemAnOrb(name: string) {
@@ -1439,7 +1662,7 @@ export class LookupService {
         description = "Every time you make it through a special path without stumbling, enter a Burst that lasts <span class='keyword'>" + 5 * numberOfPoints + "</span>% as long as normal.";
 
       if (row === 0 && column === 1)
-      description = "Increase Acceleration stat gain from training by <span class='keyword'>" + numberOfPoints + "</span>%.";
+        description = "Increase Acceleration stat gain from training by <span class='keyword'>" + numberOfPoints + "</span>%.";
       if (row === 1 && column === 1)
         description = "If velocity exceeds Max Speed while bursting, increase remaining burst distance by <span class='keyword'>" + 5 * numberOfPoints + "</span>%.";
       if (row === 2 && column === 1)
@@ -1448,7 +1671,7 @@ export class LookupService {
         description = "**Every second you are at or beyond max speed, increase Adaptability Distance by <span class='keyword'>" + numberOfPoints + "</span>% for the rest of the race.**";
 
       if (row === 0 && column === 2)
-      description = "Increase Power stat gain from training by <span class='keyword'>" + numberOfPoints + "</span>%.";
+        description = "Increase Power stat gain from training by <span class='keyword'>" + numberOfPoints + "</span>%.";
       if (row === 1 && column === 2)
         description = "Increase Power Efficiency by <span class='keyword'>" + 5 * numberOfPoints + "</span>%, but consume stamina <span class='keyword'>" + 5 * numberOfPoints + "</span>% faster.";
       if (row === 2 && column === 2)
@@ -1467,7 +1690,7 @@ export class LookupService {
         description = "Increase the effectiveness of your Relay effects by <span class='keyword'>" + 2 * numberOfPoints + "</span>%.";
 
       if (row === 0 && column === 1)
-      description = "Increase Relay Animal's Acceleration Rate by <span class='keyword'>" + numberOfPoints + "</span>%.";
+        description = "Increase Relay Animal's Acceleration Rate by <span class='keyword'>" + numberOfPoints + "</span>%.";
       if (row === 1 && column === 1)
         description = "Increase Burst Distance of next racer by <span class='keyword'>" + 5 * numberOfPoints + "</span>% of your Burst Distance on Relay.";
       if (row === 2 && column === 1)
@@ -1476,7 +1699,7 @@ export class LookupService {
         description = "Increase Burst Chance of next racer by <span class='keyword'>" + 3 * numberOfPoints + "</span>% of your Burst Chance on Relay.";
 
       if (row === 0 && column === 2)
-      description = "Increase Relay Animal's Power Efficiency by <span class='keyword'>" + numberOfPoints + "</span>%.";
+        description = "Increase Relay Animal's Power Efficiency by <span class='keyword'>" + numberOfPoints + "</span>%.";
       if (row === 1 && column === 2)
         description = "For the first <span class='keyword'>" + numberOfPoints + "</span>% of your Relay Animal's leg, double their Relay effects.";
       if (row === 2 && column === 2)
@@ -1495,7 +1718,7 @@ export class LookupService {
         description = "Instead of reducing velocity to 10% when losing focus, reduce to <span class='keyword'>" + 10 + (2 * numberOfPoints) + "</span>%.";
 
       if (row === 0 && column === 1)
-      description = "Increase Max Speed stat gain from training by <span class='keyword'>" + numberOfPoints + "</span>%.";
+        description = "Increase Max Speed stat gain from training by <span class='keyword'>" + numberOfPoints + "</span>%.";
       if (row === 1 && column === 1)
         description = "While your velocity is 25% of your Max Speed or below, increase your Acceleration Rate by <span class='keyword'>" + 5 * numberOfPoints + "</span>%.";
       if (row === 2 && column === 1)
@@ -1504,7 +1727,7 @@ export class LookupService {
         description = "After surpassing <span class='keyword'>" + .5 * numberOfPoints + "</span>% of your Max Speed, your velocity can no longer drop below it. All calculations consider this to be 0% of your velocity.";
 
       if (row === 0 && column === 2)
-      description = "Increase Endurance stat gain from training by <span class='keyword'>" + numberOfPoints + "</span>%.";
+        description = "Increase Endurance stat gain from training by <span class='keyword'>" + numberOfPoints + "</span>%.";
       if (row === 1 && column === 2)
         description = "While stamina is below 35%, reduce stamina consumption by <span class='keyword'>" + 5 * numberOfPoints + "</span>%.";
       if (row === 2 && column === 2)

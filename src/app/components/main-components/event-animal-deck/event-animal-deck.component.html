@@ -1,31 +1,55 @@
 <div>
-    <strong class="clickableText" (click)="goToDeckView()">{{deck.name}}</strong>
+    <div class="deckName">
+        <strong class="clickableText" (click)="goToDeckView()">{{deck.name}}</strong>
+    </div>
     <br />
     <div class="flex">
         <div class="eventAnimal" *ngFor="let animal of deck.selectedAnimals; let i = index;">
             <span class="coloredText" [ngClass]="getColorClass(animal)">{{animal.name}}</span>
-            <br />
-            <span>Morale: {{ getMorale(animal) }}</span>
-            <br />
-            <span>Exhaustion: {{ getExhaustion(animal) }}</span>
-            <br />
-            <br />
-            <div  *ngIf="!eventHasStarted()">
-                <span *ngIf="isCurrentlyRacing(animal)" class="keyword">
-                    Will Start Race
-                </span>
-                <span *ngIf="!isCurrentlyRacing(animal)">
-                    <button *ngIf="!isSetToRelay(animal)" (click)="chooseToStartRace(animal)">Choose To Start Race</button>                    
-                </span>
-            </div>
-            <div *ngIf="eventHasStarted()">
-                <span *ngIf="isCurrentlyRacing(animal)" class="keyword">
-                    Currently Racing
-                </span>
-                <span *ngIf="!isCurrentlyRacing(animal)">
-                    <button *ngIf="!isSetToRelay(animal)" (click)="relayAnimal(animal)">Relay</button>
-                    <span *ngIf="isSetToRelay(animal)">Set To Relay</span>
-                </span>
+            <div *ngIf="hasEventStarted()">
+                <br />
+                <div>
+                <span  [ngbPopover]="getMoralePopover(animal)" triggers="mouseenter:mouseleave"
+                popoverClass="popoverClass"><span class="keyword">Morale:</span> {{ getMorale(animal) | number : '1.2-2' }}%</span>
+                <br />
+                <span  [ngbPopover]="getEnergyPopover(animal)" triggers="mouseenter:mouseleave"
+                popoverClass="popoverClass"><span class="keyword">Energy:</span> {{ getExhaustion(animal) | number : '1.2-2' }}%</span>
+                </div>
+                <br />
+                <br />
+                <div *ngIf="canEnterGrandPrix(animal)">
+                    <div *ngIf="!enteredEvent()">
+                        <span *ngIf="isCurrentlyRacing(animal)" class="keyword">
+                            Will Start Race
+                        </span>
+                        <span *ngIf="!isCurrentlyRacing(animal)">
+                            <button *ngIf="!isSetToRelay(animal) && canRelay(animal)" (click)="chooseToStartRace(animal)">Choose To Start
+                                Race</button>
+                                <span *ngIf="!isSetToRelay(animal) && !canRelay(animal)"><em
+                                    [ngbPopover]="getRestingPopover()" triggers="mouseenter:mouseleave"
+                                    popoverClass="popoverClass">Resting...</em></span>
+                        </span>
+                    </div>
+                    <div *ngIf="enteredEvent()">
+                        <span *ngIf="isCurrentlyRacing(animal)" class="keyword">
+                            Currently Racing
+                        </span>
+                        <button *ngIf="isCurrentlyRacing(animal)" (click)="pullFromRace(animal)" class="keyword">
+                            Pull From Race
+                        </button>
+                        <span *ngIf="!isCurrentlyRacing(animal)">
+                            <button *ngIf="!isSetToRelay(animal) && canRelay(animal)"
+                                (click)="relayAnimal(animal)">Relay</button>
+                            <span *ngIf="!isSetToRelay(animal) && !canRelay(animal)"><em
+                                    [ngbPopover]="getRestingPopover()" triggers="mouseenter:mouseleave"
+                                    popoverClass="popoverClass">Resting...</em></span>
+                            <span *ngIf="isSetToRelay(animal)">Set To Relay</span>
+                        </span>
+                    </div>
+                </div>
+                <div *ngIf="!canEnterGrandPrix(animal)">
+                    <em>Breed Level {{breedLevelRequired}} Required</em>
+                </div>
             </div>
         </div>
     </div>

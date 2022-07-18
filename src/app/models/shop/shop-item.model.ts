@@ -8,6 +8,7 @@ export class ShopItem {
     purchasePrice: ResourceValue[];
     basePurchasePrice: ResourceValue[];
     amountPurchased: number;
+    numberPurchasing: number;
     canHaveMultiples: boolean;
     totalShopQuantity: number;
     infiniteAmount: boolean;
@@ -22,6 +23,7 @@ export class ShopItem {
         this.amountPurchased = 0;
         this.totalShopQuantity = 1;
         this.quantityMultiplier = 1;
+        this.numberPurchasing = 1;
         this.purchasePrice = [];
         this.basePurchasePrice = [];
     }

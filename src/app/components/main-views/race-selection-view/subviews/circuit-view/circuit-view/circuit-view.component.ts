@@ -86,6 +86,11 @@ export class CircuitViewComponent implements OnInit {
     race.raceLegs.forEach(leg => {
       if (!racingAnimals?.selectedAnimals.some(item => item.raceCourseType === leg.courseType))
         canRace = false;
+
+        var selectedAnimal = racingAnimals?.selectedAnimals.find(item => item.raceCourseType === leg.courseType);          
+        if (selectedAnimal !== undefined && !this.lookupService.canAnimalRace(selectedAnimal)) {
+          canRace = false;          
+        }
     });
 
     if (race.isCompleted)

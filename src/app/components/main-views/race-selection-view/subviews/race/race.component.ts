@@ -60,6 +60,7 @@ export class RaceComponent implements OnInit {
   displayTextUpdates = true;
   burstEffect = RacerEffectEnum.Burst;
   grandPrixRace: boolean = false;
+  eventRaceSubscription: any;
 
   constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private utilityService: UtilityService,
     private lookupService: LookupService, private initializeService: InitializeService, private modalService: NgbModal,
@@ -95,6 +96,19 @@ export class RaceComponent implements OnInit {
 
     if (this.globalService.globalVar.settings.get("skipDrawRace"))
       this.raceSkipped = true;
+
+    if (this.grandPrixRace)
+    {
+      this.eventRaceSubscription = this.gameLoopService.gameUpdateEvent.subscribe(async () => {
+        if (this.globalService.getTimeToEventRace() > 0 && this.globalService.globalVar.eventRaceData.bonusTime === 0) {
+          this.raceFinished.emit(true);
+        }
+
+        if (!this.globalService.globalVar.eventRaceData.isRunning) {
+          this.raceFinished.emit(true);
+        }
+      });
+    }
   }
 
   ngOnDestroy() {
@@ -103,6 +117,9 @@ export class RaceComponent implements OnInit {
 
     if (this.updateSubscription !== null && this.updateSubscription !== undefined)
       this.updateSubscription.unsubscribe();
+
+      if (this.eventRaceSubscription !== null && this.eventRaceSubscription !== undefined)
+      this.eventRaceSubscription.unsubscribe();
 
     this.raceFinished.emit(true);
   }
@@ -123,13 +140,13 @@ export class RaceComponent implements OnInit {
         currentTime += deltaTime;
 
         if (this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix) {          
-          /*if (this.globalService.globalVar.eventRaceData.currentRaceSegmentCount > lastEventSegment) {
-            eventViewStartFrame = 0;
+           if (this.globalService.globalVar.eventRaceData.currentRaceSegmentCount > lastEventSegment) {
+            //eventViewStartFrame = 0;
             framesPassed = 0;
             this.selectedRace = this.globalService.globalVar.eventRaceData.currentRaceSegment;
             raceUpdates = this.globalService.globalVar.eventRaceData.currentRaceSegmentResult.raceUpdates;   
-            console.log(raceUpdates);         
-          }*/
+            //console.log(raceUpdates);         
+          }
 
           lastEventSegment = this.globalService.globalVar.eventRaceData.currentRaceSegmentCount;
         }
@@ -230,11 +247,11 @@ export class RaceComponent implements OnInit {
         currentTime += deltaTime;
 
         if (this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix) {
-          /*if (this.globalService.globalVar.eventRaceData.currentRaceSegmentCount > lastEventSegment) {
-            eventViewStartFrame = 0;
-            framesPassed = 0;
+          if (this.globalService.globalVar.eventRaceData.currentRaceSegmentCount > lastEventSegment) {
+            //eventViewStartFrame = 0;
+            //framesPassed = 0;
             this.selectedRace = this.globalService.globalVar.eventRaceData.currentRaceSegment;
-          }*/
+          }
 
           lastEventSegment = this.globalService.globalVar.eventRaceData.currentRaceSegmentCount;
         }

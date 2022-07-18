@@ -1,4 +1,4 @@
-<div class="shopView">
+<div *ngIf="activeShopView === ShopsEnum.regular" class="shopView">
     <div class="infoText">
         <div class="infoGridContainer">
             <div class="info">
@@ -27,4 +27,8 @@
     <div class="shopSection" *ngFor="let section of sections;">
         <app-shopping-list [section]="section"></app-shopping-list>
     </div>
+</div>
+
+<div *ngIf="activeShopView === ShopsEnum.token">
+    <app-token-shop-view></app-token-shop-view>
 </div>

@@ -1,5 +1,5 @@
 <div class="shoppingListView">
-    <div class="sectionHeaderBackgroundColor">
+    <div [ngClass]="{'tokenShopColor': shopType === shopsEnum.token}"  class="sectionHeaderBackgroundColor">
         <span class="s4Heading keyword sectionHeaderText">{{ section.name }}</span>        
     </div>
     <div class="items">

@@ -75,7 +75,7 @@
                     </span>
                 </div>
                 <br />
-                <div>
+                <div class="animalContainer">
                     <span *ngFor="let animal of possibleAnimalsList" class="animalOption clickableText"
                         [ngClass]="{'selectedAnimal': selectedAnimalName === animal}" (click)="selectAnimal(animal)">
                         {{animal.trim()}}

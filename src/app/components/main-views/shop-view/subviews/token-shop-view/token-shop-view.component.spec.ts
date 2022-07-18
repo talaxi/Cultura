@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TalentsViewComponent } from './talents-view.component';
+import { TokenShopViewComponent } from './token-shop-view.component';
 
-describe('TalentsViewComponent', () => {
-  let component: TalentsViewComponent;
-  let fixture: ComponentFixture<TalentsViewComponent>;
+describe('TokenShopViewComponent', () => {
+  let component: TokenShopViewComponent;
+  let fixture: ComponentFixture<TokenShopViewComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ TalentsViewComponent ]
+      declarations: [ TokenShopViewComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(TalentsViewComponent);
+    fixture = TestBed.createComponent(TokenShopViewComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
