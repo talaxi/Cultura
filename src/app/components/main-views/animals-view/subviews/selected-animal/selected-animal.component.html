@@ -6,9 +6,10 @@
                     <div>
                         <div *ngIf="selectedAnimal.equippedItem !== undefined && selectedAnimal.equippedItem !== null"
                             [ngbPopover]="getEquipmentShortDescription(selectedAnimal.equippedItem.name)"
-                            triggers="mouseenter:mouseleave" popoverClass="popoverClass">Equipped: <span class="equipmentKeyword">{{
-                            selectedAnimal.equippedItem.name
-                            }}</span>
+                            triggers="mouseenter:mouseleave" popoverClass="popoverClass">Equipped: <span
+                                class="equipmentKeyword">{{
+                                selectedAnimal.equippedItem.name
+                                }}</span>
                             <br />
                             <br />
                             {{getEquipmentShortDescription(selectedAnimal.equippedItem.name)}}
@@ -25,6 +26,10 @@
                     </div>
                     <br />
                     <div class="talents" *ngIf="areTalentsAvailable">
+                        <div>
+                            <span class="keyword"> {{ getTalentTreeName() }}</span>
+                        </div>
+                        <br />
                         <button (click)="openTalentsModal(talentsContent)">View Talents</button>
                     </div>
                 </div>
@@ -122,17 +127,20 @@
                     <br />
                     <span [ngbPopover]="topSpeedPopoverContent" triggers="mouseenter:mouseleave"
                         popoverClass="popoverClass">
-                        <span class="keyword">Speed:</span> {{ selectedAnimal.currentStats.topSpeed | number : '1.2-2' }}
+                        <span class="keyword">Speed:</span> {{ selectedAnimal.currentStats.topSpeed | number : '1.2-2'
+                        }}
                     </span>
                     <br />
                     <span [ngbPopover]="accelerationPopoverContent" triggers="mouseenter:mouseleave"
                         popoverClass="popoverClass">
-                        <span class="keyword">Acceleration:</span> {{ selectedAnimal.currentStats.acceleration | number : '1.2-2' }}
+                        <span class="keyword">Acceleration:</span> {{ selectedAnimal.currentStats.acceleration | number
+                        : '1.2-2' }}
                     </span>
                     <br />
                     <span [ngbPopover]="endurancePopoverContent" triggers="mouseenter:mouseleave"
                         popoverClass="popoverClass">
-                        <span class="keyword">Endurance:</span> {{ selectedAnimal.currentStats.endurance | number : '1.2-2' }}
+                        <span class="keyword">Endurance:</span> {{ selectedAnimal.currentStats.endurance | number :
+                        '1.2-2' }}
                     </span>
                     <br />
                     <span [ngbPopover]="powerPopoverContent" triggers="mouseenter:mouseleave"
@@ -147,12 +155,14 @@
                     <br />
                     <span [ngbPopover]="adaptabilityPopoverContent" triggers="mouseenter:mouseleave"
                         popoverClass="popoverClass">
-                        <span class="keyword">Adaptability:</span> {{ selectedAnimal.currentStats.adaptability | number : '1.2-2' }}
+                        <span class="keyword">Adaptability:</span> {{ selectedAnimal.currentStats.adaptability | number
+                        : '1.2-2' }}
                     </span>
                     <br />
                     <span ngbPopover="{{ getDiminishingReturnsPopover() }}" triggers="mouseenter:mouseleave"
                         popoverClass="popoverClass">
-                        <span class="keyword">Diminishing Returns:</span> {{ diminishingReturnsAmount | number : '1.0-0' }}
+                        <span class="keyword">Diminishing Returns:</span> {{ diminishingReturnsAmount | number : '1.0-0'
+                        }}
                     </span>
                 </div>
                 <div class="racingStats">
@@ -161,42 +171,50 @@
                     <br />
                     <span ngbPopover="{{ selectedAnimal.currentStats.maxSpeedMsPopover() }}"
                         triggers="mouseenter:mouseleave" popoverClass="popoverClass">
-                        <span class="keyword">Max Speed:</span> {{ selectedAnimal.currentStats.maxSpeedMs | number : '1.2-2' }} m/s
+                        <span class="keyword">Max Speed:</span> {{ selectedAnimal.currentStats.maxSpeedMs | number :
+                        '1.2-2' }} m/s
                     </span>
                     <br />
                     <span ngbPopover="{{ selectedAnimal.currentStats.accelerationMsPopover() }}"
                         triggers="mouseenter:mouseleave" popoverClass="popoverClass">
-                        <span class="keyword">Acceleration Rate:</span> {{ selectedAnimal.currentStats.accelerationMs | number : '1.2-2' }} m/s
+                        <span class="keyword">Acceleration Rate:</span> {{ selectedAnimal.currentStats.accelerationMs |
+                        number : '1.2-2' }} m/s
                     </span>
                     <br />
                     <span ngbPopover="{{ selectedAnimal.currentStats.staminaPopover() }}"
                         triggers="mouseenter:mouseleave" popoverClass="popoverClass">
-                        <span class="keyword">Stamina:</span> {{ selectedAnimal.currentStats.stamina | number : '1.2-2' }}
+                        <span class="keyword">Stamina:</span> {{ selectedAnimal.currentStats.stamina | number : '1.2-2'
+                        }}
                     </span>
                     <br />
                     <span ngbPopover="{{ selectedAnimal.currentStats.powerMsPopover() }}"
                         triggers="mouseenter:mouseleave" popoverClass="popoverClass">
-                        <span class="keyword">Power Efficiency:</span> {{ selectedAnimal.currentStats.powerMs | number : '1.2-2' }}%
+                        <span class="keyword">Power Efficiency:</span> {{ selectedAnimal.currentStats.powerMs | number :
+                        '1.2-2' }}%
                     </span>
                     <br />
                     <span ngbPopover="{{ selectedAnimal.currentStats.focusMsPopover() }}"
                         triggers="mouseenter:mouseleave" popoverClass="popoverClass">
-                        <span class="keyword">Focus Distance:</span> ~{{ selectedAnimal.currentStats.focusMs | number : '1.2-2' }} m
+                        <span class="keyword">Focus Distance:</span> ~{{ selectedAnimal.currentStats.focusMs | number :
+                        '1.2-2' }} m
                     </span>
                     <br />
                     <span ngbPopover="{{ selectedAnimal.currentStats.adaptabilityMsPopover() }}"
                         triggers="mouseenter:mouseleave" popoverClass="popoverClass">
-                        <span class="keyword">Adaptability Distance:</span> ~{{ selectedAnimal.currentStats.adaptabilityMs | number : '1.2-2' }} m
+                        <span class="keyword">Adaptability Distance:</span> ~{{
+                        selectedAnimal.currentStats.adaptabilityMs | number : '1.2-2' }} m
                     </span>
                     <br />
                     <span ngbPopover="{{ selectedAnimal.currentStats.burstChancePopover() }}"
                         triggers="mouseenter:mouseleave" popoverClass="popoverClass">
-                        <span class="keyword">Burst Chance:</span>{{ selectedAnimal.currentStats.burstChance | number : '1.2-2' }}%
+                        <span class="keyword">Burst Chance:</span> {{ selectedAnimal.currentStats.burstChance | number :
+                        '1.2-2' }}%
                     </span>
                     <br />
                     <span ngbPopover="{{ selectedAnimal.currentStats.burstDistancePopover() }}"
                         triggers="mouseenter:mouseleave" popoverClass="popoverClass">
-                        <span class="keyword">Burst Distance:</span> {{ selectedAnimal.currentStats.burstDistance | number : '1.2-2' }} m
+                        <span class="keyword">Burst Distance:</span> {{ selectedAnimal.currentStats.burstDistance |
+                        number : '1.2-2' }} m
                     </span>
                 </div>
 
@@ -206,21 +224,27 @@
                     <br />
                     <div *ngIf="selectedAnimal.miscStats.bonusBreedXpGainFromTraining > 0">
                         <span>
-                            <span class="keyword">Bonus Breed XP From Training:</span> {{ selectedAnimal.miscStats.bonusBreedXpGainFromTraining |
+                            <span class="keyword" [ngbPopover]="bonusTrainingXpPopoverContent"
+                                triggers="mouseenter:mouseleave" popoverClass="popoverClass">Bonus Breed XP From
+                                Training:</span> {{ selectedAnimal.miscStats.bonusBreedXpGainFromTraining |
                             number : '1.0-0' }}
                         </span>
                         <br />
                     </div>
                     <div *ngIf="selectedAnimal.miscStats.bonusBreedXpGainFromLocalRaces > 0">
                         <span>
-                            <span class="keyword">Bonus Breed XP From Free Races:</span> {{ selectedAnimal.miscStats.bonusBreedXpGainFromLocalRaces
+                            <span class="keyword" [ngbPopover]="bonusFreeRaceXpPopoverContent"
+                                triggers="mouseenter:mouseleave" popoverClass="popoverClass">Bonus Breed XP From Free
+                                Races:</span> {{ selectedAnimal.miscStats.bonusBreedXpGainFromLocalRaces
                             |
                             number : '1.0-0' }}
                         </span>
                     </div>
                     <div *ngIf="selectedAnimal.miscStats.bonusBreedXpGainFromCircuitRaces > 0">
                         <span>
-                            <span class="keyword">Bonus Breed XP From Circuit Races:</span> {{
+                            <span class="keyword" [ngbPopover]="bonusCircuitRaceXpPopoverContent"
+                                triggers="mouseenter:mouseleave" popoverClass="popoverClass">Bonus Breed XP From Circuit
+                                Races:</span> {{
                             selectedAnimal.miscStats.bonusBreedXpGainFromCircuitRaces
                             |
                             number : '1.0-0' }}
@@ -228,14 +252,18 @@
                     </div>
                     <div *ngIf="selectedAnimal.miscStats.trainingTimeReduction > 0">
                         <span>
-                            <span class="keyword">Training Time Reduction:</span> {{ selectedAnimal.miscStats.trainingTimeReduction
+                            <span class="keyword" [ngbPopover]="bonusTrainingTimeReductionPopoverContent"
+                                triggers="mouseenter:mouseleave" popoverClass="popoverClass">Training Time
+                                Reduction:</span> {{ selectedAnimal.miscStats.trainingTimeReduction
                             |
                             number : '1.0-0' }}%
                         </span>
                     </div>
                     <div *ngIf="selectedAnimal.miscStats.diminishingReturnsBonus > 0">
                         <span>
-                            <span class="keyword">Bonus Diminishing Returns per Facility Level:</span> {{
+                            <span class="keyword" [ngbPopover]="bonusDiminishingReturnsPerFacilityLevelPopoverContent"
+                                triggers="mouseenter:mouseleave" popoverClass="popoverClass">Bonus Diminishing Returns
+                                per Facility Level:</span> {{
                             selectedAnimal.miscStats.diminishingReturnsBonus
                             |
                             number : '1.0-0' }}
@@ -243,7 +271,9 @@
                     </div>
                     <div *ngIf="selectedAnimal.miscStats.bonusTalents > 0">
                         <span>
-                            <span class="keyword">Bonus Talents:</span> {{ selectedAnimal.miscStats.bonusTalents
+                            <span class="keyword" [ngbPopover]="bonusTalentsPopoverContent"
+                                triggers="mouseenter:mouseleave" popoverClass="popoverClass">Bonus Talents:</span> {{
+                            selectedAnimal.miscStats.bonusTalents
                             |
                             number : '1.0-0' }}
                         </span>
@@ -254,10 +284,11 @@
             <div class="abilities">
                 <p><span class="s4Heading" [ngbPopover]="getAbilityPopover()" triggers="mouseenter:mouseleave"
                         popoverClass="popoverClass">Abilities</span>
-                        <br/>
+                    <br />
                     <span>
                         <em>Your animal will use the ability you select below.</em>
-                    </span></p>
+                    </span>
+                </p>
                 <div>
                     <span class="ability1 s5Heading clickableText" (click)="selectAbility(ability1)"
                         [class.filterActive]="selectedAnimal.ability.name === ability1.name">{{ ability1.name }} </span>
@@ -271,12 +302,12 @@
                     <br />
                     <p>
                         <span [ngbPopover]="abilityLevelPopoverContent" triggers="mouseenter:mouseleave"
-                            popoverClass="popoverClass">Level {{ selectedAbility.abilityLevel }} <span class="abilityXp"><span
-                                *ngIf="!abilityLevelMaxedOut">{{selectedAbility.abilityXp}} /
-                                {{selectedAbility.abilityMaxXp}} XP</span> <span
-                                *ngIf="abilityLevelMaxedOut">MAX</span></span></span>
+                            popoverClass="popoverClass">Level {{ selectedAbility.abilityLevel }} <span
+                                class="abilityXp"><span *ngIf="!abilityLevelMaxedOut">{{selectedAbility.abilityXp}} /
+                                    {{selectedAbility.abilityMaxXp}} XP</span> <span
+                                    *ngIf="abilityLevelMaxedOut">MAX</span></span></span>
                         <br />
-                        <span [innerHTML]="longDescription"></span>                        
+                        <span [innerHTML]="longDescription"></span>
                     </p>
                 </div>
             </div>
@@ -326,6 +357,42 @@
     </div>
 </ng-template>
 
+<ng-template #bonusFreeRaceXpPopoverContent>
+    <div class="popoverClass">
+        {{ getBonusFreeRaceXpPopover() }}
+    </div>
+</ng-template>
+
+<ng-template #bonusCircuitRaceXpPopoverContent>
+    <div class="popoverClass">
+        {{ getBonusCircuitRaceXpPopover() }}
+    </div>
+</ng-template>
+
+<ng-template #bonusTrainingXpPopoverContent>
+    <div class="popoverClass">
+        {{ getBonusTrainingXpPopover() }}
+    </div>
+</ng-template>
+
+<ng-template #bonusDiminishingReturnsPerFacilityLevelPopoverContent>
+    <div class="popoverClass">
+        {{ getBonusDiminishingReturnsPerFacilityLevelPopover() }}
+    </div>
+</ng-template>
+
+<ng-template #bonusTrainingTimeReductionPopoverContent>
+    <div class="popoverClass">
+        {{ getBonusTrainingTimeReductionPopover() }}
+    </div>
+</ng-template>
+
+<ng-template #bonusTalentsPopoverContent>
+    <div class="popoverClass">
+        {{ getBonusTalentsPopover() }}
+    </div>
+</ng-template>
+
 <ng-template #content let-modal>
     <div class="modalClass">
         <form>
@@ -339,11 +406,17 @@
                         <table>
                             <tr *ngFor="let cells of itemsRows;">
                                 <td *ngFor="let c of cells;" class="cell">
-                                    <div (click)="selectItem(c)">
-                                        {{ c.name }} ({{ c.amount }})
+                                    <div class="selectableItem" [ngClass]="{'activeSelectedItem': c.isSelected}"
+                                        (click)="selectItem(c)">
+                                        <span class="resourceKeyword">{{ c.name }} ({{ c.amount }})</span>
+                                        <div *ngIf="itemHasAdditionalText(c)">
+                                            <span [innerHTML]="getItemAdditionalText(c)"></span>
+                                        </div>
                                         <br />
                                         <br />
                                         {{ this.getItemShortDescription(c.name) }}
+                                        <br />
+                                        <br />
                                     </div>
                                 </td>
                             </tr>
@@ -353,7 +426,8 @@
                 <div *ngIf="selectedItem !== undefined && selectedItem !== null" class="modal-footer">
 
                     <span class="selectedItemSpan">
-                        <span>{{selectedItem.name}} - {{ this.getItemShortDescription(selectedItem.name) }} </span>
+                        <span><span class="resourceKeyword">{{selectedItem.name}}</span> - {{
+                            this.getItemShortDescription(selectedItem.name) }} </span>
 
                         <span class="rightAlign">
                             <label for="deck-name">Amount: </label>
@@ -375,7 +449,7 @@
         <form>
             <div class="modal-header">
                 <h4 class="modal-title" id="modal-basic-title">Change Equipment</h4>
-                <button type="button" aria-label="Close" (click)="modal.dismiss()">X</button>
+                <button type="button" aria-label="Close" (click)="clearSelectedItems(); modal.dismiss();">X</button>
             </div>
             <div>
                 <div class="modal-body">
@@ -383,11 +457,14 @@
                         <table>
                             <tr *ngFor="let cells of equipmentRows;">
                                 <td *ngFor="let c of cells;" class="cell">
-                                    <div (click)="selectEquipment(c)">
-                                        {{ c.name }} ({{ c.amount }})
+                                    <div class="selectableEquipment"
+                                        [ngClass]="{'activeSelectedEquipment': c.isSelected}"
+                                        (click)="selectEquipment(c)">
+                                        <span class="equipmentKeyword">{{ c.name }} ({{ c.amount }})</span>
                                         <br />
                                         <br />
                                         {{ this.getEquipmentShortDescription(c.name) }}
+                                        <br />
                                     </div>
                                 </td>
                             </tr>
@@ -396,7 +473,8 @@
                 </div>
                 <div *ngIf="selectedEquipment !== undefined && selectedEquipment !== null" class="modal-footer">
                     <span class="selectedEquipmentSpan">
-                        <span>{{selectedEquipment.name}} - {{ this.getEquipmentShortDescription(selectedEquipment.name)
+                        <span><span class="equipmentKeyword">{{selectedEquipment.name}}</span> - {{
+                            this.getEquipmentShortDescription(selectedEquipment.name)
                             }} </span>
 
                         <span class="rightAlign">
@@ -425,10 +503,12 @@
                         <table>
                             <tr *ngFor="let cells of orbRows;">
                                 <td *ngFor="let c of cells;" class="cell">
-                                    <div (click)="selectOrb(c)">
-                                        {{ c.name }} ({{ c.amount }})
+                                    <div class="selectableOrb" [ngClass]="{'activeSelectedOrb': c.isSelected}"
+                                        (click)="selectOrb(c)">
+                                        <span class="progressionKeyword">{{ c.name }}</span>
                                         <br />
                                         {{ this.getEquipmentShortDescription(c.name) }}
+                                        <br />
                                     </div>
                                 </td>
                             </tr>
@@ -437,7 +517,8 @@
                 </div>
                 <div *ngIf="selectedOrb !== undefined && selectedOrb !== null" class="modal-footer">
                     <span class="selectedOrbSpan">
-                        <span>{{selectedOrb.name}} - {{ this.getEquipmentShortDescription(selectedOrb.name)
+                        <span><span class="progressionKeyword">{{selectedOrb.name}}</span> - {{
+                            this.getEquipmentShortDescription(selectedOrb.name)
                             }} </span>
 
                         <span class="rightAlign">
@@ -484,16 +565,25 @@
                 *ngIf="talentsReleased && selectedAnimal.talentTree.talentTreeType !== talentTreeTypeEnum.none">
                 <div class="talentInfo">Available Talent Points: {{ availableTalentPoints }}</div>
                 <br />
+                <p>
+                  <em>
+                    Note that this functionality is new and subject to change. I have plans to add more talents and certain talents will likely still need rebalancing/redesigning. Bear with me as I work that out. Once I feel like talents are in a final state, everyone will have the option to reset their talent choices if they choose to. Feel free to experiment with the options as they are now and let me know if you have any feedback. Thanks!
+                  </em>  
+                </p>
+                <br />
                 <div class="talentRow" *ngFor="let _ of [].constructor(talentRows); let rowIndex = index">
                     <div class="rowFlex">
                         <div class="talentColumn"
                             *ngFor="let _ of [].constructor(talentColumns); let columnIndex = index">
-                            <div class="talentContent">
+                            <div [ngClass]="rowIndex < talentRows -1 ? 'talentContent' : 'lastTalentContent'">
                                 <app-talent [row]="rowIndex" [column]="columnIndex" [selectedAnimal]="selectedAnimal"
                                     (spentTalent)="spentTalent($event)"></app-talent>
                             </div>
-                            <div *ngIf="rowIndex !== talentRows-1" class="talentSpacer" [ngClass]="borderColorConditional">
-
+                            <div class="talentSpacer">
+                                <div *ngIf="rowIndex !== talentRows-1" class="defaultTalentSpacer">
+                                </div>
+                                <div *ngIf="rowIndex !== talentRows-1" [ngClass]="getBorderConditional(rowIndex, columnIndex)">
+                                </div>
                             </div>
                         </div>
                     </div>

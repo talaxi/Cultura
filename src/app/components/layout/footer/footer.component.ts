@@ -41,12 +41,17 @@ export class FooterComponent implements OnInit {
               
       this.totalTime += deltaTime;
 
-      if (this.totalTime >= this.maxTipTime)
+      if (this.totalTime >= this.maxTipTime && this.displayTip)
       {
         this.totalTime = 0;
         this.randomTip = this.lookupService.getRandomTip();
       }
     });
+  }
+
+  getNewTip() {
+    this.totalTime = 0;
+    this.randomTip = this.lookupService.getRandomTip();
   }
 
   openFAQs() {

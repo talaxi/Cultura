@@ -124,6 +124,20 @@ export class LookupService {
       resource.amount -= amountSpent;
   }
 
+  getTokens(): number {
+    var resource = this.globalService.globalVar.resources.find(item => item.name === "Tokens");
+    if (resource !== undefined)
+      return resource.amount;
+    else
+      return 0;
+  }
+
+  spendTokens(amountSpent: number): void {
+    var resource = this.globalService.globalVar.resources.find(item => item.name === "Tokens");
+    if (resource !== undefined)
+      resource.amount -= amountSpent;
+  }
+
   getRenown(): number {
     var resource = this.globalService.globalVar.resources.find(item => item.name === "Renown");
     if (resource !== undefined)
@@ -166,7 +180,12 @@ export class LookupService {
 
       var traitMaxSpeedModifier = this.globalService.getTraitModifier(animal, AnimalStatEnum.topSpeed);
 
-      totalModifier = defaultModifier * breedModifier * traitMaxSpeedModifier * animal.incubatorStatUpgrades.maxSpeedModifier;
+      var speedTalentModifier = 1;
+      if (animal.talentTree.talentTreeType === TalentTreeTypeEnum.longDistance) {
+        speedTalentModifier = 1 + (animal.talentTree.column2Row3Points / 100);
+      }
+
+      totalModifier = defaultModifier * breedModifier * traitMaxSpeedModifier * animal.incubatorStatUpgrades.maxSpeedModifier * speedTalentModifier;
     }
 
     return totalModifier;
@@ -190,7 +209,12 @@ export class LookupService {
 
       var traitAccelerationModifier = this.globalService.getTraitModifier(animal, AnimalStatEnum.acceleration);
 
-      totalModifier = defaultModifier * breedModifier * traitAccelerationModifier * animal.incubatorStatUpgrades.accelerationModifier;
+      var accelerationTalentModifier = 1;
+      if (animal.talentTree.talentTreeType === TalentTreeTypeEnum.sprint) {
+        accelerationTalentModifier = 1 + (animal.talentTree.column2Row3Points / 100);
+      }
+
+      totalModifier = defaultModifier * breedModifier * traitAccelerationModifier * animal.incubatorStatUpgrades.accelerationModifier * accelerationTalentModifier;
     }
 
     return totalModifier;
@@ -214,7 +238,12 @@ export class LookupService {
 
       var traitEnduranceModifier = this.globalService.getTraitModifier(animal, AnimalStatEnum.endurance);
 
-      totalModifier = defaultModifier * breedModifier * traitEnduranceModifier * animal.incubatorStatUpgrades.staminaModifier;
+      var enduranceTalentModifier = 1;
+      if (animal.talentTree.talentTreeType === TalentTreeTypeEnum.longDistance) {
+        enduranceTalentModifier = 1 + (animal.talentTree.column3Row3Points / 100);
+      }
+
+      totalModifier = defaultModifier * breedModifier * traitEnduranceModifier * animal.incubatorStatUpgrades.staminaModifier * enduranceTalentModifier;
     }
 
     return totalModifier;
@@ -239,7 +268,12 @@ export class LookupService {
 
       var traitPowerModifier = this.globalService.getTraitModifier(animal, AnimalStatEnum.power);
 
-      totalModifier = defaultModifier * breedModifier * traitPowerModifier * animal.incubatorStatUpgrades.powerModifier;
+      var powerTalentModifier = 1;
+      if (animal.talentTree.talentTreeType === TalentTreeTypeEnum.sprint) {
+        powerTalentModifier = 1 + (animal.talentTree.column3Row3Points / 100);
+      }
+
+      totalModifier = defaultModifier * breedModifier * traitPowerModifier * animal.incubatorStatUpgrades.powerModifier * powerTalentModifier;
     }
 
     return totalModifier;
@@ -263,7 +297,12 @@ export class LookupService {
 
       var traitFocusModifier = this.globalService.getTraitModifier(animal, AnimalStatEnum.focus);
 
-      totalModifier = defaultModifier * breedModifier * traitFocusModifier * animal.incubatorStatUpgrades.focusModifier;
+      var focusTalentModifier = 1;
+      if (animal.talentTree.talentTreeType === TalentTreeTypeEnum.longDistance) {
+        focusTalentModifier = 1 + (animal.talentTree.column1Row3Points / 100);
+      }
+
+      totalModifier = defaultModifier * breedModifier * traitFocusModifier * animal.incubatorStatUpgrades.focusModifier * focusTalentModifier;
     }
 
     return totalModifier;
@@ -287,7 +326,12 @@ export class LookupService {
 
       var traitAdaptabilityModifier = this.globalService.getTraitModifier(animal, AnimalStatEnum.adaptability);
 
-      totalModifier = defaultModifier * breedModifier * traitAdaptabilityModifier * animal.incubatorStatUpgrades.adaptabilityModifier;
+      var adaptabilityTalentModifier = 1;
+      if (animal.talentTree.talentTreeType === TalentTreeTypeEnum.sprint) {
+        adaptabilityTalentModifier = 1 + (animal.talentTree.column1Row3Points / 100);
+      }
+
+      totalModifier = defaultModifier * breedModifier * traitAdaptabilityModifier * animal.incubatorStatUpgrades.adaptabilityModifier * adaptabilityTalentModifier;
     }
 
     return totalModifier;
@@ -573,13 +617,33 @@ export class LookupService {
     if (animal.type === AnimalTypeEnum.Fox && animal.ability.name === "Trickster" && animal.ability.tricksterStatGain === "Power" && animal.ability.abilityInUse) {
       powerAbilityModifier *= 1.5;
     }
+    
+    if (animal.talentTree.talentTreeType === TalentTreeTypeEnum.sprint) {         
+      powerAbilityModifier *= 1 + (animal.talentTree.column3Row2Points * .05);      
+    }
 
     var usedAbility = animal.ability;
     if (ability !== undefined && ability !== null)
       usedAbility = ability;
 
+    var firstUseAbilityModifier = 1;
+    if (animal.talentTree !== null && animal.talentTree !== undefined && animal.raceVariables !== null && animal.raceVariables !== undefined &&
+      animal.talentTree.talentTreeType === TalentTreeTypeEnum.sprint && !animal.raceVariables.firstAbilityUseEffectApplied) {
+      firstUseAbilityModifier *= 1 + (animal.talentTree.column3Row4Points * .05);
+      animal.raceVariables.firstAbilityUseEffectApplied = true;
+    }    
+
+    var abilityEfficiencyRelayBonus = 1;
+    if (animal.raceVariables !== undefined && animal.raceVariables !== null &&
+      animal.raceVariables.relayEffects !== undefined && animal.raceVariables.relayEffects !== null) {
+      var abilityEfficiencyRelayEffect = this.getRelayEffectFromListByType(animal.raceVariables.relayEffects, RelayEffectEnum.supportAbilityEfficiency);
+      if (abilityEfficiencyRelayEffect !== undefined && abilityEfficiencyRelayEffect.additionalValue !== undefined) {
+        abilityEfficiencyRelayBonus = abilityEfficiencyRelayEffect.additionalValue;
+      }
+    }
+
     var modifiedPower = (animal.currentStats.powerMs * powerAbilityModifier * terrainModifier * statLossFromExhaustion) / 100;
-    var modifiedEfficiency = usedAbility.efficiency + (usedAbility.efficiency * ((usedAbility.abilityLevel - 1) * .01));
+    var modifiedEfficiency = usedAbility.efficiency * abilityEfficiencyRelayBonus * firstUseAbilityModifier + (usedAbility.efficiency * ((usedAbility.abilityLevel - 1) * .01));
 
     return modifiedEfficiency * (1 + modifiedPower);
   }
@@ -1291,6 +1355,11 @@ export class LookupService {
 
     var traitModifier = this.globalService.getTraitModifier(animal, AnimalStatEnum.topSpeed);
 
+    var topSpeedTalentModifier = 1;
+    if (animal.talentTree.talentTreeType === TalentTreeTypeEnum.longDistance) {
+      topSpeedTalentModifier = 1 + (animal.talentTree.column2Row3Points / 100);
+    }
+
     var popover = "Every stat point increases max speed by " + this.getMaxSpeedModifierByAnimalType(animal.type).toFixed(3) + "m/s up to diminishing returns. \n\n" +
       "Base: " + baseMaxSpeedModifier.toFixed(3) + "\n";
 
@@ -1302,6 +1371,9 @@ export class LookupService {
 
     if (animal.incubatorStatUpgrades.maxSpeedModifier > 1)
       popover += "Incubator Upgrade: *" + animal.incubatorStatUpgrades.maxSpeedModifier.toFixed(3) + "\n";
+
+    if (topSpeedTalentModifier > 1)
+      popover += "Long Distance Talents: *" + topSpeedTalentModifier.toFixed(2) + "\n";
 
     return popover;
   }
@@ -1323,6 +1395,11 @@ export class LookupService {
 
     var traitModifier = this.globalService.getTraitModifier(animal, AnimalStatEnum.acceleration);
 
+    var accelerationTalentModifier = 1;
+    if (animal.talentTree.talentTreeType === TalentTreeTypeEnum.sprint) {
+      accelerationTalentModifier = 1 + (animal.talentTree.column2Row3Points / 100);
+    }
+
     var popover = "Every stat point increases acceleration by " + this.getAccelerationModifierByAnimalType(animal.type).toFixed(3) + "m/s up to diminishing returns. \n\n" +
       "Base: " + baseAccelerationModifier.toFixed(3) + "\n";
 
@@ -1334,6 +1411,9 @@ export class LookupService {
 
     if (animal.incubatorStatUpgrades.accelerationModifier > 1)
       popover += "Incubator Upgrade: *" + animal.incubatorStatUpgrades.accelerationModifier.toFixed(3) + "\n";
+
+    if (accelerationTalentModifier > 1)
+      popover += "Sprint Talents: *" + accelerationTalentModifier.toFixed(2) + "\n";
 
     return popover;
   }
@@ -1355,6 +1435,10 @@ export class LookupService {
 
     var traitModifier = this.globalService.getTraitModifier(animal, AnimalStatEnum.endurance);
 
+    var enduranceTalentModifier = 1;
+    if (animal.talentTree.talentTreeType === TalentTreeTypeEnum.longDistance) {
+      enduranceTalentModifier = 1 + (animal.talentTree.column3Row3Points / 100);
+    }
 
     var popover = "Every stat point increases stamina by " + this.getStaminaModifierByAnimalType(animal.type).toFixed(3) + " up to diminishing returns. \n\n" +
       "Base: " + baseStaminaModifier.toFixed(3) + "\n";
@@ -1367,6 +1451,9 @@ export class LookupService {
 
     if (animal.incubatorStatUpgrades.staminaModifier > 1)
       popover += "Incubator Upgrade: *" + animal.incubatorStatUpgrades.staminaModifier.toFixed(3) + "\n";
+
+    if (enduranceTalentModifier > 1)
+      popover += "Long Distance Talents: *" + enduranceTalentModifier.toFixed(2) + "\n";
 
     return popover;
   }
@@ -1388,6 +1475,10 @@ export class LookupService {
 
     var traitModifier = this.globalService.getTraitModifier(animal, AnimalStatEnum.power);
 
+    var powerTalentModifier = 1;
+    if (animal.talentTree.talentTreeType === TalentTreeTypeEnum.sprint) {
+      powerTalentModifier = 1 + (animal.talentTree.column3Row3Points / 100);
+    }
 
     var popover = "Every stat point increases ability efficiency by " + this.getPowerModifierByAnimalType(animal.type).toFixed(3) + "% up to diminishing returns. \n\n" +
       "Base: " + basePowerModifier.toFixed(3) + "\n";
@@ -1400,6 +1491,9 @@ export class LookupService {
 
     if (animal.incubatorStatUpgrades.powerModifier > 1)
       popover += "Incubator Upgrade: *" + animal.incubatorStatUpgrades.powerModifier.toFixed(3) + "\n";
+
+    if (powerTalentModifier > 1)
+      popover += "Sprint Talents: *" + powerTalentModifier.toFixed(2) + "\n";
 
     return popover;
   }
@@ -1421,6 +1515,11 @@ export class LookupService {
 
     var traitModifier = this.globalService.getTraitModifier(animal, AnimalStatEnum.focus);
 
+    var focusTalentModifier = 1;
+    if (animal.talentTree.talentTreeType === TalentTreeTypeEnum.longDistance) {
+      focusTalentModifier = 1 + (animal.talentTree.column1Row3Points / 100);
+    }
+
     var popover = "Every stat point increases focus distance by " + this.getFocusModifierByAnimalType(animal.type).toFixed(3) + " meters up to diminishing returns. \n\n" +
       "Base: " + baseFocusModifier.toFixed(3) + "\n";
 
@@ -1432,6 +1531,9 @@ export class LookupService {
 
     if (animal.incubatorStatUpgrades.focusModifier > 1)
       popover += "Incubator Upgrade: *" + animal.incubatorStatUpgrades.focusModifier.toFixed(3) + "\n";
+
+    if (focusTalentModifier > 1)
+      popover += "Long Distance Talents: *" + focusTalentModifier.toFixed(2) + "\n";
 
     return popover;
   }
@@ -1453,6 +1555,11 @@ export class LookupService {
 
     var traitModifier = this.globalService.getTraitModifier(animal, AnimalStatEnum.adaptability);
 
+    var adaptabilityTalentModifier = 1;
+    if (animal.talentTree.talentTreeType === TalentTreeTypeEnum.sprint) {
+      adaptabilityTalentModifier = 1 + (animal.talentTree.column1Row3Points / 100);
+    }
+
     var popover = "Every stat point increases adaptability distance by " + this.getAdaptabilityModifierByAnimalType(animal.type).toFixed(3) + " meters up to diminishing returns. \n\n" +
       "Base: " + baseAdaptabilityModifier.toFixed(3) + "\n";
 
@@ -1464,6 +1571,9 @@ export class LookupService {
 
     if (animal.incubatorStatUpgrades.adaptabilityModifier > 1)
       popover += "Incubator Upgrade: *" + animal.incubatorStatUpgrades.adaptabilityModifier.toFixed(3) + "\n";
+
+    if (adaptabilityTalentModifier > 1)
+      popover += "Sprint Talents: *" + adaptabilityTalentModifier.toFixed(2) + "\n";
 
     return popover;
   }
@@ -1488,33 +1598,103 @@ export class LookupService {
     return popover;
   }
 
+  bonusFreeRaceXpPopover(animal: Animal) {
+    var popover = "";
+    var trackRaceBonus = animal.allTrainingTracks.getTotalTrainingTrackBonusBreedXpFromFreeRaces();
+
+    if (trackRaceBonus > 0)
+      popover += "Track Race Rewards: " + trackRaceBonus + "\n";
+
+    if (animal.miscStats.bonusLocalBreedXpCertificateCount > 0)
+      popover += "Certificates Bonus: " + animal.miscStats.bonusLocalBreedXpCertificateCount + " (Certificates Used: " + animal.miscStats.bonusLocalBreedXpCertificateCount + "/" + animal.miscStats.certificateUseCap + ")" + "\n";
+
+    return popover;
+  }
+
+  bonusCircuitRaceXpPopover(animal: Animal) {
+    var popover = "";
+    var trackRaceBonus = animal.allTrainingTracks.getTotalTrainingTrackBonusBreedXpFromCircuitRaces();
+
+    if (trackRaceBonus > 0)
+      popover += "Track Race Rewards: " + trackRaceBonus + "\n";
+
+    if (animal.miscStats.bonusCircuitBreedXpCertificateCount > 0)
+      popover += "Certificates Bonus: " + (2 * animal.miscStats.bonusCircuitBreedXpCertificateCount) + " (Certificates Used: " + animal.miscStats.bonusCircuitBreedXpCertificateCount + "/" + animal.miscStats.certificateUseCap + ")" + "\n";
+
+    return popover;
+  }
+
+  bonusTrainingXpPopover(animal: Animal) {
+    var popover = "";
+    var trackRaceBonus = animal.allTrainingTracks.getTotalTrainingTrackBonusBreedXpFromTraining();
+
+    if (trackRaceBonus > 0)
+      popover += "Track Race Rewards: " + trackRaceBonus + "\n";
+
+    if (animal.miscStats.bonusTrainingBreedXpCertificateCount > 0)
+      popover += "Certificates Bonus: " + animal.miscStats.bonusTrainingBreedXpCertificateCount + " (Certificates Used: " + animal.miscStats.bonusTrainingBreedXpCertificateCount + "/" + animal.miscStats.certificateUseCap + ")" + "\n";
+
+    return popover;
+  }
+
+  bonusDiminishingReturnsPerFacilityLevelPopover(animal: Animal) {
+    var popover = "";
+    var trackRaceBonus = animal.allTrainingTracks.getTotalTrainingTrackBonusDiminishingReturnsPerFacilityLevel();
+
+    if (trackRaceBonus > 0)
+      popover += "Track Race Rewards: " + trackRaceBonus + "\n";
+
+    if (animal.miscStats.bonusDiminishingReturnsCertificateCount > 0)
+      popover += "Certificates Bonus: " + animal.miscStats.bonusDiminishingReturnsCertificateCount + " (Certificates Used: " + animal.miscStats.bonusDiminishingReturnsCertificateCount + "/" + animal.miscStats.certificateUseCap + ")" + "\n";
+
+
+    return popover;
+  }
+
+  bonusTrainingTimeReductionPopover(animal: Animal) {
+    var popover = "";
+    var trackRaceBonus = animal.allTrainingTracks.getTotalTrainingTrackBonusTrainingTimeReduction();
+
+    if (trackRaceBonus > 0)
+      popover += "Track Race Rewards: " + trackRaceBonus + "%" + "\n";
+
+    return popover;
+  }
+
+  bonusTalentsPopover(animal: Animal) {
+    var popover = "";
+    var trackRaceBonus = animal.allTrainingTracks.getTotalTrainingTrackBonusTalents();
+
+    if (trackRaceBonus > 0)
+      popover += "Track Race Rewards: " + trackRaceBonus + "\n";
+
+    return popover;
+  }
+
+
   isAmountMoreThanCertificateCap(selectedAmount: number, selectedAnimal: Animal, certificateName: string) {
     var isAmountMoreThanCap = false;
     selectedAmount = +selectedAmount;
 
     if (certificateName === "Free Race Breed XP Gain Certificate") {
-      if (selectedAnimal.miscStats.bonusLocalBreedXpCertificateCount + selectedAmount > selectedAnimal.miscStats.certificateUseCap)
-      {
+      if (selectedAnimal.miscStats.bonusLocalBreedXpCertificateCount + selectedAmount > selectedAnimal.miscStats.certificateUseCap) {
         isAmountMoreThanCap = true;
       }
     }
     if (certificateName === "Circuit Race Breed XP Gain Certificate") {
-      if (selectedAnimal.miscStats.bonusCircuitBreedXpCertificateCount + selectedAmount > selectedAnimal.miscStats.certificateUseCap)
-      {
+      if (selectedAnimal.miscStats.bonusCircuitBreedXpCertificateCount + selectedAmount > selectedAnimal.miscStats.certificateUseCap) {
         isAmountMoreThanCap = true;
       }
     }
-    if (certificateName === "Training Breed XP Gain Certificate") {      
-      if (selectedAnimal.miscStats.bonusTrainingBreedXpCertificateCount + selectedAmount > selectedAnimal.miscStats.certificateUseCap)
-      {
+    if (certificateName === "Training Breed XP Gain Certificate") {
+      if (selectedAnimal.miscStats.bonusTrainingBreedXpCertificateCount + selectedAmount > selectedAnimal.miscStats.certificateUseCap) {
         isAmountMoreThanCap = true;
       }
     }
     if (certificateName === "Diminishing Returns Increase Certificate") {
-      if (selectedAnimal.miscStats.bonusDiminishingReturnsCertificateCount + selectedAmount > selectedAnimal.miscStats.certificateUseCap)
-      {
+      if (selectedAnimal.miscStats.bonusDiminishingReturnsCertificateCount + selectedAmount > selectedAnimal.miscStats.certificateUseCap) {
         isAmountMoreThanCap = true;
-      }     
+      }
     }
 
     return isAmountMoreThanCap;
@@ -1648,7 +1828,7 @@ export class LookupService {
 
   getTalentDescription(row: number, column: number, talentTreeType: TalentTreeTypeEnum, numberOfPoints?: number) {
     var description = "";
-    if (numberOfPoints === null || numberOfPoints === undefined)
+    if (numberOfPoints === null || numberOfPoints === undefined || numberOfPoints <= 0)
       numberOfPoints = 1;
 
     if (talentTreeType === TalentTreeTypeEnum.sprint) {
@@ -1664,11 +1844,11 @@ export class LookupService {
       if (row === 0 && column === 1)
         description = "Increase Acceleration stat gain from training by <span class='keyword'>" + numberOfPoints + "</span>%.";
       if (row === 1 && column === 1)
-        description = "If velocity exceeds Max Speed while bursting, increase remaining burst distance by <span class='keyword'>" + 5 * numberOfPoints + "</span>%.";
+        description = "The first time velocity exceeds Max Speed while bursting, increase remaining burst distance by <span class='keyword'>" + 5 * numberOfPoints + "</span>%.";
       if (row === 2 && column === 1)
         description = "Increase Acceleration Rate gain from Acceleration stat by <span class='keyword'>" + numberOfPoints + "</span>%.";
       if (row === 3 && column === 1)
-        description = "**Every second you are at or beyond max speed, increase Adaptability Distance by <span class='keyword'>" + numberOfPoints + "</span>% for the rest of the race.**";
+        description = "Each time your velocity reaches Max Speed, increase Max Speed by <span class='keyword'>" + numberOfPoints * .5 + "</span>% and reduce Focus Distance by <span class='keyword'>" + numberOfPoints * .5 + "</span>%. This effect can occur 10 times, up to <span class='keyword'>" + numberOfPoints * 5 + "</span>%.";
 
       if (row === 0 && column === 2)
         description = "Increase Power stat gain from training by <span class='keyword'>" + numberOfPoints + "</span>%.";
@@ -1683,11 +1863,11 @@ export class LookupService {
       if (row === 0 && column === 0)
         description = "Increase Relay Animal's Adaptability Distance by <span class='keyword'>" + numberOfPoints + "</span>%.";
       if (row === 1 && column === 0)
-        description = "The racer prior to you gains <span class='keyword'>" + 3 * numberOfPoints + "</span>% of any relay effects you provide.";
+        description = "Increase the effectiveness of your Relay effects by <span class='keyword'>" + 2 * numberOfPoints + "</span>%.";
       if (row === 2 && column === 0)
         description = "Increase Relay Animal's Max Speed by <span class='keyword'>" + numberOfPoints + "</span>%.";
       if (row === 3 && column === 0)
-        description = "Increase the effectiveness of your Relay effects by <span class='keyword'>" + 2 * numberOfPoints + "</span>%.";
+        description = "The racer prior to you gains any relay effects you provide for <span class='keyword'>" + 3 * numberOfPoints + "</span>% of the normal length if possible.";
 
       if (row === 0 && column === 1)
         description = "Increase Relay Animal's Acceleration Rate by <span class='keyword'>" + numberOfPoints + "</span>%.";
@@ -1701,7 +1881,7 @@ export class LookupService {
       if (row === 0 && column === 2)
         description = "Increase Relay Animal's Power Efficiency by <span class='keyword'>" + numberOfPoints + "</span>%.";
       if (row === 1 && column === 2)
-        description = "For the first <span class='keyword'>" + numberOfPoints + "</span>% of your Relay Animal's leg, double their Relay effects.";
+        description = "If Relay Animal ability has a cooldown, reduce it by <span class='keyword'>" + (2 * numberOfPoints) + "</span>%.";
       if (row === 2 && column === 2)
         description = "Increase Relay Animal's Focus Distance by <span class='keyword'>" + numberOfPoints + "</span>%.";
       if (row === 3 && column === 2)
@@ -1715,7 +1895,7 @@ export class LookupService {
       if (row === 2 && column === 0)
         description = "Increase Focus Distance gain from Focus stat by <span class='keyword'>" + numberOfPoints + "</span>%.";
       if (row === 3 && column === 0)
-        description = "Instead of reducing velocity to 10% when losing focus, reduce to <span class='keyword'>" + 10 + (2 * numberOfPoints) + "</span>%.";
+        description = "Instead of reducing velocity to 10% when losing focus, reduce to <span class='keyword'>" + (10 + (2 * numberOfPoints)) + "</span>%.";
 
       if (row === 0 && column === 1)
         description = "Increase Max Speed stat gain from training by <span class='keyword'>" + numberOfPoints + "</span>%.";
@@ -1733,10 +1913,14 @@ export class LookupService {
       if (row === 2 && column === 2)
         description = "Increase Stamina gain from Endurance stat by <span class='keyword'>" + numberOfPoints + "</span>%.";
       if (row === 3 && column === 2)
-        description = "When stamina drops below 50% for the first time, increase the race time by <span class='keyword'>" + numberOfPoints + "</span>% (maximum of 1 minute).";
+        description = "When running out of stamina, increase the percent regained by <span class='keyword'>" + (numberOfPoints * 2) + "</span>%.";
     }
 
     return description;
+  }
+
+  getTalentUpgradeDescription(row: number, column: number, talentTreeType: TalentTreeTypeEnum, numberOfPoints?: number) {
+
   }
 
   getTotalPossiblePointsByRowColumn(row: number, column: number, talentTreeType: TalentTreeTypeEnum) {

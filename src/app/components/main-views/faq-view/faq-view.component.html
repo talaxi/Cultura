@@ -66,9 +66,9 @@
                     <br/>
                     <strong>Breeding Grounds - {{ lookupService.getInDepthSpecializationDescription("Breeding Grounds") }}</strong>
                     <br/>
-                    <strong>Attraction - {{ lookupService.getInDepthSpecializationDescription("Attraction") }}</strong>
+                    <strong (click)="viewSpoiler('Attraction Specialization')" [ngClass]='seeAttractionSpoiler ? "viewSpoiler" : "spoilerText"'><span class="hidden">View Spoiler</span> Attraction - {{ lookupService.getInDepthSpecializationDescription("Attraction") }}</strong>
                     <br/>
-                    <strong>Research Center - {{ lookupService.getInDepthSpecializationDescription("Research Center") }}</strong>
+                    <strong (click)="viewSpoiler('Research Center Specialization')" [ngClass]='seeResearchCenterSpoiler ? "viewSpoiler" : "spoilerText"'><span class="hidden">View Spoiler</span>Research Center - {{ lookupService.getInDepthSpecializationDescription("Research Center") }}</strong>
                 </p>
                 </div>
             </div>

@@ -13,6 +13,12 @@
     text-align: center;
 }
 
+.typeContainer {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+}
+
 .customLabel
 {    
     font-weight: 700;
@@ -130,8 +136,7 @@
   color: var(--foreground-default);
 }
 
-.specializationType {
-  width: 25%;
+.specializationType {  
   text-decoration: underline solid transparent;
   transition: text-decoration .3s ease;
   display: inline-block;

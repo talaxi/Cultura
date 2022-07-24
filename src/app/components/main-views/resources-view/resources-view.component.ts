@@ -5,6 +5,7 @@ import { ShopItemTypeEnum } from 'src/app/models/shop-item-type-enum.model';
 import { ComponentCommunicationService } from 'src/app/services/component-communication.service';
 import { GlobalService } from 'src/app/services/global-service.service';
 import { LookupService } from 'src/app/services/lookup.service';
+import { UtilityService } from 'src/app/services/utility/utility.service';
 
 @Component({
   selector: 'app-resources-view',
@@ -17,7 +18,8 @@ export class ResourcesViewComponent implements OnInit {
   specialtyItems: ResourceValue[] = [];
   progressionResources: ResourceValue[] = [];
 
-  constructor(private globalService: GlobalService, private lookupService: LookupService, private componentCommunicationService: ComponentCommunicationService) { }
+  constructor(private globalService: GlobalService, private lookupService: LookupService, 
+    private componentCommunicationService: ComponentCommunicationService, private utilityService: UtilityService) { }
 
   ngOnInit(): void {
     this.componentCommunicationService.setNewView(NavigationEnum.resources);
@@ -29,6 +31,6 @@ export class ResourcesViewComponent implements OnInit {
   }
 
   getPopover(name: string, itemType: ShopItemTypeEnum) {
-    return this.lookupService.getResourcePopover(name, itemType);
+    return this.utilityService.getSanitizedHtml(this.lookupService.getResourcePopover(name, itemType));
   }
 }

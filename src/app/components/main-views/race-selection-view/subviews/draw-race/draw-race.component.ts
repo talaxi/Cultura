@@ -331,8 +331,7 @@ export class DrawRaceComponent implements OnInit {
 
       context.strokeStyle = "dimgray";
 
-      if (this.race.raceUI.lavaFallPercentByFrame.length > 0)
-        this.drawBackgroundVolcano(context, 0, volcanicStartDistance, volcanicStartDistance + volcanoDistance, 1, 1);
+      this.drawBackgroundVolcano(context, 0, volcanicStartDistance, volcanicStartDistance + volcanoDistance, 1, 1);
 
       context.globalCompositeOperation = existingContentDestinationType;
     }
@@ -367,9 +366,6 @@ export class DrawRaceComponent implements OnInit {
       //currentFrame = this.currentRaceFrame + this.eventViewStartFrame;
       isGrandPrix = true;
       var currentFrame = Math.round(this.globalService.globalVar.eventRaceData.segmentTimeCounter * this.frameModifier);
-      //console.log(currentFrame + " vs " + this.globalService.globalVar.eventRaceData.currentRaceSegmentResult.totalFramesPassed + " -- " + this.globalService.globalVar.eventRaceData.segmentTimeCounter);
-      //console.log(this.race.raceUI.distanceCoveredByFrame[currentFrame] + " vs " + this.race.length + " -- " + this.race.raceUI.distanceCoveredByFrame.length);
-
       raceLegs.push(this.globalService.globalVar.eventRaceData.nextRaceSegment.raceLegs[0]);
     }
     else
@@ -480,10 +476,10 @@ export class DrawRaceComponent implements OnInit {
 
     //if the above code is skipped, set Y equal to what mountain ended on
     if (!this.race.raceLegs.some(item => item.courseType === RaceCourseTypeEnum.Mountain))
-      this.mountainEndingY = 0;    
+      this.mountainEndingY = 0;
 
     currentYDistanceTraveled = this.mountainEndingY;
-    if (this.race.raceType === RaceTypeEnum.event && this.race.eventRaceType === EventRaceTypeEnum.grandPrix) {      
+    if (this.race.raceType === RaceTypeEnum.event && this.race.eventRaceType === EventRaceTypeEnum.grandPrix) {
       currentYDistanceTraveled += this.globalService.globalVar.eventRaceData.mountainEndingY;
       if (this.globalService.globalVar.eventRaceData.previousRaceSegment !== null &&
         this.globalService.globalVar.eventRaceData.previousRaceSegment !== undefined &&
@@ -747,9 +743,8 @@ export class DrawRaceComponent implements OnInit {
 
       context.strokeStyle = "dimgray";
 
-      //Draw background effects -- not covered by other racers
-      if (this.race.raceUI.lavaFallPercentByFrame.length > 0)
-        this.drawBackgroundVolcano(context, currentFrame, volcanicStartDistance, volcanicStartDistance + volcanoDistance, xRaceModeModifier, yRaceModeModifier, xDistanceOffset, yDistanceOffset);
+      //Draw background effects -- not covered by other racers      
+      this.drawBackgroundVolcano(context, currentFrame, volcanicStartDistance, volcanicStartDistance + volcanoDistance, xRaceModeModifier, yRaceModeModifier, xDistanceOffset, yDistanceOffset);
 
       context.globalCompositeOperation = existingContentDestinationType;
     }
@@ -1853,69 +1848,6 @@ export class DrawRaceComponent implements OnInit {
     context.lineTo(volcanoBezier1X3, volcanoBezier1Y3);
     context.fill();
 
-    var racerXOffset = 0;
-    if (xRaceModeModifier === 1) //overview mode
-    {
-      currentFrame = this.race.raceUI.lavaFallPercentByFrame.length - 1;
-    }
-
-    //currentframe doesn't work because the array is only populated with volcano
-    var lavaFallPercentByFrame = this.race.raceUI.lavaFallPercentByFrame[currentFrame]; //array of values between 0-1 that represent how far lava has fallen
-    var legDistanceX = (legEndX - legStartX) * this.canvasXDistanceScale * xRaceModeModifier;
-    var volcanicLegStartX = legStartX * this.canvasXDistanceScale * xRaceModeModifier;
-    var lava1FallXDropPoint = volcanicLegStartX + (legDistanceX * .4) - xDistanceOffset + racerXOffset;
-    var lava2FallXDropPoint = volcanicLegStartX + (legDistanceX * .45) - xDistanceOffset + racerXOffset;
-    var lava3FallXDropPoint = volcanicLegStartX + (legDistanceX * .5) - xDistanceOffset + racerXOffset;
-    var lava4FallXDropPoint = volcanicLegStartX + (legDistanceX * .55) - xDistanceOffset + racerXOffset;
-    var lava5FallXDropPoint = volcanicLegStartX + (legDistanceX * .6) - xDistanceOffset + racerXOffset;
-    var lavaFallXOffset = (legEndX - legStartX) * .01 * this.canvasXDistanceScale * xRaceModeModifier;
-
-    var lavaFallYRadius = lavaFallXOffset / 2;
-    var lavaFallYStart = volcanoEndY + volcanoYRadius / 4;
-    var bottomOfPath = this.backgroundVolcanoYStart + volcanoYRadius + yDistanceOffset;
-
-    //lava drop 1
-    var lava1YAmountFallen = (bottomOfPath - lavaFallYStart) * lavaFallPercentByFrame[0];
-    context.beginPath();
-    context.ellipse(lava1FallXDropPoint, (lavaFallYStart + lava1YAmountFallen) - lavaFallYRadius, lavaFallXOffset, lavaFallYRadius, 0, 0, 1 * Math.PI);
-    context.fill();
-    context.beginPath();
-    context.fillRect(lava1FallXDropPoint - lavaFallXOffset, lavaFallYStart, lavaFallXOffset * 2, lava1YAmountFallen - (lavaFallYRadius - 1));
-
-    //lava drop 2
-    var lava2YAmountFallen = (bottomOfPath - lavaFallYStart) * lavaFallPercentByFrame[1];
-    context.beginPath();
-    context.ellipse(lava2FallXDropPoint, (lavaFallYStart + lava2YAmountFallen) - lavaFallYRadius, lavaFallXOffset, lavaFallYRadius, 0, 0, 1 * Math.PI);
-    context.fill();
-    context.beginPath();
-    context.fillRect(lava2FallXDropPoint - lavaFallXOffset, lavaFallYStart, lavaFallXOffset * 2, lava2YAmountFallen - (lavaFallYRadius - 1));
-
-    //lava drop 3
-    var lava3YAmountFallen = (bottomOfPath - lavaFallYStart) * lavaFallPercentByFrame[2];
-    context.beginPath();
-    context.ellipse(lava3FallXDropPoint, (lavaFallYStart + lava3YAmountFallen) - lavaFallYRadius, lavaFallXOffset, lavaFallYRadius, 0, 0, 1 * Math.PI);
-    context.fill();
-    context.beginPath();
-    context.fillRect(lava3FallXDropPoint - lavaFallXOffset, lavaFallYStart, lavaFallXOffset * 2, lava3YAmountFallen - (lavaFallYRadius - 1));
-
-    //lava drop 4
-    var lava4YAmountFallen = (bottomOfPath - lavaFallYStart) * lavaFallPercentByFrame[3];
-    context.beginPath();
-    context.ellipse(lava4FallXDropPoint, (lavaFallYStart + lava4YAmountFallen) - lavaFallYRadius, lavaFallXOffset, lavaFallYRadius, 0, 0, 1 * Math.PI);
-    context.fill();
-    context.beginPath();
-    context.fillRect(lava4FallXDropPoint - lavaFallXOffset, lavaFallYStart, lavaFallXOffset * 2, lava4YAmountFallen - (lavaFallYRadius - 1));
-
-    //lava drop 5
-    var lava5YAmountFallen = (bottomOfPath - lavaFallYStart) * lavaFallPercentByFrame[4];
-    context.beginPath();
-    context.ellipse(lava5FallXDropPoint, (lavaFallYStart + lava5YAmountFallen) - lavaFallYRadius, lavaFallXOffset, lavaFallYRadius, 0, 0, 1 * Math.PI);
-    context.fill();
-    context.beginPath();
-    context.fillRect(lava5FallXDropPoint - lavaFallXOffset, lavaFallYStart, lavaFallXOffset * 2, lava5YAmountFallen - (lavaFallYRadius - 1));
-
-    context.fillStyle = originalFillColor;
-
     //left side of volcano
     context.beginPath();
     context.moveTo(volcanoStartX, volcanoStartY);
@@ -1989,6 +1921,76 @@ export class DrawRaceComponent implements OnInit {
     context.stroke();
 
     context.lineWidth = originalLineWidth;
+
+    if (this.race.raceUI.lavaFallPercentByFrame[currentFrame] === undefined ||
+      this.race.raceUI.lavaFallPercentByFrame[currentFrame].length === 0 ||
+      this.race.raceUI.lavaFallPercentByFrame[currentFrame][0] === undefined) {
+      context.fillStyle = originalFillColor;
+      return;
+    }
+
+    var racerXOffset = 0;
+    if (xRaceModeModifier === 1) //overview mode
+    {
+      currentFrame = this.race.raceUI.lavaFallPercentByFrame.length - 1;
+    }
+
+    //currentframe doesn't work because the array is only populated with volcano
+    var lavaFallPercentByFrame = this.race.raceUI.lavaFallPercentByFrame[currentFrame]; //array of values between 0-1 that represent how far lava has fallen
+    var legDistanceX = (legEndX - legStartX) * this.canvasXDistanceScale * xRaceModeModifier;
+    var volcanicLegStartX = legStartX * this.canvasXDistanceScale * xRaceModeModifier;
+    var lava1FallXDropPoint = volcanicLegStartX + (legDistanceX * .4) - xDistanceOffset + racerXOffset;
+    var lava2FallXDropPoint = volcanicLegStartX + (legDistanceX * .45) - xDistanceOffset + racerXOffset;
+    var lava3FallXDropPoint = volcanicLegStartX + (legDistanceX * .5) - xDistanceOffset + racerXOffset;
+    var lava4FallXDropPoint = volcanicLegStartX + (legDistanceX * .55) - xDistanceOffset + racerXOffset;
+    var lava5FallXDropPoint = volcanicLegStartX + (legDistanceX * .6) - xDistanceOffset + racerXOffset;
+    var lavaFallXOffset = (legEndX - legStartX) * .01 * this.canvasXDistanceScale * xRaceModeModifier;
+
+    var lavaFallYRadius = lavaFallXOffset / 2;
+    var lavaFallYStart = volcanoEndY + volcanoYRadius / 4;
+    var bottomOfPath = this.backgroundVolcanoYStart + volcanoYRadius + yDistanceOffset;
+
+    //lava drop 1
+    var lava1YAmountFallen = (bottomOfPath - lavaFallYStart) * lavaFallPercentByFrame[0];
+    context.beginPath();
+    context.ellipse(lava1FallXDropPoint, (lavaFallYStart + lava1YAmountFallen) - lavaFallYRadius, lavaFallXOffset, lavaFallYRadius, 0, 0, 1 * Math.PI);
+    context.fill();
+    context.beginPath();
+    context.fillRect(lava1FallXDropPoint - lavaFallXOffset, lavaFallYStart, lavaFallXOffset * 2, lava1YAmountFallen - (lavaFallYRadius - 1));
+
+    //lava drop 2
+    var lava2YAmountFallen = (bottomOfPath - lavaFallYStart) * lavaFallPercentByFrame[1];
+    context.beginPath();
+    context.ellipse(lava2FallXDropPoint, (lavaFallYStart + lava2YAmountFallen) - lavaFallYRadius, lavaFallXOffset, lavaFallYRadius, 0, 0, 1 * Math.PI);
+    context.fill();
+    context.beginPath();
+    context.fillRect(lava2FallXDropPoint - lavaFallXOffset, lavaFallYStart, lavaFallXOffset * 2, lava2YAmountFallen - (lavaFallYRadius - 1));
+
+    //lava drop 3
+    var lava3YAmountFallen = (bottomOfPath - lavaFallYStart) * lavaFallPercentByFrame[2];
+    context.beginPath();
+    context.ellipse(lava3FallXDropPoint, (lavaFallYStart + lava3YAmountFallen) - lavaFallYRadius, lavaFallXOffset, lavaFallYRadius, 0, 0, 1 * Math.PI);
+    context.fill();
+    context.beginPath();
+    context.fillRect(lava3FallXDropPoint - lavaFallXOffset, lavaFallYStart, lavaFallXOffset * 2, lava3YAmountFallen - (lavaFallYRadius - 1));
+
+    //lava drop 4
+    var lava4YAmountFallen = (bottomOfPath - lavaFallYStart) * lavaFallPercentByFrame[3];
+    context.beginPath();
+    context.ellipse(lava4FallXDropPoint, (lavaFallYStart + lava4YAmountFallen) - lavaFallYRadius, lavaFallXOffset, lavaFallYRadius, 0, 0, 1 * Math.PI);
+    context.fill();
+    context.beginPath();
+    context.fillRect(lava4FallXDropPoint - lavaFallXOffset, lavaFallYStart, lavaFallXOffset * 2, lava4YAmountFallen - (lavaFallYRadius - 1));
+
+    //lava drop 5
+    var lava5YAmountFallen = (bottomOfPath - lavaFallYStart) * lavaFallPercentByFrame[4];
+    context.beginPath();
+    context.ellipse(lava5FallXDropPoint, (lavaFallYStart + lava5YAmountFallen) - lavaFallYRadius, lavaFallXOffset, lavaFallYRadius, 0, 0, 1 * Math.PI);
+    context.fill();
+    context.beginPath();
+    context.fillRect(lava5FallXDropPoint - lavaFallXOffset, lavaFallYStart, lavaFallXOffset * 2, lava5YAmountFallen - (lavaFallYRadius - 1));
+
+    context.fillStyle = originalFillColor;
   }
 
   ngOnDestroy() {
@@ -2010,7 +2012,7 @@ export class DrawRaceComponent implements OnInit {
       this.race.raceUI.maxSpeedByFrame = [];
       this.race.raceUI.racerEffectByFrame = [];
     }
-    
+
     //if (this.globalService.globalVar.eventRaceData !== null && this.globalService.globalVar.eventRaceData !== undefined)
     //this.globalService.globalVar.eventRaceData.mountainEndingY = 0;
   }

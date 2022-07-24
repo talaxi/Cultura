@@ -12,5 +12,15 @@ export enum RelayEffectEnum {
     violetBaton,
     greenBaton,
     orangeBaton,
-    yellowBaton
+    yellowBaton,
+    supportMaxSpeedRelay,
+    supportAccelerationRelay,
+    supportStaminaRelay,
+    supportPowerRelay,
+    supportFocusRelay,
+    supportAdaptabilityRelay,
+    supportBurstDistance,
+    supportBurstChance,
+    supportAbilityCooldown,
+    supportAbilityEfficiency
   }

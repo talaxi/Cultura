@@ -12,7 +12,7 @@
         {{ purchaseResourcesRequired }}
     </div>
     <br />
-    <button (click)="BuyItem()" [disabled]="!canAffordItem">Buy</button>
+    <button (click)="BuyItem()" [disabled]="!canAffordItem">Buy <span *ngIf="buyMultiplierAmount > 1"> x {{buyMultiplierAmount}}</span></button>
 </div>
 
 <div class="item" *ngIf="longDescription === '' || longDescription === undefined || longDescription === null">
@@ -28,7 +28,7 @@
         {{ purchaseResourcesRequired }}
     </div>
     <br />
-    <button (click)="BuyItem()" [disabled]="!canAffordItem">Buy</button>
+    <button (click)="BuyItem()" [disabled]="!canAffordItem">Buy <span *ngIf="buyMultiplierAmount > 1"> x {{buyMultiplierAmount}}</span></button>
 </div>
 
 <ng-template #longDescriptionContent>

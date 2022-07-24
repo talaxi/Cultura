@@ -12,6 +12,7 @@ export class RaceVariables {
     defaultLostFocusLength: number;
     currentLostFocusLength: number;
     metersSinceLostFocus: number;
+    hasLostFocusDuringRace: boolean;
 
     stumbled: boolean;
     defaultStumbledLength: number;
@@ -32,7 +33,13 @@ export class RaceVariables {
     headbandStumblePreventionCount: number;
     scaryMaskEffectOccurred: boolean;
 
+    //talent effects
+    firstAbilityUseEffectApplied: boolean;
+    velocityExceedsMaxSpeedDuringBurst: boolean;
+    velocityReachesMaxSpeedCount: number;
+
     constructor() {
+        this.remainingBurstMeters = 0;
         this.metersSinceLostFocus = 0;
         
         this.recoveringStamina = false;
@@ -43,6 +50,7 @@ export class RaceVariables {
         this.lostFocus = false;
         this.defaultLostFocusLength = 60;
         this.currentLostFocusLength = this.defaultLostFocusLength;
+        this.hasLostFocusDuringRace = false;
 
         this.stumbled = false;
         this.defaultStumbledLength = 10;
@@ -56,6 +64,47 @@ export class RaceVariables {
         this.icyCurrentDirectionUp = true;
 
         this.headbandStumblePreventionCount = 0;
-        this.scaryMaskEffectOccurred = false;
+        this.scaryMaskEffectOccurred = false;   
+        
+        this.firstAbilityUseEffectApplied = false;
+        this.velocityExceedsMaxSpeedDuringBurst = false;
+        this.velocityReachesMaxSpeedCount = 0;
+    }
+
+    makeCopy() {
+        var copy = new RaceVariables();
+
+        copy.remainingBurstMeters = this.remainingBurstMeters;
+        copy.metersSinceLostFocus = this.metersSinceLostFocus;
+        
+        copy.recoveringStamina = this.recoveringStamina;
+        copy.defaultRecoveringStaminaLength = this.defaultRecoveringStaminaLength;
+        copy.currentRecoveringStaminaLength = this.currentRecoveringStaminaLength;
+        copy.ranOutOfStamina = this.ranOutOfStamina;
+
+        copy.lostFocus = this.lostFocus;
+        copy.defaultLostFocusLength = this.defaultLostFocusLength;
+        copy.currentLostFocusLength = this.currentLostFocusLength;
+        copy.hasLostFocusDuringRace = this.hasLostFocusDuringRace;
+
+        copy.stumbled = this.stumbled;
+        copy.defaultStumbledLength = this.defaultStumbledLength;
+        copy.currentStumbledLength = this.currentStumbledLength;        
+
+        copy.burstCount = this.burstCount;
+
+        copy.icyCurrentYAmount = this.icyCurrentYAmount;        
+        copy.icyCurrentDirectionUp = this.icyCurrentDirectionUp;
+
+        copy.headbandStumblePreventionCount = this.headbandStumblePreventionCount;
+        copy.scaryMaskEffectOccurred = this.scaryMaskEffectOccurred;   
+        
+        copy.firstAbilityUseEffectApplied = this.firstAbilityUseEffectApplied;
+        copy.velocityExceedsMaxSpeedDuringBurst = this.velocityExceedsMaxSpeedDuringBurst;
+        copy.velocityReachesMaxSpeedCount = this.velocityReachesMaxSpeedCount;
+
+        this.relayEffects = [];
+
+        return copy;
     }
 }

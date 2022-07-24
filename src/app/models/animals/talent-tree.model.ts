@@ -44,6 +44,29 @@ export class TalentTree {
         this.column3Row4Points = 0;
     }
 
+    makeCopy(talentTree: TalentTree) {
+        var newTalentTree = new TalentTree();
+
+        newTalentTree.talentTreeType = talentTree.talentTreeType;
+
+        newTalentTree.column1Row1Points = talentTree.column1Row1Points;
+        newTalentTree.column1Row2Points = talentTree.column1Row2Points;
+        newTalentTree.column1Row3Points = talentTree.column1Row3Points;
+        newTalentTree.column1Row4Points = talentTree.column1Row4Points;
+
+        newTalentTree.column2Row1Points = talentTree.column2Row1Points;
+        newTalentTree.column2Row2Points = talentTree.column2Row2Points;
+        newTalentTree.column2Row3Points = talentTree.column2Row3Points;
+        newTalentTree.column2Row4Points = talentTree.column2Row4Points;
+
+        newTalentTree.column3Row1Points = talentTree.column3Row1Points;
+        newTalentTree.column3Row2Points = talentTree.column3Row2Points;
+        newTalentTree.column3Row3Points = talentTree.column3Row3Points;
+        newTalentTree.column3Row4Points = talentTree.column3Row4Points;
+
+        return newTalentTree;
+    }
+
     getTalentPointsByColumn(column: number) {
         if (column === 0)
             return this.column1Row1Points + this.column1Row2Points + this.column1Row3Points + this.column1Row4Points;

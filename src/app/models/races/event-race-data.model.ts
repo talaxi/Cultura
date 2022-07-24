@@ -58,6 +58,7 @@ export class GrandPrixData {
     weatherClusterUpdateCounter: number = 0;
     @Type(() => RelayEffect)
     queuedRelayEffects: RelayEffect[];
+    isGrandPrixCompleted: boolean;
     
     constructor() {
         this.weekStartDay = 2;// TODO: set this back to 2 //tues 9 am to thurs 12 pm (noon)
@@ -85,5 +86,6 @@ export class GrandPrixData {
         this.coinRewardsObtained = 0;
         this.renownRewardsObtained = 0;
         this.tokenRewardsObtained = 0;
+        this.isGrandPrixCompleted = false;
     }
 }

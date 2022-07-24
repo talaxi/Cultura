@@ -1,4 +1,6 @@
+import { Type } from "class-transformer";
 import { AnimalTypeEnum } from "../animal-type-enum.model";
+import { RaceVariables } from "../animals/race-variables.model";
 import { RelayEffect } from "./relay-effect.model";
 
 export class EventSegmentCarryOverData {
@@ -16,5 +18,10 @@ export class EventSegmentCarryOverData {
     statLossFromExhaustion: number;    
     mountainEndingY: number = 0;
     racingAnimalType: AnimalTypeEnum; 
-    deepBreathingStaminaGain: number = 0; //Goat Ability - Deep Breathing        
+    deepBreathingStaminaGain: number = 0; //Goat Ability - Deep Breathing   
+    longDistanceTalentIncreaseAccelerationWithLowVelocity: boolean = false;     
+    maxSpeedFloor: number = 0;
+    
+    @Type(() => RaceVariables)
+    raceVariables: RaceVariables = new RaceVariables();
 }

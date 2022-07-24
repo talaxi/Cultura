@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Injectable, SecurityContext } from '@angular/core';
 import { RaceCourseTypeEnum } from 'src/app/models/race-course-type-enum.model';
 import { TerrainTypeEnum } from 'src/app/models/terrain-type-enum.model';
 import * as seedrandom from "seedrandom"
 import { ResourceValue } from 'src/app/models/resources/resource-value.model';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,7 @@ import { ResourceValue } from 'src/app/models/resources/resource-value.model';
 export class UtilityService {
 
   //circular dependency with global, use lookup for global variables instead
-  constructor() { }
+  constructor(public sanitizer: DomSanitizer) { }
 
   getRandomSeededInteger(min: number, max: number, seedValue: string = "seeded"): number {
     var prng = seedrandom(seedValue);
@@ -112,7 +113,7 @@ export class UtilityService {
 
   getAmPmTimeFromHours(hours: number) {
     var time = "";
-    
+
     if (hours === 0)
       time = "12:00 AM";
     else if (hours < 12)
@@ -127,6 +128,10 @@ export class UtilityService {
 
   convertDegreesToRadians(degrees: number) {
     return degrees * (Math.PI / 180);
+  }
+
+  getSanitizedHtml(text: string) {
+    return this.sanitizer.sanitize(SecurityContext.HTML, this.sanitizer.bypassSecurityTrustHtml(text));
   }
 
   //brighten(positive percent) or darken(negative percent) colors -- see https://stackoverflow.com/questions/5560248/programmatically-lighten-or-darken-a-hex-color-or-rgb-and-blend-colors

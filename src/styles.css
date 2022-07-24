@@ -222,6 +222,10 @@ h1 {
   text-decoration: line-through;
 }
 
+.centeredText {
+  text-align: center;
+}
+
 .coloredText {
   font-weight: 550;
 }

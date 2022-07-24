@@ -54,6 +54,10 @@ export class EventAnimalDeckComponent implements OnInit {
     return exhaustionLevel * 100;
   }
 
+  eventCompleted() {
+    return this.globalService.globalVar.eventRaceData.isGrandPrixCompleted;
+  }
+
   hasEventStarted() {
     var secondsToEvent = this.globalService.getTimeToEventRace();
     if (secondsToEvent > 0 && this.globalService.globalVar.eventRaceData.bonusTime === 0)
@@ -141,15 +145,7 @@ export class EventAnimalDeckComponent implements OnInit {
   }
 
   pullFromRace(animal: Animal) {
-    this.globalService.globalVar.eventRaceData.animalData.forEach(item => {
-      item.isCurrentlyRacing = false;
-    });
-
-    this.globalService.globalVar.eventRaceData.animalAlreadyPrepped = false;
-    this.globalService.globalVar.eventRaceData.isRunning = false;
-    this.globalService.globalVar.eventRaceData.overallTimeCounter -= this.globalService.globalVar.eventRaceData.segmentTimeCounter;
-    this.globalService.globalVar.eventRaceData.segmentTimeCounter = 0;
-    this.globalService.globalVar.eventRaceData.currentRaceSegment.reduceExportSize();
+    this.globalService.stopGrandPrixRace();
   }
 
   getColorClass(animal: Animal) {

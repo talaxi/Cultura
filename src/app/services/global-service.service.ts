@@ -39,6 +39,7 @@ import { EventRaceTypeEnum } from '../models/event-race-type-enum.model';
 import { AnimalEventRaceData } from '../models/animals/animal-event-race-data.model';
 import { Notifications } from '../models/utility/notifications.model';
 import { WeatherEnum } from '../models/weather-enum.model';
+import { TalentTreeTypeEnum } from '../models/talent-tree-type-enum.model';
 
 @Injectable({
   providedIn: 'root'
@@ -73,8 +74,8 @@ export class GlobalService {
     this.globalVar.freeRaceCounter = 0;
     this.globalVar.freeRaceTimePeriodCounter = 0;
     this.globalVar.lastTimeStamp = Date.now();
-    this.globalVar.currentVersion = 1.02; //TODO: this needs to be automatically increased or something, too easy to forget
-    this.globalVar.startingVersion = 1.02;
+    this.globalVar.currentVersion = 1.03; //TODO: this needs to be automatically increased or something, too easy to forget
+    this.globalVar.startingVersion = 1.03;
     this.globalVar.startDate = new Date();
     this.globalVar.notifications = new Notifications();
 
@@ -2099,6 +2100,18 @@ export class GlobalService {
     return new Terrain(availableTerrainsList[rng - 1]);
   }
 
+  stopGrandPrixRace() {
+    this.globalVar.eventRaceData.animalData.forEach(item => {
+      item.isCurrentlyRacing = false;
+    });
+
+    this.globalVar.eventRaceData.animalAlreadyPrepped = false;
+    this.globalVar.eventRaceData.isRunning = false;
+    this.globalVar.eventRaceData.overallTimeCounter -= this.globalVar.eventRaceData.segmentTimeCounter;
+    this.globalVar.eventRaceData.segmentTimeCounter = 0;
+    this.globalVar.eventRaceData.currentRaceSegment.reduceExportSize();
+  }
+
   GetCircuitRankValue(circuitRank: string): number {
     var rankValue = 1;
 
@@ -3092,23 +3105,42 @@ export class GlobalService {
     var animalFocusOrbModifier = animal.equippedOrb !== null && animal.equippedOrb.name === "Sapphire Orb" ? this.globalVar.orbStats.focusDistanceIncrease : 1;
     var animalAdaptabilityOrbModifier = animal.equippedOrb !== null && animal.equippedOrb.name === "Emerald Orb" ? this.globalVar.orbStats.adaptabilityDistanceIncrease : 1;
 
-
-
     //leave space to adjust modifiers with other items or anything
     var breedLevelStatModifier = this.globalVar.modifiers.find(item => item.text === "breedLevelStatModifier");
     if (breedLevelStatModifier !== undefined && breedLevelStatModifier !== null)
       breedLevelStatModifierValue = breedLevelStatModifier.value;
     breedLevelStatModifierValue = 1 + (breedLevelStatModifierValue * (animal.breedLevel - 1));
 
+    //talents
+    var topSpeedTalentModifier = 1;
+    var accelerationTalentModifier = 1;
+    var enduranceTalentModifier = 1;
+    var powerTalentModifier = 1;
+    var focusTalentModifier = 1;
+    var adaptabilityTalentModifier = 1;
+
+    if (animal.talentTree.talentTreeType === TalentTreeTypeEnum.sprint)
+    {
+      adaptabilityTalentModifier = 1 + (animal.talentTree.column1Row3Points / 100);
+      accelerationTalentModifier = 1 + (animal.talentTree.column2Row3Points / 100);
+      powerTalentModifier = 1 + (animal.talentTree.column3Row3Points / 100);
+    }
+    if (animal.talentTree.talentTreeType === TalentTreeTypeEnum.longDistance)
+    {
+      focusTalentModifier = 1 + (animal.talentTree.column1Row3Points / 100);
+      topSpeedTalentModifier = 1 + (animal.talentTree.column2Row3Points / 100);
+      enduranceTalentModifier = 1 + (animal.talentTree.column3Row3Points / 100);
+    }
+
     var diminishingReturnsThreshold = this.GetAnimalDiminishingReturns(animal);
 
-    //do the calculations      
-    animal.currentStats.maxSpeedMs = animal.currentStats.calculateMaxSpeed(totalMaxSpeedModifier * breedLevelStatModifierValue * traitMaxSpeedModifier * animal.incubatorStatUpgrades.maxSpeedModifier, diminishingReturnsThreshold, animalMaxSpeedOrbModifier);
-    animal.currentStats.accelerationMs = animal.currentStats.calculateTrueAcceleration(totalAccelerationModifier * breedLevelStatModifierValue * traitAccelerationModifier * animal.incubatorStatUpgrades.accelerationModifier, diminishingReturnsThreshold, animalAccelerationOrbModifier);
-    animal.currentStats.stamina = animal.currentStats.calculateStamina(totalStaminaModifier * breedLevelStatModifierValue * traitEnduranceModifier * animal.incubatorStatUpgrades.staminaModifier, diminishingReturnsThreshold, animalStaminaOrbModifier);
-    animal.currentStats.powerMs = animal.currentStats.calculateTruePower(totalPowerModifier * breedLevelStatModifierValue * traitPowerModifier * animal.incubatorStatUpgrades.powerModifier, diminishingReturnsThreshold, animalPowerOrbModifier);
-    animal.currentStats.focusMs = animal.currentStats.calculateTrueFocus(totalFocusModifier * breedLevelStatModifierValue * traitFocusModifier * animal.incubatorStatUpgrades.focusModifier, diminishingReturnsThreshold, animalFocusOrbModifier);
-    animal.currentStats.adaptabilityMs = animal.currentStats.calculateTrueAdaptability(totalAdaptabilityModifier * breedLevelStatModifierValue * traitAdaptabilityModifier * animal.incubatorStatUpgrades.adaptabilityModifier, diminishingReturnsThreshold, animalAdaptabilityOrbModifier);
+    //do the calculations   
+    animal.currentStats.maxSpeedMs = animal.currentStats.calculateMaxSpeed(totalMaxSpeedModifier * breedLevelStatModifierValue * traitMaxSpeedModifier * animal.incubatorStatUpgrades.maxSpeedModifier * topSpeedTalentModifier, diminishingReturnsThreshold, animalMaxSpeedOrbModifier);
+    animal.currentStats.accelerationMs = animal.currentStats.calculateTrueAcceleration(totalAccelerationModifier * breedLevelStatModifierValue * traitAccelerationModifier * animal.incubatorStatUpgrades.accelerationModifier * accelerationTalentModifier, diminishingReturnsThreshold, animalAccelerationOrbModifier);
+    animal.currentStats.stamina = animal.currentStats.calculateStamina(totalStaminaModifier * breedLevelStatModifierValue * traitEnduranceModifier * animal.incubatorStatUpgrades.staminaModifier * enduranceTalentModifier, diminishingReturnsThreshold, animalStaminaOrbModifier);
+    animal.currentStats.powerMs = animal.currentStats.calculateTruePower(totalPowerModifier * breedLevelStatModifierValue * traitPowerModifier * animal.incubatorStatUpgrades.powerModifier * powerTalentModifier, diminishingReturnsThreshold, animalPowerOrbModifier);
+    animal.currentStats.focusMs = animal.currentStats.calculateTrueFocus(totalFocusModifier * breedLevelStatModifierValue * traitFocusModifier * animal.incubatorStatUpgrades.focusModifier * focusTalentModifier, diminishingReturnsThreshold, animalFocusOrbModifier);
+    animal.currentStats.adaptabilityMs = animal.currentStats.calculateTrueAdaptability(totalAdaptabilityModifier * breedLevelStatModifierValue * traitAdaptabilityModifier * animal.incubatorStatUpgrades.adaptabilityModifier * adaptabilityTalentModifier, diminishingReturnsThreshold, animalAdaptabilityOrbModifier);
     animal.currentStats.burstChance = animal.currentStats.calculateBurstChance(breedLevelStatModifierValue);
     animal.currentStats.burstDistance = animal.currentStats.calculateBurstDistance(breedLevelStatModifierValue);
 
@@ -3515,7 +3547,7 @@ export class GlobalService {
     else
       this.globalVar.resources.push(this.initializeService.initializeResource("Medals", circuitRankNumeric, ShopItemTypeEnum.Resources));
 
-    this.globalVar.resources.push(this.initializeService.initializeResource("Talent Points", 10, ShopItemTypeEnum.Resources));
+    this.globalVar.resources.push(this.initializeService.initializeResource("Talent Points", 1000, ShopItemTypeEnum.Resources));
     this.globalVar.resources.push(this.initializeService.initializeResource("Tokens", 1000, ShopItemTypeEnum.Resources));
 
 
@@ -3539,13 +3571,13 @@ export class GlobalService {
 
     var horse = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Horse);
     if (horse !== undefined) {
-      horse.currentStats.topSpeed = 200;
-      horse.currentStats.acceleration = 200;
-      horse.currentStats.endurance = 30;
-      horse.currentStats.power = 200;
+      horse.currentStats.topSpeed = 2000;
+      horse.currentStats.acceleration = 2000;
+      horse.currentStats.endurance = 1000;
+      horse.currentStats.power = 2000;
       horse.currentStats.focus = 1000;
       horse.currentStats.adaptability = 1000;
-      horse.breedLevel = 1800;
+      horse.breedLevel = 18000;
       horse.canEquipOrb = true;
       this.calculateAnimalRacingStats(horse);
 
@@ -3579,13 +3611,13 @@ export class GlobalService {
 
     var monkey = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Monkey);
     if (monkey !== undefined) {
-      monkey.currentStats.topSpeed = 150;
-      monkey.currentStats.acceleration = 150;
-      monkey.currentStats.endurance = 5;
-      monkey.currentStats.power = 150;
-      monkey.currentStats.focus = 150;
-      monkey.currentStats.adaptability = 150;
-      monkey.breedLevel = 1000;
+      monkey.currentStats.topSpeed = 250;
+      monkey.currentStats.acceleration = 250;
+      monkey.currentStats.endurance = 205;
+      monkey.currentStats.power = 250;
+      monkey.currentStats.focus = 250;
+      monkey.currentStats.adaptability = 250;
+      monkey.breedLevel = 15000;
       this.calculateAnimalRacingStats(monkey);
 
       //monkey.breedGaugeMax = 5;
@@ -3618,13 +3650,13 @@ export class GlobalService {
 
     var dolphin = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Dolphin);
     if (dolphin !== undefined) {
-      dolphin.currentStats.topSpeed = 100;
-      dolphin.currentStats.acceleration = 100;
-      dolphin.currentStats.endurance = 50;
-      dolphin.currentStats.power = 100;
-      dolphin.currentStats.focus = 100;
-      dolphin.currentStats.adaptability = 100;
-      dolphin.breedLevel = 100;
+      dolphin.currentStats.topSpeed = 1000;
+      dolphin.currentStats.acceleration = 1000;
+      dolphin.currentStats.endurance = 500;
+      dolphin.currentStats.power = 1000;
+      dolphin.currentStats.focus = 1000;
+      dolphin.currentStats.adaptability = 1000;
+      dolphin.breedLevel = 1000;
       this.calculateAnimalRacingStats(dolphin);
     }
 
@@ -3660,7 +3692,7 @@ export class GlobalService {
       penguin.currentStats.power = 200;
       penguin.currentStats.focus = 200;
       penguin.currentStats.adaptability = 20;
-      penguin.breedLevel = 10;
+      penguin.breedLevel = 15000;
       this.calculateAnimalRacingStats(penguin);
     }
 
@@ -3684,7 +3716,7 @@ export class GlobalService {
       salamander.currentStats.power = 200;
       salamander.currentStats.focus = 100;
       salamander.currentStats.adaptability = 100;
-      salamander.breedLevel = 1000;
+      salamander.breedLevel = 2000;
       this.calculateAnimalRacingStats(salamander);
     }
     var fox = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Fox);

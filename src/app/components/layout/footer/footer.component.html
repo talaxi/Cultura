@@ -3,12 +3,12 @@
         <div class="area1">
             <span></span>
         </div>
-        <div *ngIf="displayTip" class="area2 keyword">
+        <div *ngIf="displayTip" (click)="getNewTip()" class="area2 keyword">
             <span>Tip: {{ this.randomTip }}</span>
             
         </div>
         <div class="area3 keyword rightAlign">            
-            <span><span class="faqs" (click)="openFAQs()">FAQs</span> | <a href="https://www.reddit.com/message/compose/?to=Jaghancement" rel="noopener noreferrer" target="_blank">Reddit</a> | <a href="mailto:CulturaIdle@gmail.com">Email</a></span>
+            <span><span class="faqs" (click)="openFAQs()">FAQs</span> | <a href="https://discord.gg/TgbRXsXQF3" rel="noopener noreferrer" target="_blank">Discord</a> | <a href="https://www.reddit.com/message/compose/?to=Jaghancement" rel="noopener noreferrer" target="_blank">Reddit</a> | <a href="mailto:CulturaIdle@gmail.com">Email</a></span>
         </div>
         <div class="area4 keyword rightAlign">            
             <span><a href="https://www.buymeacoffee.com/CulturaIdle" rel="noopener noreferrer" target="_blank">Donate</a> | <a href="https://www.patreon.com/CulturaIdle" rel="noopener noreferrer" target="_blank">Patreon</a></span>

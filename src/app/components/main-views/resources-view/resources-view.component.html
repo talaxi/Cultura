@@ -3,44 +3,64 @@
         <div class="s4Heading centered">Resources</div>        
         <br />
         <p *ngFor="let resource of resources;">
-            <span ngbPopover="{{ this.getPopover(resource.name, resource.itemType) }}"
+            <span [ngbPopover]="resourceContent"
             triggers="mouseenter:mouseleave" popoverClass="popoverClass" class="screenMarginLeft">
             <span class="resourceKeyword">{{ resource.name }}</span> <span class="rightAligned"> x {{ resource.amount }}</span>
             <hr class="miniHr" />
         </span>
+        <ng-template #resourceContent>
+            <div class="popoverClass">
+                <span [innerHTML]="this.getPopover(resource.name, resource.itemType)"></span>
+            </div>
+        </ng-template>
         </p>
     </div>
     <div class="progression">
         <div class="s4Heading centered">Progression</div>        
         <br />
         <p *ngFor="let progression of progressionResources;">
-            <span ngbPopover="{{ this.getPopover(progression.name, progression.itemType) }}"
+            <span [ngbPopover]="progressionContent"
             triggers="mouseenter:mouseleave" popoverClass="popoverClass" class="screenMarginLeft">
             <span class='progressionKeyword'>{{ progression.name }}</span> <span class="rightAligned"> x {{ progression.amount }}</span>
             <hr class="miniHr" />
         </span>
+        <ng-template #progressionContent>
+            <div class="popoverClass">
+                <span [innerHTML]="this.getPopover(progression.name, progression.itemType)"></span>
+            </div>
+        </ng-template>
         </p>
     </div>
     <div class="specialty">
         <div class="s4Heading centered">Specialty</div>        
         <br />
         <p *ngFor="let specialty of specialtyItems;">            
-            <span ngbPopover="{{ this.getPopover(specialty.name, specialty.itemType) }}"
+            <span [ngbPopover]="specialityContent"
             triggers="mouseenter:mouseleave" popoverClass="popoverClass" class="screenMarginLeft">
             <span class='specialityKeyword'>{{ specialty.name }}</span> <span class="rightAligned"> x {{ specialty.amount }}</span>
             <hr class="miniHr" />
         </span>
+        <ng-template #specialityContent>
+            <div class="popoverClass">
+                <span [innerHTML]="this.getPopover(specialty.name, specialty.itemType)"></span>
+            </div>
+        </ng-template>
         </p>
     </div>
     <div class="equipment">
         <div class="s4Heading centered">Equipment</div>        
         <br />
         <p *ngFor="let item of equipment;">
-            <span ngbPopover="{{ this.getPopover(item.name, item.itemType) }}"
+            <span [ngbPopover]="equipmentContent"
             triggers="mouseenter:mouseleave" popoverClass="popoverClass" class="screenMarginLeft">
             <span class='equipmentKeyword'>{{ item.name }}</span> <span class="rightAligned"> x {{ item.amount }}</span>
             <hr class="miniHr" />
         </span>
+        <ng-template #equipmentContent>
+            <div class="popoverClass">
+                <span [innerHTML]=" this.getPopover(item.name, item.itemType)"></span>
+            </div>
+        </ng-template>
         </p>
     </div>
 </div>

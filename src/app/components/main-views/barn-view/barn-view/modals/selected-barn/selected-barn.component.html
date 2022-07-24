@@ -197,6 +197,7 @@
                         (click)="filterSpecialization(specialization)">
                         {{specialization.trim()}}
                     </span>
+                </div>
                     <hr />
                     <div *ngIf="specializationDescription !== '' && specializationDescription !== undefined">
                         {{ specializationDescription }}
@@ -204,7 +205,7 @@
                         <br />
                         <strong> {{ inDepthSpecializationDescription }} </strong>
                     </div>
-                </div>
+
             </div>
             <div class="modal-footer">
                 <button type="button" (click)="selectSpecialization()">Select</button>

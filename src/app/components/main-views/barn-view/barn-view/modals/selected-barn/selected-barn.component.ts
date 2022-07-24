@@ -8,6 +8,7 @@ import { FacilitySizeEnum } from 'src/app/models/facility-size-enum.model';
 import { NavigationEnum } from 'src/app/models/navigation-enum.model';
 import { RaceCourseTypeEnum } from 'src/app/models/race-course-type-enum.model';
 import { ResourceValue } from 'src/app/models/resources/resource-value.model';
+import { TalentTreeTypeEnum } from 'src/app/models/talent-tree-type-enum.model';
 import { TrainingOptionsEnum } from 'src/app/models/training-options-enum.model';
 import { TrainingOption } from 'src/app/models/training/training-option.model';
 import { ComponentCommunicationService } from 'src/app/services/component-communication.service';
@@ -208,6 +209,33 @@ export class SelectedBarnComponent implements OnInit {
       modifiedOption.affectedStatRatios.focus *= this.barn.barnUpgrades.upgradedStatGain.focus;
       modifiedOption.affectedStatRatios.adaptability *= this.barn.barnUpgrades.upgradedStatGain.adaptability;
 
+      var topSpeedTalentModifier = 1;
+      var accelerationTalentModifier = 1;
+      var enduranceTalentModifier = 1;
+      var powerTalentModifier = 1;
+      var focusTalentModifier = 1;
+      var adaptabilityTalentModifier = 1;
+
+      if (associatedAnimal.talentTree.talentTreeType === TalentTreeTypeEnum.sprint)
+      {
+        adaptabilityTalentModifier = 1 + (associatedAnimal.talentTree.column1Row1Points / 100);
+        accelerationTalentModifier = 1 + (associatedAnimal.talentTree.column2Row1Points / 100);
+        powerTalentModifier = 1 + (associatedAnimal.talentTree.column3Row1Points / 100);
+      }
+      if (associatedAnimal.talentTree.talentTreeType === TalentTreeTypeEnum.longDistance)
+      {
+        focusTalentModifier = 1 + (associatedAnimal.talentTree.column1Row1Points / 100);
+        topSpeedTalentModifier = 1 + (associatedAnimal.talentTree.column2Row1Points / 100);
+        enduranceTalentModifier = 1 + (associatedAnimal.talentTree.column3Row1Points / 100);
+      }
+
+      modifiedOption.affectedStatRatios.topSpeed *= topSpeedTalentModifier;
+      modifiedOption.affectedStatRatios.acceleration *= accelerationTalentModifier;
+      modifiedOption.affectedStatRatios.endurance *= enduranceTalentModifier;
+      modifiedOption.affectedStatRatios.power *= powerTalentModifier;
+      modifiedOption.affectedStatRatios.focus *= focusTalentModifier;
+      modifiedOption.affectedStatRatios.adaptability *= adaptabilityTalentModifier;
+
       modifiedOption.affectedStatRatios.topSpeed = Math.round((modifiedOption.affectedStatRatios.topSpeed + Number.EPSILON) * 100) / 100;
       modifiedOption.affectedStatRatios.acceleration = Math.round((modifiedOption.affectedStatRatios.acceleration + Number.EPSILON) * 100) / 100;
       modifiedOption.affectedStatRatios.endurance = Math.round((modifiedOption.affectedStatRatios.endurance + Number.EPSILON) * 100) / 100;
@@ -397,7 +425,6 @@ export class SelectedBarnComponent implements OnInit {
       this.buildBiggerBarnPopover = this.getBuildLargerBarnPopover();
     }
   }
-
 
   upgradeBarn(): void {
     var requiredResources = this.lookupService.getResourcesForBarnUpgrade(this.barn.barnUpgrades.barnLevel);

@@ -84,6 +84,7 @@ export class Animal {
         copyAnimal.raceCourseType = originalAnimal.raceCourseType;
         copyAnimal.currentStats = originalAnimal.currentStats.makeCopy(originalAnimal.currentStats);
         copyAnimal.baseStats = originalAnimal.baseStats.makeCopy(originalAnimal.baseStats);
+        copyAnimal.talentTree = originalAnimal.talentTree.makeCopy(originalAnimal.talentTree);
         copyAnimal.isAvailable = originalAnimal.isAvailable;
         copyAnimal.ability = originalAnimal.ability;
         copyAnimal.raceVariables = new RaceVariables();

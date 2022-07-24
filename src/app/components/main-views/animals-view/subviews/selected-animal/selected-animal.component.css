@@ -154,11 +154,27 @@
   justify-content: space-evenly;
 }
 
+
+.abilityXp {
+  margin-left: 2.5rem;
+}
+
 .talentColumn {
-  width: 30%;
+  width: 31.75%;
 }
 
 .talentContent {
+  height: calc(100% - 5rem);
+  height: -moz-calc(100% - 5rem);
+  /* WebKit */
+  height: -webkit-calc(100% - 5rem);
+  /* Opera */
+  height: -o-calc(100% - 5rem);
+  border: 1px solid rgba(0, 0, 0, .1);
+}
+
+.lastTalentContent {
+  height: 100%;  
   border: 1px solid rgba(0, 0, 0, .1);
 }
 
@@ -166,34 +182,87 @@
   text-align: center;
 }
 
-.talentSpacer {
+/*.talentSpacer {
   width: 50%;
   height: 5rem;
+}*/
+
+.talentSpacer {  
+  display: grid;
+  grid-template: 1fr / 1fr;
+  place-items: center;
+}
+
+.defaultTalentSpacer {    
+  height: 5rem;
   border-right: solid thick rgba(0, 0, 0, .1);
+  grid-column: 1 / 1;
+  grid-row: 1 / 1;
+  z-index: 1;
 }
 
-.abilityXp {
-  margin-left: 2.5rem;
-}
-
-.completedFlatlandTalentSpacer {
-  border-right-color: var(--flatlandColor) !important;
+.completedFlatlandTalentSpacer {  
+  align-self: baseline;  
+  border-right: solid thick var(--flatlandColor); 
+  grid-column: 1 / 1;
+  grid-row: 1 / 1;
+  z-index: 2; 
 }
 
 .completedMountainTalentSpacer {
-  border-right-color: var(--mountainColor) !important;
+  align-self: baseline;  
+  border-right: solid thick var(--mountainColor);
+  grid-column: 1 / 1;
+  grid-row: 1 / 1;
+  z-index: 2; 
 }
 
 .completedOceanTalentSpacer {
-  border-right-color: var(--waterColor) !important;
+  align-self: baseline;  
+  border-right: solid thick var(--waterColor);
+  grid-column: 1 / 1;
+  grid-row: 1 / 1;
+  z-index: 2; 
 }
 
 .completedTundraTalentSpacer {
-  border-right-color: var(--tundraColor) !important;
+  align-self: baseline;  
+  border-right: solid thick var(--tundraColor);
+  grid-column: 1 / 1;
+  grid-row: 1 / 1;
+  z-index: 2; 
 }
 
 .completedVolcanicTalentSpacer {
-  border-right-color: var(--volcanicColor) !important;
+  align-self: baseline;  
+  border-right: solid thick var(--volcanicColor);
+  grid-column: 1 / 1;
+  grid-row: 1 / 1;
+  z-index: 2; 
+}
+
+.height0 {
+  height: 0;
+}
+
+.height1 {
+  height: 1rem;
+}
+
+.height2 {
+  height: 2rem;
+}
+
+.height3 {
+  height: 3rem;
+}
+
+.height4 {
+  height: 4rem;
+}
+
+.height5 {
+  height: 5rem;
 }
 
 table {
@@ -208,6 +277,26 @@ td {
   border: 1px solid rgba(0, 0, 0, .1)
     /*var(--foreground-default)*/
   ;
+}
+
+.activeSelectedItem {
+  font-weight: bold;
+  color: var(--foreground-secondary);  
+}
+
+.activeSelectedEquipment {
+  font-weight: bold;
+  color: var(--foreground-secondary);  
+}
+
+.activeSelectedOrb {
+  font-weight: bold;
+  color: var(--foreground-secondary);  
+}
+
+.selectableItem, .selectableOrb, .selectableEquipment {
+  margin-left: .25rem;
+  margin-right: .25rem;
 }
 
 /** This assumes 2 total columns on mobile and 4 total columns otherwise **/

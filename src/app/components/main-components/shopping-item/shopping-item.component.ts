@@ -1,8 +1,9 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 import { Animal } from 'src/app/models/animals/animal.model';
 import { ResourceValue } from 'src/app/models/resources/resource-value.model';
 import { ShopItemTypeEnum } from 'src/app/models/shop-item-type-enum.model';
 import { ShopItem } from 'src/app/models/shop/shop-item.model';
+import { GameLoopService } from 'src/app/services/game-loop/game-loop.service';
 import { GlobalService } from 'src/app/services/global-service.service';
 import { LookupService } from 'src/app/services/lookup.service';
 
@@ -21,10 +22,69 @@ export class ShoppingItemComponent implements OnInit {
   displayNumberPurchasing = false;
   displayName = "";
   colorConditional: any;
+  buyMultiplierAmount: number = 1;
+  shiftPressed: boolean;
+  altPressed: boolean;
+  ctrlPressed: boolean;
+  amountSubscription: any;
 
-  constructor(private globalService: GlobalService, private lookupService: LookupService) { }
+  @HostListener('window:keydown', ['$event'])
+  keyEventDown(event: KeyboardEvent) {
+    if (this.selectedItem.type === ShopItemTypeEnum.Consumable || this.selectedItem.type === ShopItemTypeEnum.Food ||
+      this.selectedItem.type === ShopItemTypeEnum.Equipment || this.selectedItem.type === ShopItemTypeEnum.Resources) {
+      event.preventDefault();
+      if (event.key === "Shift") { //multiply by 25
+        if (!this.shiftPressed) {
+          this.buyMultiplierAmount *= 25;
+          this.shiftPressed = true;
+        }
+      }
+      if (event.key === "Control") { //multiply by 10
+        if (!this.ctrlPressed) {
+          this.buyMultiplierAmount *= 10;
+          this.ctrlPressed = true;
+        }
+      }
+      if (event.key === "Alt") { //multiply by 100
+        if (!this.altPressed) {
+          this.buyMultiplierAmount *= 100;
+          this.altPressed = true;
+        }
+      }
+    }
+  }
+
+  @HostListener('window:keyup', ['$event'])
+  keyEventUp(event: KeyboardEvent) {
+    event.preventDefault();
+    if (this.selectedItem.type === ShopItemTypeEnum.Consumable || this.selectedItem.type === ShopItemTypeEnum.Food ||
+      this.selectedItem.type === ShopItemTypeEnum.Equipment || this.selectedItem.type === ShopItemTypeEnum.Resources) {
+      if (event.key === "Shift") { //divide by 25
+        if (this.shiftPressed) {
+          this.buyMultiplierAmount /= 25;
+          this.shiftPressed = false;
+        }
+      }
+      if (event.key === "Control") { //divide by 10
+        if (this.ctrlPressed) {
+          this.buyMultiplierAmount /= 10;
+          this.ctrlPressed = false;
+        }
+      }
+      if (event.key === "Alt") { //divide by 100
+        if (this.altPressed) {
+          this.buyMultiplierAmount /= 100;
+          this.altPressed = false;
+        }
+      }
+    }
+  }
+
+  constructor(private globalService: GlobalService, private lookupService: LookupService, private gameLoopService: GameLoopService) { }
 
   ngOnInit(): void {
+    this.buyMultiplierAmount = 1;
+
     if (this.selectedItem.type === ShopItemTypeEnum.Ability) {
       this.shortDescription = this.lookupService.getAnimalAbilityDescription(true, this.selectedItem.additionalIdentifier);
       this.longDescription = this.lookupService.getAnimalAbilityDescription(false, this.selectedItem.additionalIdentifier);
@@ -94,26 +154,31 @@ export class ShoppingItemComponent implements OnInit {
       this.displayNumberPurchasing = true;
     }
 
-    this.selectedItem.purchasePrice.forEach(resource => {
-      var displayName = resource.name;
+    this.amountSubscription = this.gameLoopService.gameUpdateEvent.subscribe(async () => {
+      this.selectedItem.purchasePrice.forEach(resource => {
+        var displayName = resource.name;
 
-      if (resource.amount === 1) {
-        if (displayName === "Tokens")
-          displayName = "Token";
-        if (displayName === "Medals")
-          displayName = "Medal";
+        if (resource.amount === 1) {
+          if (displayName === "Tokens")
+            displayName = "Token";
+          if (displayName === "Medals")
+            displayName = "Medal";
+        }
+
+        this.purchaseResourcesRequired = resource.amount.toLocaleString() + " " + displayName + ", ";
+
+        var currentAmount = this.lookupService.getResourceByName(resource.name);
+        if (currentAmount < resource.amount * this.buyMultiplierAmount)
+          this.canAffordItem = false;
+        else
+          this.canAffordItem = true;
+      });
+
+
+      if (this.purchaseResourcesRequired.length > 0) {
+        this.purchaseResourcesRequired = this.purchaseResourcesRequired.substring(0, this.purchaseResourcesRequired.length - 2);
       }
-
-      this.purchaseResourcesRequired = resource.amount.toLocaleString() + " " + displayName + ", ";
-
-      var currentAmount = this.lookupService.getResourceByName(resource.name);
-      if (currentAmount < resource.amount)
-        this.canAffordItem = false;
     });
-
-    if (this.purchaseResourcesRequired.length > 0) {
-      this.purchaseResourcesRequired = this.purchaseResourcesRequired.substring(0, this.purchaseResourcesRequired.length - 2);
-    }
   }
 
   BuyItem(): void {
@@ -153,7 +218,7 @@ export class ShoppingItemComponent implements OnInit {
     var canBuy = true;
     this.selectedItem.purchasePrice.forEach(resource => {
       var userResourceAmount = this.lookupService.getResourceByName(resource.name);
-      if (userResourceAmount < resource.amount)
+      if (userResourceAmount < resource.amount * this.buyMultiplierAmount)
         canBuy = false;
     });
 
@@ -162,7 +227,7 @@ export class ShoppingItemComponent implements OnInit {
 
   spendResourcesOnItem() {
     this.selectedItem.purchasePrice.forEach(resource => {
-      this.lookupService.spendResourceByName(resource.name, resource.amount);
+      this.lookupService.spendResourceByName(resource.name, resource.amount * this.buyMultiplierAmount);
     });
   }
 
@@ -208,15 +273,17 @@ export class ShoppingItemComponent implements OnInit {
     if (this.selectedItem.numberPurchasing === undefined || this.selectedItem.numberPurchasing === null)
       this.selectedItem.numberPurchasing = 1;
 
+    var modifiedAmountPurchasing = this.selectedItem.numberPurchasing * this.buyMultiplierAmount;
+
     if (this.globalService.globalVar.resources !== undefined && this.globalService.globalVar.resources !== null) {
       if (this.globalService.globalVar.resources.some(x => x.name === this.selectedItem.name)) {
         var globalResource = this.globalService.globalVar.resources.find(x => x.name === this.selectedItem.name);
         if (globalResource !== null && globalResource !== undefined) {
-          globalResource.amount += this.selectedItem.numberPurchasing;
+          globalResource.amount += modifiedAmountPurchasing;
         }
       }
       else
-        this.globalService.globalVar.resources.push(new ResourceValue(this.selectedItem.name, this.selectedItem.numberPurchasing, ShopItemTypeEnum.Food));
+        this.globalService.globalVar.resources.push(new ResourceValue(this.selectedItem.name, modifiedAmountPurchasing, ShopItemTypeEnum.Food));
     }
   }
 
@@ -330,17 +397,19 @@ export class ShoppingItemComponent implements OnInit {
     if (this.selectedItem.numberPurchasing === undefined || this.selectedItem.numberPurchasing === null)
       this.selectedItem.numberPurchasing = 1;
 
-    this.selectedItem.amountPurchased += 1;
+      var modifiedAmountPurchasing = this.selectedItem.numberPurchasing * this.buyMultiplierAmount;
+
+    this.selectedItem.amountPurchased += modifiedAmountPurchasing;
 
     if (this.globalService.globalVar.resources !== undefined && this.globalService.globalVar.resources !== null) {
       if (this.globalService.globalVar.resources.some(x => x.name === this.selectedItem.name)) {
         var globalResource = this.globalService.globalVar.resources.find(x => x.name === this.selectedItem.name);
         if (globalResource !== null && globalResource !== undefined) {
-          globalResource.amount += 1;
+          globalResource.amount += modifiedAmountPurchasing;
         }
       }
       else
-        this.globalService.globalVar.resources.push(new ResourceValue(this.selectedItem.name, 1, ShopItemTypeEnum.Equipment));
+        this.globalService.globalVar.resources.push(new ResourceValue(this.selectedItem.name, modifiedAmountPurchasing, ShopItemTypeEnum.Equipment));
     }
   }
 
@@ -348,15 +417,17 @@ export class ShoppingItemComponent implements OnInit {
     if (this.selectedItem.numberPurchasing === undefined || this.selectedItem.numberPurchasing === null)
       this.selectedItem.numberPurchasing = 1;
 
+      var modifiedAmountPurchasing = this.selectedItem.numberPurchasing * this.buyMultiplierAmount;
+
     if (this.globalService.globalVar.resources !== undefined && this.globalService.globalVar.resources !== null) {
       if (this.globalService.globalVar.resources.some(x => x.name === this.selectedItem.name)) {
         var globalResource = this.globalService.globalVar.resources.find(x => x.name === this.selectedItem.name);
         if (globalResource !== null && globalResource !== undefined) {
-          globalResource.amount += this.selectedItem.numberPurchasing;
+          globalResource.amount += modifiedAmountPurchasing;
         }
       }
       else
-        this.globalService.globalVar.resources.push(new ResourceValue(this.selectedItem.name, this.selectedItem.numberPurchasing, ShopItemTypeEnum.Consumable));
+        this.globalService.globalVar.resources.push(new ResourceValue(this.selectedItem.name, modifiedAmountPurchasing, ShopItemTypeEnum.Consumable));
     }
   }
 
@@ -364,15 +435,22 @@ export class ShoppingItemComponent implements OnInit {
     if (this.selectedItem.numberPurchasing === undefined || this.selectedItem.numberPurchasing === null)
       this.selectedItem.numberPurchasing = 1;
 
+      var modifiedAmountPurchasing = this.selectedItem.numberPurchasing * this.buyMultiplierAmount;
+
     if (this.globalService.globalVar.resources !== undefined && this.globalService.globalVar.resources !== null) {
       if (this.globalService.globalVar.resources.some(x => x.name === this.selectedItem.name)) {
         var globalResource = this.globalService.globalVar.resources.find(x => x.name === this.selectedItem.name);
         if (globalResource !== null && globalResource !== undefined) {
-          globalResource.amount += this.selectedItem.numberPurchasing;
+          globalResource.amount += modifiedAmountPurchasing;
         }
       }
       else
-        this.globalService.globalVar.resources.push(new ResourceValue(this.selectedItem.name, this.selectedItem.numberPurchasing, ShopItemTypeEnum.Resources));
+        this.globalService.globalVar.resources.push(new ResourceValue(this.selectedItem.name, modifiedAmountPurchasing, ShopItemTypeEnum.Resources));
     }
+  }
+
+  ngOnDestroy() {
+    if (this.amountSubscription !== undefined && this.amountSubscription !== null)
+      this.amountSubscription.unsubscribe();
   }
 }

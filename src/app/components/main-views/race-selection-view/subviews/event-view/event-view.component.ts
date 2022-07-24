@@ -108,7 +108,8 @@ export class EventViewComponent implements OnInit {
       //should be basically the same time constraints as auto run but it's 1 every 3 min instead of 1-20 every 5 min       
     }
 
-    this.raceSelected.emit(this.globalService.globalVar.eventRaceData.currentRaceSegment);
+    if (!this.globalService.globalVar.eventRaceData.isGrandPrixCompleted)
+      this.raceSelected.emit(this.globalService.globalVar.eventRaceData.currentRaceSegment);
     //view race
   }
 

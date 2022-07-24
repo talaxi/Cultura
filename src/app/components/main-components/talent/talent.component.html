@@ -1,18 +1,42 @@
 <div class="talent">
     <div class="header keyword">
-        <span>Sprint Column {{column}} Row {{row}}</span>
+        <span>Sprint Column {{(column + 1)}} Row {{(row + 1)}}</span>
     </div>
 
     <div class="content">
-        <div *ngIf="pointsNeededInColumn > 0"><em>{{pointsNeededInColumn}} points needed in this column to
-                unlock</em></div>
-        <br />
-        <div class="description" [innerHTML]="talentDescription">
+        <div *ngIf="pointsNeededInColumn > 0" class="centeredText"><em>{{pointsNeededInColumn}} points needed in this
+                column to
+                unlock</em>
+            <br />
+            <br />
+        </div>
+        <div *ngIf="pointsNeededInColumn <= 0 && pointsInTalent === 0" class="centeredText">
+            <em>
+                Click Upgrade to unlock this talent.
+                <br />
+                <br />
+            </em>
+        </div>
+        <div *ngIf="pointsInTalent === totalPossiblePoints">
+            <br />
+            <br />
+        </div>
+        <div class="description"
+            [ngClass]="{'talentInactive': pointsInTalent === 0}"
+            [innerHTML]="talentDescription">
+        </div>
+
+        <div *ngIf="pointsInTalent > 0 && pointsInTalent < totalPossiblePoints">
+            <br />
+
+            <em><div class='centeredText'>Next Upgrade: </div></em>
+            <div class="talentInactive" [innerHTML]="upgradedTalentDescription"></div>
+       
         </div>
         <br />
         <div class="footer">
-            {{pointsInTalent}} / {{totalPossiblePoints}} <button (click)="spendTalentPoint()"
-                [disabled]="!hasTalentPoint || !hasEnoughPointsInColumn">Upgrade</button>
+            {{pointsInTalent}} / {{totalPossiblePoints}} Points <button (click)="spendTalentPoint()"
+                [disabled]="!hasTalentPoint || !hasEnoughPointsInColumn || isTalentMaxed()">Upgrade</button>
         </div>
     </div>
 </div>

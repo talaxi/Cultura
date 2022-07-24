@@ -10,6 +10,7 @@ import { TalentTreeTypeEnum } from 'src/app/models/talent-tree-type-enum.model';
 import { ComponentCommunicationService } from 'src/app/services/component-communication.service';
 import { GlobalService } from 'src/app/services/global-service.service';
 import { LookupService } from 'src/app/services/lookup.service';
+import { UtilityService } from 'src/app/services/utility/utility.service';
 
 @Component({
   selector: 'app-selected-animal',
@@ -31,6 +32,7 @@ export class SelectedAnimalComponent implements OnInit {
   breedDescriptionPopover: string;
   colorConditional: any;
   borderColorConditional: any;
+  borderHeightConditional: any;
   editingName: boolean;
   newName: string;
   selectedAbility: Ability;
@@ -51,20 +53,20 @@ export class SelectedAnimalComponent implements OnInit {
   usableItemsList: ResourceValue[];
   itemsRows: ResourceValue[][]; //for display purposes
   itemsCells: ResourceValue[]; //for display purposes
-  selectedItem: ResourceValue;
+  selectedItem: ResourceValue | undefined;
   selectedItemQuantity: number;
 
   equipmentList: ResourceValue[];
   equipmentRows: ResourceValue[][]; //for display purposes
   equipmentCells: ResourceValue[]; //for display purposes
-  selectedEquipment: ResourceValue;
+  selectedEquipment: ResourceValue | undefined;
 
   orbList: ResourceValue[];
   orbRows: ResourceValue[][]; //for display purposes
   orbCells: ResourceValue[]; //for display purposes
-  selectedOrb: ResourceValue;
+  selectedOrb: ResourceValue | undefined;
 
-  talentsReleased = false;
+  talentsReleased = true;
   talentTreeOptions: string[];
   selectedTalentTree: string;
   talentTreeDescription: string;
@@ -100,7 +102,7 @@ export class SelectedAnimalComponent implements OnInit {
   }
 
   constructor(private lookupService: LookupService, private modalService: NgbModal, private globalService: GlobalService,
-    private componentCommunicationService: ComponentCommunicationService) { }
+    private componentCommunicationService: ComponentCommunicationService, private utilityService: UtilityService) { }
 
   ngOnInit(): void {
     this.handleIntroTutorial();
@@ -180,6 +182,20 @@ export class SelectedAnimalComponent implements OnInit {
       });
 
     this.setupDisplayEquipment();
+
+    //remove any equipment already in use
+    this.globalService.globalVar.animals.filter(item => item.equippedItem !== null && item.equippedItem !== undefined).forEach(animal => {
+      var listItem = this.equipmentList.find(item => item.name === animal.equippedItem?.name);
+      if (listItem !== null && listItem !== undefined) {
+        if (listItem.amount > 0) {
+          listItem.amount -= 1;
+        }
+
+        if (listItem.amount <= 0) {
+          this.equipmentList = this.equipmentList.filter(item => item.name !== listItem?.name);
+        }
+      }
+    });
   }
 
   updateOrbList() {
@@ -257,23 +273,64 @@ export class SelectedAnimalComponent implements OnInit {
 
   openItemModal(content: any) {
     this.setupDisplayItems();
-    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
+    var modalRef = this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
+
+    modalRef.result.then((data) => {
+      this.selectedItem = undefined;
+      this.selectedItemQuantity = 0;
+      this.clearSelectedItems();
+      this.updateItemsList();
+    }, (reason) => {
+      this.selectedItem = undefined;
+      this.selectedItemQuantity = 0;
+      this.clearSelectedItems();
+      this.updateItemsList();
+    });
   }
 
   openEquipmentModal(content: any) {
     this.setupDisplayEquipment();
-    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
+    var modalRef = this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
+
+    modalRef.result.then((data) => {
+      this.selectedEquipment = undefined;
+      this.clearSelectedEquipment();
+      this.updateEquipmentList();
+    }, (reason) => {
+      this.selectedEquipment = undefined;
+      this.clearSelectedEquipment();
+      this.updateEquipmentList();
+    });
   }
 
   openOrbModal(content: any) {
     this.setupDisplayOrbs();
-    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
+    var modalRef = this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
+
+    modalRef.result.then((data) => {
+      this.selectedOrb = undefined;
+      this.clearSelectedOrb();
+      this.updateOrbList();
+    }, (reason) => {
+      this.selectedOrb = undefined;
+      this.clearSelectedOrb();
+      this.updateOrbList();
+    });
   }
 
   useItem() {
-    var globalResource = this.globalService.globalVar.resources.find(item => item.name === this.selectedItem.name && item.itemType === this.selectedItem.itemType);
+    if (this.selectedItem === undefined)
+      return;
+
+    var globalResource = this.globalService.globalVar.resources.find(item => item.name === this.selectedItem!.name && item.itemType === this.selectedItem!.itemType);
     if (globalResource === undefined) {
       alert("You've run into an error! Please try again. If you have the time, please export your data under the Settings tab and send me the data and any relevant info at CulturaIdle@gmail.com. Thank you!");
+      return;
+    }
+
+    if (this.selectedItemQuantity === undefined || this.selectedItemQuantity === null || isNaN(Number(this.selectedItemQuantity)))
+    {
+      alert("You must enter a numerical amount to use.");
       return;
     }
 
@@ -316,13 +373,15 @@ export class SelectedAnimalComponent implements OnInit {
       }
     }
     else if (this.selectedItem.itemType === ShopItemTypeEnum.Consumable) {
+      this.selectedItemQuantity = +this.selectedItemQuantity;
+
       if (this.selectedItem.name === "Free Race Breed XP Gain Certificate") {
         this.selectedAnimal.miscStats.bonusBreedXpGainFromLocalRaces += +this.selectedItemQuantity;
         this.selectedAnimal.miscStats.bonusLocalBreedXpCertificateCount += +this.selectedItemQuantity;
       }
       if (this.selectedItem.name === "Circuit Race Breed XP Gain Certificate") {
         this.selectedAnimal.miscStats.bonusBreedXpGainFromCircuitRaces += +(this.selectedItemQuantity * 2);
-        this.selectedAnimal.miscStats.bonusCircuitBreedXpCertificateCount += +(this.selectedItemQuantity * 2);
+        this.selectedAnimal.miscStats.bonusCircuitBreedXpCertificateCount += +this.selectedItemQuantity;
       }
       if (this.selectedItem.name === "Training Breed XP Gain Certificate") {
         this.selectedAnimal.miscStats.bonusBreedXpGainFromTraining += +this.selectedItemQuantity;
@@ -335,40 +394,93 @@ export class SelectedAnimalComponent implements OnInit {
       }
     }
 
+    this.selectedItem = undefined;
+    this.selectedItemQuantity = 0;
+    this.clearSelectedItems();
     this.updateItemsList();
   }
 
   selectItem(item: ResourceValue) {
     this.selectedItem = item;
+
+    this.usableItemsList.forEach(item => {
+      item.isSelected = false;
+    });
+
+    item.isSelected = true;
+  }
+
+  clearSelectedItems() {
+    this.usableItemsList.forEach(item => {
+      item.isSelected = false;
+    });
+  }
+
+  clearSelectedEquipment() {
+    this.equipmentList.forEach(item => {
+      item.isSelected = false;
+    });
+  }
+
+  clearSelectedOrb() {
+    this.orbList.forEach(item => {
+      item.isSelected = false;
+    });
   }
 
   equipItem() {
+    if (this.selectedEquipment === undefined)
+      return;
+
     this.selectedAnimal.equippedItem = this.selectedEquipment;
     this.updateEquipmentList();
+    this.clearSelectedEquipment();
     this.modalService.dismissAll();
+    this.selectedEquipment = undefined;
   }
 
   selectEquipment(item: ResourceValue) {
     this.selectedEquipment = item;
+
+    this.equipmentList.forEach(item => {
+      item.isSelected = false;
+    });
+
+    item.isSelected = true;
   }
 
   unequipItem() {
     this.selectedAnimal.equippedItem = null;
+    this.clearSelectedEquipment();
+    this.updateEquipmentList();
   }
 
   equipOrb() {
+    if (this.selectedOrb === undefined)
+      return;
+
     this.selectedAnimal.equippedOrb = this.selectedOrb;
     this.updateOrbList();
+    this.clearSelectedOrb();
     this.globalService.calculateAnimalRacingStats(this.selectedAnimal);
     this.modalService.dismissAll();
+    this.selectedOrb = undefined;
   }
 
   selectOrb(item: ResourceValue) {
     this.selectedOrb = item;
+
+    this.orbList.forEach(item => {
+      item.isSelected = false;
+    });
+
+    item.isSelected = true;
   }
 
   unequipOrb() {
     this.selectedAnimal.equippedOrb = null;
+    this.clearSelectedOrb();
+    this.updateOrbList();
     this.globalService.calculateAnimalRacingStats(this.selectedAnimal);
   }
 
@@ -405,6 +517,30 @@ export class SelectedAnimalComponent implements OnInit {
     return this.lookupService.abilityLevelPopover(this.selectedAnimal);
   }
 
+  getBonusFreeRaceXpPopover() {
+    return this.lookupService.bonusFreeRaceXpPopover(this.selectedAnimal);
+  }
+
+  getBonusCircuitRaceXpPopover() {
+    return this.lookupService.bonusCircuitRaceXpPopover(this.selectedAnimal);
+  }
+
+  getBonusTrainingXpPopover() {
+    return this.lookupService.bonusTrainingXpPopover(this.selectedAnimal);
+  }
+
+  getBonusDiminishingReturnsPerFacilityLevelPopover() {
+    return this.lookupService.bonusDiminishingReturnsPerFacilityLevelPopover(this.selectedAnimal);
+  }
+
+  getBonusTrainingTimeReductionPopover() {
+    return this.lookupService.bonusTrainingTimeReductionPopover(this.selectedAnimal);
+  }
+
+  getBonusTalentsPopover() {
+    return this.lookupService.bonusTalentsPopover(this.selectedAnimal);
+  }
+
   getAbilityPopover() {
     return this.lookupService.abilityPopover();
   }
@@ -427,6 +563,35 @@ export class SelectedAnimalComponent implements OnInit {
     description = this.globalService.getItemDescription(name);
 
     return description;
+  }
+
+  itemHasAdditionalText(item: ResourceValue) {
+    if (item.itemType === ShopItemTypeEnum.Consumable && item.name.includes("Certificate")) {
+      return true;
+    }
+
+    return false;
+  }
+
+  getItemAdditionalText(item: ResourceValue) {
+    var additionalText = "";
+
+    if (item.itemType === ShopItemTypeEnum.Consumable && item.name.includes("Certificate")) {
+      if (item.name === "Free Race Breed XP Gain Certificate") {
+        additionalText = "<em>" + this.selectedAnimal.miscStats.bonusLocalBreedXpCertificateCount + " out of " + this.selectedAnimal.miscStats.certificateUseCap + " used</em>";
+      }
+      if (item.name === "Circuit Race Breed XP Gain Certificate") {
+        additionalText = "<em>" + this.selectedAnimal.miscStats.bonusCircuitBreedXpCertificateCount + " out of " + this.selectedAnimal.miscStats.certificateUseCap + " used</em>";
+      }
+      if (item.name === "Training Breed XP Gain Certificate") {
+        additionalText = "<em>" + this.selectedAnimal.miscStats.bonusTrainingBreedXpCertificateCount + " out of " + this.selectedAnimal.miscStats.certificateUseCap + " used</em>";
+      }
+      if (item.name === "Diminishing Returns Increase Certificate") {
+        additionalText = "<em>" + this.selectedAnimal.miscStats.bonusDiminishingReturnsCertificateCount + " out of " + this.selectedAnimal.miscStats.certificateUseCap + " used</em>";
+      }
+    }
+
+    return this.utilityService.getSanitizedHtml(additionalText);
   }
 
   handleIntroTutorial() {
@@ -456,7 +621,7 @@ export class SelectedAnimalComponent implements OnInit {
       return;
     }
 
-    this.selectedAnimal.talentTree.talentTreeType = this.lookupService.convertTalentTreeNameToEnum(this.selectedTalentTree);
+    this.selectedAnimal.talentTree.talentTreeType = this.lookupService.convertTalentTreeNameToEnum(this.selectedTalentTree);    
   }
 
   resetSelectedAnimalInfo(newAnimal: Animal) {
@@ -502,30 +667,11 @@ export class SelectedAnimalComponent implements OnInit {
       'volcanicColor': this.selectedAnimal.getRaceCourseType() === 'Volcanic'
     };
 
-    this.borderColorConditional = {
-      'completedFlatlandTalentSpacer': this.selectedAnimal.getRaceCourseType() === 'Flatland',
-      'completedMountainTalentSpacer': this.selectedAnimal.getRaceCourseType() === 'Mountain',
-      'completedOceanTalentSpacer': this.selectedAnimal.getRaceCourseType() === 'Ocean',
-      'completedTundraTalentSpacer': this.selectedAnimal.getRaceCourseType() === 'Tundra',
-      'completedVolcanicTalentSpacer': this.selectedAnimal.getRaceCourseType() === 'Volcanic'
-    };
-
     this.updateItemsList();
     this.updateEquipmentList();
-
-    //remove any equipment already in use
-    this.globalService.globalVar.animals.filter(item => item.equippedItem !== null && item.equippedItem !== undefined).forEach(animal => {
-      var listItem = this.equipmentList.find(item => item.name === animal.equippedItem?.name);
-      if (listItem !== null && listItem !== undefined) {
-        if (listItem.amount > 0) {
-          listItem.amount -= 1;
-        }
-
-        if (listItem.amount <= 0) {
-          this.equipmentList = this.equipmentList.filter(item => item.name !== listItem?.name);
-        }
-      }
-    });
+    this.updateOrbList();
+    this.selectedTalentTree = "";
+    this.inDepthTalentTreeDescription = "";
 
     this.componentCommunicationService.setAnimalView(NavigationEnum.animals, new Animal());
 
@@ -539,6 +685,113 @@ export class SelectedAnimalComponent implements OnInit {
       this.talentTreeOptions = this.lookupService.getTalentTreeNames();
       this.availableTalentPoints = this.lookupService.getTalentPointsAvailableToAnimal(this.selectedAnimal);
     }
+  }
+
+  getTalentTreeName() {
+    
+  }
+
+  getBorderConditional(row: number, column: number) {
+    var conditional: any;
+    var connectionRow = row + 1;
+
+    var pointsNeededInColumn = 0;
+    if (connectionRow === 1)
+      pointsNeededInColumn = this.selectedAnimal.talentTree.row2RequiredPoints;
+    if (connectionRow === 2)
+      pointsNeededInColumn = this.selectedAnimal.talentTree.row3RequiredPoints;
+    if (connectionRow === 3)
+      pointsNeededInColumn = this.selectedAnimal.talentTree.row4RequiredPoints;
+
+    var remainingPointsNeededInColumn = pointsNeededInColumn - this.selectedAnimal.talentTree.getTalentPointsByColumn(column);
+
+    if (this.selectedAnimal.getRaceCourseType() === 'Flatland') {
+      if (remainingPointsNeededInColumn >= 5)
+        conditional = { 'completedFlatlandTalentSpacer height0': true };
+      else if (remainingPointsNeededInColumn === 4)
+        conditional = { 'completedFlatlandTalentSpacer height1': true };
+      else if (remainingPointsNeededInColumn === 3)
+        conditional = { 'completedFlatlandTalentSpacer height2': true };
+      else if (remainingPointsNeededInColumn === 2)
+        conditional = { 'completedFlatlandTalentSpacer height3': true };
+      else if (remainingPointsNeededInColumn === 1)
+        conditional = { 'completedFlatlandTalentSpacer height4': true };
+      else if (remainingPointsNeededInColumn <= 0)
+        conditional = { 'completedFlatlandTalentSpacer height5': true };
+    }
+    if (this.selectedAnimal.getRaceCourseType() === 'Mountain') {
+      if (remainingPointsNeededInColumn >= 5)
+        conditional = { 'completedMountainTalentSpacer height0': true };
+      else if (remainingPointsNeededInColumn === 4)
+        conditional = { 'completedMountainTalentSpacer height1': true };
+      else if (remainingPointsNeededInColumn === 3)
+        conditional = { 'completedMountainTalentSpacer height2': true };
+      else if (remainingPointsNeededInColumn === 2)
+        conditional = { 'completedMountainTalentSpacer height3': true };
+      else if (remainingPointsNeededInColumn === 1)
+        conditional = { 'completedMountainTalentSpacer height4': true };
+      else if (remainingPointsNeededInColumn <= 0)
+        conditional = { 'completedMountainTalentSpacer height5': true };
+    }
+    if (this.selectedAnimal.getRaceCourseType() === 'Ocean') {      
+      if (remainingPointsNeededInColumn >= 5)
+      {
+        conditional = { 'completedOceanTalentSpacer height0': true };        
+      }
+      else if (remainingPointsNeededInColumn === 4)
+      {
+        conditional = { 'completedOceanTalentSpacer height1': true };        
+      }
+      else if (remainingPointsNeededInColumn === 3)
+      {
+        conditional = { 'completedOceanTalentSpacer height2': true };        
+      }
+      else if (remainingPointsNeededInColumn === 2)
+      {
+        conditional = { 'completedOceanTalentSpacer height3': true };        
+      }
+      else if (remainingPointsNeededInColumn === 1)
+      {
+        conditional = { 'completedOceanTalentSpacer height4': true };        
+      }
+      else if (remainingPointsNeededInColumn <= 0)
+      {
+        conditional = { 'completedOceanTalentSpacer height5': true };        
+      }
+    }
+    if (this.selectedAnimal.getRaceCourseType() === 'Tundra') {
+      if (remainingPointsNeededInColumn >= 5)
+        conditional = { 'completedTundraTalentSpacer height0': true };
+      else if (remainingPointsNeededInColumn === 4)
+        conditional = { 'completedTundraTalentSpacer height1': true };
+      else if (remainingPointsNeededInColumn === 3)
+        conditional = { 'completedTundraTalentSpacer height2': true };
+      else if (remainingPointsNeededInColumn === 2)
+        conditional = { 'completedTundraTalentSpacer height3': true };
+      else if (remainingPointsNeededInColumn === 1)
+        conditional = { 'completedTundraTalentSpacer height4': true };
+      else if (remainingPointsNeededInColumn <= 0)
+        conditional = { 'completedTundraTalentSpacer height5': true };
+    }
+    if (this.selectedAnimal.getRaceCourseType() === 'Volcanic') {
+      if (remainingPointsNeededInColumn >= 5)
+        conditional = { 'completedVolcanicTalentSpacer height0': true };
+      else if (remainingPointsNeededInColumn === 4)
+        conditional = { 'completedVolcanicTalentSpacer height1': true };
+      else if (remainingPointsNeededInColumn === 3)
+        conditional = { 'completedVolcanicTalentSpacer height2': true };
+      else if (remainingPointsNeededInColumn === 2)
+        conditional = { 'completedVolcanicTalentSpacer height3': true };
+      else if (remainingPointsNeededInColumn === 1)
+        conditional = { 'completedVolcanicTalentSpacer height4': true };
+      else if (remainingPointsNeededInColumn <= 0)
+        conditional = { 'completedVolcanicTalentSpacer height5': true };
+    }
+
+    if (conditional === undefined)
+      console.log("UNDEFINED: " + row + " " + column);
+
+    return conditional;
   }
 
   spentTalent(spent: boolean) {

@@ -4,6 +4,7 @@ export class ResourceValue {
     name: string;
     amount: number;
     itemType: ShopItemTypeEnum;
+    isSelected: boolean; //purely for UI purposes
 
     constructor(name: string, amount: number, type?: ShopItemTypeEnum) {
         this.name = name;

@@ -58,7 +58,7 @@ export class AppComponent {
 
     if (devMode) {
       this.globalService.globalVar.tutorials.tutorialCompleted = true;
-      this.globalService.devModeInitialize(55);
+      this.globalService.devModeInitialize(70);
     }
 
     this.versionControlService.updatePlayerVersion();
@@ -202,19 +202,28 @@ export class AppComponent {
 
       //console.log(this.globalService.globalVar.eventRaceData.segmentTimeCounter);
       if (this.globalService.globalVar.eventRaceData.segmentTimeCounter >= timeToComplete) {
-        this.globalService.globalVar.eventRaceData.previousRaceSegment = this.globalService.globalVar.eventRaceData.currentRaceSegment.makeCopy(this.globalService.globalVar.eventRaceData.currentRaceSegment);
-        this.globalService.globalVar.eventRaceData.previousRaceSegment.reduceExportSize();
-
-        this.checkForEventRelayAnimal();
-        var racingAnimal = this.globalService.getGrandPrixRacingAnimal();
-        this.globalService.globalVar.eventRaceData.currentRaceSegment = this.globalService.globalVar.eventRaceData.nextRaceSegment.makeCopy(this.globalService.globalVar.eventRaceData.nextRaceSegment);
-        this.globalService.globalVar.eventRaceData.currentRaceSegmentResult = this.raceLogicService.runRace(this.globalService.globalVar.eventRaceData.currentRaceSegment);
         this.globalService.globalVar.eventRaceData.currentRaceSegmentCount += 1;
         this.globalService.globalVar.eventRaceData.segmentTimeCounter -= timeToComplete;
         this.globalService.globalVar.eventRaceData.distanceCovered += this.globalService.globalVar.eventRaceData.currentRaceSegmentResult.distanceCovered;
 
+        this.globalService.globalVar.eventRaceData.previousRaceSegment = this.globalService.globalVar.eventRaceData.currentRaceSegment.makeCopy(this.globalService.globalVar.eventRaceData.currentRaceSegment);
+        this.globalService.globalVar.eventRaceData.previousRaceSegment.reduceExportSize();
 
-        this.globalService.globalVar.eventRaceData.nextRaceSegment = this.globalService.generateGrandPrixSegment(racingAnimal);
+        if (this.globalService.globalVar.eventRaceData.distanceCovered >= this.globalService.globalVar.eventRaceData.totalDistance) {
+          this.globalService.globalVar.eventRaceData.distanceCovered = this.globalService.globalVar.eventRaceData.totalDistance;
+          this.grandPrixRaceCompleted();
+        }
+        else {
+          this.checkForEventRelayAnimal();
+          var racingAnimal = this.globalService.getGrandPrixRacingAnimal();
+
+          if (racingAnimal.type !== undefined && racingAnimal.name !== undefined) {
+            this.globalService.globalVar.eventRaceData.currentRaceSegment = this.globalService.globalVar.eventRaceData.nextRaceSegment.makeCopy(this.globalService.globalVar.eventRaceData.nextRaceSegment);
+            this.globalService.globalVar.eventRaceData.currentRaceSegmentResult = this.raceLogicService.runRace(this.globalService.globalVar.eventRaceData.currentRaceSegment);
+
+            this.globalService.globalVar.eventRaceData.nextRaceSegment = this.globalService.generateGrandPrixSegment(racingAnimal);
+          }
+        }
       }
 
       this.checkForGrandPrixRewards();
@@ -222,6 +231,11 @@ export class AppComponent {
 
     this.updateExhaustionAndMorale(deltaTime);
     this.updateWeatherCluster(deltaTime);
+  }
+
+  grandPrixRaceCompleted() {
+    this.globalService.globalVar.eventRaceData.isGrandPrixCompleted = true;
+    this.globalService.stopGrandPrixRace();
   }
 
   updateExhaustionAndMorale(deltaTime: number) {
@@ -291,7 +305,7 @@ export class AppComponent {
           var animalsCapableOfRacing = eventDeck?.selectedAnimals.filter(item => item.breedLevel >= requiredBreedLevel);
           animalsCapableOfRacing = animalsCapableOfRacing.filter(item => {
             var associatedData = this.globalService.globalVar.eventRaceData.animalData.find(data => data.associatedAnimalType === item.type);
-            
+
             if (associatedData !== undefined && associatedData !== null) {
               return associatedData.exhaustionStatReduction >= .5 || associatedData.associatedAnimalType === racingAnimal.type;
             }
@@ -346,9 +360,9 @@ export class AppComponent {
 
             this.globalService.globalVar.eventRaceData.animalAlreadyPrepped = false;
           }
-          else {            
+          else {
             //no capable racers in event deck
-            this.globalService.globalVar.eventRaceData.animalData.forEach(item => {              
+            this.globalService.globalVar.eventRaceData.animalData.forEach(item => {
               item.isCurrentlyRacing = false;
             });
 

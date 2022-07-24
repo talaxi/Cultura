@@ -65,6 +65,117 @@ export class AllTrainingTracks {
         this.masterTrack.rewards.push(new ResourceValue("Diminishing Returns per Facility Level", 3, ShopItemTypeEnum.Other));
         this.masterTrack.rewards.push(new ResourceValue("Training Time Reduction", 1, ShopItemTypeEnum.Other));
         this.masterTrack.rewards.push(new ResourceValue("Bonus Talents", 3, ShopItemTypeEnum.Other));
+    }
 
+    getTotalTrainingTrackBonusBreedXpFromFreeRaces() {
+        var bonusXp = 0;
+
+        if (this.noviceTrack.rewards.length === 0 || this.intermediateTrack.rewards.length === 0 || this.masterTrack.rewards.length === 0)
+            return 0;
+
+        if (this.noviceTrack.rewardsObtained >= 4)
+            bonusXp += this.noviceTrack.rewards[3].amount;
+        if (this.noviceTrack.rewardsObtained >= 8)
+            bonusXp += this.noviceTrack.rewards[7].amount;
+        if (this.noviceTrack.rewardsObtained >= 12)
+            bonusXp += this.noviceTrack.rewards[11].amount;
+
+        if (this.intermediateTrack.rewardsObtained >= 8)
+            bonusXp += this.intermediateTrack.rewards[7].amount;
+
+        if (this.masterTrack.rewardsObtained >= 1)
+            bonusXp += this.masterTrack.rewards[0].amount;
+
+        return bonusXp;
+    }
+
+    getTotalTrainingTrackBonusBreedXpFromCircuitRaces() {
+        var bonusXp = 0;
+
+        if (this.noviceTrack.rewards.length === 0 || this.intermediateTrack.rewards.length === 0 || this.masterTrack.rewards.length === 0)
+            return 0;
+
+        if (this.intermediateTrack.rewardsObtained >= 6)
+            bonusXp += this.intermediateTrack.rewards[5].amount;
+
+        return bonusXp;
+    }
+
+    getTotalTrainingTrackBonusBreedXpFromTraining() {
+        var bonusXp = 0;
+
+        if (this.noviceTrack.rewards.length === 0 || this.intermediateTrack.rewards.length === 0 || this.masterTrack.rewards.length === 0)
+            return 0;
+
+        if (this.noviceTrack.rewardsObtained >= 2)
+            bonusXp += this.noviceTrack.rewards[1].amount;
+        if (this.noviceTrack.rewardsObtained >= 6)
+            bonusXp += this.noviceTrack.rewards[5].amount;
+        if (this.noviceTrack.rewardsObtained >= 10)
+            bonusXp += this.noviceTrack.rewards[9].amount;
+
+        if (this.intermediateTrack.rewardsObtained >= 2)
+            bonusXp += this.intermediateTrack.rewards[1].amount;
+        if (this.intermediateTrack.rewardsObtained >= 10)
+            bonusXp += this.intermediateTrack.rewards[9].amount;
+
+        if (this.masterTrack.rewardsObtained >= 5)
+            bonusXp += this.masterTrack.rewards[4].amount;
+
+        return bonusXp;
+    }
+
+    getTotalTrainingTrackBonusDiminishingReturnsPerFacilityLevel() {
+        var bonusXp = 0;
+
+        if (this.noviceTrack.rewards.length === 0 || this.intermediateTrack.rewards.length === 0 || this.masterTrack.rewards.length === 0)
+            return 0;
+
+        if (this.intermediateTrack.rewardsObtained >= 4)
+            bonusXp += this.intermediateTrack.rewards[3].amount;
+        if (this.intermediateTrack.rewardsObtained >= 12)
+            bonusXp += this.intermediateTrack.rewards[11].amount;
+
+        if (this.masterTrack.rewardsObtained >= 2)
+            bonusXp += this.masterTrack.rewards[1].amount;
+        if (this.masterTrack.rewardsObtained >= 10)
+            bonusXp += this.masterTrack.rewards[9].amount;
+
+        return bonusXp;
+    }
+
+    getTotalTrainingTrackBonusTrainingTimeReduction() {
+        var bonusXp = 0;
+
+        if (this.noviceTrack.rewards.length === 0 || this.intermediateTrack.rewards.length === 0 || this.masterTrack.rewards.length === 0)
+            return 0;
+
+        if (this.intermediateTrack.rewardsObtained >= 5)
+            bonusXp += this.intermediateTrack.rewards[4].amount;
+        if (this.intermediateTrack.rewardsObtained >= 11)
+            bonusXp += this.intermediateTrack.rewards[10].amount;
+
+        if (this.masterTrack.rewardsObtained >= 3)
+            bonusXp += this.masterTrack.rewards[2].amount;
+        if (this.masterTrack.rewardsObtained >= 7)
+            bonusXp += this.masterTrack.rewards[6].amount;
+        if (this.masterTrack.rewardsObtained >= 11)
+            bonusXp += this.masterTrack.rewards[10].amount;
+
+        return bonusXp;
+    }
+
+    getTotalTrainingTrackBonusTalents() {
+        var bonusXp = 0;
+
+        if (this.noviceTrack.rewards.length === 0 || this.intermediateTrack.rewards.length === 0 || this.masterTrack.rewards.length === 0)
+            return 0;
+
+        if (this.masterTrack.rewardsObtained >= 6)
+            bonusXp += this.masterTrack.rewards[5].amount;
+        if (this.masterTrack.rewardsObtained >= 12)
+            bonusXp += this.masterTrack.rewards[11].amount;        
+
+        return bonusXp;
     }
 }

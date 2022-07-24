@@ -15,8 +15,8 @@ export class CodeCreationService {
   
   setupRewards() {
     this.redeemableCode = new RedeemableCode();
-    this.redeemableCode.expirationDate = new Date('2022-07-04');    
-    this.redeemableCode.rewards.push(new ResourceValue("Coins", 3000, ShopItemTypeEnum.Resources));
+    this.redeemableCode.expirationDate = new Date('2022-08-25');    
+    this.redeemableCode.rewards.push(new ResourceValue("Mangoes", 2, ShopItemTypeEnum.Food)); //TODO: this needs to pull from a look up so you don't have to always make sure type is accurate
   }
 
   createCode() {

@@ -10,7 +10,8 @@
                 *ngIf="bonusTime !== ''" class="clickableText" (click)="selectEventRace()">Bonus Time: {{bonusTime}}
                 <br />
             </div>
-            <button (click)="goToTokenShop()">Token Shop</button>
+            <button type="button" class="rightSpaced" (click)="openInfoModal(grandPrixInfoModal)">Grand Prix Info</button>
+            <button (click)="goToTokenShop()">Token Shop</button> 
             <br />
             <br />
         </div>
@@ -22,8 +23,6 @@
                 <span class="helpText" (click)="openRewardsModal(grandPrixRewardModal)">{{
                     globalService.globalVar.eventRaceData.remainingRewards }} / {{
                     globalService.globalVar.eventRaceData.totalRewards }} rewards remaining</span>
-                <br />
-                <button type="button" (click)="openInfoModal(grandPrixInfoModal)">Grand Prix Info</button>
                 <br />
                 <br />
                 <div (click)="selectEventRace()" class="raceDescription">
@@ -37,9 +36,9 @@
                         {{ remainingMeters | number : '1.' }} Meters Remaining
 
                         <br />
-                        <p>{{ grandPrixData.isRunning ? "View Race" : "Start" }}
-                            <!--Start or View-->
-                        </p>
+                        <p *ngIf="grandPrixData.isRunning && !grandPrixData.isGrandPrixCompleted" >View Race</p>
+                        <p *ngIf="!grandPrixData.isRunning && !grandPrixData.isGrandPrixCompleted" >Start</p>
+                        <p *ngIf="!grandPrixData.isRunning && grandPrixData.isGrandPrixCompleted" >Completed!</p>                        
                     </div>
                 </div>
                 <ng-template #popContent>

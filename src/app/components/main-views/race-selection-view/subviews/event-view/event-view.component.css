@@ -51,3 +51,7 @@
     text-align: right;
     margin: 1rem;
 }
+
+.rightSpaced {
+    margin-right: 1rem;
+  }

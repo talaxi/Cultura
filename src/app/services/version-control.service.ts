@@ -16,7 +16,7 @@ export class VersionControlService {
   constructor(private globalService: GlobalService, private lookupService: LookupService) { }
 
   //add to this in descending order
-  gameVersions = [1.02, 1.01, 1.00];
+  gameVersions = [1.03, 1.02, 1.01, 1.00];
 
   getListAscended() {
     var ascendedList: number[] = [];
@@ -58,6 +58,12 @@ export class VersionControlService {
       "<li>Mix and match powerful Relay abilities with strong long distance racers and see how far you can go!</li></ul>\n" +
       "More UI improvements. (better contrast in colors, differentiation of text through various means, etc)\n\n" +
       "Bug fixes.";
+    if (version === 1.03)
+      changes = "Talents are now active!\n" +
+      "<ul><li>Complete Rainbow Races to start earning Talent Points for your animals.</li>" +
+      "<li>Each animal can select a unique talent tree and start racing in its own unique way.</li></ul>\n" +
+      "More UI improvements. (specifically around items/equipments)\n\n" +
+      "Bug fixes.";
     return changes;
   }
 
@@ -67,6 +73,10 @@ export class VersionControlService {
       date = new Date('2022-07-08 12:00:00');
     if (version === 1.01)
       date = new Date('2022-07-10 12:00:00');
+    if (version === 1.02)
+      date = new Date('2022-07-18 12:00:00');
+    if (version === 1.03)
+      date = new Date('2022-07-24 12:00:00');
 
     return date.toDateString().replace(/^\S+\s/, '');
   }
@@ -173,6 +183,13 @@ export class VersionControlService {
           //messed this up last deploy, need to fix
           this.globalService.globalVar.animals.forEach(animal => {
             animal.breedGaugeMax = 200 + ((animal.breedLevel - 1) * 10);
+          });
+        }
+        else if (version === 1.03) {
+          this.globalService.globalVar.animals.forEach(animal => {            
+            if (isNaN(Number(animal.breedLevel)) || animal.breedLevel === null || animal.breedLevel === undefined) {              
+              animal.breedLevel = 1;              
+            }
           });
         }
 

@@ -6,7 +6,7 @@
     <div class="flex">
         <div class="eventAnimal" *ngFor="let animal of deck.selectedAnimals; let i = index;">
             <span class="coloredText" [ngClass]="getColorClass(animal)">{{animal.name}}</span>
-            <div *ngIf="hasEventStarted()">
+            <div *ngIf="hasEventStarted() && !eventCompleted()">
                 <br />
                 <div>
                 <span  [ngbPopover]="getMoralePopover(animal)" triggers="mouseenter:mouseleave"
