@@ -735,12 +735,12 @@ export class SelectedBarnComponent implements OnInit {
     }
 
     popover += animal.name + " Current Stats:" + "\n";
-    popover += "Speed: " + animal.currentStats.topSpeed + "\n";
-    popover += "Acceleration: " + animal.currentStats.acceleration + "\n";
-    popover += "Endurance: " + animal.currentStats.endurance + "\n";
-    popover += "Power: " + animal.currentStats.power + "\n";
-    popover += "Focus: " + animal.currentStats.focus + "\n";
-    popover += "Adaptability: " + animal.currentStats.adaptability + "\n";
+    popover += "Speed: " + animal.currentStats.topSpeed.toFixed(3) + "\n";
+    popover += "Acceleration: " + animal.currentStats.acceleration.toFixed(3) + "\n";
+    popover += "Endurance: " + animal.currentStats.endurance.toFixed(3) + "\n";
+    popover += "Power: " + animal.currentStats.power.toFixed(3) + "\n";
+    popover += "Focus: " + animal.currentStats.focus.toFixed(3) + "\n";
+    popover += "Adaptability: " + animal.currentStats.adaptability.toFixed(3) + "\n";
     popover += "Diminishing Returns: " + this.globalService.GetAnimalDiminishingReturns(animal);
 
     var sanitized = this.utilityService.getSanitizedHtml(popover);
