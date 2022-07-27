@@ -65,7 +65,7 @@ export class GrandPrixData {
     
     constructor() {
         this.weekStartDay = 2;// TODO: set this back to 2 //tues 9 am to thurs 12 pm (noon)
-        this.weekStartHour = 12; //TODO: set this back to 9
+        this.weekStartHour = 9; //TODO: set this back to 9
         this.weekEndDay = 4; //TODO: set this back to 4
         this.weekEndHour = 12; //TODO: set this back to 12
         
