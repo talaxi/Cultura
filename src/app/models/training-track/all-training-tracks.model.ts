@@ -67,6 +67,18 @@ export class AllTrainingTracks {
         this.masterTrack.rewards.push(new ResourceValue("Bonus Talents", 3, ShopItemTypeEnum.Other));
     }
 
+    getTotalRewardCount() {
+        return this.noviceTrack.totalRewards + this.intermediateTrack.totalRewards + this.masterTrack.totalRewards;
+    }
+
+    getTotalRewardsObtained() {
+        return this.noviceTrack.rewardsObtained - this.intermediateTrack.rewardsObtained - this.masterTrack.rewardsObtained;
+    }
+
+    getTotalRewardsRemaining() {
+        return this.getTotalRewardCount() - this.noviceTrack.rewardsObtained - this.intermediateTrack.rewardsObtained - this.masterTrack.rewardsObtained;
+    }
+
     getTotalTrainingTrackBonusBreedXpFromFreeRaces() {
         var bonusXp = 0;
 

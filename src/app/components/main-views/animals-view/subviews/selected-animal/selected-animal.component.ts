@@ -8,6 +8,7 @@ import { ResourceValue } from 'src/app/models/resources/resource-value.model';
 import { ShopItemTypeEnum } from 'src/app/models/shop-item-type-enum.model';
 import { TalentTreeTypeEnum } from 'src/app/models/talent-tree-type-enum.model';
 import { ComponentCommunicationService } from 'src/app/services/component-communication.service';
+import { GameLoopService } from 'src/app/services/game-loop/game-loop.service';
 import { GlobalService } from 'src/app/services/global-service.service';
 import { LookupService } from 'src/app/services/lookup.service';
 import { UtilityService } from 'src/app/services/utility/utility.service';
@@ -45,6 +46,8 @@ export class SelectedAnimalComponent implements OnInit {
   orbIsUnlocked = false;
   assignedBarnName: string;
   talentTreeTypeEnum = TalentTreeTypeEnum;
+  canBreed = true;
+  subscription: any;
 
   ability1: Ability;
   ability2: Ability;
@@ -77,32 +80,35 @@ export class SelectedAnimalComponent implements OnInit {
 
   @HostListener('window:keyup', ['$event'])
   keyEvent(event: KeyboardEvent) {
-    var availableAnimals = this.globalService.globalVar.animals.filter(item => item.isAvailable);
-    var indexOfCurrentAnimal = availableAnimals.findIndex(item => this.selectedAnimal === item);
-    if (indexOfCurrentAnimal > -1) {
-      if (event.key === "ArrowLeft") {
-        var indexOfNewAnimal = indexOfCurrentAnimal - 1;
-        if (indexOfNewAnimal < 0)
-          indexOfNewAnimal = availableAnimals.length - 1;
+    if (!this.modalService.hasOpenModals()) {
+      var availableAnimals = this.globalService.globalVar.animals.filter(item => item.isAvailable);
+      var indexOfCurrentAnimal = availableAnimals.findIndex(item => this.selectedAnimal === item);
+      if (indexOfCurrentAnimal > -1) {
+        if (event.key === "ArrowLeft") {
+          var indexOfNewAnimal = indexOfCurrentAnimal - 1;
+          if (indexOfNewAnimal < 0)
+            indexOfNewAnimal = availableAnimals.length - 1;
 
-        var newAnimal = availableAnimals[indexOfNewAnimal];
-        this.componentCommunicationService.setAnimalView(NavigationEnum.animals, newAnimal);
-        this.resetSelectedAnimalInfo(newAnimal);
-      }
-      else if (event.key === "ArrowRight") {
-        var indexOfNewAnimal = indexOfCurrentAnimal + 1;
-        if (indexOfNewAnimal === availableAnimals.length)
-          indexOfNewAnimal = 0;
+          var newAnimal = availableAnimals[indexOfNewAnimal];
+          this.componentCommunicationService.setAnimalView(NavigationEnum.animals, newAnimal);
+          this.resetSelectedAnimalInfo(newAnimal);
+        }
+        else if (event.key === "ArrowRight") {
+          var indexOfNewAnimal = indexOfCurrentAnimal + 1;
+          if (indexOfNewAnimal === availableAnimals.length)
+            indexOfNewAnimal = 0;
 
-        var newAnimal = availableAnimals[indexOfNewAnimal];
-        this.componentCommunicationService.setAnimalView(NavigationEnum.animals, newAnimal);
-        this.resetSelectedAnimalInfo(newAnimal);
+          var newAnimal = availableAnimals[indexOfNewAnimal];
+          this.componentCommunicationService.setAnimalView(NavigationEnum.animals, newAnimal);
+          this.resetSelectedAnimalInfo(newAnimal);
+        }
       }
     }
   }
 
   constructor(private lookupService: LookupService, private modalService: NgbModal, private globalService: GlobalService,
-    private componentCommunicationService: ComponentCommunicationService, private utilityService: UtilityService) { }
+    private componentCommunicationService: ComponentCommunicationService, private utilityService: UtilityService, 
+    private gameLoopService: GameLoopService) { }
 
   ngOnInit(): void {
     this.handleIntroTutorial();
@@ -125,6 +131,15 @@ export class SelectedAnimalComponent implements OnInit {
       return true;
     else
       return false;
+  }
+
+  canAnimalBreed() {
+    var canBreed = true;
+
+    if (this.selectedAnimal.breedGaugeXp < this.selectedAnimal.breedGaugeMax)
+      canBreed = false;
+    
+    return canBreed;
   }
 
   breed(): void {
@@ -328,8 +343,7 @@ export class SelectedAnimalComponent implements OnInit {
       return;
     }
 
-    if (this.selectedItemQuantity === undefined || this.selectedItemQuantity === null || isNaN(Number(this.selectedItemQuantity)))
-    {
+    if (this.selectedItemQuantity === undefined || this.selectedItemQuantity === null || isNaN(Number(this.selectedItemQuantity))) {
       alert("You must enter a numerical amount to use.");
       return;
     }
@@ -621,7 +635,7 @@ export class SelectedAnimalComponent implements OnInit {
       return;
     }
 
-    this.selectedAnimal.talentTree.talentTreeType = this.lookupService.convertTalentTreeNameToEnum(this.selectedTalentTree);    
+    this.selectedAnimal.talentTree.talentTreeType = this.lookupService.convertTalentTreeNameToEnum(this.selectedTalentTree);
   }
 
   resetSelectedAnimalInfo(newAnimal: Animal) {
@@ -685,10 +699,16 @@ export class SelectedAnimalComponent implements OnInit {
       this.talentTreeOptions = this.lookupService.getTalentTreeNames();
       this.availableTalentPoints = this.lookupService.getTalentPointsAvailableToAnimal(this.selectedAnimal);
     }
+
+    this.subscription = this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {
+      this.canBreed = this.canAnimalBreed();
+    });
   }
 
   getTalentTreeName() {
-    
+    var talentLevel = this.selectedAnimal.talentTree.getTotalSpentPoints();
+
+    return this.lookupService.getTalentTreeNameByEnum(this.selectedAnimal.talentTree.talentTreeType) + " Level " + talentLevel;
   }
 
   getBorderConditional(row: number, column: number) {
@@ -733,30 +753,24 @@ export class SelectedAnimalComponent implements OnInit {
       else if (remainingPointsNeededInColumn <= 0)
         conditional = { 'completedMountainTalentSpacer height5': true };
     }
-    if (this.selectedAnimal.getRaceCourseType() === 'Ocean') {      
-      if (remainingPointsNeededInColumn >= 5)
-      {
-        conditional = { 'completedOceanTalentSpacer height0': true };        
+    if (this.selectedAnimal.getRaceCourseType() === 'Ocean') {
+      if (remainingPointsNeededInColumn >= 5) {
+        conditional = { 'completedOceanTalentSpacer height0': true };
       }
-      else if (remainingPointsNeededInColumn === 4)
-      {
-        conditional = { 'completedOceanTalentSpacer height1': true };        
+      else if (remainingPointsNeededInColumn === 4) {
+        conditional = { 'completedOceanTalentSpacer height1': true };
       }
-      else if (remainingPointsNeededInColumn === 3)
-      {
-        conditional = { 'completedOceanTalentSpacer height2': true };        
+      else if (remainingPointsNeededInColumn === 3) {
+        conditional = { 'completedOceanTalentSpacer height2': true };
       }
-      else if (remainingPointsNeededInColumn === 2)
-      {
-        conditional = { 'completedOceanTalentSpacer height3': true };        
+      else if (remainingPointsNeededInColumn === 2) {
+        conditional = { 'completedOceanTalentSpacer height3': true };
       }
-      else if (remainingPointsNeededInColumn === 1)
-      {
-        conditional = { 'completedOceanTalentSpacer height4': true };        
+      else if (remainingPointsNeededInColumn === 1) {
+        conditional = { 'completedOceanTalentSpacer height4': true };
       }
-      else if (remainingPointsNeededInColumn <= 0)
-      {
-        conditional = { 'completedOceanTalentSpacer height5': true };        
+      else if (remainingPointsNeededInColumn <= 0) {
+        conditional = { 'completedOceanTalentSpacer height5': true };
       }
     }
     if (this.selectedAnimal.getRaceCourseType() === 'Tundra') {
@@ -788,13 +802,15 @@ export class SelectedAnimalComponent implements OnInit {
         conditional = { 'completedVolcanicTalentSpacer height5': true };
     }
 
-    if (conditional === undefined)
-      console.log("UNDEFINED: " + row + " " + column);
-
     return conditional;
   }
 
   spentTalent(spent: boolean) {
     this.availableTalentPoints = this.lookupService.getTalentPointsAvailableToAnimal(this.selectedAnimal);
+  }
+
+  ngOnDestroy() {
+    if (this.subscription !== undefined && this.subscription !== null)
+      this.subscription.unsubscribe();
   }
 }

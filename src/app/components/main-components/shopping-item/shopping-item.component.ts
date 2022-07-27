@@ -31,21 +31,23 @@ export class ShoppingItemComponent implements OnInit {
   @HostListener('window:keydown', ['$event'])
   keyEventDown(event: KeyboardEvent) {
     if (this.selectedItem.type === ShopItemTypeEnum.Consumable || this.selectedItem.type === ShopItemTypeEnum.Food ||
-      this.selectedItem.type === ShopItemTypeEnum.Equipment || this.selectedItem.type === ShopItemTypeEnum.Resources) {
-      event.preventDefault();
+      this.selectedItem.type === ShopItemTypeEnum.Equipment || this.selectedItem.type === ShopItemTypeEnum.Resources) {      
       if (event.key === "Shift") { //multiply by 25
+        event.preventDefault();
         if (!this.shiftPressed) {
           this.buyMultiplierAmount *= 25;
           this.shiftPressed = true;
         }
       }
       if (event.key === "Control") { //multiply by 10
+        event.preventDefault();
         if (!this.ctrlPressed) {
           this.buyMultiplierAmount *= 10;
           this.ctrlPressed = true;
         }
       }
       if (event.key === "Alt") { //multiply by 100
+        event.preventDefault();
         if (!this.altPressed) {
           this.buyMultiplierAmount *= 100;
           this.altPressed = true;
@@ -361,15 +363,13 @@ export class ShoppingItemComponent implements OnInit {
 
     if (this.selectedItem.quantityMultiplier !== null && this.selectedItem.quantityMultiplier !== undefined && this.selectedItem.quantityMultiplier > 0) {
       this.selectedItem.purchasePrice.forEach(price => {
-        //var basePrice = this.selectedItem.basePurchasePrice.find(item => item.name === price.name);
-        //if (basePrice !== undefined && basePrice !== null)
-        //price.amount = basePrice?.amount * (this.selectedItem.quantityMultiplier * this.selectedItem.amountPurchased);
-        //else
-
         if (this.selectedItem.quantityAdditive !== undefined && this.selectedItem.quantityAdditive !== null && this.selectedItem.quantityAdditive > 0)
           price.amount += this.selectedItem.quantityAdditive;
         else
           price.amount *= this.selectedItem.quantityMultiplier;
+
+          if (this.selectedItem.name === "Team Manager" && price.amount > 5000)
+            price.amount = 5000;
       });
     }
   }

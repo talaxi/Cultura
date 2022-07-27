@@ -11,6 +11,7 @@ import { GlobalService } from 'src/app/services/global-service.service';
 //despite the name, used globally
 export class AnimalListComponent implements OnInit {
   @Input() availableAnimals: Animal[];
+  @Input() isTrainingTrackView: boolean = false;
   @Output() selectedAnimal = new EventEmitter<Animal>(); 
   animalRows: Animal[][];
   animalCells: Animal[];

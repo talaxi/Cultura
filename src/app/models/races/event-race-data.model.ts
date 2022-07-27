@@ -1,5 +1,6 @@
 import { Type } from "class-transformer";
 import { AnimalEventRaceData } from "../animals/animal-event-race-data.model";
+import { EventAbilityData } from "../animals/event-ability-data.model";
 import { ResourceValue } from "../resources/resource-value.model";
 import { WeatherEnum } from "../weather-enum.model";
 import { EventSegmentCarryOverData } from "./event-segment-carry-over-data.model";
@@ -20,6 +21,8 @@ export class GrandPrixData {
     grandPrixTimeLength: number;
     totalDistance: number;
     bonusTime: number; //added by effects that increase race time like landslide etc
+    @Type(() => EventAbilityData)
+    eventAbilityData: EventAbilityData;
 
     rank: string;
     @Type(() => Terrain) 
@@ -62,7 +65,7 @@ export class GrandPrixData {
     
     constructor() {
         this.weekStartDay = 2;// TODO: set this back to 2 //tues 9 am to thurs 12 pm (noon)
-        this.weekStartHour = 9; //TODO: set this back to 9
+        this.weekStartHour = 12; //TODO: set this back to 9
         this.weekEndDay = 4; //TODO: set this back to 4
         this.weekEndHour = 12; //TODO: set this back to 12
         
@@ -73,7 +76,7 @@ export class GrandPrixData {
 
         this.distanceCovered = 0;
         this.grandPrixTimeLength = 51 * 60 * 60; //51 hours
-        this.segmentTime = 20; //each segment is 20 seconds on average
+        this.segmentTime = 180; //each segment is 180 seconds on average
         this.segmentTimeCounter = 0;
         this.overallTimeCounter = 0;
         this.rank = "Z";
@@ -87,5 +90,7 @@ export class GrandPrixData {
         this.renownRewardsObtained = 0;
         this.tokenRewardsObtained = 0;
         this.isGrandPrixCompleted = false;
+
+        this.eventAbilityData = new EventAbilityData();
     }
 }

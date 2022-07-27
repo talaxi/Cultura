@@ -58,7 +58,7 @@ export class AppComponent {
 
     if (devMode) {
       this.globalService.globalVar.tutorials.tutorialCompleted = true;
-      this.globalService.devModeInitialize(70);
+      this.globalService.devModeInitialize(50);
     }
 
     this.versionControlService.updatePlayerVersion();
@@ -89,7 +89,7 @@ export class AppComponent {
     });
 
     this.gameLoopService.Update();
-  }
+  }  
 
   public gameCheckup(deltaTime: number): void {
     //update training time
@@ -182,6 +182,7 @@ export class AppComponent {
       //do initial set up
       this.globalService.initialGrandPrixSetup();
       this.globalService.globalVar.eventRaceData.initialSetupComplete = true;
+      this.globalService.globalVar.notifications.isEventRaceNowActive = true;
     }
 
     if (this.globalService.globalVar.eventRaceData.isRunning) {
@@ -214,7 +215,10 @@ export class AppComponent {
           this.grandPrixRaceCompleted();
         }
         else {
-          this.checkForEventRelayAnimal();
+          var didAnimalSwitch = this.checkForEventRelayAnimal();
+          if (didAnimalSwitch)
+            this.resetEventAbilityUseCounts();
+
           var racingAnimal = this.globalService.getGrandPrixRacingAnimal();
 
           if (racingAnimal.type !== undefined && racingAnimal.name !== undefined) {
@@ -280,6 +284,8 @@ export class AppComponent {
   }
 
   checkForEventRelayAnimal() {
+    var didAnimalSwitch = false;
+
     if (this.globalService.globalVar.eventRaceData.animalData.some(animal => animal.isSetToRelay)) {
       this.globalService.globalVar.eventRaceData.animalData.forEach(data => {
         data.isCurrentlyRacing = false;
@@ -287,6 +293,7 @@ export class AppComponent {
           data.isCurrentlyRacing = true;
           data.isSetToRelay = false;
           this.globalService.globalVar.eventRaceData.animalAlreadyPrepped = false;
+          didAnimalSwitch = true;
 
           if (this.lookupService.getCourseTypeFromAnimalType(data.associatedAnimalType) === RaceCourseTypeEnum.Mountain) {
             this.globalService.globalVar.eventRaceData.mountainEndingY = 0;
@@ -339,6 +346,7 @@ export class AppComponent {
               this.globalService.globalVar.eventRaceData.animalData.forEach(data => {
                 if (data.associatedAnimalType === animalsCapableOfRacing[nextIndex].type) {
                   data.isCurrentlyRacing = true;
+                  didAnimalSwitch = true;
                   if (this.lookupService.getCourseTypeFromAnimalType(data.associatedAnimalType) === RaceCourseTypeEnum.Mountain) {
                     this.globalService.globalVar.eventRaceData.mountainEndingY = 0;
                   }
@@ -350,6 +358,7 @@ export class AppComponent {
               this.globalService.globalVar.eventRaceData.animalData.forEach(data => {
                 if (data.associatedAnimalType === animalsCapableOfRacing[0].type) {
                   data.isCurrentlyRacing = true;
+                  didAnimalSwitch = true;
                   if (this.lookupService.getCourseTypeFromAnimalType(data.associatedAnimalType) === RaceCourseTypeEnum.Mountain) {
                     this.globalService.globalVar.eventRaceData.mountainEndingY = 0;
                   }
@@ -375,6 +384,16 @@ export class AppComponent {
         }
       }
     }
+
+    return didAnimalSwitch;
+  }
+
+  resetEventAbilityUseCounts() {
+    if (this.globalService.globalVar.eventRaceData === null || this.globalService.globalVar.eventRaceData === undefined ||
+      this.globalService.globalVar.eventRaceData.eventAbilityData === null || this.globalService.globalVar.eventRaceData.eventAbilityData === undefined)
+      return;
+
+      this.globalService.globalVar.eventRaceData.eventAbilityData.resetUseCounts();
   }
 
   checkForGrandPrixRewards() {
@@ -457,9 +476,9 @@ export class AppComponent {
       this.globalService.globalVar.eventRaceData.remainingRewards -= 1;
       var globalResource = this.globalService.globalVar.resources.find(x => x.name === "Tokens");
       if (globalResource !== null && globalResource !== undefined)
-        globalResource.amount += 1;
+        globalResource.amount += 2;
       else
-        this.globalService.globalVar.resources.push(new ResourceValue("Tokens", 1, ShopItemTypeEnum.Resources));
+        this.globalService.globalVar.resources.push(new ResourceValue("Tokens", 2, ShopItemTypeEnum.Resources));
     }
 
     if (this.globalService.globalVar.eventRaceData.tokenRewardsObtained <= 2 && distanceCovered > token3MeterCount) {
@@ -467,9 +486,9 @@ export class AppComponent {
       this.globalService.globalVar.eventRaceData.remainingRewards -= 1;
       var globalResource = this.globalService.globalVar.resources.find(x => x.name === "Tokens");
       if (globalResource !== null && globalResource !== undefined)
-        globalResource.amount += 2;
+        globalResource.amount += 3;
       else
-        this.globalService.globalVar.resources.push(new ResourceValue("Tokens", 2, ShopItemTypeEnum.Resources));
+        this.globalService.globalVar.resources.push(new ResourceValue("Tokens", 3, ShopItemTypeEnum.Resources));
     }
 
     if (this.globalService.globalVar.eventRaceData.tokenRewardsObtained <= 3 && distanceCovered > token4MeterCount) {
@@ -477,9 +496,9 @@ export class AppComponent {
       this.globalService.globalVar.eventRaceData.remainingRewards -= 1;
       var globalResource = this.globalService.globalVar.resources.find(x => x.name === "Tokens");
       if (globalResource !== null && globalResource !== undefined)
-        globalResource.amount += 3;
+        globalResource.amount += 4;
       else
-        this.globalService.globalVar.resources.push(new ResourceValue("Tokens", 3, ShopItemTypeEnum.Resources));
+        this.globalService.globalVar.resources.push(new ResourceValue("Tokens", 4, ShopItemTypeEnum.Resources));
     }
   }
 

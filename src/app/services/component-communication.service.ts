@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Animal } from '../models/animals/animal.model';
 import { NavigationEnum } from '../models/navigation-enum.model';
+import { RaceTypeEnum } from '../models/race-type-enum.model';
 import { ShopsEnum } from '../models/shops-enum.model';
 
 @Injectable({
@@ -12,12 +13,14 @@ export class ComponentCommunicationService {
   selectAnimalView: BehaviorSubject<Animal>;
   selectBarnView: BehaviorSubject<number>;
   selectShopView: BehaviorSubject<ShopsEnum>;
+  selectRaceView: BehaviorSubject<RaceTypeEnum>;
 
   constructor() {
     this.switchView = new BehaviorSubject<NavigationEnum>(NavigationEnum.barn);
     this.selectAnimalView = new BehaviorSubject<Animal>(new Animal());
     this.selectBarnView = new BehaviorSubject<number>(0);
     this.selectShopView = new BehaviorSubject<ShopsEnum>(ShopsEnum.regular);
+    this.selectRaceView = new BehaviorSubject<RaceTypeEnum>(RaceTypeEnum.circuit);
   }
 
   setNewView(newValue: NavigationEnum): void {
@@ -60,5 +63,16 @@ export class ComponentCommunicationService {
 
   getShopView(): Observable<ShopsEnum> {
     return this.selectShopView.asObservable();
+  }
+
+  setRaceView(newView: NavigationEnum, newRace: RaceTypeEnum) {
+    if (newRace !== this.selectRaceView.value)
+      this.selectRaceView.next(newRace);
+    if (newView !== this.switchView.value)
+      this.switchView.next(newView);
+  }
+
+  getRaceView(): Observable<RaceTypeEnum> {
+    return this.selectRaceView.asObservable();
   }
 }

@@ -102,6 +102,14 @@ export class UtilityService {
     return hoursDisplay + ":" + minutesDisplay + ":" + secondsDisplay;
   }
 
+  getClosestWholeNumber(adjustedCircuitRaceDistance: number, totalDistance: number) {
+    var resultingSegments = totalDistance / adjustedCircuitRaceDistance;
+    var floorValue = Math.floor(resultingSegments);
+    var segmentLength = totalDistance / floorValue;
+
+    return segmentLength;
+  }
+
   getDayOfWeekFromNumber(day: number) {
     var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 

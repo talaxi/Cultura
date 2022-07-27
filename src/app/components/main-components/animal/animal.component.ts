@@ -8,10 +8,12 @@ import { GlobalService } from 'src/app/services/global-service.service';
   styleUrls: ['./animal.component.css']
 })
 
-
 export class AnimalComponent implements OnInit {
   @Input() selectedAnimal: Animal;
+  @Input() isTrainingTrackView: boolean = false;
   colorConditional: any;
+  trainingTrackRewardsRemaining = 0;
+  trainingTrackTotalRewards = 0;
 
   constructor() { }
 
@@ -23,6 +25,11 @@ export class AnimalComponent implements OnInit {
       'tundraColor': this.selectedAnimal.getRaceCourseType() === 'Tundra',
       'volcanicColor': this.selectedAnimal.getRaceCourseType() === 'Volcanic'
     };
+
+    if (this.isTrainingTrackView) {
+      this.trainingTrackRewardsRemaining = this.selectedAnimal.allTrainingTracks.getTotalRewardsRemaining();
+      this.trainingTrackTotalRewards = this.selectedAnimal.allTrainingTracks.getTotalRewardCount();
+    }
   }
 
 }

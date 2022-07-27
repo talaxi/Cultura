@@ -17,6 +17,7 @@ import { GlobalService } from 'src/app/services/global-service.service';
 import { LookupService } from 'src/app/services/lookup.service';
 import { SpecializationService } from 'src/app/services/specialization.service';
 import { TutorialService } from 'src/app/services/tutorial-service.service';
+import { UtilityService } from 'src/app/services/utility/utility.service';
 //import * as cloneDeep from 'lodash/cloneDeep';
 
 @Component({
@@ -55,6 +56,7 @@ export class SelectedBarnComponent implements OnInit {
   tutorialActive = false;
   subscription: any;
   colorConditional: any;
+  currentTrainingPopover: string;
 
   filterSpeed = false;
   filterAcceleration = false;
@@ -72,6 +74,9 @@ export class SelectedBarnComponent implements OnInit {
     var indexOfCurrentBarn = availableBarns.findIndex(item => this.selectedBarnNumber === item!.barnNumber);
 
     if (indexOfCurrentBarn > -1) {
+      if (this.subscription !== undefined && this.subscription !== null)
+        this.subscription.unsubscribe();
+
       if (event.key === "ArrowLeft") {
         var indexOfNewBarn = indexOfCurrentBarn - 1;
         if (indexOfNewBarn < 0)
@@ -95,7 +100,7 @@ export class SelectedBarnComponent implements OnInit {
 
   constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private modalService: NgbModal,
     private lookupService: LookupService, private componentCommunicationService: ComponentCommunicationService,
-    private specializationService: SpecializationService, private tutorialService: TutorialService) {
+    private specializationService: SpecializationService, private tutorialService: TutorialService, private utilityService: UtilityService) {
   }
 
   ngOnInit(): void {
@@ -630,7 +635,7 @@ export class SelectedBarnComponent implements OnInit {
   }
 
   resetSelectedBarnInfo(newBarn: Barn) {
-    this.specializationOptions = this.lookupService.getAllBarnSpecializations();
+    this.specializationOptions = this.lookupService.getAllBarnSpecializations();    
     this.upgradeText = "Upgrade";
     this.barnSpecializationsUnlocked = this.lookupService.isItemUnlocked("barnSpecializations");
     this.coachingUnlocked = this.lookupService.isItemUnlocked("coaching");
@@ -652,7 +657,7 @@ export class SelectedBarnComponent implements OnInit {
         if (this.barn.barnUpgrades.barnLevel === 9)
           this.upgradeText = "Specialize";
 
-        var associatedAnimal = this.globalService.globalVar.animals.find(item => item.associatedBarnNumber == this.selectedBarnNumber);
+        var associatedAnimal = this.globalService.globalVar.animals.find(item => item.associatedBarnNumber == this.selectedBarnNumber);        
 
         if (associatedAnimal !== undefined && associatedAnimal !== null) {
           this.animalAssigned = true;
@@ -668,6 +673,7 @@ export class SelectedBarnComponent implements OnInit {
           };
 
           this.availableTrainings = this.GetAvailableTrainingOptions(associatedAnimal);
+          this.currentTrainingPopover = this.getCurrentTrainingPopover(associatedAnimal);
 
           if (this.existingTraining !== undefined && this.existingTraining !== null) {
             var selectedTraining = this.availableTrainings.find(item => this.existingTraining?.trainingName === item.trainingName);
@@ -708,6 +714,7 @@ export class SelectedBarnComponent implements OnInit {
               }
 
               this.trainingProgressBarPercent = ((associatedAnimal.currentTraining.timeTrained / associatedAnimal.currentTraining.timeToComplete) * 100);
+              this.currentTrainingPopover = this.getCurrentTrainingPopover(associatedAnimal);
             }
           }
         });
@@ -719,12 +726,38 @@ export class SelectedBarnComponent implements OnInit {
     }
   }
 
+  getCurrentTrainingPopover(animal: Animal) {    
+    var popover = "";
+
+    if (animal.currentTraining !== undefined && animal.currentTraining !== null)
+    {
+      popover += animal.currentTraining.trainingName + "\n" + this.lookupService.getStatGainDescription(animal.currentTraining.affectedStatRatios, animal.currentTraining.statGain) + "\n";
+    }
+
+    popover += animal.name + " Current Stats:" + "\n";
+    popover += "Speed: " + animal.currentStats.topSpeed + "\n";
+    popover += "Acceleration: " + animal.currentStats.acceleration + "\n";
+    popover += "Endurance: " + animal.currentStats.endurance + "\n";
+    popover += "Power: " + animal.currentStats.power + "\n";
+    popover += "Focus: " + animal.currentStats.focus + "\n";
+    popover += "Adaptability: " + animal.currentStats.adaptability + "\n";
+    popover += "Diminishing Returns: " + this.globalService.GetAnimalDiminishingReturns(animal);
+
+    var sanitized = this.utilityService.getSanitizedHtml(popover);
+    if (sanitized !== null)
+      popover = sanitized;
+
+    return popover;
+  }
+
   goToCoaching() {
     this.isCoachingEmitter.emit(true);
   }
 
   ngOnDestroy() {
+    console.log("On Destroy");
     if (this.subscription !== null && this.subscription !== undefined) {
+      console.log("Unsubscribe");
       this.subscription.unsubscribe();
     }
   }

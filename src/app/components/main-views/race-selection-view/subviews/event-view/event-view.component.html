@@ -25,13 +25,11 @@
                     globalService.globalVar.eventRaceData.totalRewards }} rewards remaining</span>
                 <br />
                 <br />
-                <div (click)="selectEventRace()" class="raceDescription">
-                    <div class="clickableText" [ngbPopover]="popContent" [disablePopover]="popoverText === ''"
+                <div class="raceDescription">
+                    <div (click)="selectEventRace()" class="clickableText eventRaceDescription" [ngbPopover]="popContent" [disablePopover]="popoverText === ''"
                         triggers="mouseenter:mouseleave" popoverClass="popoverClass">
-                        <span><span  class='keyword'>Forecast:</span> {{ grandPrixData.weatherCluster === undefined ? "Unknown" :
-                            lookupService.getWeatherClusterFromEnum(grandPrixData.weatherCluster) }}</span>
-                        <br />
-                        <span class='keyword'>{{ grandPrixData.totalDistance | number : '1.' }} Meters Total</span>
+                        <span><span class='keyword'>Forecast:</span> {{ grandPrixData.weatherCluster === undefined ? "Unknown" :
+                            lookupService.getWeatherClusterFromEnum(grandPrixData.weatherCluster) }}</span>                        
                         <br />
                         {{ remainingMeters | number : '1.' }} Meters Remaining
 
@@ -110,7 +108,7 @@
                 energy. 
                 <br />
                 <br />
-                <span class='keyword'>Morale</span> - This affects how much your stats reduce when running out of stamina. By default, your stats will reduce by 90% while Morale is at 100%. Morale can range from 50% to 300%.
+                <span class='keyword'>Morale</span> - This affects how much your stats reduce when running out of stamina. By default, your stats will reduce by 10% while Morale is at 100%. Morale can range from 50% to 300%.
                 <br/>
                 <span class='keyword'>Energy</span> - The percent your stats are currently at from their maximum. This is increased slightly over time while a racer is not racing.
                 <br/>

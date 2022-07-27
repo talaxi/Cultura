@@ -19,7 +19,9 @@ export class RaceSelectionViewComponent implements OnInit {
   selectedRace: Race;
   public raceTypeEnum = RaceTypeEnum;
   newSpecialRaceAvailable = false;
+  eventRaceNowAvailable = false;
   subscription: any;
+  communicationSubscription: any;
 
   constructor(private globalService: GlobalService, private componentCommunicationService: ComponentCommunicationService,
     private gameLoopService: GameLoopService) { }
@@ -29,6 +31,11 @@ export class RaceSelectionViewComponent implements OnInit {
 
     this.subscription = this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {
       this.newSpecialRaceAvailable = this.globalService.globalVar.notifications.isNewSpecialRaceAvailable;
+      this.eventRaceNowAvailable = this.globalService.globalVar.notifications.isEventRaceNowActive;
+    });
+
+    this.communicationSubscription = this.componentCommunicationService.getRaceView().subscribe((value) => {
+      this.displayRaceView = value;
     });
   }
 
@@ -41,6 +48,8 @@ export class RaceSelectionViewComponent implements OnInit {
 
     if (type === RaceTypeEnum.special)
       this.newSpecialRaceAvailable = this.globalService.globalVar.notifications.isNewSpecialRaceAvailable = false;
+      if (type === RaceTypeEnum.event)
+      this.eventRaceNowAvailable = this.globalService.globalVar.notifications.isEventRaceNowActive = false;
   }
 
   raceSelected(race: Race) {
@@ -60,5 +69,8 @@ export class RaceSelectionViewComponent implements OnInit {
   ngOnDestroy() {
     if (this.subscription !== null && this.subscription !== undefined)
       this.subscription.unsubscribe();
+
+    if (this.communicationSubscription !== null && this.communicationSubscription !== undefined)
+      this.communicationSubscription.unsubscribe();
   }
 }

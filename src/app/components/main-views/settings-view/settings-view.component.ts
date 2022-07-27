@@ -42,10 +42,10 @@ export class SettingsViewComponent implements OnInit {
 
   ngOnInit(): void {
     this.componentCommunicationService.setNewView(NavigationEnum.settings);
-    
+
     if (this.deploymentService.codeCreationMode)
       console.log(this.codeCreationService.createCode());
-    
+
     this.currentTheme = this.themeService.getActiveTheme().name.charAt(0).toUpperCase() + this.themeService.getActiveTheme().name.slice(1);
 
     var globalSkipDrawRace = this.globalService.globalVar.settings.get("skipDrawRace");
@@ -92,12 +92,14 @@ export class SettingsViewComponent implements OnInit {
     this.importExportValue = compressedData;
   }
 
-  public LoadGame() {    
+  public LoadGame() {
     if (confirm("This will overwrite your existing game data. Continue?")) {
       var decompressedData = LZString.decompressFromBase64(this.importExportValue);
       var loadDataJson = <GlobalVariables>JSON.parse(decompressedData);
-      this.globalService.globalVar = plainToInstance(GlobalVariables, loadDataJson);        
-      this.versionControlService.updatePlayerVersion();         
+      if (loadDataJson !== null && loadDataJson !== undefined) {
+        this.globalService.globalVar = plainToInstance(GlobalVariables, loadDataJson);
+        this.versionControlService.updatePlayerVersion();
+      }
     }
   }
 

@@ -9,11 +9,20 @@
             <div *ngIf="hasEventStarted() && !eventCompleted()">
                 <br />
                 <div>
-                <span  [ngbPopover]="getMoralePopover(animal)" triggers="mouseenter:mouseleave"
-                popoverClass="popoverClass"><span class="keyword">Morale:</span> {{ getMorale(animal) | number : '1.2-2' }}%</span>
-                <br />
-                <span  [ngbPopover]="getEnergyPopover(animal)" triggers="mouseenter:mouseleave"
-                popoverClass="popoverClass"><span class="keyword">Energy:</span> {{ getExhaustion(animal) | number : '1.2-2' }}%</span>
+                    <span [ngbPopover]="getMoralePopover(animal)" triggers="mouseenter:mouseleave"
+                        popoverClass="popoverClass"><span class="keyword">Morale:</span> {{ getMorale(animal) | number :
+                        '1.2-2' }}%</span>
+                    <br />
+                    <span [ngbPopover]="getEnergyPopover(animal)" triggers="mouseenter:mouseleave"
+                        popoverClass="popoverClass"><span class="keyword">Energy:</span> {{ getExhaustion(animal) |
+                        number : '1.2-2' }}%</span>
+                    <br />
+                    <div *ngIf="getUseCountInformation(animal) === ''">
+                        <br />
+                    </div>
+                    <div [innerHTML]="getUseCountInformation(animal)">
+
+                    </div>
                 </div>
                 <br />
                 <br />
@@ -23,9 +32,10 @@
                             Will Start Race
                         </span>
                         <span *ngIf="!isCurrentlyRacing(animal)">
-                            <button *ngIf="!isSetToRelay(animal) && canRelay(animal)" (click)="chooseToStartRace(animal)">Choose To Start
+                            <button *ngIf="!isSetToRelay(animal) && canRelay(animal)"
+                                (click)="chooseToStartRace(animal)">Choose To Start
                                 Race</button>
-                                <span *ngIf="!isSetToRelay(animal) && !canRelay(animal)"><em
+                            <span *ngIf="!isSetToRelay(animal) && !canRelay(animal)"><em
                                     [ngbPopover]="getRestingPopover()" triggers="mouseenter:mouseleave"
                                     popoverClass="popoverClass">Resting...</em></span>
                         </span>

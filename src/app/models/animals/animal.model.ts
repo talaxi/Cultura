@@ -238,7 +238,7 @@ export class Cheetah extends Animal {
         this.availableAbilities.push(this.ability);
 
         var ability2 = new Ability();
-        ability2.efficiency = 4;
+        ability2.efficiency = .5;
         ability2.oneTimeEffect = false;
         ability2.name = "Giving Chase";
         ability2.description = "Giving Chase";
@@ -247,7 +247,7 @@ export class Cheetah extends Animal {
         this.availableAbilities.push(ability2);
 
         var ability3 = new Ability();
-        ability3.efficiency = 1;
+        ability3.efficiency = .1;
         ability3.oneTimeEffect = false;
         ability3.name = "On The Hunt";
         ability3.description = "On The Hunt";
@@ -345,14 +345,14 @@ export class Goat extends Animal {
 
 
         this.ability = new Ability();
-        this.ability.efficiency = 2;
+        this.ability.efficiency = .5;
         this.ability.oneTimeEffect = false;
         this.ability.name = "Sure-footed";
         this.ability.isAbilityPurchased = true;
         this.availableAbilities.push(this.ability);
 
         var ability2 = new Ability();
-        ability2.efficiency = 5;
+        ability2.efficiency = .25;
         ability2.oneTimeEffect = false;
         ability2.name = "Deep Breathing";
         ability2.isAbilityPurchased = false;
@@ -360,7 +360,7 @@ export class Goat extends Animal {
         this.availableAbilities.push(ability2);
 
         var ability3 = new Ability();
-        ability3.efficiency = 1;
+        ability3.efficiency = .1;
         ability3.oneTimeEffect = false;
         ability3.name = "In The Rhythm";
         ability3.isAbilityPurchased = false;
@@ -389,7 +389,7 @@ export class Gecko extends Animal {
         this.availableAbilities.push(this.ability);
 
         var ability2 = new Ability();
-        ability2.efficiency = 2;
+        ability2.efficiency = .2;
         ability2.oneTimeEffect = false;
         ability2.name = "Night Vision";
         ability2.isAbilityPurchased = false;
@@ -468,7 +468,7 @@ export class Shark extends Animal {
         this.availableAbilities.push(ability2);
 
         var ability3 = new Ability();
-        ability3.efficiency = 1;
+        ability3.efficiency = .1;
         ability3.oneTimeEffect = true;
         ability3.name = "Blood In The Water";
         ability3.isAbilityPurchased = false;
@@ -497,7 +497,7 @@ export class Octopus extends Animal {
         this.availableAbilities.push(this.ability);
 
         var ability2 = new Ability();
-        ability2.efficiency = 4;
+        ability2.efficiency = 1;
         ability2.oneTimeEffect = false;
         ability2.name = "Buried Treasure";
         ability2.isAbilityPurchased = false;
@@ -505,7 +505,7 @@ export class Octopus extends Animal {
         this.availableAbilities.push(ability2);
 
         var ability3 = new Ability();
-        ability3.efficiency = 3;
+        ability3.efficiency = 2;
         ability3.oneTimeEffect = true;
         ability3.name = "Big Brain";
         ability3.isAbilityPurchased = false;
@@ -533,7 +533,7 @@ export class Penguin extends Animal {
         this.availableAbilities.push(this.ability);
 
         var ability2 = new Ability();
-        ability2.efficiency = 7;
+        ability2.efficiency = 4;
         ability2.oneTimeEffect = false;
         ability2.name = "Wild Toboggan";
         ability2.isAbilityPurchased = false;
@@ -541,7 +541,7 @@ export class Penguin extends Animal {
         this.availableAbilities.push(ability2);
 
         var ability3 = new Ability();
-        ability3.efficiency = 1;
+        ability3.efficiency = .1;
         ability3.oneTimeEffect = false;
         ability3.name = "Quick Toboggan";
         ability3.isAbilityPurchased = false;
@@ -561,7 +561,7 @@ export class Caribou extends Animal {
         this.raceCourseType = RaceCourseTypeEnum.Tundra;
 
         this.ability = new Ability();
-        this.ability.efficiency = 4;
+        this.ability.efficiency = .5;
         this.ability.oneTimeEffect = true;
         this.ability.name = "Herd Mentality";
         this.ability.isAbilityPurchased = true;
@@ -577,7 +577,7 @@ export class Caribou extends Animal {
         this.availableAbilities.push(ability2);
 
         var ability3 = new Ability();
-        ability3.efficiency = 2;
+        ability3.efficiency = .05;
         ability3.oneTimeEffect = true;
         ability3.name = "Special Delivery";
         ability3.isAbilityPurchased = false;
@@ -643,7 +643,7 @@ export class Fox extends Animal {
         this.availableAbilities.push(this.ability);
 
         var ability2 = new Ability();
-        ability2.efficiency = 6;
+        ability2.efficiency = 1.5;
         ability2.oneTimeEffect = false;
         ability2.name = "Fleeting Speed";
         ability2.isAbilityPurchased = false;

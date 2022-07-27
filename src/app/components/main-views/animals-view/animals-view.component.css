@@ -17,3 +17,8 @@ table {
 {
     text-align: center;
 }
+
+.selectedView {
+    height: 100%;
+    overflow: auto;
+}

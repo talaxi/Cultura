@@ -38,13 +38,15 @@
                             [disabled]="!canBuild" class="sizeButtonSpacing">Build</button></span>
                 </div>
                 <hr />
-                <div *ngIf="this.existingTraining !== null && this.existingTraining !== undefined">
+                <div *ngIf="this.existingTraining !== null && this.existingTraining !== undefined" [ngbPopover]="noTrainingContent"
+                triggers="mouseenter:mouseleave" popoverClass="popoverClass">
                     <span class="activeTrainingOption">{{ this.existingTraining.trainingName }} </span>
                     <br />
                     <span><em>({{ (this.existingTraining.trainingTimeRemaining / 60) | number : '1.0-0' }} min
                             remaining)</em></span>
                 </div>
-                <div *ngIf="this.existingTraining === null || this.existingTraining === undefined">
+                <div *ngIf="this.existingTraining === null || this.existingTraining === undefined" [ngbPopover]="currentTrainingContent"
+                triggers="mouseenter:mouseleave" popoverClass="popoverClass">
                     <span>No Training Assigned</span>
                 </div>
             </div>
@@ -179,6 +181,16 @@
 <ng-template #costToBuildContent>
     <div class="popoverClass" *ngIf="buildBiggerBarnPopover !== ''">
         {{ buildBiggerBarnPopover }}
+    </div>
+</ng-template>
+
+<ng-template #noTrainingContent>
+    <div class="popoverClass" *ngIf="currentTrainingPopover !== ''" [innerHTML] = 'currentTrainingPopover'>        
+    </div>
+</ng-template>
+
+<ng-template #currentTrainingContent>
+    <div class="popoverClass" *ngIf="currentTrainingPopover !== ''" [innerHTML] = 'currentTrainingPopover'>        
     </div>
 </ng-template>
 

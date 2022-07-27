@@ -73,36 +73,48 @@
                 </div>
             </div>
             <hr />
-            <div>
+            <div *ngIf="lookupService.isItemUnlocked('duoRace')">
                 <div>
                     <div class="expanderMargin">
                         <button type="button" aria-label="Expand" (click)="expandAnswer('faqAnswer4')">+</button>
                     </div>
                     <div class="faqQuestion">
-                        <p>I'm having an issue with my game or have some feedback, how can I contact you?</p>
+                        <p>What is the Incubator? How does the Incubator Upgrade item work?</p>
                     </div>
                 </div>
                 <div class="faqAnswer hide" id="faqAnswer4">
                     <div class="expanderMargin"></div>
-                    <p>Feel free to use the links at the bottom right or email me at CulturaIdle@gmail.com to get in touch. </p>
+                    <p>Once you've successfully completed a Duo Race, you will have access to the Incubator. The Incubator lets you select a trait for an individual animal that lets your customize your stats further. 
+                        A trait increases one stat and decreases another. As you increase your Research Level by completing Duo Races, you will unlock new traits and increase the amount the traits increase/decrease your stats. Note that traits will only decrease the chosen stat by a maximum of 25%.
+                    <br/>
+                    <br/>
+                    The Incubator Upgrade item gives you even further control over how you build your animals and allows newer animals to quickly catch up to ones of higher breed level. After purchasing this item, every time you breed you will gain a permanent increase to the stat your trait currently is providing you. The increase amount depends on your current Research Level. For example:
+                    <br/>
+                    <br/>
+                    If you have a Research Level of 15 and apply the <span class="keyword">Alert</span> trait to your Horse, it will gain 15% <span class="keyword">Focus</span> and lose 15% <span class="keyword">Endurance</span> through the trait itself. 
+                    <br/>
+                    <em>If you have Incubator Upgrade Level 1:</em> each time you Breed your Horse, it will gain an additional modifier of .01 to its <span class="keyword">Focus</span> stat. Incubator Upgrade Level 1 only allows for the first 10% of your trait value to contribute to the modifier. 
+                    <br/>
+                    <em>If you have Incubator Upgrade Level 2:</em> each time you Breed your Horse, it will gain an additional modifier of .015 to its <span class="keyword">Focus</span> stat. Incubator Upgrade Level 2 allows for the first 25% of your trait value to contribute to the modifier. Because your trait value is only 15%, it will contribute in its entirety. 
+                </p>
                 </div>
+                <hr />
             </div>
-            <hr />
             <div>
                 <div>
                     <div class="expanderMargin">
-                        <button type="button" aria-label="Expand" (click)="expandAnswer('faqAnswer5')">+</button>
+                        <button type="button" aria-label="Expand" (click)="expandAnswer('faqAnswerFeedback')">+</button>
                     </div>
                     <div class="faqQuestion">
-                        <p>What are all of the circuit race rewards?</p>
+                        <p>I'm having an issue with my game or have some feedback, how can I contact you?</p>
                     </div>
                 </div>
-                <div class="faqAnswer hide" id="faqAnswer5">
+                <div class="faqAnswer hide" id="faqAnswerFeedback">
                     <div class="expanderMargin"></div>
-                    <p>This will be included at a later date once everything is finalized!</p>
+                    <p>Feel free to use the links at the bottom right or email me at CulturaIdle@gmail.com to get in touch. </p>
                 </div>
             </div>
-            <hr />
+            <hr />            
         </div>
     </div>
 </div>

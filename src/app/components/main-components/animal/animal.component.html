@@ -10,4 +10,9 @@
     <br />
     <br />
     <span>{{ selectedAnimal.getRaceCourseType() }}</span>
+    <div *ngIf="isTrainingTrackView">
+        <br />
+        <br />
+        <em>{{trainingTrackRewardsRemaining}} / {{ trainingTrackTotalRewards }} rewards remaining</em>
+    </div>
 </div>

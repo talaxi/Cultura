@@ -213,6 +213,11 @@ export class RaceLogicService {
       else
         nextAnimal = null;
 
+      if (this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix &&
+        this.globalService.globalVar.eventRaceData.animalAlreadyPrepped)
+        raceResult.addRaceUpdate(framesPassed, animalDisplayName + " clears " + Math.round(this.selectedRace.length).toLocaleString() + " meters of the Grand Prix and moves onto the next leg of the race.");
+
+
       var defaultTerrainMaxSpeedModifier = item.terrain.maxSpeedModifier;
       var defaultTerrainAccelerationModifier = item.terrain.accelerationModifier;
       var defaultTerrainStaminaModifier = item.terrain.staminaModifier;
@@ -305,6 +310,7 @@ export class RaceLogicService {
         longDistanceTalentIncreaseAccelerationWithLowVelocity = previousEventRaceSegmentData.longDistanceTalentIncreaseAccelerationWithLowVelocity;
         maxSpeedFloor = previousEventRaceSegmentData.maxSpeedFloor;
         statLossFromExhaustion = previousEventRaceSegmentData.statLossFromExhaustion;
+        console.log("New Exhaustion Levels: " + statLossFromExhaustion);
       }
 
       //get values from relay effects      
@@ -384,9 +390,13 @@ export class RaceLogicService {
 
         if (racingAnimal.ability.name === "Night Vision" && racingAnimal.type === AnimalTypeEnum.Gecko &&
           !racingAnimal.ability.abilityInUse && !lastPath.didAnimalLoseFocus && lastPath.length > 0) {
-          permanentMaxSpeedIncreaseMultiplier += this.lookupService.GetAbilityEffectiveAmount(racingAnimal, item.terrain.powerModifier, statLossFromExhaustion) / 100;
-          this.globalService.increaseAbilityXp(racingAnimal);
-          racingAnimal.ability.abilityInUse = true;
+          if (!(this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix &&
+            this.globalService.globalVar.eventRaceData.eventAbilityData.nightVisionUseCount >= this.globalService.globalVar.eventRaceData.eventAbilityData.nightVisionUseCap)) {
+            this.globalService.globalVar.eventRaceData.eventAbilityData.nightVisionUseCount += 1;
+            permanentMaxSpeedIncreaseMultiplier += this.lookupService.GetAbilityEffectiveAmount(racingAnimal, item.terrain.powerModifier, statLossFromExhaustion) / 100;
+            this.globalService.increaseAbilityXp(racingAnimal);
+            racingAnimal.ability.abilityInUse = true;
+          }
         }
 
 
@@ -703,7 +713,11 @@ export class RaceLogicService {
           modifiedMaxSpeed *= feedingFrenzyIncreaseMultiplier;
         }
         if (racingAnimal.ability.name === "Quick Toboggan" && racingAnimal.type === AnimalTypeEnum.Penguin) {
-          modifiedMaxSpeed *= permanentMaxSpeedIncreaseMultiplierObj.permanentMaxSpeedIncreaseMultiplier;
+          if (!(this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix &&
+            this.globalService.globalVar.eventRaceData.eventAbilityData.quickTobogganUseCount >= this.globalService.globalVar.eventRaceData.eventAbilityData.quickTobogganUseCap)) {
+            this.globalService.globalVar.eventRaceData.eventAbilityData.quickTobogganUseCount += 1;
+            modifiedMaxSpeed *= permanentMaxSpeedIncreaseMultiplierObj.permanentMaxSpeedIncreaseMultiplier;
+          }
         }
         if (racingAnimal.type === AnimalTypeEnum.Gecko && racingAnimal.ability.name === "Night Vision") {
           modifiedMaxSpeed *= permanentMaxSpeedIncreaseMultiplier;
@@ -786,21 +800,25 @@ export class RaceLogicService {
           }
 
           if (racingAnimal.type === AnimalTypeEnum.Octopus && racingAnimal.ability.name === "Big Brain") {
-            var burstCap = Math.round(item.pathData.length / 3);
+            if (!(this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix &&
+              this.globalService.globalVar.eventRaceData.eventAbilityData.bigBrainUseCount >= this.globalService.globalVar.eventRaceData.eventAbilityData.bigBrainUseCap)) {              
+              var burstCap = Math.round(item.pathData.length / 3);
 
-            if (racingAnimal.raceVariables.burstCount === burstCap) {
-              raceResult.addRaceUpdate(framesPassed, animalDisplayName + " uses " + racingAnimal?.ability.name + ".");
-              var powerMultiplier = 1 + (this.lookupService.GetAbilityEffectiveAmount(racingAnimal!, item.terrain.powerModifier, statLossFromExhaustion) / 100);
-              var length = this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix ?
-                this.globalService.globalVar.eventRaceData.totalDistance : this.selectedRace.length;
+              if (racingAnimal.raceVariables.burstCount === burstCap) {
+                this.globalService.globalVar.eventRaceData.eventAbilityData.bigBrainUseCount += 1;
+                raceResult.addRaceUpdate(framesPassed, animalDisplayName + " uses " + racingAnimal?.ability.name + ".");
+                var powerMultiplier = 1 + (this.lookupService.GetAbilityEffectiveAmount(racingAnimal!, item.terrain.powerModifier, statLossFromExhaustion) / 100);
+                var length = this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix ?
+                  this.globalService.globalVar.eventRaceData.totalDistance : this.selectedRace.length;
 
-              this.AddRelayEffect(new Animal(), racingAnimal, length, new AnimalStats(1, 1, 1, powerMultiplier, 1, 1), true, RelayEffectEnum.bigBrain, true);
-              var relayAbilityXpIncrease = 4;
-              var relayAbilityXpIncreasePair = this.globalService.globalVar.modifiers.find(item => item.text === "relayAbilityXpGainModifier");
-              if (relayAbilityXpIncreasePair !== undefined)
-                relayAbilityXpIncrease = relayAbilityXpIncreasePair.value;
+                this.AddRelayEffect(new Animal(), racingAnimal, length, new AnimalStats(1, 1, 1, powerMultiplier, 1, 1), true, RelayEffectEnum.bigBrain, true);
+                var relayAbilityXpIncrease = 4;
+                var relayAbilityXpIncreasePair = this.globalService.globalVar.modifiers.find(item => item.text === "relayAbilityXpGainModifier");
+                if (relayAbilityXpIncreasePair !== undefined)
+                  relayAbilityXpIncrease = relayAbilityXpIncreasePair.value;
 
-              this.globalService.increaseAbilityXp(racingAnimal!, relayAbilityXpIncrease);
+                this.globalService.increaseAbilityXp(racingAnimal!, relayAbilityXpIncrease);
+              }
             }
           }
 
@@ -810,27 +828,41 @@ export class RaceLogicService {
             raceResult.addRaceUpdate(framesPassed, "<strong>MINI BURST!</strong> " + animalDisplayName + " is breaking their limit!");
 
           if (racingAnimal.type === AnimalTypeEnum.Cheetah && racingAnimal.ability.name === "On The Hunt") {
-            permanentMaxSpeedIncreaseMultiplier += (this.lookupService.GetAbilityEffectiveAmount(racingAnimal, item.terrain.powerModifier, statLossFromExhaustion) / 100);
-            this.globalService.increaseAbilityXp(racingAnimal);
+            if (!(this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix &&
+              this.globalService.globalVar.eventRaceData.eventAbilityData.onTheHuntUseCount >= this.globalService.globalVar.eventRaceData.eventAbilityData.onTheHuntUseCap)) {
+              this.globalService.globalVar.eventRaceData.eventAbilityData.onTheHuntUseCount += 1;
+
+              var increaseAmount = (this.lookupService.GetAbilityEffectiveAmount(racingAnimal, item.terrain.powerModifier, statLossFromExhaustion) / 100);
+
+              permanentMaxSpeedIncreaseMultiplier += increaseAmount;
+              this.globalService.increaseAbilityXp(racingAnimal);
+            }
           }
 
           if (racingAnimal.type === AnimalTypeEnum.Goat && racingAnimal.ability.name === "Deep Breathing") {
-            var staminaGain = animalMaxStamina * (this.lookupService.GetAbilityEffectiveAmount(racingAnimal, item.terrain.powerModifier, statLossFromExhaustion) / 100);
-            racingAnimal.currentStats.stamina += staminaGain;
-            raceResult.addRaceUpdate(framesPassed, animalDisplayName + " uses " + racingAnimal.ability.name + ".");
+            if (!(this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix &&
+              this.globalService.globalVar.eventRaceData.eventAbilityData.deepBreathingUseCount >= this.globalService.globalVar.eventRaceData.eventAbilityData.deepBreathingUseCap)) {
+              this.globalService.globalVar.eventRaceData.eventAbilityData.deepBreathingUseCount += 1;
+              var staminaGain = animalMaxStamina * (this.lookupService.GetAbilityEffectiveAmount(racingAnimal, item.terrain.powerModifier, statLossFromExhaustion) / 100);
+              racingAnimal.currentStats.stamina += staminaGain;
+              raceResult.addRaceUpdate(framesPassed, animalDisplayName + " uses " + racingAnimal.ability.name + ".");
 
-            if (racingAnimal.currentStats.stamina > animalMaxStamina) {
-              //deepBreathingStaminaGain += racingAnimal.currentStats.stamina - animalMaxStamina;
-              var staminaGain = racingAnimal.currentStats.stamina - animalMaxStamina;
-              var distance = 0;
+              if (racingAnimal.currentStats.stamina > animalMaxStamina) {
+                //deepBreathingStaminaGain += racingAnimal.currentStats.stamina - animalMaxStamina;
+                var staminaGain = racingAnimal.currentStats.stamina - animalMaxStamina;
+                var distance = 0;
 
-              this.AddRelayEffect(new Animal(), racingAnimal, distance, new AnimalStats(0, 0, 0, 0, 0, 0), false, RelayEffectEnum.deepBreathing, true, staminaGain);
+                if (this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix)
+                  staminaGain *= .2;
 
-              //console.log("New DBSG: " + staminaGain);
+                this.AddRelayEffect(new Animal(), racingAnimal, distance, new AnimalStats(0, 0, 0, 0, 0, 0), false, RelayEffectEnum.deepBreathing, true, staminaGain);
 
-              racingAnimal.currentStats.stamina = animalMaxStamina;
+                //console.log("New DBSG: " + staminaGain);
+
+                racingAnimal.currentStats.stamina = animalMaxStamina;
+              }
+              this.globalService.increaseAbilityXp(racingAnimal);
             }
-            this.globalService.increaseAbilityXp(racingAnimal);
           }
         }
         //}
@@ -1126,12 +1158,11 @@ export class RaceLogicService {
         framesPassed += 1;
 
         if (distanceToGo <= 0) {
-          //console.log("Finish Relay Length Check: " + racingAnimal.raceVariables.relayEffects.length);
           raceResult.addRaceUpdate(framesPassed, animalDisplayName + " finishes their leg of the race.");
           item.legComplete = true;
           legCounter += 1;
 
-          this.preRacerResetRelayEffectCheck(racingAnimal, nextAnimal, raceResult, framesPassed, lastAnimalDisplayName, item, item, statLossFromExhaustion, modifiedVelocity);
+          this.preRacerResetRelayEffectCheck(racingAnimal, nextAnimal, raceResult, framesPassed, animalDisplayName, item, item, statLossFromExhaustion, modifiedVelocity, animalMaxStamina);
 
           if (racingAnimal.type === AnimalTypeEnum.Octopus && racingAnimal.ability.name === "Buried Treasure") {
             buriedTreasureModifier = 1 + this.lookupService.GetAbilityEffectiveAmount(racingAnimal, item.terrain.powerModifier, statLossFromExhaustion) / 100;
@@ -1360,10 +1391,13 @@ export class RaceLogicService {
       }
     }
 
-    if (this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix) {
-      var eventRaceModifier = 30 / this.globalService.globalVar.eventRaceData.segmentTime;
+    /*if (this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix) {
+      console.log("Race Length: " + this.selectedRace.length);
+      console.log("Pre Modified Burst Chance: " + modifiedBurstChance);
+      //var eventRaceModifier = 30 / this.globalService.globalVar.eventRaceData.segmentTime;
       modifiedBurstChance = modifiedBurstChance / eventRaceModifier;
-    }
+      console.log("Post Modified Burst Chance: " + modifiedBurstChance);
+    }*/
 
     var rng = this.utilityService.getRandomNumber(1, 100);
 
@@ -1706,8 +1740,8 @@ export class RaceLogicService {
           this.globalService.globalVar.eventRaceData.queuedRelayEffects = this.globalService.globalVar.eventRaceData.queuedRelayEffects.filter(item => item.affectsAllRacers);
       }
 
-      if (animal.raceVariables.relayEffects !== null && animal.raceVariables.relayEffects !== undefined && animal.raceVariables.relayEffects.length > 0) {        
-        animal.raceVariables.relayEffects.forEach(effect => {          
+      if (animal.raceVariables.relayEffects !== null && animal.raceVariables.relayEffects !== undefined && animal.raceVariables.relayEffects.length > 0) {
+        animal.raceVariables.relayEffects.forEach(effect => {
           if (effect.isMultiplicative)
             animal.currentStats.multiplyCurrentRacingStats(effect.relayAffectedStatRatios);
           else
@@ -1718,7 +1752,7 @@ export class RaceLogicService {
   }
 
   //this set of relay effects is called before race variables/stats are reset from them finishing the race
-  preRacerResetRelayEffectCheck(animalGivingRelayEffect: Animal, animalReceivingRelayEffect: Animal | null, raceResult: RaceResult, framesPassed: number, lastAnimalDisplayName: string, currentLeg?: RaceLeg, previousLeg?: RaceLeg, statLossFromExhaustion?: number, modifiedVelocity?: number, animalMaxStamina?: number) {
+  preRacerResetRelayEffectCheck(animalGivingRelayEffect: Animal, animalReceivingRelayEffect: Animal | null, raceResult: RaceResult, framesPassed: number, animalDisplayName: string, currentLeg?: RaceLeg, previousLeg?: RaceLeg, statLossFromExhaustion?: number, modifiedVelocity?: number, animalMaxStamina?: number) {
     var relayAbilityXpIncrease = 4;
     var relayAbilityXpIncreasePair = this.globalService.globalVar.modifiers.find(item => item.text === "relayAbilityXpGainModifier");
     if (relayAbilityXpIncreasePair !== undefined)
@@ -1732,22 +1766,35 @@ export class RaceLogicService {
         var herdMentalityStaminaGain = animalGivingRelayEffect.currentStats.stamina * (this.lookupService.GetAbilityEffectiveAmount(animalGivingRelayEffect, previousLeg.terrain.powerModifier, statLossFromExhaustion) / 100);
         var distance = 0;
 
-        raceResult.addRaceUpdate(framesPassed, lastAnimalDisplayName + " uses " + animalGivingRelayEffect.ability.name + ".");
-        this.AddRelayEffect(animalReceivingRelayEffect, animalGivingRelayEffect, distance, new AnimalStats(0, 0, 0, 0, 0, 0), false, RelayEffectEnum.herdMentality, false, herdMentalityStaminaGain);
-        this.globalService.increaseAbilityXp(animalGivingRelayEffect, relayAbilityXpIncrease);
+        if (!(this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix &&
+          this.globalService.globalVar.eventRaceData.eventAbilityData.herdMentalityUseCount >= this.globalService.globalVar.eventRaceData.eventAbilityData.herdMentalityUseCap)) {
+          this.globalService.globalVar.eventRaceData.eventAbilityData.herdMentalityUseCount += 1;
+
+          raceResult.addRaceUpdate(framesPassed, animalDisplayName + " uses " + animalGivingRelayEffect.ability.name + ".");
+          this.AddRelayEffect(animalReceivingRelayEffect, animalGivingRelayEffect, distance, new AnimalStats(0, 0, 0, 0, 0, 0), false, RelayEffectEnum.herdMentality, false, herdMentalityStaminaGain);
+          this.globalService.increaseAbilityXp(animalGivingRelayEffect, relayAbilityXpIncrease);
+        }
       }
       if (animalGivingRelayEffect.type === AnimalTypeEnum.Caribou && animalGivingRelayEffect.ability.name === "Special Delivery" && !animalGivingRelayEffect.raceVariables.ranOutOfStamina) {
         if (animalMaxStamina === undefined)
           animalMaxStamina = 1;
 
+        if (!(this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix &&
+          this.globalService.globalVar.eventRaceData.eventAbilityData.specialDeliveryUseCount >= this.globalService.globalVar.eventRaceData.eventAbilityData.specialDeliveryUseCap)) {
+          this.globalService.globalVar.eventRaceData.eventAbilityData.specialDeliveryUseCount += 1;
 
-        //should last the entire time
-        var distance = this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix ?
-          this.globalService.globalVar.eventRaceData.totalDistance : this.selectedRace.length;
-        var specialDeliveryMaxSpeedBonus = ((animalGivingRelayEffect.currentStats.stamina / animalMaxStamina)) * (this.lookupService.GetAbilityEffectiveAmount(animalGivingRelayEffect, previousLeg.terrain.powerModifier, statLossFromExhaustion) / 100);
-        this.AddRelayEffect(animalGivingRelayEffect, animalGivingRelayEffect, distance, new AnimalStats(0, 0, 0, 0, 0, 0), false, RelayEffectEnum.specialDelivery, true, specialDeliveryMaxSpeedBonus);
-        raceResult.addRaceUpdate(framesPassed, lastAnimalDisplayName + " uses " + animalGivingRelayEffect.ability.name + ".");
-        this.globalService.increaseAbilityXp(animalGivingRelayEffect, relayAbilityXpIncrease);
+          //should last the entire time
+          var distance = this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix ?
+            this.globalService.globalVar.eventRaceData.totalDistance : this.selectedRace.length;
+
+          var specialDeliveryMaxSpeedBonus = (animalGivingRelayEffect.currentStats.stamina / animalMaxStamina) * (this.lookupService.GetAbilityEffectiveAmount(animalGivingRelayEffect, previousLeg.terrain.powerModifier, statLossFromExhaustion) / 100);
+          if (this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix)
+            specialDeliveryMaxSpeedBonus *= .2;
+
+          this.AddRelayEffect(animalGivingRelayEffect, animalGivingRelayEffect, distance, new AnimalStats(0, 0, 0, 0, 0, 0), false, RelayEffectEnum.specialDelivery, true, specialDeliveryMaxSpeedBonus);
+          raceResult.addRaceUpdate(framesPassed, animalDisplayName + " uses " + animalGivingRelayEffect.ability.name + ".");
+          this.globalService.increaseAbilityXp(animalGivingRelayEffect, relayAbilityXpIncrease);
+        }
       }
     }
   }
@@ -1765,6 +1812,9 @@ export class RaceLogicService {
         this.AddRelayEffect(animalReceivingRelayEffect, animalGivingRelayEffect, length * reducedDistanceAmount, new AnimalStats(additiveAmount, 0, 0, 0, 0, 0), false, RelayEffectEnum.inspiration, false);
         raceResult.addRaceUpdate(framesPassed, lastAnimalDisplayName + " uses " + animalGivingRelayEffect.ability.name + ".");
         this.globalService.increaseAbilityXp(animalGivingRelayEffect, relayAbilityXpIncrease);
+
+        if (this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix)
+          this.globalService.globalVar.eventRaceData.eventAbilityData.inspirationUseCount += 1;
       }
     }
 
@@ -1775,6 +1825,9 @@ export class RaceLogicService {
         this.AddRelayEffect(animalReceivingRelayEffect, animalGivingRelayEffect, length * reducedDistanceAmount, new AnimalStats(0, additiveAmount, 0, 0, 0, 0), false, RelayEffectEnum.flowingCurrent, false);
         raceResult.addRaceUpdate(framesPassed, lastAnimalDisplayName + " uses " + animalGivingRelayEffect.ability.name + ".");
         this.globalService.increaseAbilityXp(animalGivingRelayEffect, relayAbilityXpIncrease);
+
+        if (this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix)
+          this.globalService.globalVar.eventRaceData.eventAbilityData.flowingCurrentUseCount += 1;
       }
     }
 
@@ -1785,6 +1838,9 @@ export class RaceLogicService {
         this.AddRelayEffect(animalReceivingRelayEffect, animalGivingRelayEffect, length * reducedDistanceAmount, new AnimalStats(0, 0, 0, 0, 0, additiveAmount), false, RelayEffectEnum.navigator, false);
         raceResult.addRaceUpdate(framesPassed, lastAnimalDisplayName + " uses " + animalGivingRelayEffect?.ability.name + ".");
         this.globalService.increaseAbilityXp(animalGivingRelayEffect, relayAbilityXpIncrease);
+
+        if (this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix)
+          this.globalService.globalVar.eventRaceData.eventAbilityData.navigatorUseCount += 1;
       }
     }
 
@@ -1794,6 +1850,9 @@ export class RaceLogicService {
         var length = this.lookupService.GetAbilityEffectiveAmount(animalGivingRelayEffect, previousLeg.terrain.powerModifier, statLossFromExhaustion);
         this.AddRelayEffect(animalReceivingRelayEffect, animalGivingRelayEffect, length * reducedDistanceAmount, new AnimalStats(0, 0, 0, 0, 0, 0), false, RelayEffectEnum.camouflage, false, additionalEffect);
         raceResult.addRaceUpdate(framesPassed, lastAnimalDisplayName + " uses " + animalGivingRelayEffect.ability.name + ".");
+
+        if (this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix)
+          this.globalService.globalVar.eventRaceData.eventAbilityData.camouflageUseCount += 1;
       }
     }
 
@@ -1965,14 +2024,8 @@ export class RaceLogicService {
     //and create an application type situation like relays have but distance is from end of leg
 
     if (nextAnimal.talentTree.talentTreeType === TalentTreeTypeEnum.support && nextAnimal.talentTree.column1Row4Points > 0) {
-      var relayLength = nextAnimal.talentTree.column1Row4Points * .03;
-      console.log("Adding prelays");
-
-      //this.talentRelayCheck(nextAnimal, racingAnimal, currentLeg!.distance, terrain, statLossFromExhaustion, undefined, undefined, relayLength);
-      //this.batonEquipmentCheck(nextAnimal, racingAnimal, currentLeg!.distance, relayLength);
+      var relayLength = nextAnimal.talentTree.column1Row4Points * .03;      
       this.endOfLegRelayEffectCheck(nextAnimal, racingAnimal, raceResult, framesPassed, lastAnimalDisplayName, currentLeg, previousLeg, statLossFromExhaustion, undefined, undefined, undefined, relayLength);
-
-      console.log("Prelays added");
     }
   }
 
@@ -2027,8 +2080,11 @@ export class RaceLogicService {
       if (this.globalService.globalVar.eventRaceData.queuedRelayEffects.some(effect => effect.effectType === type)) {
         if (this.lookupService.relayEffectTypeStacksEffectiveness(type)) {
           var matchingEffect = this.globalService.globalVar.eventRaceData.queuedRelayEffects.find(effect => effect.effectType === type);
-          if (matchingEffect !== null && matchingEffect !== undefined)
+          if (matchingEffect !== null && matchingEffect !== undefined) {
             matchingEffect.relayAffectedStatRatios.addCurrentRacingStats(statMultiplers);
+            if (matchingEffect.additionalValue !== undefined && newRelayEffect.additionalValue !== undefined)
+              matchingEffect.additionalValue += newRelayEffect.additionalValue;
+          }
         }
         else {
           var matchingEffect = this.globalService.globalVar.eventRaceData.queuedRelayEffects.find(effect => effect.effectType === type);
@@ -2041,20 +2097,25 @@ export class RaceLogicService {
       }
     }
     else {
-      //needs to handle previous racer as well
       if (affectsAllRacers) {
         var indexOfAnimalGivingEffect = this.selectedRace.raceLegs.findIndex(item => item.courseType === racingAnimal.raceCourseType);
         if (this.selectedRace.raceLegs.length > indexOfAnimalGivingEffect) {
           this.selectedRace.raceLegs.slice(indexOfAnimalGivingEffect + 1).forEach(remainingLeg => {
             var remainingAnimal = this.racingAnimals.find(animal => animal.raceCourseType === remainingLeg.courseType);
-            if (remainingAnimal !== null && remainingAnimal !== undefined) {
+            if (remainingAnimal !== null && remainingAnimal !== undefined && remainingAnimal.raceVariables !== null &&
+              remainingAnimal.raceVariables !== undefined && remainingAnimal.raceVariables.relayEffects !== null &&
+              remainingAnimal.raceVariables.relayEffects !== undefined) {
               remainingAnimal.raceVariables.relayEffects.push(newRelayEffect);
             }
           });
         }
       }
       else {
-        racingAnimal.raceVariables.relayEffects.push(newRelayEffect);
+        if (racingAnimal !== null && racingAnimal !== undefined && racingAnimal.raceVariables !== null &&
+          racingAnimal.raceVariables !== undefined && racingAnimal.raceVariables.relayEffects !== null &&
+          racingAnimal.raceVariables.relayEffects !== undefined) {
+          racingAnimal.raceVariables.relayEffects.push(newRelayEffect);
+        }
       }
     }
   }
@@ -2083,9 +2144,13 @@ export class RaceLogicService {
     //made it through without stumbling
     if (currentPath.currentStumbleOpportunity === currentPath.stumbleOpportunities && currentPath.routeDesign !== RaceDesignEnum.Regular) {
       if (racingAnimal.type === AnimalTypeEnum.Goat && racingAnimal.ability.name === "Sure-footed") {
-        obj.permanentAdaptabilityIncreaseMultiplier += (this.lookupService.GetAbilityEffectiveAmount(racingAnimal, terrain.powerModifier, statLossFromExhaustion) / 100);
-        this.globalService.increaseAbilityXp(racingAnimal);
-        currentPath.currentStumbleOpportunity += 1; //use this so that you don't trigger multiple times -- can come up with better method
+        if (!(this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix &&
+          this.globalService.globalVar.eventRaceData.eventAbilityData.sureFootedUseCount >= this.globalService.globalVar.eventRaceData.eventAbilityData.sureFootedUseCap)) {
+          this.globalService.globalVar.eventRaceData.eventAbilityData.sureFootedUseCount += 1;
+          obj.permanentAdaptabilityIncreaseMultiplier += (this.lookupService.GetAbilityEffectiveAmount(racingAnimal, terrain.powerModifier, statLossFromExhaustion) / 100);
+          this.globalService.increaseAbilityXp(racingAnimal);
+          currentPath.currentStumbleOpportunity += 1; //use this so that you don't trigger multiple times -- can come up with better method
+        }
       }
     }
 
@@ -2661,13 +2726,11 @@ export class RaceLogicService {
     }
     else {
       var averageDistance = averageDistancePerSecond * (framesPassed / this.frameModifier);
+      var averageDistancePassed = 0;
       if (this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix) {
         var timePassed = (this.globalService.globalVar.eventRaceData.grandPrixTimeLength + this.globalService.globalVar.eventRaceData.bonusTime) - this.globalService.getRemainingEventRaceTime();
-        var averageDistancePassed = averageDistancePerSecond * timePassed;
+        averageDistancePassed = averageDistancePerSecond * timePassed;
         averageDistance += averageDistancePassed;
-
-        //console.log("Total Time: " + this.globalService.globalVar.eventRaceData.grandPrixTimeLength + " Remaining Time: " + this.globalService.getRemainingEventRaceTime() + " = " + timePassed);
-        //console.log("ADPS: " + averageDistancePerSecond + " AVG Distance: " + averageDistance + " Past Distance: " + averageDistancePassed);
       }
 
       if (totalRacers === 2) //money mark not unlocked
@@ -2686,7 +2749,7 @@ export class RaceLogicService {
 
         var moneyMarkDistancePerSecond = race.length / (this.timeToComplete * defaultMoneyMarkPace);
 
-        if (distanceCovered > moneyMarkDistancePerSecond * (framesPassed / this.frameModifier))
+        if (distanceCovered > (moneyMarkDistancePerSecond * (framesPassed / this.frameModifier)) + averageDistancePassed)
           currentPosition = 1;
       }
     }

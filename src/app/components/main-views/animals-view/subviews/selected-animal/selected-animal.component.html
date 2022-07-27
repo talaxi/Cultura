@@ -27,9 +27,8 @@
                     <br />
                     <div class="talents" *ngIf="areTalentsAvailable">
                         <div>
-                            <span class="keyword"> {{ getTalentTreeName() }}</span>
-                        </div>
-                        <br />
+                            <span *ngIf="selectedAnimal.talentTree.talentTreeType !== talentTreeTypeEnum.none" class="keyword"> {{ getTalentTreeName() }}</span>
+                        </div>                        
                         <button (click)="openTalentsModal(talentsContent)">View Talents</button>
                     </div>
                 </div>
@@ -85,7 +84,7 @@
                     <span [ngbPopover]="breedDescriptionPopover" triggers="mouseenter:mouseleave"
                         popoverClass="popoverClass">Breed XP: {{selectedAnimal.breedGaugeXp | number :
                         '1.2-2'}}/{{selectedAnimal.breedGaugeMax}}
-                        <button (click)="breed()">Breed</button>
+                        <button [disabled]="!canBreed" (click)="breed()">Breed</button>
                     </span>
                     <br />
                     <button (click)="openItemModal(content)">Use Item</button>
@@ -280,7 +279,6 @@
                     </div>
                 </div>
             </div>
-            <br />
             <div class="abilities">
                 <p><span class="s4Heading" [ngbPopover]="getAbilityPopover()" triggers="mouseenter:mouseleave"
                         popoverClass="popoverClass">Abilities</span>

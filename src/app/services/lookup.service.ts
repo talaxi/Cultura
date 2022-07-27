@@ -4,6 +4,7 @@ import { AnimalStatEnum } from '../models/animal-stat-enum.model';
 import { AnimalTypeEnum } from '../models/animal-type-enum.model';
 import { Ability } from '../models/animals/ability.model';
 import { AnimalDeck } from '../models/animals/animal-deck.model';
+import { AnimalStats } from '../models/animals/animal-stats.model';
 import { AnimalTraits } from '../models/animals/animal-traits.model';
 import { Animal } from '../models/animals/animal.model';
 import { BarnSpecializationEnum } from '../models/barn-specialization-enum.model';
@@ -463,6 +464,19 @@ export class LookupService {
     return -1;
   }
 
+  getTalentTreeNameByEnum(talentTreeType: TalentTreeTypeEnum) {
+    var talentTreeName = "";
+
+    if (talentTreeType === TalentTreeTypeEnum.sprint)
+      talentTreeName = "Sprint";
+      if (talentTreeType === TalentTreeTypeEnum.support)
+      talentTreeName = "Support";
+      if (talentTreeType === TalentTreeTypeEnum.longDistance)
+      talentTreeName = "Long Distance";
+
+    return talentTreeName;
+  }
+
   getAllBarnSpecializations() {
     var itemList = [];
     itemList.push("Breeding Grounds");
@@ -527,9 +541,9 @@ export class LookupService {
     var rewards: string[] = [];
 
     rewards.push("50,000,000 meters - +1 Token");
-    rewards.push("100,000,000 meters - +1 Token");
-    rewards.push("250,000,000 meters - +2 Tokens");
-    rewards.push("500,000,000 meters - +3 Tokens");
+    rewards.push("100,000,000 meters - +2 Tokens");
+    rewards.push("250,000,000 meters - +3 Tokens");
+    rewards.push("500,000,000 meters - +4 Tokens");
 
     return rewards;
   }
@@ -786,7 +800,7 @@ export class LookupService {
       }
 
       if (animal !== undefined && animal !== null) {
-        var effectiveAmountDisplay = this.GetAbilityEffectiveAmount(animal, undefined, undefined, selectedAbility).toFixed(2);
+        var effectiveAmountDisplay = this.GetAbilityEffectiveAmount(animal, undefined, undefined, selectedAbility).toLocaleString(undefined, {minimumFractionDigits: 2});
 
         if (cooldownDisplay === "" && animal.ability.cooldown !== undefined && animal.ability.cooldown !== null)
           cooldownDisplay = animal.ability.cooldown.toString();
@@ -809,7 +823,7 @@ export class LookupService {
           return "Acceleration Rate increases by <span class='keyword'>" + effectiveAmountDisplay + "</span>% for every second behind the average pace per second. Passive.";
         }
         if (abilityName === "On The Hunt") {
-          return "Every time you Burst, increase your Max Speed by <span class='keyword'>" + effectiveAmountDisplay + "</span>%. Passive.";
+          return "Every time you Burst, increase your Max Speed by <span class='keyword'>" + effectiveAmountDisplay + "</span>%. Passive.<br/><em>During Event Races:</em> Can trigger up to 25 times. Bonus lost after relaying.";
         }
         if (abilityName === "Awareness") {
           return "Boosts Focus Distance and Adaptability Distance by 40% for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. " + cooldownDisplay + " second cooldown.";
@@ -830,10 +844,10 @@ export class LookupService {
           return "When you are <span class='keyword'>" + effectiveAmountDisplay + "</span> meters from the finish line, leap straight to the end over .5 seconds. Passive.";
         }
         if (abilityName === "Sure-footed") {
-          return "When you make it through a special path without stumbling, increase your Adaptability Distance by <span class='keyword'>" + effectiveAmountDisplay + "</span>%. Passive.";
+          return "When you make it through a special path without stumbling, increase your Adaptability Distance by <span class='keyword'>" + effectiveAmountDisplay + "</span>%. Passive.<br/><em>During Event Races:</em> Can trigger up to 25 times. Bonus lost after relaying.";
         }
         if (abilityName === "Deep Breathing") {
-          return "Every time you Burst, regain <span class='keyword'>" + effectiveAmountDisplay + "</span>% of your stamina, up to 100%. If this amount exceeds 100% of your stamina, increase all other racers' stamina by the amount exceeded. Passive.";
+          return "Every time you Burst, regain <span class='keyword'>" + effectiveAmountDisplay + "</span>% of your stamina, up to 100%. If this amount exceeds 100% of your stamina, increase all other racers' stamina by the amount exceeded. Passive.<br/><em>During Event Races:</em> Relay effectiveness reduced to 25%. Can trigger up to 25 times. Effects remain for the duration of the race.";
         }
         if (abilityName === "In The Rhythm") {
           return "Increase your max speed bonus while Bursting by <span class='keyword'>" + effectiveAmountDisplay + "</span>%. Passive.";
@@ -842,7 +856,7 @@ export class LookupService {
           return "Cannot stumble for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. " + cooldownDisplay + " second cooldown.";
         }
         if (abilityName === "Night Vision") {
-          return "Increase Max Speed by <span class='keyword'>" + effectiveAmountDisplay + "</span>% for every path you complete without losing focus. If you lose focus, reset this bonus back to 0%. Passive.";
+          return "Increase Max Speed by <span class='keyword'>" + effectiveAmountDisplay + "</span>% for every path you complete without losing focus. If you lose focus, reset this bonus back to 0%. Passive.<br/><em>During Event Races:</em> Can trigger up to 25 times. Bonus lost after relaying.";
         }
         if (abilityName === "Camouflage") {
           return "The velocity you finish your leg at is given to your following racer on Relay. Decrease this amount to 0 evenly over <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. The following racer can break their max speed by up to 50% while this is active. Passive.";
@@ -872,7 +886,7 @@ export class LookupService {
           return "Delay your start by 8 seconds. If you still win the race, increase your Coin reward by <span class='keyword'>" + effectiveAmountDisplay + "</span>%. Passive.";
         }
         if (abilityName === "Big Brain") {
-          return "After Bursting through one third of your race paths, increase Power Efficiency of all remaining racers by <span class='keyword'>" + effectiveAmountDisplay + "</span>%. Passive.";
+          return "After Bursting through one third of your race paths, increase Power Efficiency of all remaining racers by <span class='keyword'>" + effectiveAmountDisplay + "</span>%. Passive.<br/><em>During Event Races:</em> Can trigger up to 5 times. Effects remain for the duration of the race.";
         }
         if (abilityName === "Herd Mentality") {
           return "After completing your leg, <span class='keyword'>" + effectiveAmountDisplay + "</span>% of your remaining Stamina is given to the next racer and they start their leg in Burst mode. This does not occur if you run out of Stamina during your leg. Passive.";
@@ -881,7 +895,7 @@ export class LookupService {
           return "Reduce stamina by 10%. For <span class='keyword'>" + effectiveAmountDisplay + "</span> meters, Acceleration Rate is increased by 25% of the amount of stamina lost. " + cooldownDisplay + " second cooldown.";
         }
         if (abilityName === "Special Delivery") {
-          return "Increase all remaining racers' Burst Max Speed Bonus by <span class='keyword'>" + effectiveAmountDisplay + "</span>% of your remaining Stamina percentage after completing your leg. This does not occur if you run out of Stamina during your leg. Passive.";
+          return "Increase all remaining racers' Burst Max Speed Bonus by <span class='keyword'>" + effectiveAmountDisplay + "</span>% of your remaining Stamina percentage after completing your leg. This does not occur if you run out of Stamina during your leg. Passive.<br/><em>During Event Races:</em> Relay effectiveness reduced to 25%. Can trigger up to 25 times. Effects remain for the duration of the race.";
         }
         if (abilityName === "Careful Toboggan") {
           return "Increase Adaptability Distance by 60% for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. " + cooldownDisplay + " second cooldown.";
@@ -890,7 +904,7 @@ export class LookupService {
           return "Double the maximum amount of drift per path. Increase Acceleration Rate by up to <span class='keyword'>" + effectiveAmountDisplay + "</span>% based on how much you drift. Passive.";
         }
         if (abilityName === "Quick Toboggan") {
-          return "Every time you make it through a path without drifting, gain <span class='keyword'>" + effectiveAmountDisplay + "</span>% Max Speed. Passive.";
+          return "Every time you make it through a path without drifting, gain <span class='keyword'>" + effectiveAmountDisplay + "</span>% Max Speed. Passive.<br/><em>During Event Races:</em> Can trigger up to 25 times. Bonus lost after relaying.";
         }
         if (abilityName === "Cold Blooded") {
           return "Increase Stamina and Focus Distance by 0-30% depending on how close to the center of the volcano you are. Focus Distance boost lasts <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. " + cooldownDisplay + " second cooldown.";
@@ -1168,7 +1182,8 @@ export class LookupService {
 
   relayEffectTypeStacksEffectiveness(type: RelayEffectEnum) {
     var stacks = false;
-    if (type === RelayEffectEnum.bigBrain || type === RelayEffectEnum.herdMentality || type === RelayEffectEnum.deepBreathing)
+    if (type === RelayEffectEnum.bigBrain || type === RelayEffectEnum.herdMentality || type === RelayEffectEnum.deepBreathing ||  
+      type === RelayEffectEnum.specialDelivery)
       stacks = true;
 
     return stacks;
@@ -1248,7 +1263,7 @@ export class LookupService {
     if (trait.negativeStatGain === AnimalStatEnum.topSpeed)
       negativeStat = "Speed";
 
-    return "+" + trait.researchLevel + "% " + positiveStat + ", -" + trait.researchLevel + "% " + negativeStat;
+    return "+" + trait.researchLevel + "% " + positiveStat + ", -" + (trait.researchLevel > 25 ? 25 : trait.researchLevel) + "% " + negativeStat;
   }
 
   getSpecialtyItemDescription(itemName: string) {
@@ -1292,15 +1307,15 @@ export class LookupService {
     else if (itemName === "International Races")
       description = "Gain 1 medal for every " + internationalRaceCountNeeded + " free races you complete";
     else if (itemName === "Team Manager")
-      description = "Add option to automatically run 1 free race per reset period <em>(runs for 1 hour of idle time)</em>";
+      description = "Add option to automatically run 1 free race per reset period <em>(runs for 2 hours of idle time)</em>";
     else if (itemName === "Incubator Upgrade Lv1")
-      description = "When breeding, permanently increase racing stat gain from base stat by .1% of positive trait value <em>(up to 1%)</em>";
+      description = "When breeding, permanently increase racing stat gain from base stat by .1% of positive trait value <em>(up to 10% trait value)</em>";
     else if (itemName === "Incubator Upgrade Lv2")
-      description = "When breeding, permanently increase racing stat gain from base stat by .1% of positive trait value <em>(up to 2.5%)</em>";
+      description = "When breeding, permanently increase racing stat gain from base stat by .1% of positive trait value <em>(up to 25% trait value)</em>";
     else if (itemName === "Incubator Upgrade Lv3")
-      description = "When breeding, permanently increase racing stat gain from base stat by .1% of positive trait value <em>(up to 5%)</em>";
+      description = "When breeding, permanently increase racing stat gain from base stat by .1% of positive trait value <em>(up to 50% trait value)</em>";
     else if (itemName === "Incubator Upgrade Lv4")
-      description = "When breeding, permanently increase racing stat gain from base stat by .1% of positive trait value <em>(up to 10%)</em>";
+      description = "When breeding, permanently increase racing stat gain from base stat by .1% of positive trait value <em>(up to 100% trait value)</em>";
     else if (itemName === "Whistle")
       description = "Gain +" + whistleStatGain + " to a stat instead of +1 after a successful coaching attempt";
     else if (itemName === "Golden Whistle")
@@ -1799,6 +1814,25 @@ export class LookupService {
 
     return false;
   }
+
+  getStatGainDescription(affectedStatRatios: AnimalStats, statGain: number): string {
+    var statGainDescription = "";
+
+    if (affectedStatRatios.topSpeed > 0)
+        statGainDescription += "+" + statGain * affectedStatRatios.topSpeed + " Speed\n";
+    if (affectedStatRatios.acceleration > 0)
+        statGainDescription += "+" + statGain * affectedStatRatios.acceleration + " Acceleration\n";
+    if (affectedStatRatios.endurance > 0)
+        statGainDescription += "+" + statGain * affectedStatRatios.endurance + " Endurance\n";
+    if (affectedStatRatios.focus > 0)
+        statGainDescription += "+" + statGain * affectedStatRatios.focus + " Focus\n";
+    if (affectedStatRatios.power > 0)
+        statGainDescription += "+" + statGain * affectedStatRatios.power + " Power\n";
+    if (affectedStatRatios.adaptability > 0)
+        statGainDescription += "+" + statGain * affectedStatRatios.adaptability + " Adaptability\n";
+
+    return statGainDescription;
+}
 
   getTalentTreeNames() {
     var talentTrees = [];
