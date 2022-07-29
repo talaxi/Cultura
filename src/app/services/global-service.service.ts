@@ -74,8 +74,8 @@ export class GlobalService {
     this.globalVar.freeRaceCounter = 0;
     this.globalVar.freeRaceTimePeriodCounter = 0;
     this.globalVar.lastTimeStamp = Date.now();
-    this.globalVar.currentVersion = 1.04; //TODO: this needs to be automatically increased or something, too easy to forget
-    this.globalVar.startingVersion = 1.04;
+    this.globalVar.currentVersion = 1.05; //TODO: this needs to be automatically increased or something, too easy to forget
+    this.globalVar.startingVersion = 1.05;
     this.globalVar.startDate = new Date();
     this.globalVar.notifications = new Notifications();
 
@@ -84,7 +84,7 @@ export class GlobalService {
 
     this.InitializeAnimals();
 
-    this.InitializeAnimalDecks();
+    this.InitializeRelayTeams();
 
     //Initialize training options
     this.InitializeGlobalTrainingOptions();
@@ -189,7 +189,7 @@ export class GlobalService {
     this.globalVar.modifiers.push(new StringNumberPair(5 * 60, "exhaustionGainTimerCapGrandPrixModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(.02, "exhaustionGainGrandPrixModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(2 * 60 * 60, "weatherClusterTimerCapGrandPrixModifier"));
-    this.globalVar.modifiers.push(new StringNumberPair(75, "grandPrixBreedLevelRequiredModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(50, "grandPrixBreedLevelRequiredModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(.2, "weatherMoraleBoostModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(.03, "focusMoraleLossModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(.01, "stumbleMoraleLossModifier"));
@@ -384,11 +384,11 @@ export class GlobalService {
     this.globalVar.animals.push(fox);
   }
 
-  InitializeAnimalDecks(): void {
+  InitializeRelayTeams(): void {
     var deck = new AnimalDeck();
     deck.isPrimaryDeck = true;
     deck.isAvailable = true;
-    deck.name = "Animal Deck 1";
+    deck.name = "Relay Team 1";
     deck.deckNumber = 1;
 
     var horse = this.globalVar.animals.find(item => item.getAnimalType() === "Horse");
@@ -401,7 +401,7 @@ export class GlobalService {
       var emptyDeck = new AnimalDeck();
       emptyDeck.isAvailable = true;
       emptyDeck.deckNumber = i + 2;
-      emptyDeck.name = "Animal Deck " + emptyDeck.deckNumber;
+      emptyDeck.name = "Relay Team " + emptyDeck.deckNumber;
       this.globalVar.animalDecks.push(emptyDeck);
     }
   }
@@ -1243,6 +1243,26 @@ export class GlobalService {
     }
   }
 
+  increaseGrandPrixRaceRank(): void {
+    if (this.globalVar.eventRaceData === undefined || this.globalVar.eventRaceData === null)
+      return;
+
+    var currentRank = this.globalVar.eventRaceData.rank;
+
+    var nextRank = currentRank.replace(/([A-Z])[^A-Z]*$/, function (a) {
+      var c = a.charCodeAt(0);
+      switch (c) {
+        case 65: return String.fromCharCode(c) + 'Z';
+        default: return String.fromCharCode(--c);
+      }
+    });
+
+    this.globalVar.eventRaceData.rank = nextRank;
+    this.initialGrandPrixSetup(this.globalVar.eventRaceData.rank);
+    this.globalVar.eventRaceData.initialSetupComplete = true;
+    this.globalVar.notifications.isEventRaceNowActive = true;
+  }
+
   getRewardReceiveText(numericValue: number) {
     if (this.globalVar.settings.get("useNumbersForCircuitRank"))
       return "Reach circuit rank " + numericValue + " to receive: \n";
@@ -1919,7 +1939,7 @@ export class GlobalService {
         leg.pathData = this.GenerateRaceLegPaths(leg, totalDistance);
       });
 
-      this.globalVar.circuitRaces.push(new Race(raceLegs, circuitRank, true, raceIndex, totalDistance, timeToComplete, this.GenerateCircuitRaceRewards(circuitRank)));
+      this.globalVar.circuitRaces.push(new Race(raceLegs, circuitRank, true, raceIndex, totalDistance, timeToComplete, this.GenerateCircuitRaceRewards(circuitRank), undefined, undefined, RaceTypeEnum.circuit));
 
       raceIndex += 1;
     }
@@ -2293,7 +2313,7 @@ export class GlobalService {
       leg.pathData = this.GenerateRaceLegPaths(leg, totalDistance);
     });
 
-    this.globalVar.localRaces.push(new Race(raceLegs, monoRank, false, raceIndex, totalDistance, timeToComplete, this.GenerateMonoRaceRewards(monoRank), LocalRaceTypeEnum.Mono));
+    this.globalVar.localRaces.push(new Race(raceLegs, monoRank, false, raceIndex, totalDistance, timeToComplete, this.GenerateMonoRaceRewards(monoRank), LocalRaceTypeEnum.Mono, undefined, RaceTypeEnum.special));
     raceIndex += 1;
   }
 
@@ -2355,7 +2375,7 @@ export class GlobalService {
       leg.pathData = this.GenerateRaceLegPaths(leg, totalDistance);
     });
 
-    this.globalVar.localRaces.push(new Race(raceLegs, duoRank, false, raceIndex, totalDistance, timeToComplete, this.GenerateDuoRaceRewards(duoRank), LocalRaceTypeEnum.Duo));
+    this.globalVar.localRaces.push(new Race(raceLegs, duoRank, false, raceIndex, totalDistance, timeToComplete, this.GenerateDuoRaceRewards(duoRank), LocalRaceTypeEnum.Duo, undefined, RaceTypeEnum.special));
 
     raceIndex += 1;
   }
@@ -2423,7 +2443,7 @@ export class GlobalService {
       leg.pathData = this.GenerateRaceLegPaths(leg, totalDistance);
     });
 
-    this.globalVar.localRaces.push(new Race(raceLegs, rainbowRank, false, raceIndex, totalDistance, timeToComplete, this.GenerateRainbowRaceRewards(rainbowRank), LocalRaceTypeEnum.Rainbow));
+    this.globalVar.localRaces.push(new Race(raceLegs, rainbowRank, false, raceIndex, totalDistance, timeToComplete, this.GenerateRainbowRaceRewards(rainbowRank), LocalRaceTypeEnum.Rainbow, undefined, RaceTypeEnum.special));
 
     raceIndex += 1;
   }
@@ -2582,7 +2602,7 @@ export class GlobalService {
     });
 
     return new Race(raceLegs, this.globalVar.circuitRank, false,
-      1, totalDistance, timeToComplete, this.GenerateLocalRaceRewards(this.globalVar.circuitRank), LocalRaceTypeEnum.Free);
+      1, totalDistance, timeToComplete, this.GenerateLocalRaceRewards(this.globalVar.circuitRank), LocalRaceTypeEnum.Free, undefined, RaceTypeEnum.circuit);
   }
 
   getTotalSegments(totalDistance: number) {
@@ -2622,14 +2642,15 @@ export class GlobalService {
     return totalSegments;
   }
 
-  initialGrandPrixSetup() {
-    //var raceStartAnimal = 
+  initialGrandPrixSetup(rank: string) {    
     this.globalVar.eventRaceData = new GrandPrixData();
+    this.globalVar.eventRaceData.rank = rank;
+    var numericRankValue = this.utilityService.getNumericValueOfCircuitRank(rank);    
 
-    this.globalVar.eventRaceData.totalDistance = 500000000;
+    this.globalVar.eventRaceData.totalDistance = 500000000 * numericRankValue;
     this.globalVar.eventRaceData.currentRaceSegmentCount = 0;
     this.globalVar.eventRaceData.segmentTimeCounter = 0;
-    this.globalVar.eventRaceData.totalSegments = this.getTotalSegments(this.globalVar.eventRaceData.totalDistance); //Math.ceil(this.globalVar.eventRaceData.grandPrixTimeLength / this.globalVar.eventRaceData.segmentTime);    
+    this.globalVar.eventRaceData.totalSegments = this.getTotalSegments(this.globalVar.eventRaceData.totalDistance); 
     this.globalVar.eventRaceData.remainingRewards = this.globalVar.eventRaceData.totalRewards = this.getGrandPrixRewardCount();
 
     this.globalVar.eventRaceData.animalData = [];
@@ -2638,16 +2659,6 @@ export class GlobalService {
     });
 
     this.globalVar.eventRaceData.weatherCluster = this.getRandomGrandPrixWeatherCluster(this.getEventStartDateTime().toString());
-  }
-
-  finalGrandPrixReset() {
-    //dole out rewards maybe somewhere else but needs to be done before this
-    /*this.globalVar.eventRaceData = new GrandPrixData();
-    
-    this.globalVar.eventRaceData.animalData = [];
-    this.globalVar.animals.filter(item => item.isAvailable).forEach(animal => {
-      this.globalVar.eventRaceData.animalData.push(new AnimalEventRaceData(animal.type));
-    });*/
   }
 
   animalCanRaceGrandPrix(animal: Animal) {
@@ -2736,6 +2747,8 @@ export class GlobalService {
   }
 
   getGrandPrixRewardCount() {
+    var numericalRank = this.utilityService.getNumericValueOfCircuitRank(this.globalVar.eventRaceData.rank);
+
     var metersPerCoinsGrandPrixModifierValue = 5;
     var metersPerCoinsGrandPrixModifier = this.globalVar.modifiers.find(item => item.text === "metersPerCoinsGrandPrixModifier");
     if (metersPerCoinsGrandPrixModifier !== undefined)
@@ -2746,8 +2759,8 @@ export class GlobalService {
     if (metersPerRenownGrandPrixModifier !== undefined)
       metersPerRenownGrandPrixModifierValue = metersPerRenownGrandPrixModifier.value;
 
-    var totalCoinRewards = this.globalVar.eventRaceData.totalDistance / metersPerCoinsGrandPrixModifierValue;
-    var totalRenownRewards = this.globalVar.eventRaceData.totalDistance / metersPerRenownGrandPrixModifierValue;
+    var totalCoinRewards = this.globalVar.eventRaceData.totalDistance / (metersPerCoinsGrandPrixModifierValue * numericalRank);
+    var totalRenownRewards = this.globalVar.eventRaceData.totalDistance / (metersPerRenownGrandPrixModifierValue * numericalRank);
     var totalTokenRewards = 4;
 
     return totalCoinRewards + totalRenownRewards + totalTokenRewards;
@@ -2967,7 +2980,7 @@ export class GlobalService {
       leg.pathData = this.GenerateRaceLegPaths(leg, totalDistance, type);
     });
 
-    return new Race(raceLegs, this.globalVar.circuitRank, false, 1, totalDistance, timeToComplete, undefined, LocalRaceTypeEnum.Track, type);
+    return new Race(raceLegs, this.globalVar.circuitRank, false, 1, totalDistance, timeToComplete, undefined, LocalRaceTypeEnum.Track, type, RaceTypeEnum.trainingTrack);
   }
 
   GenerateRaceLegPaths(leg: RaceLeg, totalDistance: number, trackRaceType?: TrackRaceTypeEnum): RacePath[] {
@@ -3939,9 +3952,9 @@ export class GlobalService {
       horse.currentStats.power = 2000;
       horse.currentStats.focus = 1000;
       horse.currentStats.adaptability = 1000;
-      horse.breedLevel = 1000;
+      horse.breedLevel = 100000;
       horse.canEquipOrb = true;
-      horse.incubatorStatUpgrades.powerModifier = 5;
+      horse.incubatorStatUpgrades.powerModifier = 5;      
       this.calculateAnimalRacingStats(horse);
     }
 
@@ -3973,13 +3986,13 @@ export class GlobalService {
 
     var monkey = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Monkey);
     if (monkey !== undefined) {
-      monkey.currentStats.topSpeed = 250;
-      monkey.currentStats.acceleration = 250;
+      monkey.currentStats.topSpeed = 2500;
+      monkey.currentStats.acceleration = 2500;
       monkey.currentStats.endurance = 2550;
       monkey.currentStats.power = 2000;
-      monkey.currentStats.focus = 250;
-      monkey.currentStats.adaptability = 250;
-      monkey.breedLevel = 1000;
+      monkey.currentStats.focus = 2500;
+      monkey.currentStats.adaptability = 2500;
+      monkey.breedLevel = 151000;
       monkey.incubatorStatUpgrades.powerModifier = 5;
       this.calculateAnimalRacingStats(monkey);
     }
@@ -4018,7 +4031,7 @@ export class GlobalService {
       dolphin.currentStats.power = 2000;
       dolphin.currentStats.focus = 1000;
       dolphin.currentStats.adaptability = 1000;
-      dolphin.breedLevel = 1000;
+      dolphin.breedLevel = 10000;
       dolphin.incubatorStatUpgrades.powerModifier = 5;
       this.calculateAnimalRacingStats(dolphin);
     }
@@ -4051,14 +4064,14 @@ export class GlobalService {
 
     var penguin = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Penguin);
     if (penguin !== undefined) {
-      penguin.currentStats.topSpeed = 60;
+      penguin.currentStats.topSpeed = 600;
       penguin.currentStats.acceleration = 200;
-      penguin.currentStats.endurance = 50;
+      penguin.currentStats.endurance = 500;
       penguin.currentStats.power = 2000;
       penguin.currentStats.focus = 200;
-      penguin.currentStats.adaptability = 20;
+      penguin.currentStats.adaptability = 200;
       penguin.incubatorStatUpgrades.powerModifier = 5;
-      penguin.breedLevel = 1000;
+      penguin.breedLevel = 10000;
       this.calculateAnimalRacingStats(penguin);
     }
 
@@ -4070,21 +4083,23 @@ export class GlobalService {
       caribou.currentStats.power = 2000;
       caribou.currentStats.focus = 200;
       caribou.currentStats.adaptability = 200;
-      caribou.breedLevel = 1000;
+      caribou.breedLevel = 100000;
       caribou.incubatorStatUpgrades.powerModifier = 5;
       this.calculateAnimalRacingStats(caribou);
     }
 
     var salamander = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Salamander);
     if (salamander !== undefined) {
-      salamander.currentStats.topSpeed = 250;
-      salamander.currentStats.acceleration = 150;
-      salamander.currentStats.endurance = 50;
+      salamander.currentStats.topSpeed = 2500;
+      salamander.currentStats.acceleration = 1500;
+      salamander.currentStats.endurance = 5000;
       salamander.currentStats.power = 2000;
-      salamander.currentStats.focus = 100;
-      salamander.currentStats.adaptability = 100;
-      salamander.breedLevel = 2000;
+      salamander.currentStats.focus = 1000;
+      salamander.currentStats.adaptability = 1000;
+      salamander.breedLevel = 20000;
       salamander.incubatorStatUpgrades.powerModifier = 5;
+      salamander.incubatorStatUpgrades.maxSpeedModifier = 5;
+      salamander.incubatorStatUpgrades.accelerationModifier = 5;
       this.calculateAnimalRacingStats(salamander);
     }
     var fox = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Fox);

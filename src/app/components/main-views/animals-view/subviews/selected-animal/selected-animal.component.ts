@@ -64,6 +64,7 @@ export class SelectedAnimalComponent implements OnInit {
   equipmentCells: ResourceValue[]; //for display purposes
   selectedEquipment: ResourceValue | undefined;
 
+  orbFunctionalityReleased = false;
   orbList: ResourceValue[];
   orbRows: ResourceValue[][]; //for display purposes
   orbCells: ResourceValue[]; //for display purposes

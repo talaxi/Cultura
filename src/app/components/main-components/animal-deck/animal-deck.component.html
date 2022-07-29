@@ -1,15 +1,24 @@
-<div>
-    <span *ngIf="deck.isPrimaryDeck && this.deckNumber !== undefined && this.deckNumber > 0" class="primaryText keyword rightSpaced">
-        Primary
-    </span>
-    <span *ngIf="deck.autoRunFreeRace && this.deckNumber !== undefined && this.deckNumber > 0" class="primaryText keyword rightSpaced">
-        Auto Run Free Race
-    </span>
-    <span *ngIf="deck.isEventDeck && this.deckNumber !== undefined && this.deckNumber > 0" class="primaryText keyword rightSpaced">
-        Event
-    </span>
-    <br *ngIf="this.deckNumber > 0"/>
-    <strong class="clickableText" (click)="goToDeckView()">{{deck.name}}</strong> - <span *ngFor="let animal of deck.selectedAnimals; let i = index;" class="coloredText" [ngClass]="getColorClass(animal)">
-        {{animal.name}}<span *ngIf="i < deck.selectedAnimals.length - 1" class="defaultColor"> / </span>
-    </span>
+<div class="relayTeam">
+    <div>
+        <span *ngIf="deck.isPrimaryDeck && this.deckNumber !== undefined && this.deckNumber > 0"
+            class="primaryText keyword rightSpaced">
+            Primary
+        </span>
+        <span *ngIf="deck.autoRunFreeRace && this.deckNumber !== undefined && this.deckNumber > 0"
+            class="primaryText keyword rightSpaced">
+            Auto Run Free Race
+        </span>
+        <span *ngIf="deck.isEventDeck && this.deckNumber !== undefined && this.deckNumber > 0"
+            class="primaryText keyword rightSpaced">
+            Event
+        </span>
+        <br *ngIf="this.deckNumber > 0" />
+    </div>
+    <div>
+        <strong class="clickableText" (click)="goToDeckView()">{{deck.name}}</strong> - <span
+            *ngFor="let animal of deck.selectedAnimals; let i = index;" class="coloredText"
+            [ngClass]="getColorClass(animal)">
+            {{animal.name}}<span *ngIf="i < deck.selectedAnimals.length - 1" class="defaultColor"> / </span>
+        </span>
+    </div>
 </div>

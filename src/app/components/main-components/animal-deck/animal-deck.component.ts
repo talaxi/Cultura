@@ -45,6 +45,6 @@ export class AnimalDeckComponent implements OnInit {
   }
 
   goToDeckView() {
-    this.componentCommunicationService.setNewView(NavigationEnum.decks);
+    this.componentCommunicationService.setNewView(NavigationEnum.relayTeams);
   }
 }

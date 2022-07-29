@@ -1,10 +1,10 @@
 <div class="raceSelectionDiv" *ngIf="!showRace">
         <div class="info" *ngIf="!trainingTrackRace">
                 <div class="raceGridContainer">
-                        <span class="circuit s5Heading clickableText" (click)="changeDisplayRaceView(raceTypeEnum.circuit)" [ngClass]='displayRaceView === raceTypeEnum.circuit ? "filterActive" : ""'>Circuit Races</span>
-                        <span class="local s5Heading clickableText" (click)="changeDisplayRaceView(raceTypeEnum.special)" [ngClass]='displayRaceView === raceTypeEnum.special ? "filterActive" : ""'><span *ngIf="newSpecialRaceAvailable" class="availableIcon">!</span>Special Races</span>
-                        <span class="event s5Heading clickableText" (click)="changeDisplayRaceView(raceTypeEnum.event)" [ngClass]='displayRaceView === raceTypeEnum.event  ? "filterActive" : ""'><span *ngIf="eventRaceNowAvailable" class="availableIcon">!</span>Event Races</span>
-                        <span class="trainingTrack s5Heading clickableText" (click)="changeDisplayRaceView(raceTypeEnum.trainingTrack)" [ngClass]='displayRaceView === raceTypeEnum.trainingTrack ? "filterActive" : ""'>Training Track</span>
+                        <button class="buttonAsText circuit s5Heading clickableText" (click)="changeDisplayRaceView(raceTypeEnum.circuit)" [ngClass]='displayRaceView === raceTypeEnum.circuit ? "filterActive" : ""'>Circuit Races</button>
+                        <button class="buttonAsText local s5Heading clickableText" (click)="changeDisplayRaceView(raceTypeEnum.special)" [ngClass]='displayRaceView === raceTypeEnum.special ? "filterActive" : ""'><span *ngIf="newSpecialRaceAvailable" class="availableIcon">!</span>Special Races</button>
+                        <button class="buttonAsText event s5Heading clickableText" (click)="changeDisplayRaceView(raceTypeEnum.event)" [ngClass]='displayRaceView === raceTypeEnum.event  ? "filterActive" : ""'><span *ngIf="eventRaceNowAvailable" class="availableIcon">!</span>Event Races</button>
+                        <button class="buttonAsText trainingTrack s5Heading clickableText" (click)="changeDisplayRaceView(raceTypeEnum.trainingTrack)" [ngClass]='displayRaceView === raceTypeEnum.trainingTrack ? "filterActive" : ""'>Training Track</button>
                 </div>
         <hr />
         </div>

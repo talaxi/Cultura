@@ -52,13 +52,15 @@ export class TrainingTrackRaceViewComponent implements OnInit {
   }
 
   selectTrackRace(race: Race) {
-    var currentPrimaryDeck = this.globalService.globalVar.animalDecks.find(item => item.isPrimaryDeck);
-    if (currentPrimaryDeck !== null && currentPrimaryDeck !== undefined) {
-      currentPrimaryDeck.selectedAnimals = currentPrimaryDeck.selectedAnimals.filter(item => item.raceCourseType !== this.selectedAnimal.raceCourseType);
-      currentPrimaryDeck.selectedAnimals.push(this.selectedAnimal);
-    }
+    if (this.lookupService.canAnimalRace(this.selectedAnimal)) {
+      var currentPrimaryDeck = this.globalService.globalVar.animalDecks.find(item => item.isPrimaryDeck);
+      if (currentPrimaryDeck !== null && currentPrimaryDeck !== undefined) {
+        currentPrimaryDeck.selectedAnimals = currentPrimaryDeck.selectedAnimals.filter(item => item.raceCourseType !== this.selectedAnimal.raceCourseType);
+        currentPrimaryDeck.selectedAnimals.push(this.selectedAnimal);
+      }
 
-    this.raceSelected.emit(race);
+      this.raceSelected.emit(race);
+    }
   }
 
   getTrackRewardsPopover(type: TrackRaceTypeEnum) {

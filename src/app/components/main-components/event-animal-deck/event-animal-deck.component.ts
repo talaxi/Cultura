@@ -77,9 +77,12 @@ export class EventAnimalDeckComponent implements OnInit {
 
     var grandPrixBreedLevelRequired = this.getBreedLevelRequired();
 
-    if (animal.breedLevel >= grandPrixBreedLevelRequired)
-      canEnter = true;
+    var globalAnimal = this.globalService.globalVar.animals.find(item => item.type === animal.type);
 
+    if (globalAnimal !== undefined) {
+      if (globalAnimal.breedLevel >= grandPrixBreedLevelRequired)
+        canEnter = true;
+    }
     return canEnter;
   }
 
@@ -253,6 +256,6 @@ export class EventAnimalDeckComponent implements OnInit {
   }
 
   goToDeckView() {
-    this.componentCommunicationService.setNewView(NavigationEnum.decks);
+    this.componentCommunicationService.setNewView(NavigationEnum.relayTeams);
   }
 }

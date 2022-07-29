@@ -58,7 +58,8 @@ export class TutorialService {
     }
     if (id === 5)
     {
-      tutorialState.tutorialText = "Way to go! Exciting stuff there. Looks like you've got the gist of it for now. Keep racing, make some money, and build up your facility to be as great as it can be. I'll check in with you again a little later. I look forward to seeing how far you can go!";      
+      tutorialState.tutorialText = "Way to go! Exciting stuff there. Looks like you've got the gist of it for now. Keep racing, make some money, and build up your facility to be as great as it can be. I'll check in with you again a little later. I look forward to seeing how far you can go!\n\n" + 
+      "<b>If you are stuck or are confused about anything as you progress, check the 'FAQs' link down below on the right side of the footer.</b>";      
       tutorialState.associatedTab = NavigationEnum.raceselection;
     }
     if (id === 6)

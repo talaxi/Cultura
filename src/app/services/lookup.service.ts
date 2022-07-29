@@ -539,11 +539,36 @@ export class LookupService {
 
   getGrandPrixTokenRewards() {
     var rewards: string[] = [];
+    var numericRankModifier = this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.eventRaceData.rank);
+    var token1MeterCount = 50000000;
+    var token1MeterCountPair = this.globalService.globalVar.modifiers.find(item => item.text === "grandPrixToken1MeterModifier");
+    if (token1MeterCountPair !== null && token1MeterCountPair !== undefined)
+      token1MeterCount = token1MeterCountPair.value;
 
-    rewards.push("50,000,000 meters - +1 Token");
-    rewards.push("100,000,000 meters - +2 Tokens");
-    rewards.push("250,000,000 meters - +3 Tokens");
-    rewards.push("500,000,000 meters - +4 Tokens");
+    var token2MeterCount = 50000000;
+    var token2MeterCountPair = this.globalService.globalVar.modifiers.find(item => item.text === "grandPrixToken2MeterModifier");
+    if (token2MeterCountPair !== null && token2MeterCountPair !== undefined)
+      token2MeterCount = token2MeterCountPair.value;
+
+    var token3MeterCount = 50000000;
+    var token3MeterCountPair = this.globalService.globalVar.modifiers.find(item => item.text === "grandPrixToken3MeterModifier");
+    if (token3MeterCountPair !== null && token3MeterCountPair !== undefined)
+      token3MeterCount = token3MeterCountPair.value;
+
+    var token4MeterCount = 50000000;
+    var token4MeterCountPair = this.globalService.globalVar.modifiers.find(item => item.text === "grandPrixToken4MeterModifier");
+    if (token4MeterCountPair !== null && token4MeterCountPair !== undefined)
+      token4MeterCount = token4MeterCountPair.value;
+    
+    var token1Gain = 1 * numericRankModifier;
+    var token2Gain = 2 * numericRankModifier;
+    var token3Gain = 3 * numericRankModifier;
+    var token4Gain = 4 * numericRankModifier;
+
+    rewards.push((token1MeterCount * numericRankModifier).toLocaleString() + " meters - +" + token1Gain + " Token" + (token1Gain > 1 ? "s" : ""));
+    rewards.push((token2MeterCount * numericRankModifier).toLocaleString() + " meters - +" + token2Gain + " Tokens");
+    rewards.push((token3MeterCount * numericRankModifier).toLocaleString() + " meters - +" + token3Gain + " Tokens");
+    rewards.push((token4MeterCount * numericRankModifier).toLocaleString() + " meters - +" + token4Gain + " Tokens");
 
     return rewards;
   }
@@ -677,7 +702,7 @@ export class LookupService {
         return "Increase max speed, acceleration, stamina cost for a short period";
       }
       if (abilityName === "Giving Chase") {
-        return "Increase acceleration the further behind you are";
+        return "Increase acceleration when behind competitors";
       }
       if (abilityName === "On The Hunt") {
         return "Gain max speed after each burst";
@@ -820,7 +845,7 @@ export class LookupService {
           return " Gain 35% Max Speed and Acceleration Rate for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters, but lose twice as much stamina as normal. " + cooldownDisplay + " second cooldown.";
         }
         if (abilityName === "Giving Chase") {
-          return "Acceleration Rate increases by <span class='keyword'>" + effectiveAmountDisplay + "</span>% for every second behind the average pace per second. Passive.";
+          return "While you are behind the average pace, increase Acceleration Rate by <span class='keyword'>" + effectiveAmountDisplay + "</span>%. Passive.";
         }
         if (abilityName === "On The Hunt") {
           return "Every time you Burst, increase your Max Speed by <span class='keyword'>" + effectiveAmountDisplay + "</span>%. Passive.<br/><em>During Event Races:</em> Can trigger up to 25 times. Bonus lost after relaying.";
@@ -1299,7 +1324,7 @@ export class LookupService {
     else if (itemName === "Stockbreeder")
       description = "Add option to auto breed when Breed XP is full";
     else if (itemName === "Scouts")
-      description = "You can choose the order of race legs for each animal deck";
+      description = "You can choose the order of race legs for each relay team";
     else if (itemName === "Money Mark")
       description = "Add new indicator to race, beat its time to gain increased coins";
     else if (itemName === "National Races")
@@ -1750,8 +1775,8 @@ export class LookupService {
   getWeekDayGrandPrixTimeSpan() {
     var grandPrix = new GrandPrixData();
 
-    var startTimeText = this.utilityService.getDayOfWeekFromNumber(grandPrix.weekStartDay) + " " + this.utilityService.getAmPmTimeFromHours(grandPrix.weekStartHour)
-      + " to " + this.utilityService.getDayOfWeekFromNumber(grandPrix.weekEndDay) + " " + this.utilityService.getAmPmTimeFromHours(grandPrix.weekEndHour);
+    var startTimeText = this.utilityService.getDayOfWeekFromNumber(grandPrix.weekStartDay) + " " + this.utilityService.get24HourFormat(grandPrix.weekStartHour) + " (" + this.utilityService.getAmPmTimeFromHours(grandPrix.weekStartHour) + ")"
+      + " to " + this.utilityService.getDayOfWeekFromNumber(grandPrix.weekEndDay) + " " + this.utilityService.get24HourFormat(grandPrix.weekEndHour) + " (" + this.utilityService.getAmPmTimeFromHours(grandPrix.weekEndHour) + ")";
 
     return startTimeText;
   }
@@ -1759,8 +1784,8 @@ export class LookupService {
   getWeekEndGrandPrixTimeSpan() {
     var grandPrix = new GrandPrixData();
 
-    var startTimeText = this.utilityService.getDayOfWeekFromNumber(grandPrix.weekendStartDay) + " " + this.utilityService.getAmPmTimeFromHours(grandPrix.weekendStartHour)
-      + " to " + this.utilityService.getDayOfWeekFromNumber(grandPrix.weekendEndDay) + " " + this.utilityService.getAmPmTimeFromHours(grandPrix.weekendEndHour);
+    var startTimeText = this.utilityService.getDayOfWeekFromNumber(grandPrix.weekendStartDay) + " " + this.utilityService.get24HourFormat(grandPrix.weekendStartHour) + " (" + this.utilityService.getAmPmTimeFromHours(grandPrix.weekendStartHour) + ")"
+      + " to " + this.utilityService.getDayOfWeekFromNumber(grandPrix.weekendEndDay) + " " + this.utilityService.get24HourFormat(grandPrix.weekendEndHour) + " (" + this.utilityService.getAmPmTimeFromHours(grandPrix.weekendEndHour) + ")";
 
     return startTimeText;
   }

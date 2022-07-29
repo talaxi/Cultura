@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Animal } from 'src/app/models/animals/animal.model';
 import { LocalRaceTypeEnum } from 'src/app/models/local-race-type-enum.model';
 import { RaceCourseTypeEnum } from 'src/app/models/race-course-type-enum.model';
+import { RaceTypeEnum } from 'src/app/models/race-type-enum.model';
 import { RaceLeg } from 'src/app/models/races/race-leg.model';
 import { Race } from 'src/app/models/races/race.model';
 import { GlobalService } from 'src/app/services/global-service.service';
@@ -28,19 +29,21 @@ export class RaceDescriptionComponent implements OnInit {
 
     var selectedDeck = this.lookupService.getPrimaryDeck();
     this.race.raceLegs.forEach(leg => {
-      if (selectedDeck === undefined || selectedDeck === null || selectedDeck.selectedAnimals.length === 0) {
+      if (selectedDeck === undefined || selectedDeck === null || selectedDeck.selectedAnimals.length === 0 &&
+        this.race.raceType !== RaceTypeEnum.trainingTrack) {
         this.cannotRace = true;
         this.missingRacers.push(leg.courseType);
       }
       else {
-        if (!selectedDeck?.selectedAnimals.some(item => item.raceCourseType === leg.courseType)) {
+        if (!selectedDeck?.selectedAnimals.some(item => item.raceCourseType === leg.courseType) &&
+          this.race.raceType !== RaceTypeEnum.trainingTrack) {
           this.cannotRace = true;
           this.missingRacers.push(leg.courseType);
         }
         else {
-          var selectedAnimal = selectedDeck?.selectedAnimals.find(item => item.raceCourseType === leg.courseType);          
+          var selectedAnimal = selectedDeck?.selectedAnimals.find(item => item.raceCourseType === leg.courseType);
           if (selectedAnimal !== undefined && !this.lookupService.canAnimalRace(selectedAnimal)) {
-            this.cannotRace = true;            
+            this.cannotRace = true;
             this.busyRacers.push(selectedAnimal);
           }
         }

@@ -39,7 +39,7 @@ export class DecksViewComponent implements OnInit {
     private componentCommunicationService: ComponentCommunicationService) { }
 
   ngOnInit(): void {
-    this.componentCommunicationService.setNewView(NavigationEnum.decks);
+    this.componentCommunicationService.setNewView(NavigationEnum.relayTeams);
     
     this.isRaceOrderOn = false;
     this.newAnimalList = [];

@@ -134,6 +134,17 @@ export class UtilityService {
     return time;
   }
 
+  get24HourFormat(hour: number) {
+    var time = "";
+
+    if (hour <= 9)
+      time = "0" + hour + ":00";
+    else
+      time = hour + ":00";
+
+    return time;
+  }
+
   convertDegreesToRadians(degrees: number) {
     return degrees * (Math.PI / 180);
   }

@@ -18,3 +18,10 @@ font-size-adjust: 0.75;*/
 .rightSpaced {
     margin-right: 1rem;
 }
+
+.relayTeam {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 100%;
+}

@@ -239,6 +239,30 @@ button:active:enabled {
   /* Lowering the shadow */
 }
 
+.buttonAsText {
+  background: none !important;
+  border: none;
+  padding: 0 !important;
+  color: var(--foreground-default);
+}
+
+.buttonAsText:hover {
+  color: var(--foreground-tertiary);
+}
+
+/*.buttonAsText:active {
+  border-style: outset !important;
+  background-image: none;
+  box-shadow: none !important;
+  outline: 0;
+} */
+
+.buttonAsText:hover,.buttonAsText:focus,.buttonAsText:active, 
+.buttonAsText:active:focus:not(:disabled):not(.disabled) {
+    box-shadow: none!important;
+    outline: 0;
+}
+
 .defaultTextColor {
   color: var(--foreground-default);
 }

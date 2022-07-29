@@ -98,7 +98,7 @@ export class SettingsViewComponent implements OnInit {
       var loadDataJson = <GlobalVariables>JSON.parse(decompressedData);
       if (loadDataJson !== null && loadDataJson !== undefined) {
         this.globalService.globalVar = plainToInstance(GlobalVariables, loadDataJson);
-        this.versionControlService.updatePlayerVersion();
+        this.versionControlService.updatePlayerVersion();        
       }
     }
   }

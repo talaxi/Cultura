@@ -376,11 +376,8 @@ export class DrawRaceComponent implements OnInit {
 
     if (isGrandPrix) {
       if (this.globalService.globalVar.eventRaceData.previousRaceSegment !== undefined) {
-        raceLegs.unshift(this.globalService.globalVar.eventRaceData.previousRaceSegment.raceLegs[0]);
-        //console.log("Before: " + currentDistanceTraveled);
+        raceLegs.unshift(this.globalService.globalVar.eventRaceData.previousRaceSegment.raceLegs[0]);        
         currentDistanceTraveled += raceLegs[0].distance;
-        //this.lastPathEndingX = raceLegs[0].distance * this.canvasWidth * xRaceModeModifier;
-        //console.log("After: " + currentDistanceTraveled);
       }
     }
 
@@ -480,6 +477,11 @@ export class DrawRaceComponent implements OnInit {
 
     currentYDistanceTraveled = this.mountainEndingY;
     if (this.race.raceType === RaceTypeEnum.event && this.race.eventRaceType === EventRaceTypeEnum.grandPrix) {
+      /*if (this.globalService.globalVar.eventRaceData.mountainEndingY === 0 && this.currentLeg.courseType !== RaceCourseTypeEnum.Mountain)
+      {    
+        this.lastPathEndingY = this.canvasHeight / 2;        
+      }*/
+
       currentYDistanceTraveled += this.globalService.globalVar.eventRaceData.mountainEndingY;
       if (this.globalService.globalVar.eventRaceData.previousRaceSegment !== null &&
         this.globalService.globalVar.eventRaceData.previousRaceSegment !== undefined &&
@@ -543,7 +545,7 @@ export class DrawRaceComponent implements OnInit {
     var waterGoingUp = true;
     var legDistanceCompleted = 0;
     var pathCounter = 0;
-
+    
     raceLegs.forEach(leg => {
       if (leg.pathData !== undefined && leg.pathData.length !== 0) {
         pathCounter = 0;
@@ -552,8 +554,9 @@ export class DrawRaceComponent implements OnInit {
           mountainLegDistance = 0;
 
         leg.pathData.forEach(path => {
-          if (leg.courseType === RaceCourseTypeEnum.Flatland) {
-            //context.lineCap = "round";
+          if (leg.courseType === RaceCourseTypeEnum.Flatland) { 
+            //this.grandPrixMountainYReset();
+            
             if (path.routeDesign === RaceDesignEnum.Regular)
               this.drawRegularFlatlandOverview(context, path, xRaceModeModifier, yRaceModeModifier, xDistanceOffset, yDistanceOffset);
             if (path.routeDesign === RaceDesignEnum.S)
@@ -563,12 +566,7 @@ export class DrawRaceComponent implements OnInit {
           }
           else if (leg.courseType === RaceCourseTypeEnum.Mountain) {
             //context.lineCap = "round";
-            var goingUp = mountainLegDistance < leg.distance * this.mountainClimbPercent;
-            /*if (this.globalService.globalVar.eventRaceData.currentRaceSegmentCount === 2)
-            {
-              console.log("Direction: " + goingUp);
-              console.log(mountainLegDistance + " < " + leg.distance + " * " + this.mountainClimbPercent);
-            }*/
+            var goingUp = mountainLegDistance < leg.distance * this.mountainClimbPercent;            
 
             if (path.routeDesign === RaceDesignEnum.Regular) {
               this.drawRegularMountainOverview(context, path, xRaceModeModifier, yRaceModeModifier, goingUp, xDistanceOffset, yDistanceOffset);
@@ -581,8 +579,10 @@ export class DrawRaceComponent implements OnInit {
             }
 
             mountainLegDistance += path.length;
+            this.grandPrixMountainYReset(legCounter);
           }
           else if (leg.courseType === RaceCourseTypeEnum.Ocean) {
+            //this.grandPrixMountainYReset();
             //context.lineCap = "round";
             if (path.routeDesign === RaceDesignEnum.Regular)
               this.drawRegularWaterOverview(context, path, xRaceModeModifier, yRaceModeModifier, waterGoingUp, xDistanceOffset, yDistanceOffset);
@@ -594,6 +594,7 @@ export class DrawRaceComponent implements OnInit {
             waterGoingUp = !waterGoingUp;
           }
           if (leg.courseType === RaceCourseTypeEnum.Tundra) {
+            //this.grandPrixMountainYReset();
             //context.lineCap = "round";
             if (path.routeDesign === RaceDesignEnum.Regular)
               this.drawRegularTundraOverview(context, path, xRaceModeModifier, yRaceModeModifier, xDistanceOffset, yDistanceOffset);
@@ -603,6 +604,7 @@ export class DrawRaceComponent implements OnInit {
               this.drawHillsTundraOverview(context, path, xRaceModeModifier, yRaceModeModifier, xDistanceOffset, yDistanceOffset);
           }
           if (leg.courseType === RaceCourseTypeEnum.Volcanic) {
+            //this.grandPrixMountainYReset();
             //context.lineCap = "round";
             this.backgroundVolcanoYStart = this.lastPathEndingY;
             if (path.routeDesign === RaceDesignEnum.Regular || path.routeDesign === RaceDesignEnum.FirstRegular || path.routeDesign === RaceDesignEnum.LastRegular)
@@ -1077,9 +1079,7 @@ export class DrawRaceComponent implements OnInit {
     context.beginPath();
     context.moveTo(startingX + xRegularOffset, startingY);
     context.lineTo(startingX + xRegularOffset + xFullBump / 2, startingY - yFullBump);
-    context.lineTo(startingX + xRegularOffset + xFullBump, startingY);
-    //console.log("FirstBump: (" + (startingX + xRegularOffset + xFullBump / 2) +", " + (startingY - yFullBump));
-    //console.log("FirstBumpEnd: (" + (startingX + xRegularOffset + xFullBump) +", " + (startingY));
+    context.lineTo(startingX + xRegularOffset + xFullBump, startingY);    
     context.stroke();
 
     context.beginPath();
@@ -1146,12 +1146,10 @@ export class DrawRaceComponent implements OnInit {
     context.moveTo(this.lastPathEndingX - xDistanceOffset, this.lastPathEndingY + yDistanceOffset);
 
     if (goingUp) {
-      context.lineTo(this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY - verticalLength + yDistanceOffset);
-      //console.log("From " + (this.lastPathEndingY + yDistanceOffset) + " to " + (this.lastPathEndingY - verticalLength + yDistanceOffset));
+      context.lineTo(this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY - verticalLength + yDistanceOffset);      
     }
     else {
-      context.lineTo(this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY + verticalLength + yDistanceOffset);
-      //console.log("From " + (this.lastPathEndingY + yDistanceOffset) + " to " + (this.lastPathEndingY + verticalLength + yDistanceOffset));
+      context.lineTo(this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY + verticalLength + yDistanceOffset);      
     }
     context.stroke();
 
@@ -1276,7 +1274,7 @@ export class DrawRaceComponent implements OnInit {
     context.beginPath();
     context.moveTo(startingX, startingY);
     context.bezierCurveTo(bezierX1, bezierY1, bezierX2, bezierY2, finishPointX, finishPointY);
-    context.stroke();
+    context.stroke();    
 
     this.lastPathEndingX = this.lastPathEndingX + horizontalLength;
   }
@@ -1428,7 +1426,7 @@ export class DrawRaceComponent implements OnInit {
     lineSet.push([this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY + verticalDistance + yDistanceOffset]);
     lineSet.push([this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY - verticalDistance + yDistanceOffset]);
     lineSet.push([this.lastPathEndingX - xDistanceOffset, this.lastPathEndingY - verticalDistance + yDistanceOffset]);
-    this.icyPatchBackgroundLines.push(lineSet);
+    this.icyPatchBackgroundLines.push(lineSet);    
 
     this.lastPathEndingX = this.lastPathEndingX + horizontalLength;
   }
@@ -1646,7 +1644,7 @@ export class DrawRaceComponent implements OnInit {
 
     var xCenterOfOvalOffset = horizontalLength * (pathCounter);
     var xRegularOffset = horizontalLength / xRaceModeModifier;
-    //console.log(horizontalLength + " " + pathCounter + " = " + xCenterOfOvalOffset);
+      
     volcanicYOffset = 0;
 
     var startingX = this.lastPathEndingX - xDistanceOffset;
@@ -1654,7 +1652,7 @@ export class DrawRaceComponent implements OnInit {
     var xCenterOfOval = startingX - (xCenterOfOvalOffset) + ((horizontalLength * numberOfPaths) / 2);
     var yCenterOfOval = startingY;
     var radiusOfOvalX = (horizontalLength * numberOfPaths) / this.volcanoRadiusXModifier;
-    //console.log("Race Radius: " + radiusOfOvalX);
+    
     var radiusOfOvalY = ((horizontalLength * numberOfPaths) / 2) - xRegularOffset;
     var rotationOfOval = Math.PI / 2;
     var baselineStartingAngle = 90; //go from 90 to 270
@@ -1682,16 +1680,11 @@ export class DrawRaceComponent implements OnInit {
     var endingAngle = this.volcanoStartingAngle - anglePerPath;
     if (endingAngle < 0)
       endingAngle = 360 - Math.abs(endingAngle);
-    //console.log(pathCounter + ": " + endingAngle);
-
-    //if (this.volcanoStartingAngle === baselineStartingAngle)
-    //console.log("XCenter: " + xCenterOfOval + " YCenter: " + yCenterOfOval + " XRadius: " + radiusOfOvalX + " YRadius: " + radiusOfOvalY);
 
     context.beginPath();
     context.ellipse(xCenterOfOval, yCenterOfOval, radiusOfOvalX, radiusOfOvalY, rotationOfOval, this.volcanoStartingAngle * (Math.PI / 180), endingAngle * (Math.PI / 180), true);
     context.stroke();
-    //}
-
+    
     this.lastPathEndingX = this.lastPathEndingX + horizontalLength;
     this.volcanoStartingAngle = endingAngle;
   }
@@ -1991,6 +1984,20 @@ export class DrawRaceComponent implements OnInit {
     context.fillRect(lava5FallXDropPoint - lavaFallXOffset, lavaFallYStart, lavaFallXOffset * 2, lava5YAmountFallen - (lavaFallYRadius - 1));
 
     context.fillStyle = originalFillColor;
+  }
+
+  grandPrixMountainYReset(legCounter: number) {
+    if (this.race.raceType === RaceTypeEnum.event && this.race.eventRaceType === EventRaceTypeEnum.grandPrix) {      
+      if (this.globalService.globalVar.eventRaceData.mountainEndingY === 0 &&
+        this.globalService.globalVar.eventRaceData.previousRaceSegment !== null &&
+        this.globalService.globalVar.eventRaceData.previousRaceSegment !== undefined &&
+        this.globalService.globalVar.eventRaceData.previousRaceSegment.raceLegs !== undefined &&
+        this.globalService.globalVar.eventRaceData.previousRaceSegment.raceLegs[0].courseType === RaceCourseTypeEnum.Mountain &&
+        legCounter === 1)
+      {    
+        this.lastPathEndingY = this.canvasHeight / 2;        
+      }
+    }
   }
 
   ngOnDestroy() {

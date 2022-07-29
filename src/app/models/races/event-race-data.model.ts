@@ -23,6 +23,7 @@ export class GrandPrixData {
     bonusTime: number; //added by effects that increase race time like landslide etc
     @Type(() => EventAbilityData)
     eventAbilityData: EventAbilityData;
+    isCatchingUp: boolean;
 
     rank: string;
     @Type(() => Terrain) 
@@ -92,5 +93,6 @@ export class GrandPrixData {
         this.isGrandPrixCompleted = false;
 
         this.eventAbilityData = new EventAbilityData();
+        this.isCatchingUp = false;
     }
 }

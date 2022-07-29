@@ -26,7 +26,7 @@
                 <br />
                 <br />
                 <div class="raceDescription">
-                    <div (click)="selectEventRace()" class="clickableText eventRaceDescription" [ngbPopover]="popContent" [disablePopover]="popoverText === ''"
+                    <div (click)="selectEventRace()" [ngClass]="{'raceNotAllowed': grandPrixData.isCatchingUp }" class="clickableText eventRaceDescription" [ngbPopover]="popContent" [disablePopover]="popoverText === ''"
                         triggers="mouseenter:mouseleave" popoverClass="popoverClass">
                         <span><span class='keyword'>Forecast:</span> {{ grandPrixData.weatherCluster === undefined ? "Unknown" :
                             lookupService.getWeatherClusterFromEnum(grandPrixData.weatherCluster) }}</span>                        
@@ -34,7 +34,8 @@
                         {{ remainingMeters | number : '1.' }} Meters Remaining
 
                         <br />
-                        <p *ngIf="grandPrixData.isRunning && !grandPrixData.isGrandPrixCompleted" >View Race</p>
+                        <p *ngIf="grandPrixData.isRunning && !grandPrixData.isGrandPrixCompleted && !grandPrixData.isCatchingUp" >View Race</p>
+                        <p *ngIf="grandPrixData.isRunning && !grandPrixData.isGrandPrixCompleted && grandPrixData.isCatchingUp" class="raceCatchingUp" ><em>Please Wait -- Offline Time Is Calculating</em></p>
                         <p *ngIf="!grandPrixData.isRunning && !grandPrixData.isGrandPrixCompleted" >Start</p>
                         <p *ngIf="!grandPrixData.isRunning && grandPrixData.isGrandPrixCompleted" >Completed!</p>                        
                     </div>
@@ -96,7 +97,7 @@
             <div>
                 You've been invited to the <span class='keyword'>Grand Prix</span> invitational, which is a marathon style race that runs for 51
                 hours twice a week. You can start the race at any time during the start and stop point of the Grand
-                Prix. The weekly start and end times are:
+                Prix. <b>It will run on its own in the background -- you don't have to watch your animals race for it to run.</b> You have the option to view the race as desired by clicking the race. The weekly start and end times are:
                 <br />
                 <br />
                 <span class='keyword'>Weekday Marathon</span> - {{weekDayGrandPrixTimeSpan}}
@@ -104,7 +105,7 @@
                 <span class='keyword'>Weekend Marathon</span> - {{weekEndGrandPrixTimeSpan}}
                 <br />
                 <br />
-                To run in the Grand Prix, animals must be at least Breed Level 75. The animals in your event deck will be shown below along with their current morale and
+                To run in the Grand Prix, animals must be at least Breed Level {{requiredBreedLevel}}. The animals in your event deck will be shown below along with their current morale and
                 energy. 
                 <br />
                 <br />

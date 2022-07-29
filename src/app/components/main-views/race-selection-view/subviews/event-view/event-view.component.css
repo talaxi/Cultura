@@ -60,3 +60,12 @@
     width: 40%;
     margin: auto;
 }
+
+.raceNotAllowed {
+    cursor: not-allowed !important;
+}
+
+.raceCatchingUp {
+    opacity: 0.5;
+    color: var(--grayedOut-Text) !important;
+}

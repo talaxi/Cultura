@@ -8,7 +8,7 @@ export interface Theme {
     properties: {
       "--foreground-default": "#000000",
       "--foreground-secondary": "#1B1B1B",
-      "--foreground-tertiary": "#262626",
+      "--foreground-tertiary": "#a6a49d",
       "--foreground-quaternary": "#2F2F2F",
       "--foreground-light": "#000000",
   
@@ -85,8 +85,8 @@ export interface Theme {
     name: "twilight",
     properties: {
       "--foreground-default": "#ED8B42",
-      "--foreground-secondary": "#D65A00",
-      "--foreground-tertiary": "#FF8023",
+      "--foreground-secondary": "#C05100",
+      "--foreground-tertiary": "#6A2D00",
       "--foreground-quaternary": "#FFAA20",
       "--foreground-light": "#FF8F3D",
   
@@ -125,7 +125,7 @@ export interface Theme {
     properties: {
       "--foreground-default": "#A3B9CC",
       "--foreground-secondary": "#5C7D99",
-      "--foreground-tertiary": "#F4FAFF",
+      "--foreground-tertiary": "#49647A",
       "--foreground-quaternary": "#E5E5E5",
       "--foreground-light": "#FFFFFF",
   

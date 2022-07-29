@@ -84,7 +84,7 @@ export class RaceLogicService {
     var nextAnimal: Animal | null = new Animal();
 
     if (selectedDeck === undefined) {
-      raceResult.errorMessage = 'No animal deck selected.';
+      raceResult.errorMessage = 'No relay team selected.';
       return raceResult;
     }
 
@@ -273,6 +273,30 @@ export class RaceLogicService {
       var longDistanceTalentIncreaseAccelerationWithLowVelocity = false;
       var maxSpeedFloor = 0;
 
+      //check placement before starting leg
+      var currentEventDistance = 0;
+      var currentEventDistanceCovered = 0;
+      if (this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix) {
+        var timePassed = (this.globalService.globalVar.eventRaceData.grandPrixTimeLength + this.globalService.globalVar.eventRaceData.bonusTime) - this.globalService.getRemainingEventRaceTime();
+        var averageDistancePassed = distancePerSecond * timePassed;
+        currentEventDistance += averageDistancePassed;
+
+        currentEventDistanceCovered = this.globalService.globalVar.eventRaceData.distanceCovered;
+      }
+
+      if (distanceCovered + currentEventDistanceCovered > distancePerSecond * (framesPassed / this.frameModifier) + currentEventDistance) {
+        if (!aheadOfAveragePace)
+          passedAveragePace = true;
+
+        aheadOfAveragePace = true;
+      }
+      else {
+        if (aheadOfAveragePace)
+          passedAveragePace = true;
+
+        aheadOfAveragePace = false;
+      }
+
       if (previousEventRaceSegmentData !== undefined && previousEventRaceSegmentData !== null) {
         velocity = previousEventRaceSegmentData.velocity;
         racingAnimal.currentStats.stamina = previousEventRaceSegmentData.stamina;
@@ -309,8 +333,7 @@ export class RaceLogicService {
         }
         longDistanceTalentIncreaseAccelerationWithLowVelocity = previousEventRaceSegmentData.longDistanceTalentIncreaseAccelerationWithLowVelocity;
         maxSpeedFloor = previousEventRaceSegmentData.maxSpeedFloor;
-        statLossFromExhaustion = previousEventRaceSegmentData.statLossFromExhaustion;
-        console.log("New Exhaustion Levels: " + statLossFromExhaustion);
+        statLossFromExhaustion = previousEventRaceSegmentData.statLossFromExhaustion;        
       }
 
       //get values from relay effects      
@@ -613,15 +636,8 @@ export class RaceLogicService {
           if (racingAnimal.type === AnimalTypeEnum.Cheetah && racingAnimal.ability.name === "Sprint" && racingAnimal.ability.abilityInUse) {
             modifiedAccelerationMs *= 1.35;
           }
-          if (racingAnimal.type === AnimalTypeEnum.Cheetah && racingAnimal.ability.name === "Giving Chase") {
-            var averageDistance = distancePerSecond * (framesPassed / this.frameModifier);
-            var meterDifferential = averageDistance - distanceCovered;
-            if (meterDifferential > 0) {
-              var percentPerSecond = this.lookupService.GetAbilityEffectiveAmount(racingAnimal, item.terrain.powerModifier, statLossFromExhaustion);
-              var modifiedAmount = (meterDifferential / distancePerSecond) * percentPerSecond;
-              if (modifiedAmount >= 1)
-                modifiedAccelerationMs *= modifiedAmount;
-            }
+          if (racingAnimal.type === AnimalTypeEnum.Cheetah && racingAnimal.ability.name === "Giving Chase" && !aheadOfAveragePace) {            
+            modifiedAccelerationMs *= 1 + (this.lookupService.GetAbilityEffectiveAmount(racingAnimal, item.terrain.powerModifier, statLossFromExhaustion) / 100);            
           }
           if (racingAnimal.ability.name === "Feeding Frenzy" && racingAnimal.type === AnimalTypeEnum.Shark) {
             modifiedAccelerationMs *= feedingFrenzyIncreaseMultiplier;
@@ -801,7 +817,7 @@ export class RaceLogicService {
 
           if (racingAnimal.type === AnimalTypeEnum.Octopus && racingAnimal.ability.name === "Big Brain") {
             if (!(this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix &&
-              this.globalService.globalVar.eventRaceData.eventAbilityData.bigBrainUseCount >= this.globalService.globalVar.eventRaceData.eventAbilityData.bigBrainUseCap)) {              
+              this.globalService.globalVar.eventRaceData.eventAbilityData.bigBrainUseCount >= this.globalService.globalVar.eventRaceData.eventAbilityData.bigBrainUseCap)) {
               var burstCap = Math.round(item.pathData.length / 3);
 
               if (racingAnimal.raceVariables.burstCount === burstCap) {
@@ -1118,7 +1134,7 @@ export class RaceLogicService {
           var averageDistancePassed = distancePerSecond * timePassed;
           eventDistance += averageDistancePassed;
 
-          var eventDistanceCovered = this.globalService.globalVar.eventRaceData.distanceCovered;
+          eventDistanceCovered = this.globalService.globalVar.eventRaceData.distanceCovered;
         }
 
         if (distanceCovered + eventDistanceCovered > distancePerSecond * (framesPassed / this.frameModifier) + eventDistance) {
@@ -2024,7 +2040,7 @@ export class RaceLogicService {
     //and create an application type situation like relays have but distance is from end of leg
 
     if (nextAnimal.talentTree.talentTreeType === TalentTreeTypeEnum.support && nextAnimal.talentTree.column1Row4Points > 0) {
-      var relayLength = nextAnimal.talentTree.column1Row4Points * .03;      
+      var relayLength = nextAnimal.talentTree.column1Row4Points * .03;
       this.endOfLegRelayEffectCheck(nextAnimal, racingAnimal, raceResult, framesPassed, lastAnimalDisplayName, currentLeg, previousLeg, statLossFromExhaustion, undefined, undefined, undefined, relayLength);
     }
   }

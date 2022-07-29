@@ -1,27 +1,22 @@
 <div class="navigation">
-    <p (click)="switchView(navigationEnum.barn)" class="clickableText" [ngClass]="{'active': selectedNavigation === navigationEnum.barn, 'tutorialActive' : tutorial6Active }">Barns</p>
+    <button (click)="switchView(navigationEnum.barn)" class="buttonAsText clickableText" [ngClass]="{'active': selectedNavigation === navigationEnum.barn, 'tutorialActive' : tutorial6Active }">Barns</button>
     <hr />
-    <p (click)="switchView(navigationEnum.raceselection)" class="clickableText" [ngClass]="{'active': selectedNavigation === navigationEnum.raceselection, 'tutorialActive' : tutorial3Active }">Races</p>
-    <hr />         
-    <!--<div *ngIf="trainingTrackAvailable">
-        <p (click)="switchView(navigationEnum.trainingtrack)" class="clickableText" [ngClass]="selectedNavigation === navigationEnum.trainingtrack ? 'active' : ''">Training Track</p>
-        <hr />
-    </div>-->
-    <p (click)="switchView(navigationEnum.animals)" class="clickableText" [ngClass]="selectedNavigation === navigationEnum.animals ? 'active' : ''">Animals</p>
+    <button (click)="switchView(navigationEnum.raceselection)" class="buttonAsText clickableText" [ngClass]="{'active': selectedNavigation === navigationEnum.raceselection, 'tutorialActive' : tutorial3Active }">Races</button>
+    <hr />             
+    <button (click)="switchView(navigationEnum.animals)" class="buttonAsText clickableText" [ngClass]="selectedNavigation === navigationEnum.animals ? 'active' : ''">Animals</button>
     <hr />
-    <p (click)="switchView(navigationEnum.decks)" class="clickableText" [ngClass]="selectedNavigation === navigationEnum.decks ? 'active' : ''">Decks</p>
+    <button (click)="switchView(navigationEnum.relayTeams)" class="buttonAsText clickableText" [ngClass]="selectedNavigation === navigationEnum.relayTeams ? 'active' : ''">Relay Teams</button>
     <hr />
-    <p (click)="switchView(navigationEnum.shop)" class="clickableText" [ngClass]="selectedNavigation === navigationEnum.shop ? 'active' : ''">Shop</p>
+    <button (click)="switchView(navigationEnum.shop)" class="buttonAsText clickableText" [ngClass]="selectedNavigation === navigationEnum.shop ? 'active' : ''">Shop</button>
     <hr />
     <div *ngIf="incubatorAvailable">
-        <p (click)="switchView(navigationEnum.incubator)" class="clickableText" [ngClass]="selectedNavigation === navigationEnum.incubator ? 'active' : ''">Incubator</p>
+        <button (click)="switchView(navigationEnum.incubator)" class="buttonAsText clickableText" [ngClass]="selectedNavigation === navigationEnum.incubator ? 'active' : ''">Incubator</button>
         <hr />
     </div> 
-    <p (click)="switchView(navigationEnum.resources)" class="clickableText" [ngClass]="selectedNavigation === navigationEnum.resources ? 'active' : ''">Resources</p>
+    <button (click)="switchView(navigationEnum.resources)" class="buttonAsText clickableText" [ngClass]="selectedNavigation === navigationEnum.resources ? 'active' : ''">Resources</button>
     <hr />
-    <p (click)="switchView(navigationEnum.settings)" class="clickableText" [ngClass]="selectedNavigation === navigationEnum.settings ? 'active' : ''">Settings</p>
+    <button (click)="switchView(navigationEnum.settings)" class="buttonAsText clickableText" [ngClass]="selectedNavigation === navigationEnum.settings ? 'active' : ''">Settings</button>
     <hr />
-    <p (click)="switchView(navigationEnum.stats)" class="clickableText" [ngClass]="selectedNavigation === navigationEnum.stats ? 'active' : ''">Stats</p>    
-    <!--<hr />
-    <p (click)="switchView(navigationEnum.faqs)" class="clickableText" [ngClass]="selectedNavigation === navigationEnum.faqs ? 'active' : ''">FAQs</p>    -->
+    <button class="buttonAsText clickableText" (click)="switchView(navigationEnum.stats)" [ngClass]="selectedNavigation === navigationEnum.stats ? 'active' : ''">Stats</button>
+    <!--<p (click)="switchView(navigationEnum.stats)" class="clickableText" [ngClass]="selectedNavigation === navigationEnum.stats ? 'active' : ''">Stats</p>        -->
 </div>

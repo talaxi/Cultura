@@ -735,12 +735,12 @@ export class SelectedBarnComponent implements OnInit {
     }
 
     popover += animal.name + " Current Stats:" + "\n";
-    popover += "Speed: " + animal.currentStats.topSpeed.toFixed(3) + "\n";
-    popover += "Acceleration: " + animal.currentStats.acceleration.toFixed(3) + "\n";
-    popover += "Endurance: " + animal.currentStats.endurance.toFixed(3) + "\n";
-    popover += "Power: " + animal.currentStats.power.toFixed(3) + "\n";
-    popover += "Focus: " + animal.currentStats.focus.toFixed(3) + "\n";
-    popover += "Adaptability: " + animal.currentStats.adaptability.toFixed(3) + "\n";
+    popover += "Speed: " + Math.round(animal.currentStats.topSpeed).toLocaleString() + "\n";
+    popover += "Acceleration: " + Math.round(animal.currentStats.acceleration).toLocaleString() + "\n";
+    popover += "Endurance: " + Math.round(animal.currentStats.endurance).toLocaleString() + "\n";
+    popover += "Power: " + Math.round(animal.currentStats.power).toLocaleString() + "\n";
+    popover += "Focus: " + Math.round(animal.currentStats.focus).toLocaleString() + "\n";
+    popover += "Adaptability: " + Math.round(animal.currentStats.adaptability).toLocaleString() + "\n";
     popover += "Diminishing Returns: " + this.globalService.GetAnimalDiminishingReturns(animal);
 
     var sanitized = this.utilityService.getSanitizedHtml(popover);
@@ -754,10 +754,8 @@ export class SelectedBarnComponent implements OnInit {
     this.isCoachingEmitter.emit(true);
   }
 
-  ngOnDestroy() {
-    console.log("On Destroy");
-    if (this.subscription !== null && this.subscription !== undefined) {
-      console.log("Unsubscribe");
+  ngOnDestroy() {    
+    if (this.subscription !== null && this.subscription !== undefined) {      
       this.subscription.unsubscribe();
     }
   }

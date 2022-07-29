@@ -2,7 +2,7 @@ export enum NavigationEnum {
     barn, 
     raceselection,
     animals,
-    decks,
+    relayTeams,
     shop,
     incubator,
     trainingtrack,

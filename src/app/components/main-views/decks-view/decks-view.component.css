@@ -110,11 +110,12 @@
 
 .autoRunFreeRace {
     grid-area: freeRace;
-    text-align: center;
+    text-align: center;    
 }
 
 .autoRunFreeRaceButton {
     width: 80%;
+    margin-bottom: .5rem;
 }
 
 .spaced {

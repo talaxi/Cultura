@@ -17,7 +17,7 @@ export class VersionControlService {
   constructor(private globalService: GlobalService, private lookupService: LookupService) { }
 
   //add to this in descending order
-  gameVersions = [1.04, 1.03, 1.02, 1.01, 1.00];
+  gameVersions = [1.05, 1.04, 1.03, 1.02, 1.01, 1.00];
 
   getListAscended() {
     var ascendedList: number[] = [];
@@ -54,7 +54,7 @@ export class VersionControlService {
         "<li>Animals have had their breed levels reduced by half to balance this change. Despite this, you should notice a small increase in stats.</li></ul>";
     if (version === 1.02)
       changes = "Event Races now active!\n" +
-        "<ul><li>Select an event deck and run the marathon-style Grand Prix.</li>" +
+        "<ul><li>Select an event deck (now relay team) and run the marathon-style Grand Prix.</li>" +
         "<li>Run a single race over the course of multiple days to unlock new rewards.</li>" +
         "<li>Mix and match powerful Relay abilities with strong long distance racers and see how far you can go!</li></ul>\n" +
         "More UI improvements. (better contrast in colors, differentiation of text through various means, etc)\n\n" +
@@ -67,11 +67,14 @@ export class VersionControlService {
         "Bug fixes.";
     if (version === 1.04)
       changes = "Ability rebalancing (view Discord Change Log for full info).\n\n" +
-      "Changes to Event Races" +
-      "<ul><li>Leg length adjusts based on your game progress so that the race always feels smooth.</li>" +
-      "<li>Certain abilities have different effects during events, viewable when changing abilities.</li>" +
-      "<li>Abilities that can trigger multiple times or have a cap are now displayed on the Event Race Info page.</li></ul>\n" +
-      "Bug fixes (view Discord Change Log for full info).";
+        "Changes to Event Races" +
+        "<ul><li>Leg length adjusts based on your game progress so that the race always feels smooth.</li>" +
+        "<li>Certain abilities have different effects during events, viewable when changing abilities.</li>" +
+        "<li>Abilities that can trigger multiple times or have a cap are now displayed on the Event Race Info page.</li></ul>\n" +
+        "Bug fixes (view Discord Change Log for full info).";
+    if (version === 1.05)
+      changes = "Changed all references of 'Decks' to 'Relay Teams' for ease of understanding and better theming.\n\n" +
+      "Bug fixes and UI improvements (view Discord Change Log for full info).";
 
     return changes;
   }
@@ -86,8 +89,10 @@ export class VersionControlService {
       date = new Date('2022-07-18 12:00:00');
     if (version === 1.03)
       date = new Date('2022-07-24 12:00:00');
-      if (version === 1.04)
+    if (version === 1.04)
       date = new Date('2022-07-27 12:00:00');
+    if (version === 1.05)
+      date = new Date('2022-07-29 12:00:00');
 
     return date.toDateString().replace(/^\S+\s/, '');
   }
@@ -221,8 +226,8 @@ export class VersionControlService {
               if (onTheHunt !== undefined)
                 onTheHunt.efficiency = .1;
 
-                if (item.ability.name === "On The Hunt")
-                  item.ability.efficiency = .1;
+              if (item.ability.name === "On The Hunt")
+                item.ability.efficiency = .1;
             }
 
             if (item.type === AnimalTypeEnum.Goat) {
@@ -230,23 +235,22 @@ export class VersionControlService {
               if (deepBreathing !== undefined)
                 deepBreathing.efficiency = .25;
 
-                if (item.ability.name === "Deep Breathing")
+              if (item.ability.name === "Deep Breathing")
                 item.ability.efficiency = .25;
 
               var inTheRhythm = item.availableAbilities.find(ability => ability.name === "In The Rhythm");
               if (inTheRhythm !== undefined)
                 inTheRhythm.efficiency = .1;
-                
-                
+
+
               if (item.ability.name === "In The Rhythm")
-              item.ability.efficiency = .1;
+                item.ability.efficiency = .1;
 
               var sureFooted = item.availableAbilities.find(ability => ability.name === "Sure-footed");
-              if (sureFooted !== undefined)
-              {
+              if (sureFooted !== undefined) {
                 sureFooted.efficiency = .5;
               }
-              
+
               if (item.ability.name === "Sure-footed")
                 item.ability.efficiency = .5;
             }
@@ -256,9 +260,9 @@ export class VersionControlService {
               if (nightVision !== undefined)
                 nightVision.efficiency = .2;
 
-                
+
               if (item.ability.name === "Night Vision")
-              item.ability.efficiency = .2;
+                item.ability.efficiency = .2;
             }
 
             if (item.type === AnimalTypeEnum.Shark) {
@@ -266,41 +270,41 @@ export class VersionControlService {
               if (bloodInTheWater !== undefined)
                 bloodInTheWater.efficiency = .1;
 
-                
+
               if (item.ability.name === "Blood In The Water")
-              item.ability.efficiency = .1;
+                item.ability.efficiency = .1;
             }
 
             if (item.type === AnimalTypeEnum.Octopus) {
               var buriedTreasure = item.availableAbilities.find(ability => ability.name === "Buried Treasure");
               if (buriedTreasure !== undefined)
                 buriedTreasure.efficiency = 1;
-                
+
               if (item.ability.name === "Buried Treasure")
-              item.ability.efficiency = 1;
+                item.ability.efficiency = 1;
 
               var bigBrain = item.availableAbilities.find(ability => ability.name === "Big Brain");
               if (bigBrain !== undefined)
                 bigBrain.efficiency = 2;
-                
+
               if (item.ability.name === "Big Brain")
-              item.ability.efficiency = 2;
+                item.ability.efficiency = 2;
             }
 
             if (item.type === AnimalTypeEnum.Penguin) {
               var wildToboggan = item.availableAbilities.find(ability => ability.name === "Wild Toboggan");
               if (wildToboggan !== undefined)
                 wildToboggan.efficiency = 4;
-                
+
               if (item.ability.name === "Wild Toboggan")
-              item.ability.efficiency = 4;
+                item.ability.efficiency = 4;
 
               var quickToboggan = item.availableAbilities.find(ability => ability.name === "Quick Toboggan");
               if (quickToboggan !== undefined)
                 quickToboggan.efficiency = .1;
-                
+
               if (item.ability.name === "Quick Toboggan")
-              item.ability.efficiency = .1;
+                item.ability.efficiency = .1;
             }
 
             if (item.type === AnimalTypeEnum.Caribou) {
@@ -308,17 +312,17 @@ export class VersionControlService {
               if (herdMentality !== undefined)
                 herdMentality.efficiency = .5;
 
-                
+
               if (item.ability.name === "Herd Mentality")
-              item.ability.efficiency = .5;
+                item.ability.efficiency = .5;
 
               var specialDelivery = item.availableAbilities.find(ability => ability.name === "Special Delivery");
               if (specialDelivery !== undefined)
                 specialDelivery.efficiency = .05;
 
-                
+
               if (item.ability.name === "Special Delivery")
-              item.ability.efficiency = .05;
+                item.ability.efficiency = .05;
             }
 
             if (item.type === AnimalTypeEnum.Fox) {
@@ -326,15 +330,24 @@ export class VersionControlService {
               if (fleetingSpeed !== undefined)
                 fleetingSpeed.efficiency = 1.5;
 
-                
+
               if (item.ability.name === "Fleeting Speed")
-              item.ability.efficiency = 1.5;
+                item.ability.efficiency = 1.5;
             }
           });
 
           var autoFreeRacesMaxIdleTimePeriodModifier = this.globalService.globalVar.modifiers.find(item => item.text === "autoFreeRacesMaxIdleTimePeriodModifier");
           if (autoFreeRacesMaxIdleTimePeriodModifier !== undefined)
             autoFreeRacesMaxIdleTimePeriodModifier.value = (2 * 60 * 60);
+        }
+        else if (version === 1.05) {
+          if (this.globalService.globalVar.eventRaceData !== null && this.globalService.globalVar.eventRaceData !== undefined &&
+            (this.globalService.globalVar.eventRaceData.isCatchingUp === null || this.globalService.globalVar.eventRaceData.isCatchingUp === undefined))
+            this.globalService.globalVar.eventRaceData.isCatchingUp = false;
+
+          var grandPrixBreedLevelRequiredModifier = this.globalService.globalVar.modifiers.find(item => item.text === "grandPrixBreedLevelRequiredModifier");
+          if (grandPrixBreedLevelRequiredModifier !== undefined)
+            grandPrixBreedLevelRequiredModifier.value = 50;
         }
 
         this.globalService.globalVar.currentVersion = version;

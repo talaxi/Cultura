@@ -21,6 +21,7 @@ export class EventViewComponent implements OnInit {
   @Output() raceSelected = new EventEmitter<Race>();
   grandPrix: Race;
   grandPrixData: GrandPrixData;
+  requiredBreedLevel: number;
   remainingMeters: number;
   isEventRaceAvailable: boolean;
   popoverText: string = "";
@@ -47,6 +48,7 @@ export class EventViewComponent implements OnInit {
     this.grandPrixUnlocked = this.lookupService.isItemUnlocked("grandPrix");
     this.weekDayGrandPrixTimeSpan = this.lookupService.getWeekDayGrandPrixTimeSpan();
     this.weekEndGrandPrixTimeSpan = this.lookupService.getWeekEndGrandPrixTimeSpan();
+    this.requiredBreedLevel = this.lookupService.getBreedLevelRequiredForGrandPrix();
 
     this.popoverText = this.getForecastPopoverText();
 
@@ -108,7 +110,7 @@ export class EventViewComponent implements OnInit {
       //should be basically the same time constraints as auto run but it's 1 every 3 min instead of 1-20 every 5 min       
     }
 
-    if (!this.globalService.globalVar.eventRaceData.isGrandPrixCompleted)
+    if (!this.globalService.globalVar.eventRaceData.isGrandPrixCompleted && !this.globalService.globalVar.eventRaceData.isCatchingUp)
       this.raceSelected.emit(this.globalService.globalVar.eventRaceData.currentRaceSegment);
     //view race
   }
@@ -205,9 +207,10 @@ export class EventViewComponent implements OnInit {
     var text = "";
     var rewardsObtained = 0;
     var totalRewards = 0;
+    var numericRankModifier = this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.eventRaceData.rank);
 
-    totalRewards = this.globalService.globalVar.eventRaceData.totalDistance / this.renownRewardInterval;
-    rewardsObtained = Math.floor(this.globalService.globalVar.eventRaceData.distanceCovered / this.renownRewardInterval);
+    totalRewards = this.globalService.globalVar.eventRaceData.totalDistance / (this.renownRewardInterval * numericRankModifier);
+    rewardsObtained = Math.floor(this.globalService.globalVar.eventRaceData.distanceCovered / (this.renownRewardInterval * numericRankModifier));
 
     text = (rewardsObtained * this.renownRewardAmount) + "/" + (totalRewards * this.renownRewardAmount) + " Renown obtained";
 
@@ -218,9 +221,10 @@ export class EventViewComponent implements OnInit {
     var text = "";
     var rewardsObtained = 0;
     var totalRewards = 0;
+    var numericRankModifier = this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.eventRaceData.rank);
 
-    totalRewards = this.globalService.globalVar.eventRaceData.totalDistance / this.coinRewardInterval;
-    rewardsObtained = Math.floor(this.globalService.globalVar.eventRaceData.distanceCovered / this.coinRewardInterval);
+    totalRewards = this.globalService.globalVar.eventRaceData.totalDistance / (this.coinRewardInterval * numericRankModifier);
+    rewardsObtained = Math.floor(this.globalService.globalVar.eventRaceData.distanceCovered / (this.coinRewardInterval * numericRankModifier));
 
     text = (rewardsObtained * this.coinRewardAmount) + "/" + (totalRewards * this.coinRewardAmount) + " Coins obtained";
 
@@ -230,6 +234,7 @@ export class EventViewComponent implements OnInit {
   getGrandPrixTokenRewardsPopover() {
     var popover = "";
     var rewards = this.lookupService.getGrandPrixTokenRewards();
+    var numericRankModifier = this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.eventRaceData.rank);
 
     var token1MeterCount = 50000000;
     var token1MeterCountPair = this.globalService.globalVar.modifiers.find(item => item.text === "grandPrixToken1MeterModifier");
@@ -257,25 +262,25 @@ export class EventViewComponent implements OnInit {
 
     var distanceCovered = this.globalService.globalVar.eventRaceData.distanceCovered;
 
-    if (distanceCovered >= token1MeterCount) {
+    if (distanceCovered >= token1MeterCount * numericRankModifier) {
       popover += "<span class='crossed'>" + token1Reward + "</span>\n";
     }
     else
       popover += "<span>" + token1Reward + "</span>\n";
 
-    if (distanceCovered >= token2MeterCount) {
+    if (distanceCovered >= token2MeterCount * numericRankModifier) {
       popover += "<span class='crossed'>" + token2Reward + "</span>\n";
     }
     else
       popover += "<span>" + token2Reward + "</span>\n";
 
-    if (distanceCovered >= token3MeterCount) {
+    if (distanceCovered >= token3MeterCount * numericRankModifier) {
       popover += "<span class='crossed'>" + token3Reward + "</span>\n";
     }
     else
       popover += "<span>" + token3Reward + "</span>\n";
 
-    if (distanceCovered >= token4MeterCount) {
+    if (distanceCovered >= token4MeterCount * numericRankModifier) {
       popover += "<span class='crossed'>" + token4Reward + "</span>\n";
     }
     else
