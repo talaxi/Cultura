@@ -130,3 +130,10 @@
 .raceOrder {
     display: inline-block;
 }
+
+
+@media (max-width: 800px) {
+    .gridContainer {
+        grid-template-columns: 50% 1fr 1fr 1fr;       
+      }
+}

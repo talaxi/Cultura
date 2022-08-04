@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectorRef, Input, ElementRef, ViewChild, Sec
 import { DomSanitizer } from '@angular/platform-browser';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AnimalTypeEnum } from 'src/app/models/animal-type-enum.model';
+import { Animal } from 'src/app/models/animals/animal.model';
 import { RaceCourseTypeEnum } from 'src/app/models/race-course-type-enum.model';
 import { ComponentCommunicationService } from 'src/app/services/component-communication.service';
 import { GameLoopService } from 'src/app/services/game-loop/game-loop.service';
@@ -21,7 +22,7 @@ export class MainComponent implements OnInit {
   @ViewChild('tutorialContent', { static: true }) tutorialContent: ElementRef;
 
   constructor(private ref: ChangeDetectorRef, private globalService: GlobalService, private modalService: NgbModal,
-    private tutorialService: TutorialService,
+    private tutorialService: TutorialService, private componentCommunicationService: ComponentCommunicationService,
     private sanitizer: DomSanitizer, private gameLoopService: GameLoopService) {
   }
 

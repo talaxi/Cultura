@@ -16,6 +16,7 @@ import { UtilityService } from 'src/app/services/utility/utility.service';
 export class EventAnimalDeckComponent implements OnInit {
   deck: AnimalDeck;
   breedLevelRequired: number;
+  organizedAnimals: Animal[] = [];
 
   constructor(private globalService: GlobalService, private componentCommunicationService: ComponentCommunicationService,
     private lookupService: LookupService, private utilityService: UtilityService) { }
@@ -24,6 +25,25 @@ export class EventAnimalDeckComponent implements OnInit {
     var eventDeck = this.globalService.globalVar.animalDecks.find(item => item.isEventDeck);
     if (eventDeck !== undefined)
       this.deck = eventDeck;
+
+    if (this.deck !== undefined && this.deck !== null) {
+      if (this.deck.isCourseOrderActive) {
+        for (var i = 0; i < this.deck.selectedAnimals.length; i++) {
+          if (this.deck.courseTypeOrder.length > i) {
+            var type = this.deck.courseTypeOrder[i];
+            var matchingAnimal = this.deck.selectedAnimals.find(animal => animal.raceCourseType === type);
+            if (matchingAnimal !== undefined)
+              this.organizedAnimals.push(matchingAnimal);
+          }
+        }
+      }
+      else {
+        this.deck.selectedAnimals.forEach(animal => {
+          this.organizedAnimals.push(animal);
+        });
+      }
+    }
+
 
     this.breedLevelRequired = this.getBreedLevelRequired();
   }
@@ -99,11 +119,20 @@ export class EventAnimalDeckComponent implements OnInit {
     var animalData = this.globalService.globalVar.eventRaceData.animalData.find(item => item.associatedAnimalType === animal.type);
 
     if (animalData !== undefined) {
-      this.globalService.globalVar.eventRaceData.animalData.forEach(item => {
-        item.isCurrentlyRacing = false;
-      });
+      var globalAnimal = this.globalService.globalVar.animals.find(item => item.type === animalData?.associatedAnimalType);
+      if (globalAnimal !== null && globalAnimal !== undefined) {
+        this.globalService.globalVar.eventRaceData.nextRaceSegment = this.globalService.generateGrandPrixSegment(globalAnimal);
 
-      animalData.isCurrentlyRacing = true;
+        var showSlowSegmentWarning = this.lookupService.shouldShowSlowSegmentWarning(globalAnimal);
+
+        if (this.lookupService.slowSegmentWarning(showSlowSegmentWarning)) {
+          this.globalService.globalVar.eventRaceData.animalData.forEach(item => {
+            item.isCurrentlyRacing = false;
+          });
+
+          animalData.isCurrentlyRacing = true;
+        }
+      }
     }
   }
 
@@ -135,14 +164,20 @@ export class EventAnimalDeckComponent implements OnInit {
     var animalData = this.globalService.globalVar.eventRaceData.animalData.find(item => item.associatedAnimalType === animal.type);
 
     if (animalData !== undefined) {
-      this.globalService.globalVar.eventRaceData.animalData.forEach(item => {
-        item.isSetToRelay = false;
-      });
-
-      animalData.isSetToRelay = true;
       var globalAnimal = this.globalService.globalVar.animals.find(item => item.type === animalData?.associatedAnimalType);
-      if (globalAnimal !== null && globalAnimal !== undefined)
+      if (globalAnimal !== null && globalAnimal !== undefined) {
         this.globalService.globalVar.eventRaceData.nextRaceSegment = this.globalService.generateGrandPrixSegment(globalAnimal);
+
+        var showSlowSegmentWarning = this.lookupService.shouldShowSlowSegmentWarning(globalAnimal);
+
+        if (this.lookupService.slowSegmentWarning(showSlowSegmentWarning)) {
+          this.globalService.globalVar.eventRaceData.animalData.forEach(item => {
+            item.isSetToRelay = false;
+          });
+
+          animalData.isSetToRelay = true;
+        }
+      }
     }
   }
 
@@ -202,53 +237,56 @@ export class EventAnimalDeckComponent implements OnInit {
   getUseCountInformation(animal: Animal) {
     var useCountInfo = "";
     var data = this.globalService.globalVar.eventRaceData.eventAbilityData;
+    var globalAnimal = this.globalService.globalVar.animals.find(item => item.type === animal.type);
+    if (globalAnimal === undefined || globalAnimal === null)
+      return;
 
-    if (animal.type === AnimalTypeEnum.Horse) {
-      if (animal.ability.name === "Inspiration")
+    if (globalAnimal.type === AnimalTypeEnum.Horse) {
+      if (globalAnimal.ability.name === "Inspiration")
         useCountInfo += "Inspiration Relay Count: " + data.inspirationUseCount;
     }
 
-    if (animal.type === AnimalTypeEnum.Cheetah) {
-      if (animal.ability.name === "On The Hunt")
+    if (globalAnimal.type === AnimalTypeEnum.Cheetah) {
+      if (globalAnimal.ability.name === "On The Hunt")
         useCountInfo += "On The Hunt Use Count: " + data.onTheHuntUseCount + " / " + data.onTheHuntUseCap;
     }
 
-    if (animal.type === AnimalTypeEnum.Goat) {
-      if (animal.ability.name === "Sure-footed")
+    if (globalAnimal.type === AnimalTypeEnum.Goat) {
+      if (globalAnimal.ability.name === "Sure-footed")
         useCountInfo += "Sure-footed Use Count: " + data.sureFootedUseCount + " / " + data.sureFootedUseCap;
 
-      if (animal.ability.name === "Deep Breathing")
+      if (globalAnimal.ability.name === "Deep Breathing")
         useCountInfo += "Deep Breathing Relay Count: " + data.deepBreathingUseCount + " / " + data.deepBreathingUseCap;
     }
 
-    if (animal.type === AnimalTypeEnum.Gecko) {
-      if (animal.ability.name === "Night Vision")
+    if (globalAnimal.type === AnimalTypeEnum.Gecko) {
+      if (globalAnimal.ability.name === "Night Vision")
         useCountInfo += "Night Vision Use Count: " + data.nightVisionUseCount + " / " + data.nightVisionUseCap;
     }
 
-    if (animal.type === AnimalTypeEnum.Dolphin) {
-      if (animal.ability.name === "Flowing Current")
+    if (globalAnimal.type === AnimalTypeEnum.Dolphin) {
+      if (globalAnimal.ability.name === "Flowing Current")
         useCountInfo += "Flowing Current Relay Count: " + data.flowingCurrentUseCount;
 
-      if (animal.ability.name === "Navigator")
+      if (globalAnimal.ability.name === "Navigator")
         useCountInfo += "Navigator Relay Count: " + data.navigatorUseCount;
     }
 
-    if (animal.type === AnimalTypeEnum.Octopus) {
-      if (animal.ability.name === "Big Brain")
+    if (globalAnimal.type === AnimalTypeEnum.Octopus) {
+      if (globalAnimal.ability.name === "Big Brain")
         useCountInfo += "Big Brain Relay Count: " + data.bigBrainUseCount + " / " + data.bigBrainUseCap;
     }
 
-    if (animal.type === AnimalTypeEnum.Penguin) {
-      if (animal.ability.name === "Quick Toboggan")
+    if (globalAnimal.type === AnimalTypeEnum.Penguin) {
+      if (globalAnimal.ability.name === "Quick Toboggan")
         useCountInfo += "Quick Toboggan Use Count: " + data.quickTobogganUseCount + " / " + data.quickTobogganUseCap;
     }
 
-    if (animal.type === AnimalTypeEnum.Caribou) {
-      if (animal.ability.name === "Herd Mentality")
+    if (globalAnimal.type === AnimalTypeEnum.Caribou) {
+      if (globalAnimal.ability.name === "Herd Mentality")
         useCountInfo += "Herd Mentality Relay Count: " + data.herdMentalityUseCount + " / " + data.herdMentalityUseCap;
 
-      if (animal.ability.name === "Special Delivery")
+      if (globalAnimal.ability.name === "Special Delivery")
         useCountInfo += "Special Delivery Relay Count: " + data.specialDeliveryUseCount + " / " + data.specialDeliveryUseCap;
     }
 

@@ -1,0 +1,1 @@
+(()=>{"use strict";addEventListener("message",({data:e})=>{importScripts("assets/js/lz-string.js"),null!=e.eventRaceData&&null!=e.eventRaceData.currentRaceSegmentResult&&e.eventRaceData.currentRaceSegmentResult.totalFramesPassed>4e5&&(e.eventRaceData.currentRaceSegment.raceUI=void 0);var t=JSON.stringify(e),a=LZString.compressToBase64(t);postMessage(a)})})();

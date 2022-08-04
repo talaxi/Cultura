@@ -132,7 +132,7 @@ export class CoachingComponent implements OnInit {
       else {
         //console.log("Drawn Line: (" + this.activePoints[i][0] + ", " + this.activePoints[i][1] + ") to (" + this.currentX + ", " + this.currentY + ")");
         //current section
-        if (this.currentPathType === CoachingCourseTypeEnum.power && (i === 0 || i === 2)) {          
+        if (this.currentPathType === CoachingCourseTypeEnum.power && (i === 0 || i === 2)) {
           var index = 0;
           if (i === 2)
             index = 3;
@@ -140,10 +140,10 @@ export class CoachingComponent implements OnInit {
           context.fillStyle = this.getAnimalDistanceColor(this.associatedAnimal.raceCourseType);
           if (index === 0)
             context.fillRect(this.activePoints[index][0] - this.activePoints[index][2] - 5, this.activePoints[index][1] - 2 * this.activePoints[index][3],
-            this.currentX - (this.activePoints[index][0] - this.activePoints[index][2]), 2 * this.activePoints[index][3] + 2);
+              this.currentX - (this.activePoints[index][0] - this.activePoints[index][2]), 2 * this.activePoints[index][3] + 2);
           else
             context.fillRect(this.activePoints[index][0] - this.activePoints[index][2] - 5, this.activePoints[index][1],
-            this.currentX - (this.activePoints[index][0] - this.activePoints[index][2]), 2 * this.activePoints[index][3] + 2);
+              this.currentX - (this.activePoints[index][0] - this.activePoints[index][2]), 2 * this.activePoints[index][3] + 2);
 
           context.fillStyle = this.getAnimalRacerColor(this.associatedAnimal.raceCourseType);
 
@@ -559,7 +559,7 @@ export class CoachingComponent implements OnInit {
     var color = "";
 
     if (courseType === RaceCourseTypeEnum.Flatland)
-      color = "#7d3f00";
+      color = "#7d3f00";//"#8f1c14";
     if (courseType === RaceCourseTypeEnum.Mountain) {
       color = "#1b630d";
     }
@@ -580,22 +580,46 @@ export class CoachingComponent implements OnInit {
   getAnimalRacerColor(courseType: RaceCourseTypeEnum) {
     var color = "";
 
-    if (courseType === RaceCourseTypeEnum.Flatland)
-      color = "#c66900";
+    if (courseType === RaceCourseTypeEnum.Flatland) {
+      if (this.themeService.getActiveThemeName() === "night")
+        color = "#E18B07";
+      else if (this.themeService.getActiveThemeName() === "light")
+        color = "#c66900";
+      else
+        color = "#c66900";
+    }
     if (courseType === RaceCourseTypeEnum.Mountain) {
-      color = "#279113";
+      if (this.themeService.getActiveThemeName() === "night")
+        color = "#30b001";
+      else if (this.themeService.getActiveThemeName() === "light")
+        color = "#279113";
+      else
+        color = "#279113";
     }
     if (courseType === RaceCourseTypeEnum.Ocean) {
       if (this.themeService.getActiveThemeName() === "night")
-        color = "#7463f7";
+        color = "#9289CF";
+      else if (this.themeService.getActiveThemeName() === "light")
+        color = "#0000FF";
       else
         color = "#0000FF";
     }
-    if (courseType === RaceCourseTypeEnum.Tundra)
-      color = "#1CA1C9";
-    if (courseType === RaceCourseTypeEnum.Volcanic)
-      color = "#D92525";
-
+    if (courseType === RaceCourseTypeEnum.Tundra) {
+      if (this.themeService.getActiveThemeName() === "night")
+        color = "#019DDE";
+      else if (this.themeService.getActiveThemeName() === "light")
+        color = "#1CA1C9";
+      else
+        color = "#1CA1C9";
+    }
+    if (courseType === RaceCourseTypeEnum.Volcanic) {
+      if (this.themeService.getActiveThemeName() === "night")
+        color = "#E56C6E";
+      else if (this.themeService.getActiveThemeName() === "light")
+        color = "#D92525";
+      else
+        color = "#D92525";
+    }
     return color;
   }
 
@@ -619,7 +643,7 @@ export class CoachingComponent implements OnInit {
     this.activePoints = [];
     this.currentX = 0;
     this.currentY = 0;
-    this.isPointerDown = false;    
+    this.isPointerDown = false;
     this.successfulAttemptStreak += 1;
     this.getReward(this.currentPathType);
     this.associatedAnimal.trackedAnimalStats.successfulCoachingAttempts += 1;
@@ -629,20 +653,20 @@ export class CoachingComponent implements OnInit {
   getReward(pathType: CoachingCourseTypeEnum) {
     var statGainAmount = 1;
 
-      var whistle = this.globalService.globalVar.resources.find(item => item.name === "Whistle");
-      
-      if (whistle !== undefined && whistle !== null && whistle.amount > 0) {        
-        var whistleStatGainModifier = this.globalService.globalVar.modifiers.find(item => item.text === "whistleModifier");
-        if (whistleStatGainModifier !== undefined && whistleStatGainModifier !== null)
-          statGainAmount = whistleStatGainModifier.value;
-      }
+    var whistle = this.globalService.globalVar.resources.find(item => item.name === "Whistle");
 
-      var goldenWhistle = this.globalService.globalVar.resources.find(item => item.name === "Golden Whistle");
-      if (goldenWhistle !== undefined && goldenWhistle !== null && goldenWhistle.amount > 0) {
-        var goldenWhistleStatGainModifier = this.globalService.globalVar.modifiers.find(item => item.text === "goldenWhistleModifier");
-        if (goldenWhistleStatGainModifier !== undefined && goldenWhistleStatGainModifier !== null)
-          statGainAmount = goldenWhistleStatGainModifier.value;
-      }    
+    if (whistle !== undefined && whistle !== null && whistle.amount > 0) {
+      var whistleStatGainModifier = this.globalService.globalVar.modifiers.find(item => item.text === "whistleModifier");
+      if (whistleStatGainModifier !== undefined && whistleStatGainModifier !== null)
+        statGainAmount = whistleStatGainModifier.value;
+    }
+
+    var goldenWhistle = this.globalService.globalVar.resources.find(item => item.name === "Golden Whistle");
+    if (goldenWhistle !== undefined && goldenWhistle !== null && goldenWhistle.amount > 0) {
+      var goldenWhistleStatGainModifier = this.globalService.globalVar.modifiers.find(item => item.text === "goldenWhistleModifier");
+      if (goldenWhistleStatGainModifier !== undefined && goldenWhistleStatGainModifier !== null)
+        statGainAmount = goldenWhistleStatGainModifier.value;
+    }
 
     if (pathType === CoachingCourseTypeEnum.speed) {
       this.associatedAnimal.currentStats.topSpeed += statGainAmount;
@@ -669,8 +693,7 @@ export class CoachingComponent implements OnInit {
       this.incrementalCoachingUpdates += this.animalDisplayName + " completes the course and gains " + statGainAmount + " adaptability. (" + this.associatedAnimal.currentStats.adaptability.toFixed(2) + ")\n";
     }
 
-    if (this.successfulAttemptStreak % 5 === 0)
-    {
+    if (this.successfulAttemptStreak % 5 === 0) {
       this.globalService.increaseAbilityXp(this.associatedAnimal, statGainAmount);
       this.incrementalCoachingUpdates += this.animalDisplayName + " also gains " + statGainAmount + " XP towards their ability " + this.associatedAnimal.ability.name + "!\n";
     }

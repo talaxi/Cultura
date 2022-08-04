@@ -13,6 +13,6 @@ export class Incubator {
     constructor()
     {
         this.timeTrained = 0;
-        this.timeToComplete = 300;
+        this.timeToComplete = 120;
     }
 }

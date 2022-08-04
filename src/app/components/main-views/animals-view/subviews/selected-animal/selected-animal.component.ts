@@ -287,6 +287,18 @@ export class SelectedAnimalComponent implements OnInit {
     this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
   }
 
+  openBaseStatsModal(content: any) {
+    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
+  }
+
+  openRacingStatsModal(content: any) {
+    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
+  }
+
+  openMiscStatsModal(content: any) {
+    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
+  }
+
   openItemModal(content: any) {
     this.setupDisplayItems();
     var modalRef = this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
@@ -688,7 +700,7 @@ export class SelectedAnimalComponent implements OnInit {
     this.selectedTalentTree = "";
     this.inDepthTalentTreeDescription = "";
 
-    this.componentCommunicationService.setAnimalView(NavigationEnum.animals, new Animal());
+    this.componentCommunicationService.setAnimalView(NavigationEnum.animals, newAnimal);
 
     var assignedBarn = this.globalService.globalVar.barns.find(item => item.barnNumber === this.selectedAnimal.associatedBarnNumber);
     if (assignedBarn === null || assignedBarn === undefined)
@@ -813,5 +825,7 @@ export class SelectedAnimalComponent implements OnInit {
   ngOnDestroy() {
     if (this.subscription !== undefined && this.subscription !== null)
       this.subscription.unsubscribe();
+
+    this.componentCommunicationService.setAnimal(new Animal());
   }
 }

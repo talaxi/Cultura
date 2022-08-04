@@ -15,7 +15,7 @@
             <div class="noviceTrackRace">
                 <span class="s4Heading">Novice Track</span>
                 <br />
-                <span class="clickableText" (click)="openRewardsModal(noviceRewardModal)">{{selectedAnimal.allTrainingTracks.noviceTrack.totalRewards - selectedAnimal.allTrainingTracks.noviceTrack.rewardsObtained}} / {{ selectedAnimal.allTrainingTracks.noviceTrack.totalRewards }} rewards remaining</span>
+                <h6 class="clickableText keyword" (click)="openRewardsModal(noviceRewardModal)">{{selectedAnimal.allTrainingTracks.noviceTrack.totalRewards - selectedAnimal.allTrainingTracks.noviceTrack.rewardsObtained}} / {{ selectedAnimal.allTrainingTracks.noviceTrack.totalRewards }} rewards remaining</h6>
                 <br />
                 <app-race-description (click)="selectTrackRace(noviceTrackRace)" [race]="noviceTrackRace" [showStartText]="true"></app-race-description>
             </div>
@@ -26,7 +26,7 @@
             <div class="intermediateTrackRace">
                 <span class="s4Heading">Intermediate Track</span>
                 <br />
-                <span class="clickableText" (click)="openRewardsModal(intermediateRewardModal)">{{selectedAnimal.allTrainingTracks.intermediateTrack.totalRewards - selectedAnimal.allTrainingTracks.intermediateTrack.rewardsObtained}} / {{ selectedAnimal.allTrainingTracks.intermediateTrack.totalRewards }} rewards remaining</span>
+                <h6 class="clickableText keyword" (click)="openRewardsModal(intermediateRewardModal)">{{selectedAnimal.allTrainingTracks.intermediateTrack.totalRewards - selectedAnimal.allTrainingTracks.intermediateTrack.rewardsObtained}} / {{ selectedAnimal.allTrainingTracks.intermediateTrack.totalRewards }} rewards remaining</h6>
                 <br />
                 <app-race-description (click)="selectTrackRace(intermediateTrackRace)" [race]="intermediateTrackRace" [showStartText]="true"></app-race-description>
             </div>
@@ -37,7 +37,7 @@
             <div class="masterTrackRace">
                 <span class="s4Heading">Master Track</span>
                 <br />
-                <span class="clickableText" (click)="openRewardsModal(masterRewardModal)">{{selectedAnimal.allTrainingTracks.masterTrack.totalRewards - selectedAnimal.allTrainingTracks.masterTrack.rewardsObtained}} / {{ selectedAnimal.allTrainingTracks.masterTrack.totalRewards }} rewards remaining</span>
+                <h6 class="clickableText keyword" (click)="openRewardsModal(masterRewardModal)">{{selectedAnimal.allTrainingTracks.masterTrack.totalRewards - selectedAnimal.allTrainingTracks.masterTrack.rewardsObtained}} / {{ selectedAnimal.allTrainingTracks.masterTrack.totalRewards }} rewards remaining</h6>
                 <br />
                 <app-race-description (click)="selectTrackRace(masterTrackRace)" [race]="masterTrackRace" [showStartText]="true"></app-race-description>
             </div>

@@ -72,5 +72,8 @@ export class RaceSelectionViewComponent implements OnInit {
 
     if (this.communicationSubscription !== null && this.communicationSubscription !== undefined)
       this.communicationSubscription.unsubscribe();
+
+      //these will regenerate when needed
+      this.globalService.globalVar.localRaces = [];
   }
 }

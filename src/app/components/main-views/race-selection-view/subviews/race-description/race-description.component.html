@@ -7,7 +7,9 @@
             {{ raceLeg.distance | number : '1.2-2' }} Meters of {{ raceLeg.getTerrainName() }}
             <span class="coloredText" [ngClass]="getColorClass(raceLeg)">{{ raceLeg.getCourseTypeName() }}</span>
         </p>
-        <p *ngIf="showStartText">{{ race.isCompleted ? "Completed" : cannotRace ? "Cannot Run" : "Start" }}</p>
+        <h6 *ngIf="showStartText && race.isCompleted"><em>Completed!</em></h6>
+        <h6 *ngIf="showStartText && !race.isCompleted && cannotRace"><em>Cannot Run</em></h6>
+        <h6 class="keyword" *ngIf="showStartText && !race.isCompleted && !cannotRace">Start</h6>
     </div>
 </div>
 

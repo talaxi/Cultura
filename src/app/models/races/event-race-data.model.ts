@@ -24,6 +24,7 @@ export class GrandPrixData {
     @Type(() => EventAbilityData)
     eventAbilityData: EventAbilityData;
     isCatchingUp: boolean;
+    isLoading: boolean;
 
     rank: string;
     @Type(() => Terrain) 
@@ -34,7 +35,8 @@ export class GrandPrixData {
     totalRewards: number;
     coinRewardsObtained: number;
     renownRewardsObtained: number;
-    tokenRewardsObtained: number;    
+    tokenRewardsObtained: number;  
+    remainingEventRaceTime: number;  
     segmentTime: number;
     segmentTimeCounter: number;
     overallTimeCounter: number;
@@ -66,17 +68,17 @@ export class GrandPrixData {
     
     constructor() {
         this.weekStartDay = 2;// TODO: set this back to 2 //tues 9 am to thurs 12 pm (noon)
-        this.weekStartHour = 9; //TODO: set this back to 9
+        this.weekStartHour = 9; //TODO: set this back to 9        
         this.weekEndDay = 4; //TODO: set this back to 4
         this.weekEndHour = 12; //TODO: set this back to 12
         
         this.weekendStartDay = 5; //TODO: set back to 5 //fri 8 pm to sun 11 pm
         this.weekendStartHour = 20; //TODO: set back to 20
-        this.weekendEndDay = 0;
-        this.weekendEndHour = 23;
+        this.weekendEndDay = 0; //should be 0
+        this.weekendEndHour = 23; //should be 23
 
         this.distanceCovered = 0;
-        this.grandPrixTimeLength = 51 * 60 * 60; //51 hours
+        this.grandPrixTimeLength = 51 * 60 * 60; //TODO: set back to 51 hours
         this.segmentTime = 180; //each segment is 180 seconds on average
         this.segmentTimeCounter = 0;
         this.overallTimeCounter = 0;
@@ -91,8 +93,10 @@ export class GrandPrixData {
         this.renownRewardsObtained = 0;
         this.tokenRewardsObtained = 0;
         this.isGrandPrixCompleted = false;
+        this.remainingEventRaceTime = 0;
 
         this.eventAbilityData = new EventAbilityData();
         this.isCatchingUp = false;
+        this.isLoading = false;
     }
 }

@@ -54,3 +54,21 @@
   .rightAlign {
       text-align: right;
   }
+
+  @media (max-width: 800px) {
+    .gridContainer {
+      display: grid;
+      width: 100%;
+      height: 100%;
+      grid-template-columns: 1% 0% 0% 1fr 1%;
+      grid-template-rows: 50%;
+      justify-content: stretch;
+      grid-template-areas: 
+        ". . . area3 ."
+        ". . . area4 .";
+    }
+
+    .tips {
+      display: none;
+    }
+  }

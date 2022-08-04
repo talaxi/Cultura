@@ -1,6 +1,7 @@
 import { Component, Input, OnInit, Output, EventEmitter, ViewEncapsulation, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AnimalTypeEnum } from 'src/app/models/animal-type-enum.model';
+import { AnimalStats } from 'src/app/models/animals/animal-stats.model';
 import { Animal } from 'src/app/models/animals/animal.model';
 import { BarnSpecializationEnum } from 'src/app/models/barn-specialization-enum.model';
 import { Barn } from 'src/app/models/barns/barn.model';
@@ -221,14 +222,12 @@ export class SelectedBarnComponent implements OnInit {
       var focusTalentModifier = 1;
       var adaptabilityTalentModifier = 1;
 
-      if (associatedAnimal.talentTree.talentTreeType === TalentTreeTypeEnum.sprint)
-      {
+      if (associatedAnimal.talentTree.talentTreeType === TalentTreeTypeEnum.sprint) {
         adaptabilityTalentModifier = 1 + (associatedAnimal.talentTree.column1Row1Points / 100);
         accelerationTalentModifier = 1 + (associatedAnimal.talentTree.column2Row1Points / 100);
         powerTalentModifier = 1 + (associatedAnimal.talentTree.column3Row1Points / 100);
       }
-      if (associatedAnimal.talentTree.talentTreeType === TalentTreeTypeEnum.longDistance)
-      {
+      if (associatedAnimal.talentTree.talentTreeType === TalentTreeTypeEnum.longDistance) {
         focusTalentModifier = 1 + (associatedAnimal.talentTree.column1Row1Points / 100);
         topSpeedTalentModifier = 1 + (associatedAnimal.talentTree.column2Row1Points / 100);
         enduranceTalentModifier = 1 + (associatedAnimal.talentTree.column3Row1Points / 100);
@@ -508,19 +507,19 @@ export class SelectedBarnComponent implements OnInit {
     var popover = "Upgrade to gain barn bonuses";
 
     if (this.barn.barnUpgrades.barnLevel >= 1)
-      popover = "Barn Upgrades: \n"
+      popover = "Barn Upgrades: <br/>"
 
     //TODO: Condense this entire if condition into the getspecializationpopovertext call
     if (this.barn.barnUpgrades.specialization === BarnSpecializationEnum.TrainingFacility) {
       if (this.barn.barnUpgrades.specializationLevel <= 20)
-        popover += "Training Time Reduction: " + this.barn.barnUpgrades.specializationLevel + "%\n";
+        popover += "Training Time Reduction: " + this.barn.barnUpgrades.specializationLevel + "%<br/>";
       else
-        popover += "Training Time Reduction: 20%\n All Stat Multiplier: " + ((this.barn.barnUpgrades.specializationLevel - 20) / 10);
+        popover += "Training Time Reduction: 20%<br/> All Stat Multiplier: " + ((this.barn.barnUpgrades.specializationLevel - 20) / 10);
     }
     else if (this.barn.barnUpgrades.specialization === BarnSpecializationEnum.BreedingGrounds) {
       var breedingGroundsModifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "breedingGroundsSpecializationModifier");
       if (breedingGroundsModifierPair !== null && breedingGroundsModifierPair !== undefined) {
-        popover += "Training Breed XP Multipler: " + (this.barn.barnUpgrades.specializationLevel * (breedingGroundsModifierPair.value * 100)) + "%\n";
+        popover += "Training Breed XP Multipler: " + (this.barn.barnUpgrades.specializationLevel * (breedingGroundsModifierPair.value * 100)) + "%<br/>";
       }
     }
     else if (this.barn.barnUpgrades.specialization === BarnSpecializationEnum.Attraction) {
@@ -534,17 +533,20 @@ export class SelectedBarnComponent implements OnInit {
 
 
     if (this.barn.barnUpgrades.upgradedStatGain.adaptability > 1)
-      popover += "Adaptability Multiplier: " + this.barn.barnUpgrades.upgradedStatGain.adaptability.toFixed(1) + "\n";
+      popover += "Adaptability Multiplier: " + this.barn.barnUpgrades.upgradedStatGain.adaptability.toFixed(1) + "<br/>";
     if (this.barn.barnUpgrades.upgradedStatGain.focus > 1)
-      popover += "Focus Multiplier: " + this.barn.barnUpgrades.upgradedStatGain.focus.toFixed(1) + "\n";
+      popover += "Focus Multiplier: " + this.barn.barnUpgrades.upgradedStatGain.focus.toFixed(1) + "<br/>";
     if (this.barn.barnUpgrades.upgradedStatGain.power > 1)
-      popover += "Power Multiplier: " + this.barn.barnUpgrades.upgradedStatGain.power.toFixed(1) + "\n";
+      popover += "Power Multiplier: " + this.barn.barnUpgrades.upgradedStatGain.power.toFixed(1) + "<br/>";
     if (this.barn.barnUpgrades.upgradedStatGain.endurance > 1)
-      popover += "Endurance Multiplier: " + this.barn.barnUpgrades.upgradedStatGain.endurance.toFixed(1) + "\n";
+      popover += "Endurance Multiplier: " + this.barn.barnUpgrades.upgradedStatGain.endurance.toFixed(1) + "<br/>";
     if (this.barn.barnUpgrades.upgradedStatGain.acceleration > 1)
-      popover += "Acceleration Multiplier: " + this.barn.barnUpgrades.upgradedStatGain.acceleration.toFixed(1) + "\n";
+      popover += "Acceleration Multiplier: " + this.barn.barnUpgrades.upgradedStatGain.acceleration.toFixed(1) + "<br/>";
     if (this.barn.barnUpgrades.upgradedStatGain.topSpeed > 1)
-      popover += "Speed Multiplier: " + this.barn.barnUpgrades.upgradedStatGain.topSpeed.toFixed(1) + "\n";
+      popover += "Speed Multiplier: " + this.barn.barnUpgrades.upgradedStatGain.topSpeed.toFixed(1) + "<br/>";
+
+    if (this.utilityService.getSanitizedHtml(popover) !== null)
+      popover = this.utilityService.getSanitizedHtml(popover)!;
 
     return popover;
   }
@@ -610,6 +612,71 @@ export class SelectedBarnComponent implements OnInit {
     if (this.barn.barnUpgrades.barnLevel === 9)
       this.upgradeText = "Specialize";
 
+    this.barnName = this.lookupService.getBarnName(this.barn);
+    this.selectedSpecialization = "";
+    this.specializationDescription = "";
+    this.inDepthSpecializationDescription = "";
+
+    this.modalService.dismissAll();
+  }
+
+  resetSpecialization() {
+    if (this.selectedSpecialization === "" || this.selectedSpecialization === null || this.selectedSpecialization === undefined) {
+      alert("You must select a specialization.");
+      return;
+    }
+
+    this.barn.barnUpgrades.barnLevel = Math.round(this.barn.barnUpgrades.barnLevel * .8);
+
+    if (this.barn.barnUpgrades.barnLevel < 10) {
+      this.barn.barnUpgrades.specialization = BarnSpecializationEnum.None;
+    }
+    else {
+      this.barn.barnUpgrades.specialization = this.lookupService.convertSpecializationNameToEnum(this.selectedSpecialization);
+    }
+
+    this.barn.barnUpgrades.specializationLevel = 0;
+
+    this.upgradeText = "Upgrade";
+    if (this.barn.barnUpgrades.barnLevel === 9)
+      this.upgradeText = "Specialize";
+
+    this.barnName = this.lookupService.getBarnName(this.barn);
+    this.selectedSpecialization = "";
+    this.specializationDescription = "";
+    this.inDepthSpecializationDescription = "";
+
+    //recalculate stat gain
+    var defaultStatGain = .1;
+    this.barn.barnUpgrades.upgradedStatGain = new AnimalStats(1, 1, 1, 1, 1, 1);
+
+    for (var i = 1; i <= this.barn.barnUpgrades.barnLevel; i++) {
+      if (i % 10 === 0) {
+        this.barn.barnUpgrades.specializationLevel += 1;
+      }
+      else {
+        var statBarnLevel = i - this.barn.barnUpgrades.specializationLevel;
+        if (statBarnLevel % 6 === 0)
+          this.barn.barnUpgrades.upgradedStatGain.topSpeed += defaultStatGain;
+        else if (statBarnLevel % 6 === 5)
+          this.barn.barnUpgrades.upgradedStatGain.acceleration += defaultStatGain;
+        else if (statBarnLevel % 6 === 4)
+          this.barn.barnUpgrades.upgradedStatGain.endurance += defaultStatGain;
+        else if (statBarnLevel % 6 === 3)
+          this.barn.barnUpgrades.upgradedStatGain.power += defaultStatGain;
+        else if (statBarnLevel % 6 === 2)
+          this.barn.barnUpgrades.upgradedStatGain.focus += defaultStatGain;
+        else if (statBarnLevel % 6 === 1)
+          this.barn.barnUpgrades.upgradedStatGain.adaptability += defaultStatGain;
+      }
+    }
+
+    this.availableTrainings = this.GetAvailableTrainingOptions(this.associatedAnimal);
+    this.totalBarnStatsPopover = this.getTotalBarnStatsPopover();
+    this.upgradeBarnPopover = this.getUpgradeBarnPopover();
+    this.canUpgrade = this.canUpgradeBarn(this.lookupService.getResourcesForBarnUpgrade(this.barn.barnUpgrades.barnLevel));
+    this.canBuild = this.canBuildLargerBarn();
+
     this.modalService.dismissAll();
   }
 
@@ -635,7 +702,7 @@ export class SelectedBarnComponent implements OnInit {
   }
 
   resetSelectedBarnInfo(newBarn: Barn) {
-    this.specializationOptions = this.lookupService.getAllBarnSpecializations();    
+    this.specializationOptions = this.lookupService.getAllBarnSpecializations();
     this.upgradeText = "Upgrade";
     this.barnSpecializationsUnlocked = this.lookupService.isItemUnlocked("barnSpecializations");
     this.coachingUnlocked = this.lookupService.isItemUnlocked("coaching");
@@ -657,7 +724,7 @@ export class SelectedBarnComponent implements OnInit {
         if (this.barn.barnUpgrades.barnLevel === 9)
           this.upgradeText = "Specialize";
 
-        var associatedAnimal = this.globalService.globalVar.animals.find(item => item.associatedBarnNumber == this.selectedBarnNumber);        
+        var associatedAnimal = this.globalService.globalVar.animals.find(item => item.associatedBarnNumber == this.selectedBarnNumber);
 
         if (associatedAnimal !== undefined && associatedAnimal !== null) {
           this.animalAssigned = true;
@@ -686,7 +753,7 @@ export class SelectedBarnComponent implements OnInit {
           this.availableAnimals = this.GetAvailableAnimalOptions();
         }
 
-        this.componentCommunicationService.setBarnView(NavigationEnum.barn, 0);
+        this.componentCommunicationService.setBarnView(NavigationEnum.barn, this.selectedBarnNumber);
 
         this.subscription = this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {
           if (!this.barn.isLocked) {
@@ -721,16 +788,15 @@ export class SelectedBarnComponent implements OnInit {
       }
 
     }
-    else {      
+    else {
       alert("You've run into an error! Please try again. If you have the time, please export your data under the Settings tab and send me the data and any relevant info at CulturaIdle@gmail.com. Thank you!");
     }
   }
 
-  getCurrentTrainingPopover(animal: Animal) {    
+  getCurrentTrainingPopover(animal: Animal) {
     var popover = "";
 
-    if (animal.currentTraining !== undefined && animal.currentTraining !== null)
-    {
+    if (animal.currentTraining !== undefined && animal.currentTraining !== null) {
       popover += animal.currentTraining.trainingName + "\n" + this.lookupService.getStatGainDescription(animal.currentTraining.affectedStatRatios, animal.currentTraining.statGain) + "\n";
     }
 
@@ -754,8 +820,18 @@ export class SelectedBarnComponent implements OnInit {
     this.isCoachingEmitter.emit(true);
   }
 
-  ngOnDestroy() {    
-    if (this.subscription !== null && this.subscription !== undefined) {      
+  openBarnUpgradeModal(content: any) {
+    this.specializationOptions = this.lookupService.getAllBarnSpecializations();
+
+    if (this.barn.barnUpgrades.specialization !== BarnSpecializationEnum.None) {
+      var currentSpecializationName = this.lookupService.convertSpecializationEnumToName(this.barn.barnUpgrades.specialization);
+      this.specializationOptions = this.specializationOptions.filter(item => item !== currentSpecializationName);
+    }
+    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
+  }
+
+  ngOnDestroy() {
+    if (this.subscription !== null && this.subscription !== undefined) {
       this.subscription.unsubscribe();
     }
   }

@@ -1,9 +1,10 @@
-import { Component, EventEmitter, OnInit, Output, SecurityContext } from '@angular/core';
+import { Component, ElementRef, EventEmitter, OnInit, Output, SecurityContext, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NavigationEnum } from 'src/app/models/navigation-enum.model';
 import { GrandPrixData } from 'src/app/models/races/event-race-data.model';
 import { Race } from 'src/app/models/races/race.model';
+import { ResourceValue } from 'src/app/models/resources/resource-value.model';
 import { ShopsEnum } from 'src/app/models/shops-enum.model';
 import { ComponentCommunicationService } from 'src/app/services/component-communication.service';
 import { GameLoopService } from 'src/app/services/game-loop/game-loop.service';
@@ -38,6 +39,10 @@ export class EventViewComponent implements OnInit {
   renownRewardAmount: number;
   weekDayGrandPrixTimeSpan: string;
   weekEndGrandPrixTimeSpan: string;
+  previousRaceRewardList: ResourceValue[];
+  rewardRows: any[][];
+  rewardCells: any[];
+  @ViewChild('loadingModal', { static: true }) loadingContent: ElementRef;
 
   constructor(public globalService: GlobalService, private gameLoopService: GameLoopService, public lookupService: LookupService,
     private raceLogicService: RaceLogicService, private sanitizer: DomSanitizer, private modalService: NgbModal,
@@ -45,6 +50,8 @@ export class EventViewComponent implements OnInit {
 
   ngOnInit(): void {
     this.grandPrixData = this.globalService.globalVar.eventRaceData;
+    this.previousRaceRewardList = this.globalService.globalVar.previousEventRewards;
+    
     this.grandPrixUnlocked = this.lookupService.isItemUnlocked("grandPrix");
     this.weekDayGrandPrixTimeSpan = this.lookupService.getWeekDayGrandPrixTimeSpan();
     this.weekEndGrandPrixTimeSpan = this.lookupService.getWeekEndGrandPrixTimeSpan();
@@ -55,8 +62,7 @@ export class EventViewComponent implements OnInit {
     var racingAnimal = this.globalService.getGrandPrixRacingAnimal();
     if (!this.globalService.globalVar.eventRaceData.animalData.some(item => item.isCurrentlyRacing)) {
       var matchingAnimalData = this.globalService.globalVar.eventRaceData.animalData.find(item => item.associatedAnimalType == racingAnimal.type);
-      if (matchingAnimalData !== undefined)
-      {
+      if (matchingAnimalData !== undefined) {
         matchingAnimalData.isCurrentlyRacing = true;
       }
     }
@@ -80,30 +86,60 @@ export class EventViewComponent implements OnInit {
     this.subscription = this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {
       this.setupEventTime();
       this.grandPrixData = this.globalService.globalVar.eventRaceData;
+      this.previousRaceRewardList = this.globalService.globalVar.previousEventRewards;
+      if (this.previousRaceRewardList.length > 0)
+        this.setupDisplayRewards();
+
       this.remainingMeters = this.globalService.globalVar.eventRaceData.totalDistance - this.globalService.globalVar.eventRaceData.distanceCovered;
+
+      if (this.globalService.globalVar.eventRaceData !== undefined && this.globalService.globalVar.eventRaceData !== null &&
+        this.globalService.globalVar.eventRaceData.currentRaceSegment !== undefined && this.globalService.globalVar.eventRaceData.currentRaceSegment !== null) {
+        var timeToComplete = this.globalService.globalVar.eventRaceData.currentRaceSegmentResult.totalFramesPassed / 60;
+
+        if (this.globalService.globalVar.eventRaceData.segmentTimeCounter >= timeToComplete * 2) {
+          this.grandPrixData.isCatchingUp = true;
+        }
+        else {
+          this.grandPrixData.isCatchingUp = false;
+        }
+      }
     });
   }
 
-  selectEventRace() {
+  selectEventRace(content: any) {
     //this can't actually start a race -- the race needs to be running in the background. this should just view it
     if (this.globalService.globalVar.eventRaceData.isRunning === false) {
       //do set up
       var racingAnimal = this.globalService.getGrandPrixRacingAnimal();
 
-      if (racingAnimal.type === undefined || racingAnimal.type === null)
-      {
+      if (racingAnimal.type === undefined || racingAnimal.type === null) {
         alert("None of the animals in your event deck are capable of entering the Grand Prix. Swap to new animals or make adjustments to your existing animals to meet the criteria.");
         return;
       }
       else {
-        this.globalService.globalVar.eventRaceData.isRunning = true;
-        this.globalService.globalVar.eventRaceData.currentRaceSegment = this.globalService.generateGrandPrixSegment(racingAnimal);
-        this.globalService.globalVar.eventRaceData.currentRaceSegmentResult = this.raceLogicService.runRace(this.globalService.globalVar.eventRaceData.currentRaceSegment);
-        this.globalService.globalVar.eventRaceData.nextRaceSegment = this.globalService.generateGrandPrixSegment(racingAnimal);
+        var showSlowSegmentWarning = this.lookupService.shouldShowSlowSegmentWarning(racingAnimal);
 
-        if (this.globalService.globalVar.eventRaceData.currentRaceSegmentCount === 0) {
-          this.globalService.globalVar.eventRaceData.currentRaceSegmentCount += 1;
+        if (this.lookupService.slowSegmentWarning(showSlowSegmentWarning)) {          
+          this.globalService.globalVar.eventRaceData.isRunning = true; 
+
+          //this.grandPrixData.isLoading = true;
+          //this.openLoadingModal(content);       
+
+          this.globalService.globalVar.eventRaceData.currentRaceSegment = this.globalService.generateGrandPrixSegment(racingAnimal);
+          this.globalService.globalVar.eventRaceData.currentRaceSegmentResult = this.raceLogicService.runRace(this.globalService.globalVar.eventRaceData.currentRaceSegment);
+          this.globalService.globalVar.eventRaceData.nextRaceSegment = this.globalService.generateGrandPrixSegment(racingAnimal);                    
+          
+          //best you're gonna get is the confirm slow segment thing. 
+          //console.log("Total Frames: " + this.globalService.globalVar.eventRaceData.currentRaceSegmentResult.totalFramesPassed);
+          //this.grandPrixData.isLoading = false;
+          //this.modalService.dismissAll();   
+          
+          if (this.globalService.globalVar.eventRaceData.currentRaceSegmentCount === 0) {
+            this.globalService.globalVar.eventRaceData.currentRaceSegmentCount += 1;
+          }
         }
+        else
+          return;
       }
 
       //flipping that true should start the auto run in gamecheckup
@@ -200,6 +236,10 @@ export class EventViewComponent implements OnInit {
   }
 
   openInfoModal(content: any) {
+    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
+  }
+  
+  openLoadingModal(content: any) {
     this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
   }
 
@@ -299,6 +339,27 @@ export class EventViewComponent implements OnInit {
 
   goToTokenShop() {
     this.componentCommunicationService.setShopView(NavigationEnum.shop, ShopsEnum.token);
+  }
+
+  setupDisplayRewards(): void {
+    this.rewardCells = [];
+    this.rewardRows = [];
+
+    var maxColumns = 4;
+
+    if (this.previousRaceRewardList === undefined || this.previousRaceRewardList === null)
+      return;
+
+    for (var i = 1; i <= this.previousRaceRewardList.length; i++) {
+      this.rewardCells.push({ name: this.previousRaceRewardList[i - 1].name, amount: this.previousRaceRewardList[i - 1].amount });
+      if ((i % maxColumns) == 0) {
+        this.rewardRows.push(this.rewardCells);
+        this.rewardCells = [];
+      }
+    }
+
+    if (this.rewardCells.length !== 0)
+      this.rewardRows.push(this.rewardCells);
   }
 
   ngOnDestroy() {

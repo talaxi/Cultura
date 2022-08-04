@@ -21,21 +21,25 @@
     }
     .resources {
       grid-area: resources;
-      border-right: 1px solid rgba(0,0,0,.1);
+      border-right: 1px solid rgba(0,0,0,.1);      
+      background-color: var(--background-secondary);
     }
-  
+
     .progression {
       grid-area: progression;
       border-right: 1px solid rgba(0,0,0,.1);
+      background-color: var(--background-secondary);
     }
   
     .specialty {
       grid-area: specialty;
       border-right: 1px solid rgba(0,0,0,.1);
+      background-color: var(--background-secondary);
     }
   
     .equipment {
       grid-area: equipment;
+      background-color: var(--background-secondary);
     }
 
     .rightAligned {
@@ -44,4 +48,20 @@
 
     .centered {
         text-align: center;
+    }
+
+
+    @media (max-width: 800px) {
+      .gridContainer {
+        height: 100%;
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto auto;
+        justify-content: stretch;
+        grid-template-areas: 
+          "resources"
+          "progression" 
+          "specialty" 
+          "equipment";
+      }
     }

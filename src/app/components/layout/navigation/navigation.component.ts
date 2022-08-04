@@ -54,23 +54,22 @@ export class NavigationComponent implements OnInit {
     });
   }
 
-  switchView(selectedView: NavigationEnum) {
+  switchView(selectedView: NavigationEnum) {    
     if (this.selectedNavigation === NavigationEnum.shop)
     {
       this.componentCommunicationService.setShopView(NavigationEnum.shop, ShopsEnum.regular);
     }
-    
-    this.viewChanged.emit(selectedView);
-    this.selectedNavigation = selectedView;
-
-    /*if (this.selectedNavigation === NavigationEnum.barn)
+    if (this.selectedNavigation === NavigationEnum.barn)
     {
       this.componentCommunicationService.setBarnView(NavigationEnum.barn, 0);
     }
     if (this.selectedNavigation === NavigationEnum.animals)
     {
       this.componentCommunicationService.setAnimalView(NavigationEnum.animals, new Animal());
-    }*/
+    }
+    
+    this.viewChanged.emit(selectedView);
+    this.selectedNavigation = selectedView;
 
     this.incubatorAvailable = this.lookupService.isItemUnlocked("duoRace");
     this.trainingTrackAvailable = this.lookupService.isItemUnlocked("trainingTrack");

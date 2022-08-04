@@ -4,6 +4,7 @@ import { ShopItemTypeEnum } from 'src/app/models/shop-item-type-enum.model';
 import { environment } from 'src/environments/environment';
 import * as CryptoJS from 'crypto-js';
 import { RedeemableCode } from 'src/app/models/redeemable-code.model';
+import { LookupService } from '../lookup.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,12 +12,14 @@ import { RedeemableCode } from 'src/app/models/redeemable-code.model';
 export class CodeCreationService {
   redeemableCode: RedeemableCode;
 
-  constructor() { }
+  constructor(private lookupService: LookupService) { }
   
   setupRewards() {
     this.redeemableCode = new RedeemableCode();
-    this.redeemableCode.expirationDate = new Date('2022-08-25');    
-    this.redeemableCode.rewards.push(new ResourceValue("Mangoes", 2, ShopItemTypeEnum.Food)); //TODO: this needs to pull from a look up so you don't have to always make sure type is accurate
+    this.redeemableCode.expirationDate = new Date('2022-09-01');    
+    this.redeemableCode.rewards.push(this.lookupService.gainMangoes(10));
+    this.redeemableCode.rewards.push(this.lookupService.gainCoins(10000));
+    this.redeemableCode.rewards.push(this.lookupService.gainTokens(5));
   }
 
   createCode() {

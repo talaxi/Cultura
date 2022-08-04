@@ -39,6 +39,14 @@
                     </label>
                 </span>
                 <br />
+                <span [ngbPopover]="autoStartEventRacePopoverText" class="checkboxOption" triggers="mouseenter:mouseleave">
+                    <label>
+                    <input type="checkbox" class="rightSpaced" id="autoStartEventRace"
+                        [(ngModel)]="autoStartEventRace" (input)="autoStartEventRaceToggle()">
+                        <span>Auto Start Event Race</span>                    
+                    </label>
+                </span>
+                <br />
             </div>
             <div [ngbPopover]="raceDisplayInfoPopoverText" triggers="mouseenter:mouseleave" ngbDropdown class="d-inline-block">
                 <label class="bottomAligned">Race Display Info:</label>

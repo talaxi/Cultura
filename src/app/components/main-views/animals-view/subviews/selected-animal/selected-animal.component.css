@@ -293,6 +293,11 @@ td {
 .selectableItem, .selectableOrb, .selectableEquipment {
   margin-left: .25rem;
   margin-right: .25rem;
+  margin-top: .25rem;
+}
+
+.tooltipIcon {
+  display: none;
 }
 
 /** This assumes 2 total columns on mobile and 4 total columns otherwise **/
@@ -332,4 +337,18 @@ table tr td:nth-child(4n) {
 
 table tr td:nth-child(4n-3) {
   border-left: none;
+}
+
+@media (max-width: 800px) {
+  .info {
+    grid-template-columns: 1fr 1.5fr 1fr;
+  }
+
+  .gridContainer {    
+    grid-template-columns: 1fr 1.5fr 1fr;
+  }
+
+  .tooltipIcon {
+    display: inline-block;
+  }
 }

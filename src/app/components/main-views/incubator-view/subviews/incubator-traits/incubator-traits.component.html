@@ -41,19 +41,19 @@
             <div class="changeTrainingHeader">
                 <span>Choose New Trait</span>
             </div>
-            <div class="statFilter clickableText">
-                <span (click)="toggleStatFilter('Speed')" id="speedFilter" [class.filterActive]="filterSpeed">SPD
-                </span>
-                <span (click)="toggleStatFilter('Acceleration')" id="accelerationFilter"
-                    [class.filterActive]="filterAcceleration">ACC </span>
-                <span (click)="toggleStatFilter('Endurance')" id="enduranceFilter"
-                    [class.filterActive]="filterEndurance">END </span>
-                <span (click)="toggleStatFilter('Power')" id="powerFilter" [class.filterActive]="filterPower">PWR
-                </span>
-                <span (click)="toggleStatFilter('Focus')" id="focusFilter" [class.filterActive]="filterFocus">FCS
-                </span>
-                <span (click)="toggleStatFilter('Adaptability')" id="adaptabilityFilter"
-                    [class.filterActive]="filterAdaptability">ADP</span>
+            <div class="statFilter clickableText filterMargins">
+                <button class="buttonAsText" (click)="toggleStatFilter('Speed')" id="speedFilter" [class.filterActive]="filterSpeed">SPD
+                </button>
+                <button class="buttonAsText" (click)="toggleStatFilter('Acceleration')" id="accelerationFilter"
+                    [class.filterActive]="filterAcceleration">ACC </button>
+                <button class="buttonAsText" (click)="toggleStatFilter('Endurance')" id="enduranceFilter"
+                    [class.filterActive]="filterEndurance">END </button>
+                <button class="buttonAsText" (click)="toggleStatFilter('Power')" id="powerFilter" [class.filterActive]="filterPower">PWR
+                </button>
+                <button class="buttonAsText" (click)="toggleStatFilter('Focus')" id="focusFilter" [class.filterActive]="filterFocus">FCS
+                </button>
+                <button class="buttonAsText" (click)="toggleStatFilter('Adaptability')" id="adaptabilityFilter"
+                    [class.filterActive]="filterAdaptability">ADP</button>
             </div>
         </div>
         <br />

@@ -26,12 +26,14 @@ export class SettingsViewComponent implements OnInit {
   finishTrainingBeforeSwitching: boolean;
   hideTips: boolean;
   useNumbersForCircuitRank: boolean;
+  autoStartEventRace: boolean;
   raceDisplayInfo: string;
   finishTrainingBeforeSwitchingPopoverText: string;
   skipDrawRacePopoverText: string;
   hideTipsPopoverText: string;
   useNumbersForCircuitRankPopoverText: string;
   raceDisplayInfoPopoverText: string;
+  autoStartEventRacePopoverText: string;
   enteredRedemptionCode: string;
   currentTheme: string;
   public raceDisplayInfoEnum = RaceDisplayInfoEnum;
@@ -41,6 +43,7 @@ export class SettingsViewComponent implements OnInit {
     private componentCommunicationService: ComponentCommunicationService, private versionControlService: VersionControlService) { }
 
   ngOnInit(): void {
+    //console.log(JSON.stringify(this.globalService.globalVar));
     this.componentCommunicationService.setNewView(NavigationEnum.settings);
 
     if (this.deploymentService.codeCreationMode)
@@ -74,7 +77,7 @@ export class SettingsViewComponent implements OnInit {
       this.hideTips = false;
     else
       this.hideTips = hideTips;
-    this.hideTipsPopoverText = "Stop displaying tips in the footer.";
+    this.hideTipsPopoverText = "Stop displaying tips in the footer. (Tips never display in Mobile version)";
 
 
     var useNumbersForCircuitRank = this.globalService.globalVar.settings.get("useNumbersForCircuitRank");
@@ -83,6 +86,13 @@ export class SettingsViewComponent implements OnInit {
     else
       this.useNumbersForCircuitRank = useNumbersForCircuitRank;
     this.useNumbersForCircuitRankPopoverText = "Use numbers instead of letters when displaying ranks.";
+
+    var autoStartEventRace = this.globalService.globalVar.settings.get("autoStartEventRace");
+    if (autoStartEventRace === undefined)
+      this.autoStartEventRace = false;
+    else
+      this.autoStartEventRace = autoStartEventRace;
+    this.autoStartEventRacePopoverText = "When event race begins, automatically start running with your current event relay team.";
 
   }
 
@@ -98,7 +108,7 @@ export class SettingsViewComponent implements OnInit {
       var loadDataJson = <GlobalVariables>JSON.parse(decompressedData);
       if (loadDataJson !== null && loadDataJson !== undefined) {
         this.globalService.globalVar = plainToInstance(GlobalVariables, loadDataJson);
-        this.versionControlService.updatePlayerVersion();        
+        this.versionControlService.updatePlayerVersion();                      
       }
     }
   }
@@ -122,6 +132,12 @@ export class SettingsViewComponent implements OnInit {
     this.useNumbersForCircuitRank = !this.useNumbersForCircuitRank;
     this.globalService.globalVar.settings.set("useNumbersForCircuitRank", this.useNumbersForCircuitRank);
   }
+
+  autoStartEventRaceToggle = () => {
+    this.autoStartEventRace = !this.autoStartEventRace;
+    this.globalService.globalVar.settings.set("autoStartEventRace", this.autoStartEventRace);
+  }
+
 
   saveRaceDisplayInfo() {
     this.globalService.globalVar.settings.set("raceDisplayInfo", this.raceDisplayInfo);

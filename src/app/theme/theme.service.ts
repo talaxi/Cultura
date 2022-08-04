@@ -13,24 +13,28 @@ export class ThemeService {
     return this.availableThemes;
   }
 
-  getActiveTheme(): Theme {
+  getActiveTheme(): Theme {    
     return this.active;
   }
 
   getActiveThemeName() {
-    if (this.active === night)
-      return "night";
-    if (this.active === light)
-      return "light";
-    if (this.active === white)
-      return "white";
-    if (this.active === twilight)
-      return "twilight";
+    var themeName = "";
 
-    return "";
+    themeName = this.active.name;
+
+    if (this.active === night)
+      themeName = "night";
+    if (this.active === light)
+      themeName = "light";
+    if (this.active === white)
+      themeName = "white";
+    if (this.active === twilight)
+      themeName = "twilight";
+
+    return themeName;
   }
 
-  setNightTheme() {    
+  setNightTheme() {
     return this.setActiveTheme(night);
   }
 

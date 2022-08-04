@@ -26,8 +26,11 @@ export class SpecializationService {
       var amountEarned = 0;
       var amountEarnedPair = this.globalService.globalVar.modifiers.find(item => item.text === "attractionAmountModifier");
 
-      if (amountEarnedPair !== undefined && amountEarnedPair !== null)
-        amountEarned = amountEarnedPair.value * specializationLevel;
+      if (amountEarnedPair !== undefined && amountEarnedPair !== null) {
+        for (var i = 1; i <= specializationLevel; i++) {
+          amountEarned += amountEarnedPair.value + (5 * (i-1));
+        }
+      }
 
       return "Amount Earned: " + amountEarned + " Coins / " + timeToCollect + " seconds\n";
     }
@@ -126,7 +129,7 @@ export class SpecializationService {
         randomizedAnimalList[i].increaseStats(new AnimalStats(maxStatGain.value * baseTopSpeed, maxStatGain.value * baseAcceleration,
           maxStatGain.value * baseEndurance, maxStatGain.value * basePower, maxStatGain.value * baseFocus,
           maxStatGain.value * baseAdaptability));
-          this.globalService.calculateAnimalRacingStats(randomizedAnimalList[i]);
+        this.globalService.calculateAnimalRacingStats(randomizedAnimalList[i]);
       }
 
       if (totalStudyingAnimals > Math.floor(totalStudyingAnimals) && randomizedAnimalList.length > i) {
@@ -135,7 +138,7 @@ export class SpecializationService {
         randomizedAnimalList[i].increaseStats(new AnimalStats(studyingAnimalStatRatio * baseTopSpeed, studyingAnimalStatRatio * baseAcceleration,
           studyingAnimalStatRatio * baseEndurance, studyingAnimalStatRatio * basePower, studyingAnimalStatRatio * baseFocus,
           studyingAnimalStatRatio * baseAdaptability));
-          this.globalService.calculateAnimalRacingStats(randomizedAnimalList[i]);
+        this.globalService.calculateAnimalRacingStats(randomizedAnimalList[i]);
       }
     }
     else {
@@ -144,7 +147,7 @@ export class SpecializationService {
         randomizedAnimalList[0].increaseStats(new AnimalStats(studyingAnimalStatRatio * baseTopSpeed, studyingAnimalStatRatio * baseAcceleration,
           studyingAnimalStatRatio * baseEndurance, studyingAnimalStatRatio * basePower, studyingAnimalStatRatio * baseFocus,
           studyingAnimalStatRatio * baseAdaptability));
-          this.globalService.calculateAnimalRacingStats(randomizedAnimalList[0]);
+        this.globalService.calculateAnimalRacingStats(randomizedAnimalList[0]);
       }
     }
   }
@@ -187,29 +190,28 @@ export class SpecializationService {
     var amountEarned = 0;
     var amountEarnedPair = this.globalService.globalVar.modifiers.find(item => item.text === "attractionAmountModifier");
 
-    if (amountEarnedPair !== undefined && amountEarnedPair !== null)
-      amountEarned = amountEarnedPair.value;
+    if (amountEarnedPair !== undefined && amountEarnedPair !== null) {
+      for (var i = 1; i <= assignedBarn.barnUpgrades.specializationLevel; i++) {
+        amountEarned += amountEarnedPair.value + (5 * (i-1));
+      }
+    }
 
-    amountEarned *= assignedBarn.barnUpgrades.specializationLevel;
     assignedBarn.barnUpgrades.currentDeltaTime += deltaTime;
     var collectedAmount = 0;
 
-    if (trainingAnimal.currentTraining !== null && 
-      assignedBarn.barnUpgrades.currentDeltaTime >= trainingAnimal.currentTraining.trainingTimeRemaining)
-    {
+    if (trainingAnimal.currentTraining !== null &&
+      assignedBarn.barnUpgrades.currentDeltaTime >= trainingAnimal.currentTraining.trainingTimeRemaining) {
       assignedBarn.barnUpgrades.currentDeltaTime = trainingAnimal.currentTraining.trainingTimeRemaining;
     }
 
     while (assignedBarn.barnUpgrades.currentDeltaTime >= timeToCollect) {
-      //console.log("Success Delta Time: " + assignedBarn.barnUpgrades.currentDeltaTime);
       assignedBarn.barnUpgrades.currentDeltaTime -= timeToCollect;
-      
+
       var resource = this.globalService.globalVar.resources.find(item => item.name === "Coins");
       if (resource !== undefined)
         resource.amount += amountEarned;
 
-      collectedAmount += amountEarned;     
-      //console.log("Attraction: " + amountEarned + ' New Total: ' + resource?.amount); 
-    }    
+      collectedAmount += amountEarned;
+    }
   }
 }

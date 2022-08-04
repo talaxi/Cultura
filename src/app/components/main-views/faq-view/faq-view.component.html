@@ -3,7 +3,7 @@
         <div class="view">
             <div class="info">
                 <h2>Frequently Asked Questions</h2>
-                <em>This FAQ and game is still a work in progress! Bare with me if certain features aren't fully fleshed out and developed yet. I tend to develop in a way where I will put something out still a bit bare bones and add more to it over time until it is complete. If you have any feedback at all, please let me know using one of the links on the bottom right. Thank you so much for playing and hope you're enjoying it!</em>
+                <em>This FAQ and game is still a work in progress! Bear with me if certain features aren't fully fleshed out and developed yet. I tend to develop in a way where I will put something out still a bit bare bones and add more to it over time until it is complete. If you have any feedback at all, please let me know using one of the links on the bottom right. Thank you so much for playing and hope you're enjoying it!</em>
             </div>
             <br />
             <br />
@@ -24,6 +24,36 @@
                         <br />
                         <br />
                         If you are having a hard time collecting coins, look into buying Team Managers from the Shop and upgrading your barns to Attractions to build passive income. </p>
+                </div>
+            </div>
+            <hr />
+            <div>
+                <div>
+                    <div class="expanderMargin">
+                        <button type="button" aria-label="Expand" (click)="expandAnswer('faqAnswerBreedGuide')">+</button>
+                    </div>
+                    <div class="faqQuestion">
+                        <p>What does Breeding do? How do I gain Breed XP?</p>
+                    </div>
+                </div>
+                <div class="faqAnswer hide" id="faqAnswerBreedGuide">
+                    <div class="expanderMargin"></div>
+                    <p>
+                        Breeding is one of the best way to increase your animals' racing capabilities. It is a reset mechanic, meaning all of the base stats
+                        your animal has gained will be reset back to their default levels, and in return gain a permanent multiplier to your racing stats. 
+                        <br />
+                        <br />
+                        Every time you Breed, you gain a 5% increase to the amount your base stats contribute to your racing stats. If you hover over your
+                        base stats (or tap if you are on mobile) when selecting an animal on the Animal page, you will see a breakdown of all multipliers
+                        you have obtained. Increasing your Breed level is the first step in reaching new heights in Cultura.
+                        <br />
+                        <br />
+                        There are a few ways to increase Breed XP: <br />
+                        <em>Completing a training:</em> {{ lookupService.getTrainingBreedGaugeIncrease(0) }} XP<br/>
+                        <em>Successfully completing a free race:</em> {{ lookupService.getLocalBreedGaugeIncrease() }} XP<br/>
+                        <em>Successfully completeing a circuit race:</em> {{ lookupService.getCircuitBreedGaugeIncrease() }} XP<br/> <br/>
+                        As you progress, you'll find ways to increase the amount of XP gained.
+                    </p>
                 </div>
             </div>
             <hr />
@@ -93,9 +123,9 @@
                     <br/>
                     If you have a Research Level of 15 and apply the <span class="keyword">Alert</span> trait to your Horse, it will gain 15% <span class="keyword">Focus</span> and lose 15% <span class="keyword">Endurance</span> through the trait itself. 
                     <br/>
-                    <em>If you have Incubator Upgrade Level 1:</em> each time you Breed your Horse, it will gain an additional modifier of .01 to its <span class="keyword">Focus</span> stat. Incubator Upgrade Level 1 only allows for the first 10% of your trait value to contribute to the modifier. 
+                    <em>If you have Incubator Upgrade Level 1:</em> each time you Breed your Horse, it will gain an additional modifier of .01 to its <span class="keyword">Focus</span> stat. 10% of the positive trait value of 15% would come out to .015. Incubator Upgrade Level 1 only allows for the first 10% of your trait value to contribute to the modifier, so you would gain .01. 
                     <br/>
-                    <em>If you have Incubator Upgrade Level 2:</em> each time you Breed your Horse, it will gain an additional modifier of .015 to its <span class="keyword">Focus</span> stat. Incubator Upgrade Level 2 allows for the first 25% of your trait value to contribute to the modifier. Because your trait value is only 15%, it will contribute in its entirety. 
+                    <em>If you have Incubator Upgrade Level 2:</em> each time you Breed your Horse, it will gain an additional modifier of .015 to its <span class="keyword">Focus</span> stat. 10% of the positive trait value of 15% would come to .015. Incubator Upgrade Level 2 allows for the first 25% of your trait value to contribute to the modifier. Because your trait value is only 15%, it will contribute in its entirety. 
                 </p>
                 </div>
                 <hr />

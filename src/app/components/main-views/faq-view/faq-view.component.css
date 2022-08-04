@@ -60,3 +60,14 @@
     background-color: inherit;
     color: inherit;
   }
+
+  @media (max-width: 800px) {
+    .expanderMargin {
+        width: auto;
+        margin-right: 1rem;
+    }
+
+    .faqQuestion {
+        width: auto;
+    }
+  }

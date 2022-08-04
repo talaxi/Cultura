@@ -67,6 +67,7 @@ export class GlobalService {
     this.globalVar.trackedStats = new TrackedStats();
     this.globalVar.orbStats = new OrbStats();
     this.globalVar.tutorials = new Tutorials();
+    this.globalVar.previousEventRewards = [];
     this.globalVar.eventRaceData = new GrandPrixData();
     this.globalVar.userIsRacing = false;
     this.globalVar.nationalRaceCountdown = 0;
@@ -74,8 +75,8 @@ export class GlobalService {
     this.globalVar.freeRaceCounter = 0;
     this.globalVar.freeRaceTimePeriodCounter = 0;
     this.globalVar.lastTimeStamp = Date.now();
-    this.globalVar.currentVersion = 1.05; //TODO: this needs to be automatically increased or something, too easy to forget
-    this.globalVar.startingVersion = 1.05;
+    this.globalVar.currentVersion = 1.06; //TODO: this needs to be automatically increased or something, too easy to forget
+    this.globalVar.startingVersion = 1.06;
     this.globalVar.startDate = new Date();
     this.globalVar.notifications = new Notifications();
 
@@ -181,7 +182,7 @@ export class GlobalService {
     this.globalVar.modifiers.push(new StringNumberPair(5000000, "metersPerCoinsGrandPrixModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(20000000, "metersPerRenownGrandPrixModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(100, "grandPrixCoinRewardModifier"));
-    this.globalVar.modifiers.push(new StringNumberPair(5, "grandPrixRenownRewardModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(3, "grandPrixRenownRewardModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(50000000, "grandPrixToken1MeterModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(100000000, "grandPrixToken2MeterModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(250000000, "grandPrixToken3MeterModifier"));
@@ -189,9 +190,10 @@ export class GlobalService {
     this.globalVar.modifiers.push(new StringNumberPair(5 * 60, "exhaustionGainTimerCapGrandPrixModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(.02, "exhaustionGainGrandPrixModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(2 * 60 * 60, "weatherClusterTimerCapGrandPrixModifier"));
-    this.globalVar.modifiers.push(new StringNumberPair(50, "grandPrixBreedLevelRequiredModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(25, "grandPrixBreedLevelRequiredModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(.2, "weatherMoraleBoostModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(.03, "focusMoraleLossModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(.02, "burstMoraleBoostModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(.01, "stumbleMoraleLossModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(.05, "segmentCompleteMoraleBoostModifier"));
 
@@ -919,7 +921,7 @@ export class GlobalService {
     var whistle = new ShopItem();
     whistle.name = "Whistle";
     whistle.purchasePrice.push(this.getCoinsResourceValue(2500));
-    whistle.basePurchasePrice.push(this.getCoinsResourceValue(2500));    
+    whistle.basePurchasePrice.push(this.getCoinsResourceValue(2500));
     whistle.totalShopQuantity = 1;
     whistle.canHaveMultiples = false;
     whistle.isAvailable = false;
@@ -929,12 +931,23 @@ export class GlobalService {
     var goldenWhistle = new ShopItem();
     goldenWhistle.name = "Golden Whistle";
     goldenWhistle.purchasePrice.push(this.getCoinsResourceValue(15000));
-    goldenWhistle.basePurchasePrice.push(this.getCoinsResourceValue(15000));    
+    goldenWhistle.basePurchasePrice.push(this.getCoinsResourceValue(15000));
     goldenWhistle.totalShopQuantity = 1;
     goldenWhistle.canHaveMultiples = false;
     goldenWhistle.isAvailable = false;
     goldenWhistle.type = ShopItemTypeEnum.Specialty;
     specialtyShopItems.push(goldenWhistle);
+
+    var talentPoints = new ShopItem();
+    talentPoints.name = "Talent Point Voucher";
+    talentPoints.purchasePrice.push(this.getMedalResourceValue(25));
+    talentPoints.basePurchasePrice.push(this.getMedalResourceValue(25));
+    talentPoints.infiniteAmount = true;
+    talentPoints.canHaveMultiples = true;
+    talentPoints.quantityAdditive = 25;
+    talentPoints.isAvailable = false;
+    talentPoints.type = ShopItemTypeEnum.Specialty;
+    specialtyShopItems.push(talentPoints);
 
     specialtyShopSection.name = "Specialty";
     specialtyShopSection.itemList = specialtyShopItems;
@@ -1320,7 +1333,7 @@ export class GlobalService {
       if (specialtyShop !== null && specialtyShop !== undefined) {
         var whistle = specialtyShop.itemList.find(item => item.name === "Whistle");
         if (whistle !== null && whistle !== undefined)
-        whistle.isAvailable = true;
+          whistle.isAvailable = true;
       }
 
       returnVal = ["Coaching", "Take charge of your animal's training by giving them some coaching yourself. Visit a barn with an animal assigned and select 'Coach' to get started."];
@@ -1631,6 +1644,14 @@ export class GlobalService {
       this.globalVar.unlockables.set("rainbowRace", true);
       this.globalVar.notifications.isNewSpecialRaceAvailable = true;
 
+      //unlock talent point voucher upgrade from shop
+      var specialtyShop = this.globalVar.shop.find(item => item.name === "Specialty");
+      if (specialtyShop !== null && specialtyShop !== undefined) {
+        var talentPoints = specialtyShop.itemList.find(item => item.name === "Talent Point Voucher");
+        if (talentPoints !== null && talentPoints !== undefined)
+          talentPoints.isAvailable = true;
+      }
+
       returnVal = ["Rainbow Race", "A new race type has been unlocked! This race requires a full team effort spanning all five course types. Your team of researchers are on hand for these races, coming up with more efficient ways to win. Gain Talent Tree Points that can be spent to improve various course types."];
 
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(55) + "Amethyst Orb";
@@ -1649,7 +1670,7 @@ export class GlobalService {
       returnVal = ["Barn Row 4", ""];
 
       var renownAmount = 1;
-      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(20) + "Sapphire Orb";
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(60) + "Sapphire Orb";
     }
     else if (numericValue === 60) {
       this.globalVar.resources.push(new ResourceValue("Sapphire Orb", 1, ShopItemTypeEnum.Equipment));
@@ -1952,6 +1973,13 @@ export class GlobalService {
     return raceLegs.sort((a, b) => selectedDeck.courseTypeOrder.indexOf(a.courseType) - selectedDeck.courseTypeOrder.indexOf(b.courseType));
   }
 
+  reorganizeAnimalsByDeckOrder(animals: Animal[], selectedDeck: AnimalDeck) {
+    if (!selectedDeck.isCourseOrderActive)
+      return animals;
+
+    return animals.sort((a, b) => selectedDeck.courseTypeOrder.indexOf(a.raceCourseType) - selectedDeck.courseTypeOrder.indexOf(b.raceCourseType));
+  }
+
   getCourseTypeInRandomOrder(courseList: RaceCourseTypeEnum[]) {
     var randomizedList: RaceCourseTypeEnum[] = [];
     var length = courseList.length;
@@ -2034,9 +2062,9 @@ export class GlobalService {
     else
       rng = this.utilityService.getRandomInteger(1, availableClusterList.length);
 
-    var selectedWeather = availableClusterList[rng - 1];    
+    var selectedWeather = availableClusterList[rng - 1];
 
-    if (this.globalVar.eventRaceData.animalData.length > 0) {      
+    if (this.globalVar.eventRaceData.animalData.length > 0) {
       var weatherMoraleBoostModifierValue = .2;
       var weatherMoraleBoostModifier = this.globalVar.modifiers.find(item => item.text === "weatherMoraleBoostModifier");
       if (weatherMoraleBoostModifier !== undefined)
@@ -2047,12 +2075,12 @@ export class GlobalService {
         var globalAnimal = this.globalVar.animals.find(item => item.type === animal.associatedAnimalType);
         if (globalAnimal !== undefined) {
           if (previousWeather !== undefined) {
-            if (this.animalGainsMoraleBoostFromWeather(globalAnimal.raceCourseType, previousWeather)) {              
+            if (this.animalGainsMoraleBoostFromWeather(globalAnimal.raceCourseType, previousWeather)) {
               animal.morale -= +weatherMoraleBoostModifierValue;
             }
           }
 
-          if (this.animalGainsMoraleBoostFromWeather(globalAnimal.raceCourseType, selectedWeather)) {            
+          if (this.animalGainsMoraleBoostFromWeather(globalAnimal.raceCourseType, selectedWeather)) {
             animal.morale += +weatherMoraleBoostModifierValue;
           }
         }
@@ -2125,6 +2153,7 @@ export class GlobalService {
       item.isCurrentlyRacing = false;
     });
 
+    this.globalVar.eventRaceData.isLoading = false;
     this.globalVar.eventRaceData.animalAlreadyPrepped = false;
     this.globalVar.eventRaceData.isRunning = false;
     this.globalVar.eventRaceData.overallTimeCounter -= this.globalVar.eventRaceData.segmentTimeCounter;
@@ -2173,7 +2202,7 @@ export class GlobalService {
 
   GenerateLocalRaceRewards(circuitRank: string): ResourceValue[] {
     var numericRank = this.GetCircuitRankValue(circuitRank);
-    var CoinsFactor = 1.005;
+    var CoinsFactor = 1.0075;
     var baseCoins = 10;
 
     var baseRenown = 1.01;
@@ -2516,12 +2545,12 @@ export class GlobalService {
       legLengthCutoff = timeToComplete / 6;
 
       var availableCourses: RaceCourseTypeEnum[] = [];
-      if (numericalRank < 35) {
+      if (numericalRank < 37) {
         availableCourses.push(RaceCourseTypeEnum.Flatland);
         availableCourses.push(RaceCourseTypeEnum.Mountain);
         availableCourses.push(RaceCourseTypeEnum.Ocean);
       }
-      else if (numericalRank < 45) {
+      else if (numericalRank < 47) {
         availableCourses.push(RaceCourseTypeEnum.Flatland);
         availableCourses.push(RaceCourseTypeEnum.Mountain);
         availableCourses.push(RaceCourseTypeEnum.Ocean);
@@ -2610,7 +2639,7 @@ export class GlobalService {
     //get expected race distance by segment    
     if (this.globalVar.circuitRaces === null || this.globalVar.circuitRaces === undefined || this.globalVar.circuitRaces.length === 0)
       this.GenerateCircuitRacesForRank(this.globalVar.circuitRank);
-    
+
     //TODO: if doing holiday event, need to reconsider this
     var expectedSegmentTotals = Math.ceil(this.globalVar.eventRaceData.grandPrixTimeLength / this.globalVar.eventRaceData.segmentTime);
     var expectedSegmentDistance = totalDistance / expectedSegmentTotals;
@@ -2620,7 +2649,7 @@ export class GlobalService {
     var circuitRaceTimeLength = this.globalVar.circuitRaces[0].timeToComplete;
     var timeToCompleteModifier = this.globalVar.eventRaceData.segmentTime / circuitRaceTimeLength;
     var adjustedCircuitRaceDistance = circuitRaceDistance * timeToCompleteModifier;
-    
+
     //TODO: implement smoothness after making sure it works fine without it
     /*
     if (expectedSegmentDistance < adjustedCircuitRaceDistance)
@@ -2629,7 +2658,7 @@ export class GlobalService {
       smoothnessModifier = .75;
 
     adjustedCircuitRaceDistance *= smoothnessModifier;*/
-    
+
     //want to make segments roughly adjustedcircuitracedistance length
     //console.log("Adj Circuit Race Distance: " + adjustedCircuitRaceDistance + " Total Distance: " + totalDistance);
     //adjust length so that segment is an integer
@@ -2642,15 +2671,15 @@ export class GlobalService {
     return totalSegments;
   }
 
-  initialGrandPrixSetup(rank: string) {    
+  initialGrandPrixSetup(rank: string) {      
     this.globalVar.eventRaceData = new GrandPrixData();
     this.globalVar.eventRaceData.rank = rank;
-    var numericRankValue = this.utilityService.getNumericValueOfCircuitRank(rank);    
+    var numericRankValue = this.utilityService.getNumericValueOfCircuitRank(rank);
 
     this.globalVar.eventRaceData.totalDistance = 500000000 * numericRankValue;
     this.globalVar.eventRaceData.currentRaceSegmentCount = 0;
     this.globalVar.eventRaceData.segmentTimeCounter = 0;
-    this.globalVar.eventRaceData.totalSegments = this.getTotalSegments(this.globalVar.eventRaceData.totalDistance); 
+    this.globalVar.eventRaceData.totalSegments = this.getTotalSegments(this.globalVar.eventRaceData.totalDistance);
     this.globalVar.eventRaceData.remainingRewards = this.globalVar.eventRaceData.totalRewards = this.getGrandPrixRewardCount();
 
     this.globalVar.eventRaceData.animalData = [];
@@ -2658,7 +2687,8 @@ export class GlobalService {
       this.globalVar.eventRaceData.animalData.push(new AnimalEventRaceData(animal.type));
     });
 
-    this.globalVar.eventRaceData.weatherCluster = this.getRandomGrandPrixWeatherCluster(this.getEventStartDateTime().toString());
+    this.globalVar.eventRaceData.weatherCluster = this.getRandomGrandPrixWeatherCluster();
+    this.globalVar.previousEventRewards = [];
   }
 
   animalCanRaceGrandPrix(animal: Animal) {
@@ -2668,10 +2698,10 @@ export class GlobalService {
     if (animal.breedLevel < requiredBreedLevel)
       canRaceGrandPrix = false;
 
-      var associatedData = this.globalVar.eventRaceData.animalData.find(data => data.associatedAnimalType === animal.type);
+    var associatedData = this.globalVar.eventRaceData.animalData.find(data => data.associatedAnimalType === animal.type);
 
-      if (associatedData !== undefined && associatedData !== null && associatedData.exhaustionStatReduction < .5)
-        canRaceGrandPrix = false;
+    if (associatedData !== undefined && associatedData !== null && associatedData.exhaustionStatReduction < .5)
+      canRaceGrandPrix = false;
 
     return canRaceGrandPrix;
   }
@@ -2680,11 +2710,29 @@ export class GlobalService {
     var racingAnimal = new Animal();
     var eventDeck = this.globalVar.animalDecks.find(item => item.isEventDeck);
 
-    if (eventDeck !== undefined)
-    {
-      var availableOptions = eventDeck.selectedAnimals.filter(item => this.animalCanRaceGrandPrix(item));
-      if (availableOptions.length > 0)
+    if (eventDeck !== undefined) {
+      var availableOptions = [];
+      if (eventDeck.isCourseOrderActive) {
+        for (var i = 0; i < eventDeck.selectedAnimals.length; i++) {
+          if (eventDeck.courseTypeOrder.length > i) {
+            var type = eventDeck.courseTypeOrder[i];
+            var matchingAnimal = eventDeck.selectedAnimals.find(animal => animal.raceCourseType === type);
+            if (matchingAnimal !== undefined)
+              availableOptions.push(matchingAnimal);
+          }
+        }
+      }
+      else
+      {
+        eventDeck.selectedAnimals.forEach(item => {
+          availableOptions.push(item);
+        });
+      }
+
+      availableOptions = availableOptions.filter(item => this.animalCanRaceGrandPrix(item));
+      if (availableOptions.length > 0) {
         racingAnimal = availableOptions[0];
+      }
     }
 
     this.globalVar.eventRaceData.animalData.forEach(animal => {
@@ -2734,7 +2782,7 @@ export class GlobalService {
 
     var leg = new RaceLeg();
     leg.courseType = racingAnimal.raceCourseType;
-    leg.terrain = this.getRandomGrandPrixTerrainFromWeatherCluster(this.globalVar.eventRaceData.weatherCluster, leg.courseType, this.getEventStartDateTime().toString() + this.getEventTimePer5Min().toString());    
+    leg.terrain = this.getRandomGrandPrixTerrainFromWeatherCluster(this.globalVar.eventRaceData.weatherCluster, leg.courseType, this.getEventStartDateTime().toString() + this.getEventTimePer5Min().toString());
     leg.distance = segmentMeters;
 
     raceLegs.push(leg);
@@ -2932,6 +2980,60 @@ export class GlobalService {
 
     return 0;
   }
+
+  /*getTimeSinceEventRaceEnded() {
+    var currentDate = new Date();
+
+    var currentDay = currentDate.getDay();
+    var currentHour = currentDate.getHours();
+    var eventData = this.globalVar.eventRaceData;
+
+    var event1StartDate = new Date();
+    var event1EndDate = new Date();
+    var event2StartDate = new Date();
+    var event2EndDate = new Date();
+
+    if (currentDate.getDay() === 0 && currentHour < eventData.weekendEndHour)
+      event1StartDate = new Date(new Date().setDate(new Date().getDate() - 7 - currentDay + eventData.weekStartDay));
+    else
+      event1StartDate = new Date(new Date().setDate(new Date().getDate() - currentDay + eventData.weekStartDay));
+    event1StartDate.setHours(event1StartDate.getHours() - currentHour + eventData.weekStartHour);
+    event1StartDate.setMinutes(0, 0, 0);
+
+    if (currentDate.getDay() === 0 && currentHour < eventData.weekendEndHour)
+      event1EndDate = new Date(new Date().setDate(new Date().getDate() - 7 - currentDay + eventData.weekEndDay));
+    else
+      event1EndDate = new Date(new Date().setDate(new Date().getDate() - currentDay + eventData.weekEndDay));
+    event1EndDate.setHours(event1EndDate.getHours() - currentHour + eventData.weekEndHour);
+    event1EndDate.setMinutes(0, 0, 0);
+
+    if (currentDate.getDay() === 0 && currentHour < eventData.weekendEndHour)
+      event2StartDate = new Date(new Date().setDate(new Date().getDate() - 7 - currentDay + eventData.weekendStartDay));
+    else
+      event2StartDate = new Date(new Date().setDate(new Date().getDate() - currentDay + eventData.weekendStartDay));
+    event2StartDate.setHours(event2StartDate.getHours() - currentHour + eventData.weekendStartHour);
+    event2StartDate.setMinutes(0, 0, 0);
+    //need to move into next week since sunday is first of the week
+
+    if (currentDate.getDay() === 0 && currentHour < eventData.weekendEndHour)
+      event2EndDate = new Date(new Date().setDate(new Date().getDate() - currentDay + eventData.weekendEndDay));
+    else
+      event2EndDate = new Date(new Date().setDate(new Date().getDate() + 7 - currentDay + eventData.weekendEndDay));
+    event2EndDate.setHours(event2EndDate.getHours() - currentHour + eventData.weekendEndHour);
+    event2EndDate.setMinutes(0, 0, 0);
+
+    if ((currentDate >= event1StartDate && currentDate <= event1EndDate) ||
+      (currentDate >= event2StartDate && currentDate <= event2EndDate)) {
+      return 0;
+    }
+
+    if (currentDate > event1EndDate) {
+      return (event2StartDate.getTime() - currentDate.getTime()) / 1000;
+    }
+    else {
+      return (event1StartDate.getTime() - currentDate.getTime()) / 1000;
+    }
+  }*/
 
   getEventTimePer5Min() {
     var remainingEventTime = this.getRemainingEventRaceTime();
@@ -3165,14 +3267,12 @@ export class GlobalService {
     var focusTalentModifier = 1;
     var adaptabilityTalentModifier = 1;
 
-    if (animal.talentTree.talentTreeType === TalentTreeTypeEnum.sprint)
-    {
+    if (animal.talentTree.talentTreeType === TalentTreeTypeEnum.sprint) {
       adaptabilityTalentModifier = 1 + (animal.talentTree.column1Row3Points / 100);
       accelerationTalentModifier = 1 + (animal.talentTree.column2Row3Points / 100);
       powerTalentModifier = 1 + (animal.talentTree.column3Row3Points / 100);
     }
-    if (animal.talentTree.talentTreeType === TalentTreeTypeEnum.longDistance)
-    {
+    if (animal.talentTree.talentTreeType === TalentTreeTypeEnum.longDistance) {
       focusTalentModifier = 1 + (animal.talentTree.column1Row3Points / 100);
       topSpeedTalentModifier = 1 + (animal.talentTree.column2Row3Points / 100);
       enduranceTalentModifier = 1 + (animal.talentTree.column3Row3Points / 100);
@@ -3374,6 +3474,7 @@ export class GlobalService {
     this.globalVar.settings.set("hideTips", false);
     this.globalVar.settings.set("useNumbersForCircuitRank", false);
     this.globalVar.settings.set("raceDisplayInfo", RaceDisplayInfoEnum.both);
+    this.globalVar.settings.set("autoStartEventRace", false);
   }
 
   InitializeUnlockables() {
@@ -3584,11 +3685,11 @@ export class GlobalService {
   devModeInitialize(circuitRankNumeric: number) {
     var Coins = this.globalVar.resources.find(item => item.name === "Coins");
     if (Coins !== undefined)
-      Coins.amount = 100000;
+      Coins.amount = 1000000;
     if (this.globalVar.resources.some(item => item.name === "Medals")) {
       var medals = this.globalVar.resources.find(item => item.name === "Medals");
       if (medals !== undefined)
-        medals.amount += circuitRankNumeric + 1000000;
+        medals.amount += circuitRankNumeric + 10000000;
     }
     else
       this.globalVar.resources.push(this.initializeService.initializeResource("Medals", circuitRankNumeric + 100000, ShopItemTypeEnum.Resources));
@@ -3596,16 +3697,15 @@ export class GlobalService {
     this.globalVar.resources.push(this.initializeService.initializeResource("Talent Points", 1000, ShopItemTypeEnum.Resources));
     this.globalVar.resources.push(this.initializeService.initializeResource("Tokens", 1000, ShopItemTypeEnum.Resources));
 
-
     if (this.globalVar.resources.some(item => item.name === "Renown")) {
       var renown = this.globalVar.resources.find(item => item.name === "Renown");
       if (renown !== undefined)
-        renown.amount += 200;
+        renown.amount += 5;
     }
     else
-      this.globalVar.resources.push(this.initializeService.initializeResource("Renown", 200, ShopItemTypeEnum.Resources));
+      this.globalVar.resources.push(this.initializeService.initializeResource("Renown", 5, ShopItemTypeEnum.Resources));
 
-    this.globalVar.resources.push(this.initializeService.initializeResource("Facility Level", circuitRankNumeric*2, ShopItemTypeEnum.Progression));
+    this.globalVar.resources.push(this.initializeService.initializeResource("Facility Level", circuitRankNumeric * 2, ShopItemTypeEnum.Progression));
     this.globalVar.resources.push(this.initializeService.initializeResource("Research Level", circuitRankNumeric, ShopItemTypeEnum.Progression));
 
     for (var i = 1; i <= circuitRankNumeric; i++) {
@@ -3774,7 +3874,7 @@ export class GlobalService {
     }*/
 
     //breed level 250
-    /*var horse = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Horse);
+    var horse = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Horse);
     if (horse !== undefined) {
       horse.currentStats.topSpeed = 2000;
       horse.currentStats.acceleration = 2000;
@@ -3941,10 +4041,10 @@ export class GlobalService {
       fox.breedLevel = 250;
       fox.incubatorStatUpgrades.powerModifier = 1;
       this.calculateAnimalRacingStats(fox);
-    }*/
+    }
 
     //Breed Lvl 1000, power focused
-    var horse = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Horse);
+    /*var horse = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Horse);
     if (horse !== undefined) {
       horse.currentStats.topSpeed = 2000;
       horse.currentStats.acceleration = 2000;
@@ -4113,6 +4213,6 @@ export class GlobalService {
       fox.breedLevel = 2000;
       fox.incubatorStatUpgrades.powerModifier = 5;
       this.calculateAnimalRacingStats(fox);
-    }
-  }  
+    }*/
+  }
 }

@@ -34,3 +34,11 @@
     opacity: 0;
   }
 }
+
+
+@media (max-width: 800px) {
+  .barn {
+    width: 75%;
+  }
+  
+}

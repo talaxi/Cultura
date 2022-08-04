@@ -1,22 +1,46 @@
 <div class="navigation">
-    <button (click)="switchView(navigationEnum.barn)" class="buttonAsText clickableText" [ngClass]="{'active': selectedNavigation === navigationEnum.barn, 'tutorialActive' : tutorial6Active }">Barns</button>
+    <div class="navSpace clickableText" (click)="switchView(navigationEnum.barn)">
+        <button class="buttonAsText"
+            [ngClass]="{'active': selectedNavigation === navigationEnum.barn, 'tutorialActive' : tutorial6Active }">Barns</button>
+    </div>
     <hr />
-    <button (click)="switchView(navigationEnum.raceselection)" class="buttonAsText clickableText" [ngClass]="{'active': selectedNavigation === navigationEnum.raceselection, 'tutorialActive' : tutorial3Active }">Races</button>
-    <hr />             
-    <button (click)="switchView(navigationEnum.animals)" class="buttonAsText clickableText" [ngClass]="selectedNavigation === navigationEnum.animals ? 'active' : ''">Animals</button>
+    <div class="navSpace clickableText" (click)="switchView(navigationEnum.raceselection)">
+        <button class="buttonAsText"
+            [ngClass]="{'active': selectedNavigation === navigationEnum.raceselection, 'tutorialActive' : tutorial3Active }">Races</button>
+    </div>
     <hr />
-    <button (click)="switchView(navigationEnum.relayTeams)" class="buttonAsText clickableText" [ngClass]="selectedNavigation === navigationEnum.relayTeams ? 'active' : ''">Relay Teams</button>
+    <div class="navSpace clickableText" (click)="switchView(navigationEnum.animals)">
+        <button class="buttonAsText"
+            [ngClass]="selectedNavigation === navigationEnum.animals ? 'active' : ''">Animals</button>
+    </div>
     <hr />
-    <button (click)="switchView(navigationEnum.shop)" class="buttonAsText clickableText" [ngClass]="selectedNavigation === navigationEnum.shop ? 'active' : ''">Shop</button>
+    <div class="navSpace clickableText" (click)="switchView(navigationEnum.relayTeams)" >
+        <button class="buttonAsText"
+            [ngClass]="selectedNavigation === navigationEnum.relayTeams ? 'active' : ''">Relay Teams</button>
+    </div>
     <hr />
-    <div *ngIf="incubatorAvailable">
-        <button (click)="switchView(navigationEnum.incubator)" class="buttonAsText clickableText" [ngClass]="selectedNavigation === navigationEnum.incubator ? 'active' : ''">Incubator</button>
+    <div class="navSpace clickableText" (click)="switchView(navigationEnum.shop)" >
+        <button class="buttonAsText"
+            [ngClass]="selectedNavigation === navigationEnum.shop ? 'active' : ''">Shop</button>
+    </div>
+    <hr />
+    <div *ngIf="incubatorAvailable" class="navSpace clickableText" (click)="switchView(navigationEnum.incubator)">
+        <button  class="buttonAsText"
+            [ngClass]="selectedNavigation === navigationEnum.incubator ? 'active' : ''">Incubator</button>
         <hr />
-    </div> 
-    <button (click)="switchView(navigationEnum.resources)" class="buttonAsText clickableText" [ngClass]="selectedNavigation === navigationEnum.resources ? 'active' : ''">Resources</button>
+    </div>
+    <div class="navSpace clickableText">
+        <button (click)="switchView(navigationEnum.resources)" class="buttonAsText"
+            [ngClass]="selectedNavigation === navigationEnum.resources ? 'active' : ''">Resources</button>
+    </div>
     <hr />
-    <button (click)="switchView(navigationEnum.settings)" class="buttonAsText clickableText" [ngClass]="selectedNavigation === navigationEnum.settings ? 'active' : ''">Settings</button>
+    <div class="navSpace clickableText" (click)="switchView(navigationEnum.settings)" >
+        <button class="buttonAsText"
+            [ngClass]="selectedNavigation === navigationEnum.settings ? 'active' : ''">Settings</button>
+    </div>
     <hr />
-    <button class="buttonAsText clickableText" (click)="switchView(navigationEnum.stats)" [ngClass]="selectedNavigation === navigationEnum.stats ? 'active' : ''">Stats</button>
-    <!--<p (click)="switchView(navigationEnum.stats)" class="clickableText" [ngClass]="selectedNavigation === navigationEnum.stats ? 'active' : ''">Stats</p>        -->
+    <div class="navSpace clickableText" (click)="switchView(navigationEnum.stats)">
+        <button class="buttonAsText" 
+            [ngClass]="selectedNavigation === navigationEnum.stats ? 'active' : ''">Stats</button>
+    </div>    
 </div>

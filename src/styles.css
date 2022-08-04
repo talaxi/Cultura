@@ -143,6 +143,14 @@ body {
   cursor: default;
 }
 
+@media (max-width: 800px) {
+
+  html,
+  body {
+    font-size: 3vmin;
+  }
+}
+
 /*html {
   overflow: hidden;
 }
@@ -194,6 +202,13 @@ h1 {
   font-weight: var(--s5-weight);
 }
 
+/* designating h6 to be unset */
+h6 {
+  margin-top: 0;
+  margin-bottom: 0;
+  font-weight: inherit;
+}
+
 .keyword {
   font-weight: 550;
 }
@@ -239,6 +254,17 @@ button:active:enabled {
   /* Lowering the shadow */
 }
 
+@media (max-width: 800px) {
+  button:hover:enabled {
+    transform: scale(0.98);
+    -webkit-transform: scale(0.98);
+    /* Scaling button to 0.98 to its original size */
+    box-shadow: 3px 2px 22px 1px rgba(0, 0, 0, 0.24);
+    -webkit-box-shadow: 3px 2px 22px 1px rgba(0, 0, 0, 0.24);
+    /* Lowering the shadow */
+  }
+}
+
 .buttonAsText {
   background: none !important;
   border: none;
@@ -250,17 +276,34 @@ button:active:enabled {
   color: var(--foreground-tertiary);
 }
 
-/*.buttonAsText:active {
-  border-style: outset !important;
-  background-image: none;
+.buttonAsText:hover,
+.buttonAsText:focus,
+.buttonAsText:active,
+.buttonAsText:active:focus:not(:disabled):not(.disabled) {
   box-shadow: none !important;
   outline: 0;
-} */
+}
 
-.buttonAsText:hover,.buttonAsText:focus,.buttonAsText:active, 
-.buttonAsText:active:focus:not(:disabled):not(.disabled) {
-    box-shadow: none!important;
-    outline: 0;
+.buttonAsTextKeepColor {
+  background: none !important;
+  border: none;
+  padding: 0 !important;
+}
+
+.buttonAsTextKeepColor:hover,
+.buttonAsTextKeepColor:focus,
+.buttonAsTextKeepColor:active,
+.buttonAsTextKeepColor:active:focus:not(:disabled):not(.disabled) {
+  box-shadow: none !important;
+  outline: 0;
+}
+
+.tooltipIcon {
+  color: var(--foreground-quaternary);
+  border-radius: 25px;
+  background: var(--background-five);
+  padding: 0 .5rem;
+  margin-right: .25rem;
 }
 
 .defaultTextColor {

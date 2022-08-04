@@ -27,8 +27,9 @@
                     <br />
                     <div class="talents" *ngIf="areTalentsAvailable">
                         <div>
-                            <span *ngIf="selectedAnimal.talentTree.talentTreeType !== talentTreeTypeEnum.none" class="keyword"> {{ getTalentTreeName() }}</span>
-                        </div>                        
+                            <span *ngIf="selectedAnimal.talentTree.talentTreeType !== talentTreeTypeEnum.none"
+                                class="keyword"> {{ getTalentTreeName() }}</span>
+                        </div>
                         <button (click)="openTalentsModal(talentsContent)">View Talents</button>
                     </div>
                 </div>
@@ -75,8 +76,9 @@
                         <span class="keyword">{{ selectedAnimal.getRaceCourseType() }}</span>
                         <br />
                     </div>
-                    <span class="clickableText" (click)="goToAssignedBarn()">{{ this.assignedBarnName }} <em
-                            *ngIf="this.selectedAnimal.currentTraining !== null && this.selectedAnimal.currentTraining !== undefined">({{this.selectedAnimal.currentTraining.trainingName}})</em></span>
+                    <button class="clickableText buttonAsText" (click)="goToAssignedBarn()">{{ this.assignedBarnName }}
+                        <em
+                            *ngIf="this.selectedAnimal.currentTraining !== null && this.selectedAnimal.currentTraining !== undefined">({{this.selectedAnimal.currentTraining.trainingName}})</em></button>
                     <br />
                     <span ngbPopover="{{ breedLevelPopover }}" triggers="mouseenter:mouseleave"
                         popoverClass="popoverClass">Breed Level {{selectedAnimal.breedLevel}}</span>
@@ -121,7 +123,8 @@
             <hr />
             <div class="gridContainer">
                 <div class="trainableStats">
-                    <span class="s4Heading">Base Stats</span>
+                    <span class="s4Heading">Base Stats <span class="tooltipIcon"
+                            (click)="openBaseStatsModal(baseStatsContent)">?</span></span>
                     <br />
                     <br />
                     <span [ngbPopover]="topSpeedPopoverContent" triggers="mouseenter:mouseleave"
@@ -165,7 +168,8 @@
                     </span>
                 </div>
                 <div class="racingStats">
-                    <span class="s4Heading">Racing Stats</span>
+                    <span class="s4Heading">Racing Stats <span class="tooltipIcon"
+                            (click)="openRacingStatsModal(racingStatsContent)">?</span></span>
                     <br />
                     <br />
                     <span ngbPopover="{{ selectedAnimal.currentStats.maxSpeedMsPopover() }}"
@@ -218,7 +222,8 @@
                 </div>
 
                 <div class="miscStats">
-                    <span class="s4Heading">Miscellaneous Stats</span>
+                    <span class="s4Heading">Miscellaneous Stats <span class="tooltipIcon"
+                            (click)="openMiscStatsModal(miscStatsContent)">?</span></span>
                     <br />
                     <br />
                     <div *ngIf="selectedAnimal.miscStats.bonusBreedXpGainFromTraining > 0">
@@ -288,15 +293,19 @@
                     </span>
                 </p>
                 <div>
-                    <span class="ability1 s5Heading clickableText" (click)="selectAbility(ability1)"
-                        [class.filterActive]="selectedAnimal.ability.name === ability1.name">{{ ability1.name }} </span>
-                    <span *ngIf="ability2.isAbilityPurchased" class="ability2 s5Heading clickableText"
-                        (click)="selectAbility(ability2)"
-                        [class.filterActive]="selectedAnimal.ability.name === ability2.name">{{ ability2.name }} </span>
-                    <span *ngIf="ability3.isAbilityPurchased" class="ability3 s5Heading clickableText"
-                        (click)="selectAbility(ability3)"
-                        [class.filterActive]="selectedAnimal.ability.name === ability3.name">{{ ability3.name }} </span>
-                    <br />
+                    <div>
+                        <button class="ability1 s5Heading clickableText buttonAsText" (click)="selectAbility(ability1)"
+                            [class.filterActive]="selectedAnimal.ability.name === ability1.name">{{ ability1.name }}
+                        </button>
+                        <button *ngIf="ability2.isAbilityPurchased"
+                            class="ability2 s5Heading clickableText buttonAsText" (click)="selectAbility(ability2)"
+                            [class.filterActive]="selectedAnimal.ability.name === ability2.name">{{ ability2.name }}
+                        </button>
+                        <button *ngIf="ability3.isAbilityPurchased"
+                            class="ability3 s5Heading clickableText buttonAsText" (click)="selectAbility(ability3)"
+                            [class.filterActive]="selectedAnimal.ability.name === ability3.name">{{ ability3.name }}
+                        </button>
+                    </div>
                     <br />
                     <p>
                         <span [ngbPopover]="abilityLevelPopoverContent" triggers="mouseenter:mouseleave"
@@ -406,7 +415,7 @@
                                 <td *ngFor="let c of cells;" class="cell">
                                     <div class="selectableItem" [ngClass]="{'activeSelectedItem': c.isSelected}"
                                         (click)="selectItem(c)">
-                                        <span class="resourceKeyword">{{ c.name }} ({{ c.amount }})</span>
+                                        <h6 class="resourceKeyword">{{ c.name }} ({{ c.amount }})</h6>
                                         <div *ngIf="itemHasAdditionalText(c)">
                                             <span [innerHTML]="getItemAdditionalText(c)"></span>
                                         </div>
@@ -458,7 +467,7 @@
                                     <div class="selectableEquipment"
                                         [ngClass]="{'activeSelectedEquipment': c.isSelected}"
                                         (click)="selectEquipment(c)">
-                                        <span class="equipmentKeyword">{{ c.name }} ({{ c.amount }})</span>
+                                        <h6 class="equipmentKeyword">{{ c.name }} ({{ c.amount }})</h6>
                                         <br />
                                         <br />
                                         {{ this.getEquipmentShortDescription(c.name) }}
@@ -503,7 +512,7 @@
                                 <td *ngFor="let c of cells;" class="cell">
                                     <div class="selectableOrb" [ngClass]="{'activeSelectedOrb': c.isSelected}"
                                         (click)="selectOrb(c)">
-                                        <span class="progressionKeyword">{{ c.name }}</span>
+                                        <h6 class="progressionKeyword">{{ c.name }}</h6>
                                         <br />
                                         {{ this.getEquipmentShortDescription(c.name) }}
                                         <br />
@@ -564,9 +573,13 @@
                 <div class="talentInfo">Available Talent Points: {{ availableTalentPoints }}</div>
                 <br />
                 <p>
-                  <em>
-                    Note that this functionality is new and subject to change. I have plans to add more talents and certain talents will likely still need rebalancing/redesigning. Bear with me as I work that out. Once I feel like talents are in a final state, everyone will have the option to reset their talent choices if they choose to. Feel free to experiment with the options as they are now and let me know if you have any feedback. Thanks!
-                  </em>  
+                    <em>
+                        Note that this functionality is new and subject to change. I have plans to add more talents and
+                        certain talents will likely still need rebalancing/redesigning. Bear with me as I work that out.
+                        Once I feel like talents are in a final state, everyone will have the option to reset their
+                        talent choices if they choose to. Feel free to experiment with the options as they are now and
+                        let me know if you have any feedback. Thanks!
+                    </em>
                 </p>
                 <br />
                 <div class="talentRow" *ngFor="let _ of [].constructor(talentRows); let rowIndex = index">
@@ -580,7 +593,8 @@
                             <div class="talentSpacer">
                                 <div *ngIf="rowIndex !== talentRows-1" class="defaultTalentSpacer">
                                 </div>
-                                <div *ngIf="rowIndex !== talentRows-1" [ngClass]="getBorderConditional(rowIndex, columnIndex)">
+                                <div *ngIf="rowIndex !== talentRows-1"
+                                    [ngClass]="getBorderConditional(rowIndex, columnIndex)">
                                 </div>
                             </div>
                         </div>
@@ -591,5 +605,133 @@
                 Coming Soon!
             </div>
         </form>
+    </div>
+</ng-template>
+
+
+<ng-template #baseStatsContent let-modal>
+    <div class="modalClass">
+        <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">Base Stats Info</h4>
+            <button type="button" aria-label="Close" (click)="modal.dismiss()">X</button>
+        </div>
+
+        <div class="modal-body">
+            <div class="baseStats">
+                <div class="popoverClass">
+                    <span class='keyword'>Speed - </span> {{ getTopSpeedPopover() }}
+                </div>
+                <hr />
+                <div class="popoverClass">
+                    <span class='keyword'>Acceleration - </span> {{ getAccelerationPopover() }}
+                </div>
+                <hr />
+                <div class="popoverClass">
+                    <span class='keyword'>Endurance - </span> {{ getEndurancePopover() }}
+                </div>
+                <hr />
+                <div class="popoverClass">
+                    <span class='keyword'>Power - </span> {{ getPowerPopover() }}
+                </div>
+                <hr />
+                <div class="popoverClass">
+                    <span class='keyword'>Focus - </span> {{ getFocusPopover() }}
+                </div>
+                <hr />
+                <div class="popoverClass">
+                    <span class='keyword'>Adaptability - </span> {{ getAdaptabilityPopover() }}
+                </div>
+                <hr />
+                <div class="popoverClass">
+                    <span class='keyword'>Diminishing Returns - </span> {{ getDiminishingReturnsPopover() }}
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #racingStatsContent let-modal>
+    <div class="modalClass">
+        <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">Racing Stats Info</h4>
+            <button type="button" aria-label="Close" (click)="modal.dismiss()">X</button>
+        </div>
+
+        <div class="modal-body">
+            <div class="racingStats">
+                <div class="popoverClass">
+                    <span class='keyword'>Max Speed - </span> {{ selectedAnimal.currentStats.maxSpeedMsPopover() }}
+                </div>
+                <hr />
+                <div class="popoverClass">
+                    <span class='keyword'>Acceleration Rate - </span> {{ selectedAnimal.currentStats.accelerationMsPopover() }}
+                </div>
+                <hr />
+                <div class="popoverClass">
+                    <span class='keyword'>Stamina - </span> {{ selectedAnimal.currentStats.staminaPopover() }}
+                </div>
+                <hr />
+                <div class="popoverClass">
+                    <span class='keyword'>Power Efficiency - </span> {{ selectedAnimal.currentStats.powerMsPopover() }}
+                </div>
+                <hr />
+                <div class="popoverClass">
+                    <span class='keyword'>Focus Distance - </span> {{ selectedAnimal.currentStats.focusMsPopover() }}
+                </div>
+                <hr />
+                <div class="popoverClass">
+                    <span class='keyword'>Adaptability Distance - </span> {{ selectedAnimal.currentStats.adaptabilityMsPopover() }}
+                </div>
+                <hr />
+                <div class="popoverClass">
+                    <span class='keyword'>Burst Chance - </span> {{ selectedAnimal.currentStats.burstChancePopover() }}
+                </div>
+                <hr />
+                <div class="popoverClass">
+                    <span class='keyword'>Burst Distance - </span> {{ selectedAnimal.currentStats.burstDistancePopover() }}
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #miscStatsContent let-modal>
+    <div class="modalClass">
+        <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">Miscellaneous Stats Info</h4>
+            <button type="button" aria-label="Close" (click)="modal.dismiss()">X</button>
+        </div>
+
+        <div class="modal-body">
+            <div class="baseStats">
+                <div class="popoverClass">
+                    <span class='keyword'>Bonus Breed XP From
+                        Training - </span> {{ getBonusTrainingXpPopover() }}
+                </div>
+                <hr />
+                <div class="popoverClass">
+                    <span class='keyword'>Bonus Breed XP From
+                        Free Races - </span> {{ getBonusFreeRaceXpPopover() }}
+                </div>
+                <hr />
+                <div class="popoverClass">
+                    <span class='keyword'>Bonus Breed XP From
+                        Circuit Races - </span> {{ getBonusCircuitRaceXpPopover() }}
+                </div>
+                <hr />
+                <div class="popoverClass">
+                    <span class='keyword'>Training Time Reduction - </span> {{ getBonusTrainingTimeReductionPopover() }}
+                </div>
+                <hr />
+                <div class="popoverClass">
+                    <span class='keyword'>Bonus Diminishing Returns
+                        per Facility Level - </span> {{ getBonusDiminishingReturnsPerFacilityLevelPopover() }}
+                </div>
+                <hr />
+                <div class="popoverClass">
+                    <span class='keyword'>Bonus Talents - </span> {{ getBonusTalentsPopover() }}
+                </div>
+            </div>
+        </div>
     </div>
 </ng-template>

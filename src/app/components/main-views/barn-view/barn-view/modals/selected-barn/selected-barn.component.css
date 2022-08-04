@@ -163,3 +163,26 @@
   font-weight: bold;
   color: var(--foreground-secondary);  
 }
+
+.filterMargins {
+  display: flex;
+  justify-content: center;
+  gap: 3%;
+}
+
+.resetSpecializationInfo {
+  text-align: center;
+}
+
+@media (max-width: 800px) {
+  .filterGridContainer
+  {
+      height: 100%;
+      display: grid;
+      grid-template-columns: 2fr 1fr 2fr;
+      grid-template-rows: auto;
+      justify-content: stretch;
+      grid-template-areas: 
+        "facilitySizeFilter resetFiltersHeader statFilter";
+  }
+}

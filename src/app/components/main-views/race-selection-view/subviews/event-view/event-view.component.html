@@ -7,7 +7,7 @@
             {{eventRaceNotice}} {{eventRaceTimer}}
             <br />
             <div [ngbPopover]="bonusTimeContent" triggers="mouseenter:mouseleave" popoverClass="popoverClass"
-                *ngIf="bonusTime !== ''" class="clickableText" (click)="selectEventRace()">Bonus Time: {{bonusTime}}
+                *ngIf="bonusTime !== ''" class="clickableText" (click)="selectEventRace(loadingModal)">Bonus Time: {{bonusTime}}
                 <br />
             </div>
             <button type="button" class="rightSpaced" (click)="openInfoModal(grandPrixInfoModal)">Grand Prix Info</button>
@@ -26,7 +26,7 @@
                 <br />
                 <br />
                 <div class="raceDescription">
-                    <div (click)="selectEventRace()" [ngClass]="{'raceNotAllowed': grandPrixData.isCatchingUp }" class="clickableText eventRaceDescription" [ngbPopover]="popContent" [disablePopover]="popoverText === ''"
+                    <div (click)="selectEventRace(loadingModal)" [ngClass]="{'raceNotAllowed': grandPrixData.isCatchingUp }" class="clickableText eventRaceDescription" [ngbPopover]="popContent" [disablePopover]="popoverText === ''"
                         triggers="mouseenter:mouseleave" popoverClass="popoverClass">
                         <span><span class='keyword'>Forecast:</span> {{ grandPrixData.weatherCluster === undefined ? "Unknown" :
                             lookupService.getWeatherClusterFromEnum(grandPrixData.weatherCluster) }}</span>                        
@@ -34,10 +34,11 @@
                         {{ remainingMeters | number : '1.' }} Meters Remaining
 
                         <br />
-                        <p *ngIf="grandPrixData.isRunning && !grandPrixData.isGrandPrixCompleted && !grandPrixData.isCatchingUp" >View Race</p>
-                        <p *ngIf="grandPrixData.isRunning && !grandPrixData.isGrandPrixCompleted && grandPrixData.isCatchingUp" class="raceCatchingUp" ><em>Please Wait -- Offline Time Is Calculating</em></p>
-                        <p *ngIf="!grandPrixData.isRunning && !grandPrixData.isGrandPrixCompleted" >Start</p>
-                        <p *ngIf="!grandPrixData.isRunning && grandPrixData.isGrandPrixCompleted" >Completed!</p>                        
+                        <h6 *ngIf="grandPrixData.isRunning && !grandPrixData.isGrandPrixCompleted && !grandPrixData.isCatchingUp" class="keyword">View Race</h6>
+                        <h6 *ngIf="grandPrixData.isRunning && !grandPrixData.isGrandPrixCompleted && grandPrixData.isCatchingUp" class="raceCatchingUp"><em>Please Wait -- Offline Time Is Calculating</em></h6>
+                        <h6 *ngIf="grandPrixData.isRunning && !grandPrixData.isGrandPrixCompleted && !grandPrixData.isCatchingUp && grandPrixData.isLoading" class="raceCatchingUp"><em>Loading..</em></h6>
+                        <h6 *ngIf="!grandPrixData.isRunning && !grandPrixData.isGrandPrixCompleted" class="keyword">Start</h6>
+                        <h6 *ngIf="!grandPrixData.isRunning && grandPrixData.isGrandPrixCompleted"><em>Completed!</em></h6>                        
                     </div>
                 </div>
                 <ng-template #popContent>
@@ -47,8 +48,26 @@
                 </ng-template>
             </div>
         </div>
+        <br/>        
         <div>
             <app-event-animal-deck></app-event-animal-deck>
+        </div>
+        <div *ngIf="previousRaceRewardList !== undefined && previousRaceRewardList !== null && !isEventRaceAvailable">
+            <br/>
+            <br/>
+            <div class="results">
+                <span class="s4Heading">Previous Grand Prix Rewards</span>
+                <div class="rewards" *ngIf="previousRaceRewardList.length === 0">
+                    None
+                </div>
+                <div class="rewards" *ngIf="previousRaceRewardList.length > 0">
+                    <table>
+                        <tr *ngFor="let cells of rewardRows;">
+                            <td *ngFor="let c of cells;"><span class="keyword">{{c.name}}</span>: {{c.amount}}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
         </div>
 
     </div>
@@ -136,5 +155,11 @@
     <div class="popoverClass">
         Bonus Time is accrued from effects that delay competitors or extend the length of a race. Once the Grand Prix
         event time ends, any bonus time will continue to play out before your entry to the Grand Prix ends.
+    </div>
+</ng-template>
+
+<ng-template #loadingModal let-modal>
+    <div class="popoverClass">
+        Loading...
     </div>
 </ng-template>

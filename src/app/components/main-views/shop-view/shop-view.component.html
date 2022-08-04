@@ -5,23 +5,22 @@
                 <h2>Shop</h2>
             </div>
         </div>        
-        <div class="filters">
-            <!--css grid-->
-            <p id="title">Filters:</p>
-            <p (click)="toggleShopFilter('Animals')" id="animalsFilter" class="clickableText" [class.filterActive]="filterAnimals">Animals</p>
-            <p (click)="toggleShopFilter('Trainings')" id="trainingsFilter" class="clickableText" [class.filterActive]="filterTrainings">
-                Trainings</p>
-            <p (click)="toggleShopFilter('Equipment')" id="equipmentFilter" class="clickableText" [class.filterActive]="filterEquipment">Equipment
-            </p>
-            <p (click)="toggleShopFilter('Food')" id="foodFilter" class="clickableText" [class.filterActive]="filterFood">Food</p>
-            <p (click)="toggleShopFilter('Specialty')" id="specialtyFilter" class="clickableText" [class.filterActive]="filterSpecialty">
-                Specialty</p>
-            <p (click)="toggleShopFilter('Abilities')" id="abilitiesFilter" class="clickableText" [class.filterActive]="filterAbilities">
-                Abilities</p>
+        <div class="filters">            
+            <span id="title">Filters:</span>
+            <button (click)="toggleShopFilter('Animals')" id="animalsFilter" class="clickableText buttonAsText" [class.filterActive]="filterAnimals">Animals</button>
+            <button (click)="toggleShopFilter('Trainings')" id="trainingsFilter" class="clickableText buttonAsText" [class.filterActive]="filterTrainings">
+                Trainings</button>
+            <button (click)="toggleShopFilter('Equipment')" id="equipmentFilter" class="clickableText buttonAsText" [class.filterActive]="filterEquipment">Equipment
+            </button>
+            <button (click)="toggleShopFilter('Food')" id="foodFilter" class="clickableText buttonAsText" [class.filterActive]="filterFood">Food</button>
+            <button (click)="toggleShopFilter('Specialty')" id="specialtyFilter" class="clickableText buttonAsText" [class.filterActive]="filterSpecialty">
+                Specialty</button>
+            <button (click)="toggleShopFilter('Abilities')" id="abilitiesFilter" class="clickableText buttonAsText" [class.filterActive]="filterAbilities">
+                Abilities</button>
         </div>
-        <div (click)="ResetShopFilters()" class="centered clickableText">
+        <button (click)="ResetShopFilters()" class="centered clickableText buttonAsText">
             Reset Filters
-        </div>
+        </button>
     </div>
     <br/>
     <div class="shopSection" *ngFor="let section of sections;">

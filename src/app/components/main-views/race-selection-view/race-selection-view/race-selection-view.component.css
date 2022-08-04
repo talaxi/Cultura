@@ -58,3 +58,9 @@
     padding: 0 .5rem;
     margin-right: .25rem;
   }
+
+  @media (max-width: 800px) {
+    .raceGridContainer {      
+      grid-template-columns: .9fr 1.1fr 1fr 1fr;
+    }
+  }

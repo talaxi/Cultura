@@ -49,7 +49,15 @@ export class LocalViewComponent implements OnInit {
     var nextRainbowRace = this.getNextAvailableSpecialRace(LocalRaceTypeEnum.Rainbow);
     if (nextRainbowRace !== undefined)
       this.availableRainbowRace = nextRainbowRace;
-
+      
+    var primaryDeck = this.globalService.globalVar.animalDecks.find(item => item.isPrimaryDeck);
+    if (primaryDeck !== undefined && primaryDeck !== null)
+    {
+      if (this.availableDuoRace !== null && this.availableDuoRace !== undefined)
+        this.availableDuoRace.raceLegs = this.globalService.reorganizeLegsByDeckOrder(this.availableDuoRace.raceLegs, primaryDeck);      
+      if (this.availableRainbowRace !== null && this.availableRainbowRace !== undefined)
+        this.availableRainbowRace.raceLegs = this.globalService.reorganizeLegsByDeckOrder(this.availableRainbowRace.raceLegs, primaryDeck);      
+    }
 
     if (this.globalService.globalVar.settings.get("useNumbersForCircuitRank")) {
       if (this.availableMonoRace !== null && this.availableMonoRace !== undefined)

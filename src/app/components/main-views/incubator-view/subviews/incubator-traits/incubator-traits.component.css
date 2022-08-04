@@ -115,3 +115,9 @@
     font-weight: bold;
     color: var(--foreground-secondary);  
 }
+
+.filterMargins {
+  display: flex;
+  justify-content: center;
+  gap: 3%;
+}

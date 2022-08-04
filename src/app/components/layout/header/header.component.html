@@ -18,7 +18,7 @@
         </div>
 
         <div class="menu keyword">
-            <div ngbDropdown #menuDropdown="ngbDropdown" class="d-inline-block">
+            <div ngbDropdown #menuDropdown="ngbDropdown" class="d-inline-block customDropdown">
                 <button type="button" class="btn dropdown" id="menuDropdown" ngbDropdownToggle>Menu</button>
                 <div ngbDropdownMenu aria-labelledby="menuDropdown" class="dropdownItems">
                     <app-navigation (viewChanged)="changeView($event);" (click)="menuDropdown.close();">

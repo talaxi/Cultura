@@ -32,22 +32,36 @@ export class ComponentCommunicationService {
     return this.switchView.asObservable();
   }
 
-  setAnimalView(newView: NavigationEnum, newAnimalView: Animal) {
+  setAnimalView(newView: NavigationEnum, newAnimalView: Animal) {    
     if (newAnimalView !== this.selectAnimalView.value)
       this.selectAnimalView.next(newAnimalView);
     if (newView !== this.switchView.value)
       this.switchView.next(newView);
   }
 
+  setAnimal(newAnimalView: Animal) {
+    if (newAnimalView !== this.selectAnimalView.value)
+    this.selectAnimalView.next(newAnimalView);
+  }
+
   getAnimalView(): Observable<Animal> {
     return this.selectAnimalView.asObservable();
   }
 
-  setBarnView(newView: NavigationEnum, newBarnNumber: number) {    
+  setBarnView(newView: NavigationEnum, newBarnNumber: number) {  
     if (newBarnNumber !== this.selectBarnView.value)
+    {      
       this.selectBarnView.next(newBarnNumber);
+    }
     if (newView !== this.switchView.value)
       this.switchView.next(newView);
+  }
+
+  setBarnNumber(newBarnNumber: number) {
+    if (newBarnNumber !== this.selectBarnView.value)
+    {      
+      this.selectBarnView.next(newBarnNumber);
+    }
   }
 
   getBarnView(): Observable<number> {
@@ -56,7 +70,9 @@ export class ComponentCommunicationService {
 
   setShopView(newView: NavigationEnum, newShop: ShopsEnum) {
     if (newShop !== this.selectShopView.value)
+    {      
       this.selectShopView.next(newShop);
+    }
     if (newView !== this.switchView.value)
       this.switchView.next(newView);
   }

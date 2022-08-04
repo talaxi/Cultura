@@ -75,10 +75,13 @@ export class LookupService {
       resource.amount -= amountSpent;
   }
 
-  gainResourceByName(name: string, amountGained: number) {
+  gainResourceByName(name: string, amountGained: number, type: ShopItemTypeEnum) {
     var resource = this.globalService.globalVar.resources.find(item => item.name === name);
     if (resource !== undefined)
       resource.amount += amountGained;
+    else {
+      this.globalService.globalVar.resources.push(new ResourceValue(name, amountGained, type));
+    }
   }
 
   getFacilityLevel(): number {
@@ -145,6 +148,44 @@ export class LookupService {
       return resource.amount;
     else
       return 0;
+  }
+
+  addResourceToResourceList(resource: ResourceValue, list: ResourceValue[]) {
+    if (list === undefined)
+      return;
+
+    if (list.some(item => item.name === resource.name)) {
+      var existingItem = list.find(item => item.name === resource.name);
+      if (existingItem !== undefined) {        
+        existingItem.amount += resource.amount;
+      }
+    }
+    else {     
+      list.push(resource);
+    }
+  }
+
+  //make this exponential and change all instances of renown to use this
+  getRenownCoinModifier(totalRenown: number, displayingPercentage: boolean): number {
+    var modifierAmount = 1;
+    var renownDiminishingReturnsCap = 50;
+
+    if (totalRenown <= renownDiminishingReturnsCap)
+      modifierAmount = totalRenown;
+    else {
+      var amplifier = 500;
+      var horizontalStretch = .0035;
+      var horizontalPosition = 1;
+      var verticalPosition = 50;
+
+      //500 * (log(.0035 * 10 + 1)) + 50      
+      modifierAmount = amplifier * Math.log10(horizontalStretch * (totalRenown - renownDiminishingReturnsCap) + horizontalPosition) + verticalPosition;
+    }
+
+    if (!displayingPercentage)
+      modifierAmount /= 100;
+
+    return modifierAmount;
   }
 
   getStockbreeder(): number {
@@ -338,13 +379,13 @@ export class LookupService {
     return totalModifier;
   }
 
-  getTrainingBreedGaugeIncrease(breedingGroundsSpecializationLevel: number, animal: Animal): number {
+  getTrainingBreedGaugeIncrease(breedingGroundsSpecializationLevel: number, animal?: Animal): number {
     var increaseAmount = 0;
     var modifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "trainingBreedGaugeIncrease");
     if (modifierPair !== null && modifierPair !== undefined)
       increaseAmount = modifierPair.value;
 
-    if (animal.miscStats.bonusBreedXpGainFromTraining !== undefined && animal.miscStats.bonusBreedXpGainFromTraining !== null && animal.miscStats.bonusBreedXpGainFromTraining > 0)
+    if (animal !== undefined && animal.miscStats.bonusBreedXpGainFromTraining !== undefined && animal.miscStats.bonusBreedXpGainFromTraining !== null && animal.miscStats.bonusBreedXpGainFromTraining > 0)
       increaseAmount += animal.miscStats.bonusBreedXpGainFromTraining;
 
     if (breedingGroundsSpecializationLevel > 0) {
@@ -357,25 +398,25 @@ export class LookupService {
     return increaseAmount;
   }
 
-  getCircuitBreedGaugeIncrease(animal: Animal): number {
+  getCircuitBreedGaugeIncrease(animal?: Animal): number {
     var increaseAmount = 0;
     var modifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "circuitBreedGaugeIncrease");
     if (modifierPair !== null && modifierPair !== undefined)
       increaseAmount = modifierPair.value;
 
-    if (animal.miscStats.bonusBreedXpGainFromCircuitRaces !== undefined && animal.miscStats.bonusBreedXpGainFromCircuitRaces !== null && animal.miscStats.bonusBreedXpGainFromCircuitRaces > 0)
+    if (animal !== undefined && animal.miscStats.bonusBreedXpGainFromCircuitRaces !== undefined && animal.miscStats.bonusBreedXpGainFromCircuitRaces !== null && animal.miscStats.bonusBreedXpGainFromCircuitRaces > 0)
       increaseAmount += animal.miscStats.bonusBreedXpGainFromCircuitRaces;
 
     return increaseAmount;
   }
 
-  getLocalBreedGaugeIncrease(animal: Animal): number {
+  getLocalBreedGaugeIncrease(animal?: Animal): number {
     var increaseAmount = 0;
     var modifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "localBreedGaugeIncrease");
     if (modifierPair !== null && modifierPair !== undefined)
       increaseAmount = modifierPair.value;
 
-    if (animal.miscStats.bonusBreedXpGainFromLocalRaces !== undefined && animal.miscStats.bonusBreedXpGainFromLocalRaces !== null && animal.miscStats.bonusBreedXpGainFromLocalRaces > 0)
+    if (animal !== undefined && animal.miscStats.bonusBreedXpGainFromLocalRaces !== undefined && animal.miscStats.bonusBreedXpGainFromLocalRaces !== null && animal.miscStats.bonusBreedXpGainFromLocalRaces > 0)
       increaseAmount += animal.miscStats.bonusBreedXpGainFromLocalRaces;
 
     return increaseAmount;
@@ -422,11 +463,17 @@ export class LookupService {
       return "Rare currency gained from improving your circuit rank and winning certain special races.";
     else if (name === "Renown") {
       var currentRenown = this.getRenown();
-      return "Increases Coins gained from races by " + currentRenown + "%. Increase total number of free races available per reset period by 1 for every 100 renown for a total of " + this.getTotalFreeRacesPerPeriod() + ". Complete circuit or free races to get your name out there and raise your renown.";
+      return "Increases Coins gained from races by " + this.getRenownCoinModifier(currentRenown, true).toFixed(2) + "%. Increase total number of free races available per reset period by 1 for every 100 renown for a total of " + this.getTotalFreeRacesPerPeriod() + ". Complete circuit or free races to get your name out there and raise your renown.";
     }
     else if (name === "Facility Level") {
       var diminishingReturnsThreshold = this.getDiminishingReturnsThreshold();
       return "Increase Diminishing Returns value by 5 for each level for a total of " + diminishingReturnsThreshold + ". You can increase a base stat up to your Diminishing Returns value before that base stat starts to increase your racing stats less and less.";
+    }
+    else if (name === "Tokens") {
+      return "Currency used to purchase items from the Event Shop.";
+    }
+    else if (name === "Talent Points") {
+      return "Use to improve any of your racers' talents. Each of these applies to all racers.";
     }
     else if (name === "Research Level") {
       var researchLevel = this.getResourceByName(name);
@@ -469,9 +516,9 @@ export class LookupService {
 
     if (talentTreeType === TalentTreeTypeEnum.sprint)
       talentTreeName = "Sprint";
-      if (talentTreeType === TalentTreeTypeEnum.support)
+    if (talentTreeType === TalentTreeTypeEnum.support)
       talentTreeName = "Support";
-      if (talentTreeType === TalentTreeTypeEnum.longDistance)
+    if (talentTreeType === TalentTreeTypeEnum.longDistance)
       talentTreeName = "Long Distance";
 
     return talentTreeName;
@@ -559,7 +606,7 @@ export class LookupService {
     var token4MeterCountPair = this.globalService.globalVar.modifiers.find(item => item.text === "grandPrixToken4MeterModifier");
     if (token4MeterCountPair !== null && token4MeterCountPair !== undefined)
       token4MeterCount = token4MeterCountPair.value;
-    
+
     var token1Gain = 1 * numericRankModifier;
     var token2Gain = 2 * numericRankModifier;
     var token3Gain = 3 * numericRankModifier;
@@ -656,9 +703,9 @@ export class LookupService {
     if (animal.type === AnimalTypeEnum.Fox && animal.ability.name === "Trickster" && animal.ability.tricksterStatGain === "Power" && animal.ability.abilityInUse) {
       powerAbilityModifier *= 1.5;
     }
-    
-    if (animal.talentTree.talentTreeType === TalentTreeTypeEnum.sprint) {         
-      powerAbilityModifier *= 1 + (animal.talentTree.column3Row2Points * .05);      
+
+    if (animal.talentTree.talentTreeType === TalentTreeTypeEnum.sprint) {
+      powerAbilityModifier *= 1 + (animal.talentTree.column3Row2Points * .05);
     }
 
     var usedAbility = animal.ability;
@@ -670,7 +717,7 @@ export class LookupService {
       animal.talentTree.talentTreeType === TalentTreeTypeEnum.sprint && !animal.raceVariables.firstAbilityUseEffectApplied) {
       firstUseAbilityModifier *= 1 + (animal.talentTree.column3Row4Points * .05);
       animal.raceVariables.firstAbilityUseEffectApplied = true;
-    }    
+    }
 
     var abilityEfficiencyRelayBonus = 1;
     if (animal.raceVariables !== undefined && animal.raceVariables !== null &&
@@ -723,7 +770,7 @@ export class LookupService {
         return "Increase burst distance, cannot stumble or lose focus during burst";
       }
       if (abilityName === "Leap") {
-        return "Jump to the finish line";
+        return "Jump to the end of the leg";
       }
       if (abilityName === "Echolocation") {
         return "Increase adaptability, ignore negative terrain effects for a short period";
@@ -825,7 +872,7 @@ export class LookupService {
       }
 
       if (animal !== undefined && animal !== null) {
-        var effectiveAmountDisplay = this.GetAbilityEffectiveAmount(animal, undefined, undefined, selectedAbility).toLocaleString(undefined, {minimumFractionDigits: 2});
+        var effectiveAmountDisplay = this.GetAbilityEffectiveAmount(animal, undefined, undefined, selectedAbility).toLocaleString(undefined, { minimumFractionDigits: 2 });
 
         if (cooldownDisplay === "" && animal.ability.cooldown !== undefined && animal.ability.cooldown !== null)
           cooldownDisplay = animal.ability.cooldown.toString();
@@ -866,7 +913,7 @@ export class LookupService {
           return "Increase Burst distance by <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. You do not stumble or lose focus while bursting. Passive.";
         }
         if (abilityName === "Leap") {
-          return "When you are <span class='keyword'>" + effectiveAmountDisplay + "</span> meters from the finish line, leap straight to the end over .5 seconds. Passive.";
+          return "When you are <span class='keyword'>" + effectiveAmountDisplay + "</span> meters from the end of the leg, leap straight to the end over .5 seconds. Passive.";
         }
         if (abilityName === "Sure-footed") {
           return "When you make it through a special path without stumbling, increase your Adaptability Distance by <span class='keyword'>" + effectiveAmountDisplay + "</span>%. Passive.<br/><em>During Event Races:</em> Can trigger up to 25 times. Bonus lost after relaying.";
@@ -920,7 +967,7 @@ export class LookupService {
           return "Reduce stamina by 10%. For <span class='keyword'>" + effectiveAmountDisplay + "</span> meters, Acceleration Rate is increased by 25% of the amount of stamina lost. " + cooldownDisplay + " second cooldown.";
         }
         if (abilityName === "Special Delivery") {
-          return "Increase all remaining racers' Burst Max Speed Bonus by <span class='keyword'>" + effectiveAmountDisplay + "</span>% of your remaining Stamina percentage after completing your leg. This does not occur if you run out of Stamina during your leg. Passive.<br/><em>During Event Races:</em> Relay effectiveness reduced to 25%. Can trigger up to 25 times. Effects remain for the duration of the race.";
+          return "Increase all remaining racers' Burst Max Speed Bonus by <span class='keyword'>" + effectiveAmountDisplay + "</span>% of your remaining Stamina percentage, up to 100%, after completing your leg. This does not occur if you run out of Stamina during your leg. Passive.<br/><em>During Event Races:</em> Relay effectiveness reduced to 25%. Can trigger up to 25 times. Effects remain for the duration of the race.";
         }
         if (abilityName === "Careful Toboggan") {
           return "Increase Adaptability Distance by 60% for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. " + cooldownDisplay + " second cooldown.";
@@ -1005,7 +1052,12 @@ export class LookupService {
     Coins.amount *= (currentLevel + 1);
     allResourcesRequired.push(Coins);
     if (currentLevel % 10 === 9) {
-      var medal = new ResourceValue("Medals", 1);
+      var medalCost = 1;
+
+      medalCost = Math.ceil(currentLevel / 100);
+
+      var medal = new ResourceValue("Medals", 1 * medalCost);
+
       allResourcesRequired.push(medal);
     }
     return allResourcesRequired;
@@ -1108,7 +1160,7 @@ export class LookupService {
       if (amountEarnedPair !== undefined && amountEarnedPair !== null)
         amountEarned = amountEarnedPair.value;
 
-      description = "For every 10 levels, gain " + amountEarned + " Coins every " + timeToCollect + " seconds while an animal trains in this barn.";
+      description = "Gain a certain amount of Coins every " + timeToCollect + " seconds while an animal trains in this barn. At level 10, you gain 10 Coins and every subsequent 10 levels increases that amount by 10 Coins plus 5 Coins per Specialization Level - 1.";
     }
     else if (specializationName === "Research Center") {
       var statGainIncrementsModifier = this.globalService.globalVar.modifiers.find(item => item.text === "researchCenterIncrementsModifier");
@@ -1207,7 +1259,7 @@ export class LookupService {
 
   relayEffectTypeStacksEffectiveness(type: RelayEffectEnum) {
     var stacks = false;
-    if (type === RelayEffectEnum.bigBrain || type === RelayEffectEnum.herdMentality || type === RelayEffectEnum.deepBreathing ||  
+    if (type === RelayEffectEnum.bigBrain || type === RelayEffectEnum.herdMentality || type === RelayEffectEnum.deepBreathing ||
       type === RelayEffectEnum.specialDelivery)
       stacks = true;
 
@@ -1332,19 +1384,21 @@ export class LookupService {
     else if (itemName === "International Races")
       description = "Gain 1 medal for every " + internationalRaceCountNeeded + " free races you complete";
     else if (itemName === "Team Manager")
-      description = "Add option to automatically run 1 free race per reset period <em>(runs for 2 hours of idle time)</em>";
+      description = "Add option to automatically run 1 free race per reset period <em>(banks 2 hours worth of races when idle)</em>";
     else if (itemName === "Incubator Upgrade Lv1")
-      description = "When breeding, permanently increase racing stat gain from base stat by .1% of positive trait value <em>(up to 10% trait value)</em>";
+      description = "When breeding, gain a permanent stat modifier equal to 10% of positive trait bonus, up to a maximum additional modifier of .01 per Breed. <em>(10% trait value)</em>";
     else if (itemName === "Incubator Upgrade Lv2")
-      description = "When breeding, permanently increase racing stat gain from base stat by .1% of positive trait value <em>(up to 25% trait value)</em>";
+      description = "When breeding, gain a permanent stat modifier equal to 10% of positive trait bonus, up to a maximum additional modifier of .025 per Breed. <em>(25% trait value)</em>";
     else if (itemName === "Incubator Upgrade Lv3")
-      description = "When breeding, permanently increase racing stat gain from base stat by .1% of positive trait value <em>(up to 50% trait value)</em>";
+      description = "When breeding, gain a permanent stat modifier equal to 10% of positive trait bonus, up to a maximum additional modifier of .05 per Breed. <em>(50% trait value)</em>";
     else if (itemName === "Incubator Upgrade Lv4")
-      description = "When breeding, permanently increase racing stat gain from base stat by .1% of positive trait value <em>(up to 100% trait value)</em>";
+      description = "When breeding, gain a permanent stat modifier equal to 10% of positive trait bonus, up to a maximum additional modifier of .1 per Breed. <em>(100% trait value)</em>";
     else if (itemName === "Whistle")
       description = "Gain +" + whistleStatGain + " to a stat instead of +1 after a successful coaching attempt";
     else if (itemName === "Golden Whistle")
       description = "Gain +" + goldenWhistleStatGain + " to a stat instead of +" + whistleStatGain + " after a successful coaching attempt";
+    else if (itemName === "Talent Point Voucher")
+      description = "Increase Talent Points by 1";
 
     var sanitized = this.sanitizer.sanitize(SecurityContext.HTML, this.sanitizer.bypassSecurityTrustHtml(description));
     if (sanitized !== null)
@@ -1772,6 +1826,42 @@ export class LookupService {
       affectedAnimalData.morale = .5;
   }
 
+  shouldShowSlowSegmentWarning(animal: Animal) {
+    var tooSlow = false;
+
+    if (animal.currentStats.acceleration <= 10 || animal.currentStats.topSpeed <= 10 ||
+      animal.currentStats.endurance <= 10 || animal.currentStats.power <= 10 ||
+      animal.currentStats.focus <= 10 || animal.currentStats.adaptability <= 10) {
+      console.log("Stats too low: " + animal.currentStats.acceleration + " " + animal.currentStats.topSpeed + " " +
+        animal.currentStats.endurance + " " + animal.currentStats.power + " " + animal.currentStats.focus + " " +
+        animal.currentStats.adaptability);
+      tooSlow = true;
+    }
+
+    if (this.globalService.globalVar.eventRaceData !== undefined && this.globalService.globalVar.eventRaceData !== null) {
+      var segmentMeters = this.globalService.globalVar.eventRaceData.totalDistance / this.globalService.globalVar.eventRaceData.totalSegments;
+      var expectedRaceMperS = segmentMeters / this.globalService.globalVar.eventRaceData.segmentTime;
+            
+      if (expectedRaceMperS > animal.currentStats.maxSpeedMs * 3) {
+        console.log("Max Speed Too Low: " + expectedRaceMperS + " > " + animal.currentStats.maxSpeedMs * 3);
+        tooSlow = true;
+      }
+      if (animal.currentStats.focusMs < expectedRaceMperS / 5) {
+        console.log("Not Focused Enough: " + animal.currentStats.focusMs + " < " + expectedRaceMperS / 30);
+        tooSlow = true;
+      }
+    }
+
+    return tooSlow;
+  }
+
+  slowSegmentWarning(showWarning: boolean) {
+    if (!showWarning)
+      return true;
+    else
+      return confirm("The animal you have selected has low racing stats for this race. You may experience some loading time as they race. Continue?");
+  }
+
   getWeekDayGrandPrixTimeSpan() {
     var grandPrix = new GrandPrixData();
 
@@ -1799,8 +1889,8 @@ export class LookupService {
       tipList.push("Don't forget to export your save regularly!");
       tipList.push("Have to recite the alphabet to figure out what your next circuit rank is? You're not alone, go to the settings to use numbers instead!");
       tipList.push("Small barns allow training for 2 hours, medium for 4 hours, and large for 8 hours. Your animals will train even when the game is not active.");
-      tipList.push("Each animal is predisposed to racing a certain way, meaning they may gain more or less racing stats from a base stat than other animals. Hover over each base stat in the Animals tab to see its modifier.");
-      tipList.push("Can't quite finish a close race and don't want to breed? Burst Chance and Distance are not affected by Diminishing Returns, so you can continue to increase those stats to try and push you over the edge!")
+      tipList.push("Each animal gains more or less racing stats from a base stat than other animals. Hover over each base stat in the Animals tab to see its modifier.");
+      tipList.push("Can't quite finish a close race? Burst Chance and Distance are not affected by Diminishing Returns, so continue to increase those stats to get ahead!")
 
       var rng = this.utilityService.getRandomInteger(0, tipList.length - 1);
       tip = tipList[rng];
@@ -1840,24 +1930,78 @@ export class LookupService {
     return false;
   }
 
+  getRelayEffectNameByType(type: RelayEffectEnum) {
+    var name = "";
+    if (type === RelayEffectEnum.bigBrain)
+      name = "Big Brain";
+    else if (type === RelayEffectEnum.blueBaton)
+      name = "Blue Baton";
+    else if (type === RelayEffectEnum.camouflage)
+      name = "Camouflage";
+    else if (type === RelayEffectEnum.deepBreathing)
+      name = "Deep Breathing";
+    else if (type === RelayEffectEnum.flowingCurrent)
+      name = "Flowing Current";
+    else if (type === RelayEffectEnum.greenBaton)
+      name = "Green Baton";
+    else if (type === RelayEffectEnum.herdMentality)
+      name = "Herd Mentality";
+    else if (type === RelayEffectEnum.inspiration)
+      name = "Inspiration";
+    else if (type === RelayEffectEnum.navigator)
+      name = "Navigator";
+    else if (type === RelayEffectEnum.orangeBaton)
+      name = "Orange Baton";
+    else if (type === RelayEffectEnum.redBaton)
+      name = "Red Baton";
+    else if (type === RelayEffectEnum.specialDelivery)
+      name = "Special Delivery";
+    else if (type === RelayEffectEnum.supportAbilityCooldown)
+      name = "Cooldown Reduction Talent";
+    else if (type === RelayEffectEnum.supportAbilityEfficiency)
+      name = "Ability Efficiency Talent";
+    else if (type === RelayEffectEnum.supportAccelerationRelay)
+      name = "Acceleration Rate Talent";
+    else if (type === RelayEffectEnum.supportAdaptabilityRelay)
+      name = "Adaptability Distance Talent";
+    else if (type === RelayEffectEnum.supportBurstChance)
+      name = "Burst Chance Talent";
+    else if (type === RelayEffectEnum.supportBurstDistance)
+      name = "Burst Distance Talent";
+    else if (type === RelayEffectEnum.supportFocusRelay)
+      name = "Focus Distance Talent";
+    else if (type === RelayEffectEnum.supportMaxSpeedRelay)
+      name = "Max Speed Talent";
+    else if (type === RelayEffectEnum.supportPowerRelay)
+      name = "Power Efficiency Talent";
+    else if (type === RelayEffectEnum.supportStaminaRelay)
+      name = "Stamina Talent";
+    else if (type === RelayEffectEnum.violetBaton)
+      name = "Violet Baton";
+    else if (type === RelayEffectEnum.yellowBaton)
+      name = "Yellow Baton";
+
+    return name;
+  }
+
   getStatGainDescription(affectedStatRatios: AnimalStats, statGain: number): string {
     var statGainDescription = "";
 
     if (affectedStatRatios.topSpeed > 0)
-        statGainDescription += "+" + statGain * affectedStatRatios.topSpeed + " Speed\n";
+      statGainDescription += "+" + statGain * affectedStatRatios.topSpeed + " Speed\n";
     if (affectedStatRatios.acceleration > 0)
-        statGainDescription += "+" + statGain * affectedStatRatios.acceleration + " Acceleration\n";
+      statGainDescription += "+" + statGain * affectedStatRatios.acceleration + " Acceleration\n";
     if (affectedStatRatios.endurance > 0)
-        statGainDescription += "+" + statGain * affectedStatRatios.endurance + " Endurance\n";
+      statGainDescription += "+" + statGain * affectedStatRatios.endurance + " Endurance\n";
     if (affectedStatRatios.focus > 0)
-        statGainDescription += "+" + statGain * affectedStatRatios.focus + " Focus\n";
+      statGainDescription += "+" + statGain * affectedStatRatios.focus + " Focus\n";
     if (affectedStatRatios.power > 0)
-        statGainDescription += "+" + statGain * affectedStatRatios.power + " Power\n";
+      statGainDescription += "+" + statGain * affectedStatRatios.power + " Power\n";
     if (affectedStatRatios.adaptability > 0)
-        statGainDescription += "+" + statGain * affectedStatRatios.adaptability + " Adaptability\n";
+      statGainDescription += "+" + statGain * affectedStatRatios.adaptability + " Adaptability\n";
 
     return statGainDescription;
-}
+  }
 
   getTalentTreeNames() {
     var talentTrees = [];
@@ -2084,5 +2228,42 @@ export class LookupService {
       availableTalentPoints = 0;
 
     return availableTalentPoints;
+  }
+
+  //gain various items, primarily used for redemption codes
+  gainMangoes(amountGained: number) {
+    return new ResourceValue("Mangoes", amountGained, ShopItemTypeEnum.Food);
+  }
+
+  gainApples(amountGained: number) {
+    return new ResourceValue("Apples", amountGained, ShopItemTypeEnum.Food);
+  }
+
+  gainBananas(amountGained: number) {
+    return new ResourceValue("Bananas", amountGained, ShopItemTypeEnum.Food);
+  }
+
+  gainOranges(amountGained: number) {
+    return new ResourceValue("Oranges", amountGained, ShopItemTypeEnum.Food);
+  }
+
+  gainStrawberries(amountGained: number) {
+    return new ResourceValue("Strawberries", amountGained, ShopItemTypeEnum.Food);
+  }
+
+  gainTurnips(amountGained: number) {
+    return new ResourceValue("Turnips", amountGained, ShopItemTypeEnum.Food);
+  }
+
+  gainCarrots(amountGained: number) {
+    return new ResourceValue("Carrots", amountGained, ShopItemTypeEnum.Food);
+  }
+
+  gainCoins(amountGained: number) {
+    return new ResourceValue("Coins", amountGained, ShopItemTypeEnum.Resources);
+  }
+
+  gainTokens(amountGained: number) {
+    return new ResourceValue("Tokens", amountGained, ShopItemTypeEnum.Resources);
   }
 }

@@ -391,6 +391,7 @@ export class DrawRaceComponent implements OnInit {
     var previousLegDistance = 0;
     var foundLeg = false;
     var legCounter = 0;
+    
     raceLegs.forEach(leg => {
       if (!foundLeg) {
         if (currentDistanceTraveled >= legPinpointDistance && currentDistanceTraveled < legPinpointDistance + leg.distance) {
@@ -412,6 +413,7 @@ export class DrawRaceComponent implements OnInit {
     //console.log("Current Leg: " + legCounter + " Current Leg Distance: " + currentDistanceInLeg + " LastX: " + this.lastPathEndingX);
     var currentCrevasseDistance = 0;
     //handle translating screen up and down with Mountain race course type
+
     if (this.currentLeg.courseType === RaceCourseTypeEnum.Mountain) {
       var goingUpCalculatedTotal = this.currentLeg.distance * this.mountainClimbPercent;
 
@@ -764,11 +766,8 @@ export class DrawRaceComponent implements OnInit {
         //we are in this leg        
         if (leg.courseType === RaceCourseTypeEnum.Flatland)
           color = "#7d3f00";//"#8f1c14";
-        if (leg.courseType === RaceCourseTypeEnum.Mountain) {
-          //if (this.themeService.getActiveThemeName() === "light")
+        if (leg.courseType === RaceCourseTypeEnum.Mountain) {          
           color = "#1b630d";
-          //else
-          //color = "#4d6b48";
         }
         if (leg.courseType === RaceCourseTypeEnum.Ocean) {
           if (this.themeService.getActiveThemeName() === "night")
@@ -799,7 +798,7 @@ export class DrawRaceComponent implements OnInit {
       //else
       //color = "#4d6b48";
     }
-    if (courseType === RaceCourseTypeEnum.Ocean) {
+    if (courseType === RaceCourseTypeEnum.Ocean) {      
       if (this.themeService.getActiveThemeName() === "night")
         color = "#5044ab";
       else
@@ -1581,10 +1580,45 @@ export class DrawRaceComponent implements OnInit {
 
   drawHillsBackgroundTundraOverview(context: any, coordinates: any): void {
     var existingContentDestinationType = context.globalCompositeOperation;
+       context.strokeStyle = "dimgray";
+    
+    //Draw hills once over content and once over so they always persist no matter what
+    context.globalCompositeOperation = "source-atop";
+ 
+    if (coordinates.length >= 17) {
+      context.beginPath();
+      context.moveTo(coordinates[6][0], coordinates[6][1]);
+      context.bezierCurveTo(coordinates[7][0], coordinates[7][1], coordinates[7][2], coordinates[7][3], coordinates[7][4], coordinates[7][5]);
+      context.stroke();
+
+      context.beginPath();
+      context.moveTo(coordinates[8][0], coordinates[8][1]);
+      context.bezierCurveTo(coordinates[9][0], coordinates[9][1], coordinates[9][2], coordinates[9][3], coordinates[9][4], coordinates[9][5]);
+      context.stroke();
+
+      context.beginPath();
+      context.moveTo(coordinates[10][0], coordinates[10][1]);
+      context.bezierCurveTo(coordinates[11][0], coordinates[11][1], coordinates[11][2], coordinates[11][3], coordinates[11][4], coordinates[11][5]);
+      context.stroke();
+
+      context.beginPath();
+      context.moveTo(coordinates[12][0], coordinates[12][1]);
+      context.bezierCurveTo(coordinates[13][0], coordinates[13][1], coordinates[13][2], coordinates[13][3], coordinates[13][4], coordinates[13][5]);
+      context.stroke();
+
+      context.beginPath();
+      context.moveTo(coordinates[14][0], coordinates[14][1]);
+      context.bezierCurveTo(coordinates[15][0], coordinates[15][1], coordinates[15][2], coordinates[15][3], coordinates[15][4], coordinates[15][5]);
+      context.stroke();
+
+      context.beginPath();
+      context.moveTo(coordinates[16][0], coordinates[16][1]);
+      context.bezierCurveTo(coordinates[17][0], coordinates[17][1], coordinates[17][2], coordinates[17][3], coordinates[17][4], coordinates[17][5]);
+      context.stroke();
+    }
+
     context.globalCompositeOperation = "destination-over";
-
-    context.strokeStyle = "dimgray";
-
+ 
     if (coordinates.length >= 17) {
       context.beginPath();
       context.moveTo(coordinates[6][0], coordinates[6][1]);

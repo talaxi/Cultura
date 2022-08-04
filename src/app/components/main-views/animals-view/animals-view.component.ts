@@ -26,12 +26,15 @@ export class AnimalsViewComponent implements OnInit {
         this.animalSelected = true;
         this.animal = value;
       }
+      else
+        this.animalSelected = false;
     });
   }
 
   selectedAnimal($event: Animal): void {
     this.animalSelected = true;
     this.animal = $event;
+    this.componentCommunicationService.setAnimalView(NavigationEnum.animals, this.animal);
   }
 
   returnToAnimalView($event: boolean) {

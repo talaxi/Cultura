@@ -30,8 +30,9 @@ export class ShoppingItemComponent implements OnInit {
 
   @HostListener('window:keydown', ['$event'])
   keyEventDown(event: KeyboardEvent) {
-    if (this.selectedItem.type === ShopItemTypeEnum.Consumable || this.selectedItem.type === ShopItemTypeEnum.Food ||
-      this.selectedItem.type === ShopItemTypeEnum.Equipment || this.selectedItem.type === ShopItemTypeEnum.Resources) {      
+    if ((this.selectedItem.type === ShopItemTypeEnum.Consumable || this.selectedItem.type === ShopItemTypeEnum.Food ||
+      this.selectedItem.type === ShopItemTypeEnum.Equipment || this.selectedItem.type === ShopItemTypeEnum.Resources) &&
+      this.selectedItem.name !== "Mangoes") {      
       if (event.key === "Shift") { //multiply by 25
         event.preventDefault();
         if (!this.shiftPressed) {
@@ -59,8 +60,9 @@ export class ShoppingItemComponent implements OnInit {
   @HostListener('window:keyup', ['$event'])
   keyEventUp(event: KeyboardEvent) {
     event.preventDefault();
-    if (this.selectedItem.type === ShopItemTypeEnum.Consumable || this.selectedItem.type === ShopItemTypeEnum.Food ||
-      this.selectedItem.type === ShopItemTypeEnum.Equipment || this.selectedItem.type === ShopItemTypeEnum.Resources) {
+    if ((this.selectedItem.type === ShopItemTypeEnum.Consumable || this.selectedItem.type === ShopItemTypeEnum.Food ||
+      this.selectedItem.type === ShopItemTypeEnum.Equipment || this.selectedItem.type === ShopItemTypeEnum.Resources) &&
+      this.selectedItem.name !== "Mangoes") {
       if (event.key === "Shift") { //divide by 25
         if (this.shiftPressed) {
           this.buyMultiplierAmount /= 25;
@@ -276,6 +278,7 @@ export class ShoppingItemComponent implements OnInit {
       this.selectedItem.numberPurchasing = 1;
 
     var modifiedAmountPurchasing = this.selectedItem.numberPurchasing * this.buyMultiplierAmount;
+    this.selectedItem.amountPurchased += modifiedAmountPurchasing;
 
     if (this.globalService.globalVar.resources !== undefined && this.globalService.globalVar.resources !== null) {
       if (this.globalService.globalVar.resources.some(x => x.name === this.selectedItem.name)) {
@@ -286,6 +289,23 @@ export class ShoppingItemComponent implements OnInit {
       }
       else
         this.globalService.globalVar.resources.push(new ResourceValue(this.selectedItem.name, modifiedAmountPurchasing, ShopItemTypeEnum.Food));
+    }
+
+    if (this.selectedItem.name === "Mangoes")
+    {
+      this.selectedItem.purchasePrice.forEach(price => {
+        if (price.name === "Coins")
+        {
+          //base price + amount purchased * growth
+          price.amount += 50;
+        }
+
+        if (price.name === "Tokens")
+        {
+          //base price + amount purchased * growth
+          price.amount += 1;
+        }
+      });
     }
   }
 
@@ -359,6 +379,17 @@ export class ShoppingItemComponent implements OnInit {
       }
       else
         this.globalService.globalVar.resources.push(new ResourceValue(this.selectedItem.name, 1, ShopItemTypeEnum.Specialty));
+    }
+
+    if (this.selectedItem.name === "Talent Point Voucher") {
+      if (this.globalService.globalVar.resources.some(x => x.name === "Talent Points")) {
+        var globalResource = this.globalService.globalVar.resources.find(x => x.name === "Talent Points");
+        if (globalResource !== null && globalResource !== undefined) {
+          globalResource.amount += 1;
+        }
+      }
+      else
+        this.globalService.globalVar.resources.push(new ResourceValue("Talent Points", 1, ShopItemTypeEnum.Resources));
     }
 
     if (this.selectedItem.quantityMultiplier !== null && this.selectedItem.quantityMultiplier !== undefined && this.selectedItem.quantityMultiplier > 0) {

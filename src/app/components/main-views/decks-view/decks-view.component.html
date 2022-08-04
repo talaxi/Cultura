@@ -69,18 +69,18 @@
                 </div>
                 <br />
                 <div class="typeContainer">
-                    <span *ngFor="let type of raceCourseTypeList" class="raceType subHeading clickableText"
+                    <button *ngFor="let type of raceCourseTypeList" class="raceType subHeading clickableText buttonAsTextKeepColor"
                         [ngClass]="{'selectedCourseType': selectedCourseType === type, 'flatlandColor': type === 'Flatland',
                 'mountainColor': type === 'Mountain', 'waterColor': type === 'Ocean', 'tundraColor': type === 'Tundra', 'volcanicColor': type === 'Volcanic'}" (click)="filterType(type)">
                         {{type.trim()}}
-                    </span>
+                    </button>
                 </div>
                 <br />
                 <div class="animalContainer">
-                    <span *ngFor="let animal of possibleAnimalsList" class="animalOption clickableText"
+                    <button *ngFor="let animal of possibleAnimalsList" class="animalOption clickableText buttonAsTextKeepColor"
                         [ngClass]="{'selectedAnimal': selectedAnimalName === animal}" (click)="selectAnimal(animal)">
                         {{animal.trim()}}
-                    </span>
+                </button>
 
                 </div>
             </div>

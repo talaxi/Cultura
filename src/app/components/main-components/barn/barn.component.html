@@ -1,14 +1,14 @@
 <div class="barn clickableText">
     <div class="unlocked" *ngIf="this.isOccupied">
         <span>{{ barnName }}</span>
-        <div [ngClass]="colorConditional" class="keyword" *ngIf="associatedAnimal.name !== associatedAnimal.getAnimalType()">
+        <h6 [ngClass]="colorConditional" class="keyword" *ngIf="associatedAnimal.name !== associatedAnimal.getAnimalType()">
             <span>{{ this.associatedAnimalName }}</span>
             <br />
             <span>{{ this.associatedAnimalType }}</span>
-        </div>
-        <div [ngClass]="colorConditional" class="keyword" *ngIf="associatedAnimal.name === associatedAnimal.getAnimalType()">            
+        </h6>
+        <h6 [ngClass]="colorConditional" class="keyword" *ngIf="associatedAnimal.name === associatedAnimal.getAnimalType()">            
             <span>{{ this.associatedAnimalType }}</span>
-        </div>
+        </h6>
         <br />        
         <p>
             <ngb-progressbar type="success" [value]="this.trainingProgressBarPercent"></ngb-progressbar>
@@ -22,14 +22,14 @@
             <em>Ready to Breed</em>
         </div>
     </div>
-    <div class="unassigned" *ngIf="!this.isOccupied && !this.isLocked">
+    <h6 class="unassigned" *ngIf="!this.isOccupied && !this.isLocked">
         <span>Unassigned</span>
         <br/>
         <em>Click to assign animal</em>
-    </div>
-    <div class="locked" *ngIf="this.isLocked">
+    </h6>
+    <h6 class="locked" *ngIf="this.isLocked">
         <span>Locked</span>
         <br/>
         <em>Click to view status</em>
-    </div>
+    </h6>
 </div>

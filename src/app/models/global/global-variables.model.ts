@@ -65,6 +65,8 @@ export class GlobalVariables {
     redeemedCodes: RedeemableCode[];
     @Type(() => GrandPrixData)
     eventRaceData: GrandPrixData;
+    @Type(() => ResourceValue)
+    previousEventRewards: ResourceValue[];
     @Type(() => Notifications)
     notifications: Notifications;
     circuitRankUpRewardDescription: string;
@@ -99,6 +101,7 @@ export class GlobalVariables {
             this.redeemedCodes = existingVariables.redeemedCodes;
             this.eventRaceData = existingVariables.eventRaceData;
             this.notifications = existingVariables.notifications;
+            this.previousEventRewards = [];
             this.nationalRaceCountdown = 0;
             this.autoFreeRaceCounter = 0;
             this.freeRaceCounter = 0;

@@ -40,14 +40,15 @@ export class BarnViewComponent implements OnInit {
     }
 
     this.subscription = this.componentCommunicationService.getBarnView().subscribe((value) => {
-      if (value > 0) {
+      //if (value > 0) {
         this.selectedBarn = value;
-      }
+      //}
     });
   }
 
   goToBarn(selectedBarnNumber: number): void {    
     this.selectedBarn = selectedBarnNumber;
+    this.componentCommunicationService.setBarnView(NavigationEnum.barn, selectedBarnNumber);
   }
 
   goToCoaching(isCoaching: boolean): void {    
@@ -58,5 +59,7 @@ export class BarnViewComponent implements OnInit {
     if (this.subscription !== null && this.subscription !== undefined) {
       this.subscription.unsubscribe();
     }
+
+    this.componentCommunicationService.setBarnNumber(0);
   }
 }
