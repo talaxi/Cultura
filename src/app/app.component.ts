@@ -66,7 +66,7 @@ export class AppComponent {
 
     if (devMode) {
       this.globalService.globalVar.tutorials.tutorialCompleted = true;
-      this.globalService.devModeInitialize(50);
+      this.globalService.devModeInitialize(5);
     }
 
     this.versionControlService.updatePlayerVersion();
@@ -395,10 +395,6 @@ export class AppComponent {
 
             return false;
           });
-          
-          animalsCapableOfRacing.forEach(item => {
-            console.log(item.name);
-          })
           
           if (animalsCapableOfRacing.length > 1) {
             var indexInEventDeck = 0;

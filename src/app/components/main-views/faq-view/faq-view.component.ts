@@ -96,13 +96,13 @@ export class FaqViewComponent implements OnInit {
     if (incubatorUpgradeLv1 !== null && incubatorUpgradeLv1 !== undefined) {
       this.incubatorUpgradeLevel = 1;
     }
-    if (incubatorUpgradeLv2 !== null && incubatorUpgradeLv1 !== undefined) {
+    if (incubatorUpgradeLv2 !== null && incubatorUpgradeLv2 !== undefined) {
       this.incubatorUpgradeLevel = 2;
     }
-    if (incubatorUpgradeLv3 !== null && incubatorUpgradeLv1 !== undefined) {
+    if (incubatorUpgradeLv3 !== null && incubatorUpgradeLv3 !== undefined) {
       this.incubatorUpgradeLevel = 3;
     }
-    if (incubatorUpgradeLv4 !== null && incubatorUpgradeLv1 !== undefined) {
+    if (incubatorUpgradeLv4 !== null && incubatorUpgradeLv4 !== undefined) {
       this.incubatorUpgradeLevel = 4;
     }
 
@@ -196,12 +196,10 @@ export class FaqViewComponent implements OnInit {
   handleBarnSpecializationLevelAmountCalculation() {    
     if (+this.selectedSpecialization === 1)
     {
-      console.log("Breed");
       this.barnSpecializationLevelAmount = this.specializationService.getSpecializationPopoverText(BarnSpecializationEnum.BreedingGrounds, this.barnSpecializationLevel);
     }
     else if (+this.selectedSpecialization === 2)
     {
-      console.log("Train");
       this.barnSpecializationLevelAmount = this.specializationService.getSpecializationPopoverText(BarnSpecializationEnum.TrainingFacility, this.barnSpecializationLevel);
     }
     else if (+this.selectedSpecialization === 3)

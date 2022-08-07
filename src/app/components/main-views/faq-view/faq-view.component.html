@@ -483,55 +483,7 @@
                         </div>
                     </div>
                 </div>
-                <hr />
-                <div *ngIf="lookupService.isItemUnlocked('duoRace')">
-                    <div>
-                        <div class="expanderMargin">
-                            <button type="button" aria-label="Expand"
-                                (click)="expandAnswer('faqAnswerIncubatorGrowthCalculator')">+</button>
-                        </div>
-                        <div class="faqQuestion">
-                            <p>Modifier gain from Incubator Upgrade</p>
-                        </div>
-                    </div>
-                    <div class="faqAnswer hide" id="faqAnswerIncubatorGrowthCalculator">
-                        <div class="expanderMargin"></div>
-                        <div class="mb-3">
-                            <div><em>Enter a Facility Level and an Incubator Upgrade Level between 1 and 4 to see what
-                                    the
-                                    modifier would be on the stat corresponding to the positive trait. This pulls from
-                                    your current resources by default.</em></div>
-                            <br />
-                            <br />
-                            <div class="inputsAndResult">
-                                <div class="inputs">
-                                    <label for="incubator-upgrade-level" class="labelMargin specialtyKeyword">Incubator
-                                        Upgrade
-                                        Level:</label>
-                                    <input id="incubator-upgrade-level" type="number" class="spaced" maxlength="20"
-                                        [(ngModel)]="incubatorUpgradeLevel">
-                                    <br />
-                                    <label for="facility-level" class="labelMargin progressionKeyword">Facility
-                                        Level:</label>
-                                    <input id="facility-level" type="number" class="spaced" maxlength="20"
-                                        [(ngModel)]="facilityLevel">
-
-                                </div>
-                                <div class="result">
-                                    <span>Result:</span>
-                                    <em><span class='progressionKeyword'>{{facilityLevel}}</span> * .001 with Incubator
-                                        Upgrade Level <span class='specialtyKeyword'>{{ incubatorUpgradeLevel
-                                            }}</span>
-                                    </em>
-                                    = <span class='keyword'>*{{ incubatorModifierAmount }} to Positive Trait Stat per
-                                        Breed
-                                        Level</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <hr />
-                </div>
+                <hr />                
                 <div>
                     <div>
                         <div class="expanderMargin">
@@ -642,6 +594,55 @@
                     </div>
                 </div>
                 <hr />
+                <div *ngIf="lookupService.isItemUnlocked('duoRace')">
+                    <div>
+                        <div class="expanderMargin">
+                            <button type="button" aria-label="Expand"
+                                (click)="expandAnswer('faqAnswerIncubatorGrowthCalculator')">+</button>
+                        </div>
+                        <div class="faqQuestion">
+                            <p>Modifier gain from Incubator Upgrade</p>
+                        </div>
+                    </div>
+                    <div class="faqAnswer hide" id="faqAnswerIncubatorGrowthCalculator">
+                        <div class="expanderMargin"></div>
+                        <div class="mb-3">
+                            <div><em>Enter a Facility Level and an Incubator Upgrade Level between 1 and 4 to see what
+                                    the
+                                    modifier would be on the stat corresponding to the positive trait. This pulls from
+                                    your current resources by default.</em></div>
+                            <br />
+                            <br />
+                            <div class="inputsAndResult">
+                                <div class="inputs">
+                                    <label for="incubator-upgrade-level" class="labelMargin specialtyKeyword">Incubator
+                                        Upgrade
+                                        Level:</label>
+                                    <input id="incubator-upgrade-level" type="number" class="spaced" maxlength="20"
+                                        [(ngModel)]="incubatorUpgradeLevel">
+                                    <br />
+                                    <label for="facility-level" class="labelMargin progressionKeyword">Facility
+                                        Level:</label>
+                                    <input id="facility-level" type="number" class="spaced" maxlength="20"
+                                        [(ngModel)]="facilityLevel">
+
+                                </div>
+                                <div class="result">
+                                    <span>Result:</span>
+                                    <br/>
+                                    <em><span class='progressionKeyword'>{{facilityLevel}}</span> * .001 with Incubator
+                                        Upgrade Level <span class='specialtyKeyword'>{{ incubatorUpgradeLevel
+                                            }}</span>
+                                    </em>
+                                    = <span class='keyword'>*{{ incubatorModifierAmount }} to Positive Trait Stat per
+                                        Breed
+                                        Level</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                </div>
             </div>
         </div>
     </div>
