@@ -11,7 +11,9 @@
                 <div [ngClass]="colorConditional" (click)="goToAnimal()" class="clickableText keyword" *ngIf="this.selectedAnimal.name === this.selectedAnimal.getAnimalType()">
                     <span>{{ this.selectedAnimal.getAnimalType() }}</span>
                 </div>      
-                <span>Current Trait: {{ this.selectedAnimal.getTraitName() }}</span>          
+                <span  class="defaultTextColor" ngbPopover="{{ traitStatGainDescription }}"
+                triggers="mouseenter:mouseleave" popoverClass="popoverClass"
+                *ngIf="selectedAnimal.trait !== undefined && selectedAnimal.trait !== null">Current Trait: <span class="keyword">{{ this.selectedAnimal.getTraitName() }}</span></span>          
                 <hr />
                 <span class="activeTrait" *ngIf="this.existingTrait !== null && this.existingTrait !== undefined">{{
                     this.existingTrait.traitName }} </span>

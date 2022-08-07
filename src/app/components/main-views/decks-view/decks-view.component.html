@@ -77,7 +77,7 @@
                 </div>
                 <br />
                 <div class="animalContainer">
-                    <button *ngFor="let animal of possibleAnimalsList" class="animalOption clickableText buttonAsTextKeepColor"
+                    <button *ngFor="let animal of possibleAnimalsList" class="animalOption clickableText buttonAsText"
                         [ngClass]="{'selectedAnimal': selectedAnimalName === animal}" (click)="selectAnimal(animal)">
                         {{animal.trim()}}
                 </button>

@@ -66,7 +66,7 @@ export class AppComponent {
 
     if (devMode) {
       this.globalService.globalVar.tutorials.tutorialCompleted = true;
-      this.globalService.devModeInitialize(60);
+      this.globalService.devModeInitialize(50);
     }
 
     this.versionControlService.updatePlayerVersion();
@@ -286,7 +286,7 @@ export class AppComponent {
           if (didAnimalSwitch) {
             this.resetEventAbilityUseCounts();
           }
-
+          
           var racingAnimal = this.globalService.getGrandPrixRacingAnimal();
 
           if (racingAnimal.type !== undefined && racingAnimal.name !== undefined) {
@@ -294,12 +294,17 @@ export class AppComponent {
             this.globalService.globalVar.eventRaceData.currentRaceSegment = this.globalService.globalVar.eventRaceData.nextRaceSegment.makeCopy(this.globalService.globalVar.eventRaceData.nextRaceSegment);
             this.globalService.globalVar.eventRaceData.currentRaceSegmentResult = this.raceLogicService.runRace(this.globalService.globalVar.eventRaceData.currentRaceSegment);            
             this.globalService.globalVar.eventRaceData.nextRaceSegment = this.globalService.generateGrandPrixSegment(racingAnimal);
-            this.globalService.globalVar.eventRaceData.isLoading = false;
+            this.globalService.globalVar.eventRaceData.isLoading = false;            
           }
         }
       }
 
       this.checkForGrandPrixRewards();
+    }
+    else
+    {
+      //event race is not running
+      this.globalService.globalVar.eventRaceData.isCatchingUp = false;
     }
 
     this.updateExhaustionAndMorale(deltaTime);
@@ -383,12 +388,18 @@ export class AppComponent {
             var associatedData = this.globalService.globalVar.eventRaceData.animalData.find(data => data.associatedAnimalType === item.type);
 
             if (associatedData !== undefined && associatedData !== null) {
-              return associatedData.exhaustionStatReduction >= .5 || associatedData.associatedAnimalType === racingAnimal.type;
+              var globalData = this.globalService.globalVar.animals.find(data => data.type === item.type);
+
+              return (associatedData.exhaustionStatReduction >= .5 && !this.globalService.shouldShowSlowSegmentWarning(globalData)) || associatedData.associatedAnimalType === racingAnimal.type;
             }
 
             return false;
           });
-
+          
+          animalsCapableOfRacing.forEach(item => {
+            console.log(item.name);
+          })
+          
           if (animalsCapableOfRacing.length > 1) {
             var indexInEventDeck = 0;
             var animalFound = false;
@@ -438,7 +449,7 @@ export class AppComponent {
 
             this.globalService.globalVar.eventRaceData.animalAlreadyPrepped = false;
           }
-          else {
+          else {            
             //no capable racers in event deck
             this.globalService.globalVar.eventRaceData.animalData.forEach(item => {
               item.isCurrentlyRacing = false;

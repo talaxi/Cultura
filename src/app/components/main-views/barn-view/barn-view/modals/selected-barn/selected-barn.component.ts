@@ -58,6 +58,7 @@ export class SelectedBarnComponent implements OnInit {
   subscription: any;
   colorConditional: any;
   currentTrainingPopover: string;
+  postResetBarnUpgradeLevel = 0;
 
   filterSpeed = false;
   filterAcceleration = false;
@@ -509,18 +510,13 @@ export class SelectedBarnComponent implements OnInit {
     if (this.barn.barnUpgrades.barnLevel >= 1)
       popover = "Barn Upgrades: <br/>"
 
-    //TODO: Condense this entire if condition into the getspecializationpopovertext call
     if (this.barn.barnUpgrades.specialization === BarnSpecializationEnum.TrainingFacility) {
-      if (this.barn.barnUpgrades.specializationLevel <= 20)
-        popover += "Training Time Reduction: " + this.barn.barnUpgrades.specializationLevel + "%<br/>";
-      else
-        popover += "Training Time Reduction: 20%<br/> All Stat Multiplier: " + ((this.barn.barnUpgrades.specializationLevel - 20) / 10);
+      var popoverSpecializationText = this.specializationService.getSpecializationPopoverText(BarnSpecializationEnum.TrainingFacility, this.barn.barnUpgrades.specializationLevel);
+      popover += popoverSpecializationText;
     }
     else if (this.barn.barnUpgrades.specialization === BarnSpecializationEnum.BreedingGrounds) {
-      var breedingGroundsModifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "breedingGroundsSpecializationModifier");
-      if (breedingGroundsModifierPair !== null && breedingGroundsModifierPair !== undefined) {
-        popover += "Training Breed XP Multipler: " + (this.barn.barnUpgrades.specializationLevel * (breedingGroundsModifierPair.value * 100)) + "%<br/>";
-      }
+      var popoverSpecializationText = this.specializationService.getSpecializationPopoverText(BarnSpecializationEnum.BreedingGrounds, this.barn.barnUpgrades.specializationLevel);
+      popover += popoverSpecializationText;
     }
     else if (this.barn.barnUpgrades.specialization === BarnSpecializationEnum.Attraction) {
       var popoverSpecializationText = this.specializationService.getSpecializationPopoverText(BarnSpecializationEnum.Attraction, this.barn.barnUpgrades.specializationLevel);
@@ -552,7 +548,7 @@ export class SelectedBarnComponent implements OnInit {
   }
 
   getUpgradeBarnPopover() {
-    var popover = "Cost to upgrade: \n";
+    var popover = "Cost for next upgrade: \n";
 
     var requiredResources = this.lookupService.getResourcesForBarnUpgrade(this.barn.barnUpgrades.barnLevel);
 
@@ -582,7 +578,7 @@ export class SelectedBarnComponent implements OnInit {
   filterSpecialization(specialization: string) {
     this.selectedSpecialization = specialization;
     this.specializationDescription = this.globalService.getSpecializationDescription(specialization);
-    this.inDepthSpecializationDescription = this.lookupService.getInDepthSpecializationDescription(specialization);
+    this.inDepthSpecializationDescription = this.lookupService.getInDepthSpecializationDescription(specialization);    
   }
 
   selectSpecialization() {
@@ -826,6 +822,7 @@ export class SelectedBarnComponent implements OnInit {
     if (this.barn.barnUpgrades.specialization !== BarnSpecializationEnum.None) {
       var currentSpecializationName = this.lookupService.convertSpecializationEnumToName(this.barn.barnUpgrades.specialization);
       this.specializationOptions = this.specializationOptions.filter(item => item !== currentSpecializationName);
+      this.postResetBarnUpgradeLevel = Math.round(this.barn.barnUpgrades.barnLevel * .8);
     }
     this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
   }

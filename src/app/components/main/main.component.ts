@@ -20,6 +20,9 @@ export class MainComponent implements OnInit {
   activeView = NavigationEnum.barn;
   tutorialText: string | null;
   @ViewChild('tutorialContent', { static: true }) tutorialContent: ElementRef;
+  @ViewChild('eventLoadingContent', { static: true }) eventLoadingContent: ElementRef;
+  eventPrixSubscription: any;
+  loadingScreenDisplayed = false;
 
   constructor(private ref: ChangeDetectorRef, private globalService: GlobalService, private modalService: NgbModal,
     private tutorialService: TutorialService, private componentCommunicationService: ComponentCommunicationService,
@@ -28,13 +31,27 @@ export class MainComponent implements OnInit {
 
   ngOnInit(): void {
     this.openTutorialModal();
-    
-    var subscription = this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {      
+
+    this.eventPrixSubscription = this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {
+      if (this.globalService.globalVar.eventRaceData !== undefined && this.globalService.globalVar.eventRaceData !== null &&
+        this.globalService.globalVar.eventRaceData.isCatchingUp && !this.loadingScreenDisplayed) {        
+        this.loadingScreenDisplayed = true;
+        this.openLoadingModal();
+      }
+      else if (this.globalService.globalVar.eventRaceData !== undefined && this.globalService.globalVar.eventRaceData !== null &&
+        !this.globalService.globalVar.eventRaceData.isCatchingUp && this.loadingScreenDisplayed)
+      {
+        this.loadingScreenDisplayed = false;
+        this.closeModals();
+      }
+    });
+
+    var subscription = this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {
       if (this.globalService.globalVar.tutorials.showTutorial)
         this.openTutorialModal();
 
-        if (this.globalService.globalVar.tutorials.tutorialCompleted)
-          subscription.unsubscribe();
+      if (this.globalService.globalVar.tutorials.tutorialCompleted)
+        subscription.unsubscribe();
     });
   }
 
@@ -45,7 +62,7 @@ export class MainComponent implements OnInit {
   openTutorialModal() {
     if (!this.globalService.globalVar.tutorials.tutorialCompleted) {
       var getTutorialState = this.tutorialService.getTutorialState(this.globalService.globalVar.tutorials.currentTutorialId);
-        
+
       if (this.activeView === getTutorialState.associatedTab) {
         this.tutorialText = this.sanitizer.sanitize(SecurityContext.HTML, this.sanitizer.bypassSecurityTrustHtml(getTutorialState.tutorialText + "\n"));
         this.globalService.globalVar.tutorials.showTutorial = false;
@@ -63,8 +80,23 @@ export class MainComponent implements OnInit {
     }
   }
 
+  openLoadingModal() {
+    this.modalService.open(this.eventLoadingContent, { ariaLabelledBy: 'modal-basic-title', size: 'lg' }).result.then(
+      result => {
+        this.closeModals();
+      },
+      reason => {
+        this.closeModals();
+      }
+    );
+  }
+
+  closeModals() {
+    this.modalService.dismissAll();
+  }
+
   closeTutorialModal() {
-    this.modalService.dismissAll();   
+    this.modalService.dismissAll();
   }
 
   skipTutorial() {

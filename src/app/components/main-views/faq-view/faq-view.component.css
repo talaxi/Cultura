@@ -1,8 +1,7 @@
-.faqView
-{
+.faqView {
     background-color: var(--background-secondary);
     border-color: var(--background-tertiary);
-    color: var(--foreground-default);     
+    color: var(--foreground-default);
 }
 
 .marginGrid {
@@ -11,8 +10,8 @@
     grid-template-columns: 1% 1fr 1%;
     grid-template-rows: auto;
     justify-content: stretch;
-    grid-template-areas: 
-      ". view .";
+    grid-template-areas:
+        ". view .";
 }
 
 .view {
@@ -29,7 +28,7 @@
     font-weight: bold;
 }
 
-.hide {    
+.hide {
     display: none;
 }
 
@@ -38,30 +37,74 @@
     width: 5%;
 }
 
-.spoilerText { 
-  background-color: gray;
-  color: transparent;
-  user-select: none;
-}
-
-.spoilerText:hover > .hidden { 
-    display: block;
-    color: white;
-    position: absolute;
-    border: 1px solid white;
+.spaced {
+    margin-left: .5em;
   }
 
+  .inputsAndResult {
+    display: flex;    
+  }
+
+  .inactiveCalculation {
+    opacity: .5;
+  }
+
+  .inputs {
+    width: 50%;
+  }
+
+  .results {
+    width: 50%;
+  }
+
+.spoilerText {
+    background-color: gray;
+    color: transparent;
+    user-select: none;
+    position: relative;
+    display: inline-block;
+    min-width: 8rem;
+}
+
+.spoilerText:hover>.hidden {
+    display: block;
+    color: white;    
+}
+
+.active {
+    font-weight: bold;
+    color: var(--foreground-secondary);
+}
+
+.shortLabelMargin {
+    min-width: 15%;
+}
+
+.labelMargin {
+    min-width: 25%;
+}
+
+.longLabelMargin {
+    min-width: 40%;
+}
+
 .hidden {
-    display: none;        
+    display: none;
+    position: absolute;
+}
+
+.subsections {
+    display: flex;
+    justify-content: space-evenly;
 }
 
 
 .viewSpoiler {
     background-color: inherit;
     color: inherit;
-  }
+}
 
-  @media (max-width: 800px) {
+@media (max-width: 800px) {
     .expanderMargin {
         width: auto;
         margin-right: 1rem;
@@ -70,4 +113,4 @@
     .faqQuestion {
         width: auto;
     }
-  }
+}

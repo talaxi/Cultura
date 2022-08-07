@@ -75,8 +75,8 @@ export class GlobalService {
     this.globalVar.freeRaceCounter = 0;
     this.globalVar.freeRaceTimePeriodCounter = 0;
     this.globalVar.lastTimeStamp = Date.now();
-    this.globalVar.currentVersion = 1.06; //TODO: this needs to be automatically increased or something, too easy to forget
-    this.globalVar.startingVersion = 1.06;
+    this.globalVar.currentVersion = 1.07; //TODO: this needs to be automatically increased or something, too easy to forget
+    this.globalVar.startingVersion = 1.07;
     this.globalVar.startDate = new Date();
     this.globalVar.notifications = new Notifications();
 
@@ -612,7 +612,7 @@ export class GlobalService {
 
     var cheetah = new ShopItem();
     cheetah.name = "Cheetah";
-    cheetah.shortDescription = "The Cheetah is a Flatland racing animal that prioritizes quickness over stamina.";
+    //cheetah.shortDescription = "The Cheetah is a Flatland racing animal that prioritizes quickness over stamina.";
     cheetah.purchasePrice.push(new ResourceValue("Coins", flatlandAnimalPrice));
     cheetah.canHaveMultiples = false;
     cheetah.type = ShopItemTypeEnum.Animal;
@@ -620,7 +620,7 @@ export class GlobalService {
 
     var hare = new ShopItem();
     hare.name = "Hare";
-    hare.shortDescription = "The Hare is a Flatland racing animal with various ways to increase acceleration and focus.";
+    //hare.shortDescription = "The Hare is a Flatland racing animal with various ways to increase acceleration and focus.";
     hare.purchasePrice.push(new ResourceValue("Coins", flatlandAnimalPrice));
     hare.canHaveMultiples = false;
     hare.type = ShopItemTypeEnum.Animal;
@@ -628,7 +628,7 @@ export class GlobalService {
 
     var goat = new ShopItem();
     goat.name = "Goat";
-    goat.shortDescription = "The Goat is a Mountain climbing animal that can nimbly travel terrain and increase stamina.";
+    //goat.shortDescription = "The Goat is a Mountain climbing animal that can nimbly travel terrain and increase stamina.";
     goat.purchasePrice.push(new ResourceValue("Coins", mountainAnimalPrice));
     goat.canHaveMultiples = false;
     goat.type = ShopItemTypeEnum.Animal;
@@ -637,7 +637,7 @@ export class GlobalService {
 
     var gecko = new ShopItem();
     gecko.name = "Gecko";
-    gecko.shortDescription = "The Gecko is a Mountain climbing animal that can increase speed based on focus and can increase other racers' velocity.";
+    //gecko.shortDescription = "The Gecko is a Mountain climbing animal that can increase speed based on focus and can increase other racers' velocity.";
     gecko.purchasePrice.push(new ResourceValue("Coins", mountainAnimalPrice));
     gecko.canHaveMultiples = false;
     gecko.type = ShopItemTypeEnum.Animal;
@@ -646,7 +646,7 @@ export class GlobalService {
 
     var shark = new ShopItem();
     shark.name = "Shark";
-    shark.shortDescription = "The Shark is an Ocean swimming animal that can slow competitors and increase its own stats at the cost of your other racers.";
+    //shark.shortDescription = "The Shark is an Ocean swimming animal that can slow competitors and increase its own stats at the cost of your other racers.";
     shark.purchasePrice.push(new ResourceValue("Coins", oceanAnimalPrice));
     shark.canHaveMultiples = false;
     shark.type = ShopItemTypeEnum.Animal;
@@ -655,7 +655,7 @@ export class GlobalService {
 
     var octopus = new ShopItem();
     octopus.name = "Octopus";
-    octopus.shortDescription = "The Octopus is an Ocean swimming animal that can increase your coin rewards from races and increase power of other racers.";
+    //octopus.shortDescription = "The Octopus is an Ocean swimming animal that can increase your coin rewards from races and increase power of other racers.";
     octopus.purchasePrice.push(new ResourceValue("Coins", oceanAnimalPrice));
     octopus.canHaveMultiples = false;
     octopus.type = ShopItemTypeEnum.Animal;
@@ -664,7 +664,7 @@ export class GlobalService {
 
     var caribou = new ShopItem();
     caribou.name = "Caribou";
-    caribou.shortDescription = "The Caribou is a Tundra racing animal that boosts other racers based on stamina.";
+    //caribou.shortDescription = "The Caribou is a Tundra racing animal that boosts other racers based on stamina.";
     caribou.purchasePrice.push(new ResourceValue("Coins", tundraAnimalPrice));
     caribou.canHaveMultiples = false;
     caribou.type = ShopItemTypeEnum.Animal;
@@ -673,7 +673,7 @@ export class GlobalService {
 
     var fox = new ShopItem();
     fox.name = "Fox";
-    fox.shortDescription = "The Fox is a Volcanic racing animal that can increase stats at random.";
+    //fox.shortDescription = "The Fox is a Volcanic racing animal that can increase stats at random.";
     fox.purchasePrice.push(new ResourceValue("Coins", volcanicAnimalPrice));
     fox.canHaveMultiples = false;
     fox.type = ShopItemTypeEnum.Animal;
@@ -1321,9 +1321,9 @@ export class GlobalService {
         }
       }
 
-      returnVal = ["Monkey", "The Monkey is a powerful Mountain climbing animal capable of slowing its competitors and leaping to victory."];
+      returnVal = ["Monkey", "The Monkey is a Mountain climbing animal capable of slowing its competitors and leaping to victory."];
 
-      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(5) + "Coaching";
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(4) + "Coaching";
     }
     else if (numericValue === 4) {
       this.globalVar.unlockables.set("coaching", true);
@@ -1362,7 +1362,7 @@ export class GlobalService {
     }
     else if (numericValue === 8) {
       var amount = 1;
-      var resource = this.globalVar.resources.find(item => item.name === "1 Headband");
+      var resource = this.globalVar.resources.find(item => item.name === "Headband");
       if (resource === null || resource === undefined)
         this.globalVar.resources.push(new ResourceValue("Headband", amount, ShopItemTypeEnum.Equipment));
       else
@@ -1392,7 +1392,7 @@ export class GlobalService {
         }
       }
 
-      returnVal = ["Dolphin", "The Dolphin is a graceful Ocean swimming animal capable of ignoring detrimental terrain effects and supporting teammates on relay."];
+      returnVal = ["Dolphin", "The Dolphin is an Ocean swimming animal capable of ignoring detrimental terrain effects and supporting teammates on relay."];
 
       var amount = 10;
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(12) + amount + " Stat Increasing Food";
@@ -1499,11 +1499,11 @@ export class GlobalService {
       returnVal = [coinsAmount + " Coins", ""];
 
       var amount = 20;
-      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(33) + amount + " Mangoes";
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(32) + amount + " Mangoes";
     }
     else if (numericValue === 32) {
       var amount = 1;
-      var resource = this.globalVar.resources.find(item => item.name === "1 Blue Baton");
+      var resource = this.globalVar.resources.find(item => item.name === "Blue Baton");
       if (resource === null || resource === undefined)
         this.globalVar.resources.push(new ResourceValue("Blue Baton", amount, ShopItemTypeEnum.Equipment));
       else
@@ -1511,7 +1511,8 @@ export class GlobalService {
 
       returnVal = [amount + " Blue Baton", "Equipment can be handled when viewing an animal from the Animals tab."];
 
-      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(10) + "Dolphin";
+      var mangoAmount = 20;
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(33) + mangoAmount + " Mangoes";
     }
     else if (numericValue === 33) {
       var amount = 20;
@@ -2156,6 +2157,7 @@ export class GlobalService {
     this.globalVar.eventRaceData.isLoading = false;
     this.globalVar.eventRaceData.animalAlreadyPrepped = false;
     this.globalVar.eventRaceData.isRunning = false;
+    this.globalVar.eventRaceData.isCatchingUp = false;
     this.globalVar.eventRaceData.overallTimeCounter -= this.globalVar.eventRaceData.segmentTimeCounter;
     this.globalVar.eventRaceData.segmentTimeCounter = 0;
     this.globalVar.eventRaceData.currentRaceSegment.reduceExportSize();
@@ -2730,6 +2732,9 @@ export class GlobalService {
       }
 
       availableOptions = availableOptions.filter(item => this.animalCanRaceGrandPrix(item));
+      if (this.globalVar.eventRaceData.isCatchingUp)
+        availableOptions = availableOptions.filter(item => !this.shouldShowSlowSegmentWarning(item));
+
       if (availableOptions.length > 0) {
         racingAnimal = availableOptions[0];
       }
@@ -3680,6 +3685,38 @@ export class GlobalService {
       if (animal.currentStats.focusMs > highestAdaptabilityDistanceValue)
         this.globalVar.trackedStats.highestAdaptabilityDistance = animal.currentStats.adaptabilityMs.toLocaleString("en-US") + " m (" + animal.name + ")";
     }
+  }
+
+  shouldShowSlowSegmentWarning(animal?: Animal) {
+    var tooSlow = false;
+
+    if (animal === undefined)
+      return tooSlow;
+
+    if (animal.currentStats.acceleration <= 10 || animal.currentStats.topSpeed <= 10 ||
+      animal.currentStats.endurance <= 10 || animal.currentStats.power <= 10 ||
+      animal.currentStats.focus <= 10 || animal.currentStats.adaptability <= 10) {
+      console.log("Stats too low: " + animal.currentStats.acceleration + " " + animal.currentStats.topSpeed + " " +
+        animal.currentStats.endurance + " " + animal.currentStats.power + " " + animal.currentStats.focus + " " +
+        animal.currentStats.adaptability);
+      tooSlow = true;
+    }
+
+    if (this.globalVar.eventRaceData !== undefined && this.globalVar.eventRaceData !== null) {
+      var segmentMeters = this.globalVar.eventRaceData.totalDistance / this.globalVar.eventRaceData.totalSegments;
+      var expectedRaceMperS = segmentMeters / this.globalVar.eventRaceData.segmentTime;
+
+      if (expectedRaceMperS > animal.currentStats.maxSpeedMs * 3) {
+        console.log("Max Speed Too Low: " + expectedRaceMperS + " > " + animal.currentStats.maxSpeedMs * 3);
+        tooSlow = true;
+      }
+      if (animal.currentStats.focusMs < expectedRaceMperS / 5) {
+        console.log("Not Focused Enough: " + animal.currentStats.focusMs + " < " + expectedRaceMperS / 30);
+        tooSlow = true;
+      }
+    }
+
+    return tooSlow;
   }
 
   devModeInitialize(circuitRankNumeric: number) {

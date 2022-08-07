@@ -65,3 +65,20 @@
         </div>
     </div>
 </ng-template>
+
+<ng-template #eventLoadingContent let-modal>
+    <div class="modalClass">
+        <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">Loading...</h4>
+            <button type="button" aria-label="Close" (click)="closeModals()">X</button>
+        </div>
+        <div class="modal-body">
+            Grand Prix is calculating offline time. Load times may be long while this finishes.            
+        </div>
+        <div class="modal-footer spaceBetween">                        
+            <span>
+                <button type="button" class="spaced" (click)="closeModals()">Continue</button>
+            </span>        
+        </div>
+    </div>
+</ng-template>

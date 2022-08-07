@@ -164,6 +164,11 @@
   color: var(--foreground-secondary);  
 }
 
+.spaceEvenly {
+  display: flex;
+  justify-content: space-evenly;
+}
+
 .filterMargins {
   display: flex;
   justify-content: center;

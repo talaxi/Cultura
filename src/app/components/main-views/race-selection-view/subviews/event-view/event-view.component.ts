@@ -117,7 +117,7 @@ export class EventViewComponent implements OnInit {
         return;
       }
       else {
-        var showSlowSegmentWarning = this.lookupService.shouldShowSlowSegmentWarning(racingAnimal);
+        var showSlowSegmentWarning = this.globalService.shouldShowSlowSegmentWarning(racingAnimal);
 
         if (this.lookupService.slowSegmentWarning(showSlowSegmentWarning)) {          
           this.globalService.globalVar.eventRaceData.isRunning = true; 

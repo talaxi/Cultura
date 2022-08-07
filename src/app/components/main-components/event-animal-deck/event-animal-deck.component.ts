@@ -123,7 +123,7 @@ export class EventAnimalDeckComponent implements OnInit {
       if (globalAnimal !== null && globalAnimal !== undefined) {
         this.globalService.globalVar.eventRaceData.nextRaceSegment = this.globalService.generateGrandPrixSegment(globalAnimal);
 
-        var showSlowSegmentWarning = this.lookupService.shouldShowSlowSegmentWarning(globalAnimal);
+        var showSlowSegmentWarning = this.globalService.shouldShowSlowSegmentWarning(globalAnimal);
 
         if (this.lookupService.slowSegmentWarning(showSlowSegmentWarning)) {
           this.globalService.globalVar.eventRaceData.animalData.forEach(item => {
@@ -168,7 +168,7 @@ export class EventAnimalDeckComponent implements OnInit {
       if (globalAnimal !== null && globalAnimal !== undefined) {
         this.globalService.globalVar.eventRaceData.nextRaceSegment = this.globalService.generateGrandPrixSegment(globalAnimal);
 
-        var showSlowSegmentWarning = this.lookupService.shouldShowSlowSegmentWarning(globalAnimal);
+        var showSlowSegmentWarning = this.globalService.shouldShowSlowSegmentWarning(globalAnimal);
 
         if (this.lookupService.slowSegmentWarning(showSlowSegmentWarning)) {
           this.globalService.globalVar.eventRaceData.animalData.forEach(item => {

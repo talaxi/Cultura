@@ -1,3 +1,4 @@
+import { sanitizeIdentifier } from '@angular/compiler';
 import { Injectable, SecurityContext } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { AnimalStatEnum } from '../models/animal-stat-enum.model';
@@ -156,16 +157,15 @@ export class LookupService {
 
     if (list.some(item => item.name === resource.name)) {
       var existingItem = list.find(item => item.name === resource.name);
-      if (existingItem !== undefined) {        
+      if (existingItem !== undefined) {
         existingItem.amount += resource.amount;
       }
     }
-    else {     
+    else {
       list.push(resource);
     }
   }
 
-  //make this exponential and change all instances of renown to use this
   getRenownCoinModifier(totalRenown: number, displayingPercentage: boolean): number {
     var modifierAmount = 1;
     var renownDiminishingReturnsCap = 50;
@@ -194,6 +194,52 @@ export class LookupService {
       return resource.amount;
     else
       return 0;
+  }
+
+  getAnimalDescription(name: string) {
+    var description = "";
+
+    if (name === "Horse") {
+      description = "The Horse is a Flatland racing animal capable of running without losing stamina and increasing the max speed of relay racers.";
+    }
+    else if (name === "Cheetah") {
+      description = "The Cheetah is a Flatland racing animal that prioritizes quickness over stamina.";
+    }
+    else if (name === "Hare") {
+      description = "The Hare is a Flatland racing animal that can instantly enter Burst and increase adaptability and focus.";
+    }
+    else if (name === "Monkey") {
+      description = "The Monkey is a Mountain climbing animal capable of slowing its competitors and leaping to victory.";
+    }
+    else if (name === "Goat") {
+      description = "The Goat is a Mountain climbing animal that can nimbly travel terrain and increase stamina.";
+    }
+    else if (name === "Gecko") {
+      description = "The Gecko is a Mountain climbing animal that can increase speed based on focus and can increase other racers' starting velocity.";
+    }
+    else if (name === "Dolphin") {
+      description = "The Dolphin is an Ocean swimming animal capable of ignoring detrimental terrain effects and supporting teammates on relay.";
+    }
+    else if (name === "Shark") {
+      description = "The Shark is an Ocean swimming animal that can slow competitors and increase its own stats at the cost of your other racers.";
+    }
+    else if (name === "Octopus") {
+      description = "The Octopus is an Ocean swimming animal that can increase your coin rewards from races and increase power of other racers.";
+    }
+    else if (name === "Penguin") {
+      description = "The Penguin is a Tundra racing animal that can slide carefully or recklessly.";
+    }
+    else if (name === "Caribou") {
+      description = "The Caribou is a Tundra racing animal that boosts other racers based on stamina.";
+    }
+    else if (name === "Salamander") {
+      description = "The Salamander is a Volcanic racing animal that can burrow underground to avoid lava and continously increase acceleration.";
+    }
+    else if (name === "Fox") {
+      description = "The Fox is a Volcanic racing animal that can increase stats at random.";
+    }
+
+    return description;
   }
 
   getAnimalByType(type: AnimalTypeEnum): Animal | null {
@@ -458,9 +504,9 @@ export class LookupService {
 
   getResourcePopover(name: string, type: ShopItemTypeEnum) {
     if (name === "Coins")
-      return "Good ol classic Coins. Gain from most actions and buy most things with this.";
+      return "Good ol classic Coins. Gain from most races and buy items from the shop with this.";
     else if (name === "Medals")
-      return "Rare currency gained from improving your circuit rank and winning certain special races.";
+      return "Rare currency gained from improving your circuit rank.";
     else if (name === "Renown") {
       var currentRenown = this.getRenown();
       return "Increases Coins gained from races by " + this.getRenownCoinModifier(currentRenown, true).toFixed(2) + "%. Increase total number of free races available per reset period by 1 for every 100 renown for a total of " + this.getTotalFreeRacesPerPeriod() + ". Complete circuit or free races to get your name out there and raise your renown.";
@@ -482,6 +528,27 @@ export class LookupService {
     else if (name === "Apples" || name === "Bananas" || name === "Oranges" || name === "Strawberries" || name === "Turnips"
       || name === "Carrots" || name === "Mangoes") {
       return this.globalService.getItemDescription(name);
+    }
+    else if (name === "Bonus Breed XP Gain From Training") {
+      return "Increase Breed XP gained from training by this amount. Only applies to this animal.";
+    }
+    else if (name === "Bonus Breed XP Gain From Free Races") {
+      return "Increase Breed XP gained from completing free races by this amount. Only applies to this animal.";
+    }
+    else if (name === "Bonus Breed XP Gain From Circuit Races") {
+      return "Increase Breed XP gained from completing circuit races by this amount. Only applies to this animal.";
+    }
+    else if (name === "Diminishing Returns per Facility Level") {
+      return "Increase Diminishing Returns value by this amount for every Facility Level you have. Only applies to this animal.";
+    }
+    else if (name === "Orb Pendant") {
+      return "This looks like the perfect size to fit an orb inside.";
+    }
+    else if (name === "Training Time Reduction") {
+      return "Reduce training times by this percent. Only applies to this animal.";
+    }
+    else if (name === "Bonus Talents") {
+      return "Increase talent point amount for this animal.";
     }
     else if (type === ShopItemTypeEnum.Specialty)
       return this.getSpecialtyItemDescription(name);
@@ -1082,53 +1149,60 @@ export class LookupService {
     return barnName;
   }
 
-  getTerrainPopoverText(terrain: Terrain, raceLeg: RaceLeg) {
-    var popoverText = "The terrain for the " + raceLeg.getCourseTypeName() + " leg is " + terrain.getTerrainType() + ":\n";
+  getTerrainPopoverText(terrain: Terrain, raceLeg?: RaceLeg) {
+    var popoverText = "";
+
+    if (raceLeg !== undefined)
+      popoverText = "The terrain for the " + raceLeg.getCourseTypeName() + " leg is " + terrain.getTerrainType() + ": <br/>";
 
     /*if (terrain.staminaModifier !== null && terrain.staminaModifier !== undefined && terrain.staminaModifier !== 0) {
       popoverText += "+" + (terrain.staminaModifier * 100).toFixed(0) + "% stamina cost\n";
     }*/
     if (terrain.staminaModifier !== null && terrain.staminaModifier !== undefined && terrain.staminaModifier !== 1) {
       if (terrain.staminaModifier > 1)
-        popoverText += "+" + ((terrain.staminaModifier - 1) * 100).toFixed(0) + "% stamina loss\n";
+        popoverText += "+" + ((terrain.staminaModifier - 1) * 100).toFixed(0) + "% stamina loss <br/>";
       else
-        popoverText += "-" + ((1 - terrain.staminaModifier) * 100).toFixed(0) + "% stamina loss\n";
+        popoverText += "-" + ((1 - terrain.staminaModifier) * 100).toFixed(0) + "% stamina loss <br/>";
     }
 
     if (terrain.maxSpeedModifier !== null && terrain.maxSpeedModifier !== undefined && terrain.maxSpeedModifier !== 1) {
       if (terrain.maxSpeedModifier > 1)
-        popoverText += "+" + ((terrain.maxSpeedModifier - 1) * 100).toFixed(0) + "% max speed\n";
+        popoverText += "+" + ((terrain.maxSpeedModifier - 1) * 100).toFixed(0) + "% max speed<br/>";
       else
-        popoverText += "-" + ((1 - terrain.maxSpeedModifier) * 100).toFixed(0) + "% max speed\n";
+        popoverText += "-" + ((1 - terrain.maxSpeedModifier) * 100).toFixed(0) + "% max speed<br/>";
     }
 
     if (terrain.accelerationModifier !== null && terrain.accelerationModifier !== undefined && terrain.accelerationModifier !== 1) {
       if (terrain.accelerationModifier > 1)
-        popoverText += "+" + ((terrain.accelerationModifier - 1) * 100).toFixed(0) + "% acceleration\n";
+        popoverText += "+" + ((terrain.accelerationModifier - 1) * 100).toFixed(0) + "% acceleration<br/>";
       else
-        popoverText += "-" + ((1 - terrain.accelerationModifier) * 100).toFixed(0) + "% acceleration\n";
+        popoverText += "-" + ((1 - terrain.accelerationModifier) * 100).toFixed(0) + "% acceleration<br/>";
     }
 
     if (terrain.powerModifier !== null && terrain.powerModifier !== undefined && terrain.powerModifier !== 1) {
       if (terrain.powerModifier > 1)
-        popoverText += "+" + ((terrain.powerModifier - 1) * 100).toFixed(0) + "% power efficiency\n";
+        popoverText += "+" + ((terrain.powerModifier - 1) * 100).toFixed(0) + "% power efficiency<br/>";
       else
-        popoverText += "-" + ((1 - terrain.powerModifier) * 100).toFixed(0) + "% power efficiency\n";
+        popoverText += "-" + ((1 - terrain.powerModifier) * 100).toFixed(0) + "% power efficiency<br/>";
     }
 
     if (terrain.focusModifier !== null && terrain.focusModifier !== undefined && terrain.focusModifier !== 1) {
       if (terrain.focusModifier > 1)
-        popoverText += "+" + ((terrain.focusModifier - 1) * 100).toFixed(0) + "% meters before losing focus\n";
+        popoverText += "+" + ((terrain.focusModifier - 1) * 100).toFixed(0) + "% meters before losing focus<br/>";
       else
-        popoverText += "-" + ((1 - terrain.focusModifier) * 100).toFixed(0) + "% meters before losing focus\n";
+        popoverText += "-" + ((1 - terrain.focusModifier) * 100).toFixed(0) + "% meters before losing focus<br/>";
     }
 
     if (terrain.adaptabilityModifier !== null && terrain.adaptabilityModifier !== undefined && terrain.adaptabilityModifier !== 1) {
       if (terrain.adaptabilityModifier > 1)
-        popoverText += "+" + ((terrain.adaptabilityModifier - 1) * 100).toFixed(0) + "% meters before stumbling\n";
+        popoverText += "+" + ((terrain.adaptabilityModifier - 1) * 100).toFixed(0) + "% meters before stumbling<br/>";
       else
-        popoverText += "-" + ((1 - terrain.adaptabilityModifier) * 100).toFixed(0) + "% meters before stumbling\n";
+        popoverText += "-" + ((1 - terrain.adaptabilityModifier) * 100).toFixed(0) + "% meters before stumbling<br/>";
     }
+
+    var sanitizedText = this.utilityService.getSanitizedHtml(popoverText);
+    if (sanitizedText !== undefined && sanitizedText !== null)
+      popoverText = sanitizedText;
 
     return popoverText;
   }
@@ -1182,7 +1256,7 @@ export class LookupService {
       if (maxStatGainModifier !== undefined && maxStatGainModifier !== null)
         maxStatGain = maxStatGainModifier.value;
 
-      description = "To start, the animal training only gains " + ((trainingAnimalDefault + statGainIncrements) * 100) + "% of the stats from their training. An animal at random will gain " + (studyingAnimalDefault * 100) + "% of the stats from training, prioritizing animals of the same course type. For every 10 levels, " + (statGainIncrements * 100) + "% additional stat gain will be distributed up to " + (maxStatGain * 100) + "% starting with the training animal. Additional animals will gain stats after maxing out the previous.";
+      description = "To start, the animal training at the Research Center only gains " + ((trainingAnimalDefault + statGainIncrements) * 100) + "% of the stat values from their training. Another animal at random will gain " + (studyingAnimalDefault * 100) + "% of the stat values from training, prioritizing animals of the same course type. For every 10 levels, " + (statGainIncrements * 100) + "% additional stat gain will be distributed up to " + (maxStatGain * 100) + "% starting with the training animal and then the other animal. Additional animals will gain stats after maxing out the previous.";
     }
 
     return description;
@@ -1826,35 +1900,6 @@ export class LookupService {
       affectedAnimalData.morale = .5;
   }
 
-  shouldShowSlowSegmentWarning(animal: Animal) {
-    var tooSlow = false;
-
-    if (animal.currentStats.acceleration <= 10 || animal.currentStats.topSpeed <= 10 ||
-      animal.currentStats.endurance <= 10 || animal.currentStats.power <= 10 ||
-      animal.currentStats.focus <= 10 || animal.currentStats.adaptability <= 10) {
-      console.log("Stats too low: " + animal.currentStats.acceleration + " " + animal.currentStats.topSpeed + " " +
-        animal.currentStats.endurance + " " + animal.currentStats.power + " " + animal.currentStats.focus + " " +
-        animal.currentStats.adaptability);
-      tooSlow = true;
-    }
-
-    if (this.globalService.globalVar.eventRaceData !== undefined && this.globalService.globalVar.eventRaceData !== null) {
-      var segmentMeters = this.globalService.globalVar.eventRaceData.totalDistance / this.globalService.globalVar.eventRaceData.totalSegments;
-      var expectedRaceMperS = segmentMeters / this.globalService.globalVar.eventRaceData.segmentTime;
-            
-      if (expectedRaceMperS > animal.currentStats.maxSpeedMs * 3) {
-        console.log("Max Speed Too Low: " + expectedRaceMperS + " > " + animal.currentStats.maxSpeedMs * 3);
-        tooSlow = true;
-      }
-      if (animal.currentStats.focusMs < expectedRaceMperS / 5) {
-        console.log("Not Focused Enough: " + animal.currentStats.focusMs + " < " + expectedRaceMperS / 30);
-        tooSlow = true;
-      }
-    }
-
-    return tooSlow;
-  }
-
   slowSegmentWarning(showWarning: boolean) {
     if (!showWarning)
       return true;
@@ -1897,6 +1942,62 @@ export class LookupService {
     }
 
     return tip;
+  }
+
+  getRandomFunFact() {
+    var tip = "";
+    var tipList = [];
+
+    if (!this.globalService.globalVar.settings.get("hideTips")) {
+      tipList.push("Horses are prey animals. Their best method of defense? Run!");
+
+      if (this.globalService.globalVar.animals.find(item => item.type === AnimalTypeEnum.Monkey)?.isAvailable)
+        tipList.push("There are over 300 species of Monkey in the world. Roughly half are considered Old World Monkeys in Asia and Africa, and the others are New World Monkeys in Central and South America.")
+
+      if (this.globalService.globalVar.animals.find(item => item.type === AnimalTypeEnum.Goat)?.isAvailable)
+        tipList.push("Mountain goats' wide toes, rough hooves, and sharp dewclaws give them incredible traction and the ability to climb steep slopes sometimes over 60 degrees.");
+
+      if (this.globalService.globalVar.animals.find(item => item.type === AnimalTypeEnum.Octopus)?.isAvailable)
+        tipList.push("Octopi have the largest brain of any invertebrate and have been known to use tools, such as using coconut husks to defend themselves.");
+
+      if (this.globalService.globalVar.animals.find(item => item.type === AnimalTypeEnum.Hare)?.isAvailable)
+        tipList.push("Hares' teeth never stop growing. They continually chew on grasses and twigs to keep their teeth from getting too large.");
+
+      if (this.globalService.globalVar.animals.find(item => item.type === AnimalTypeEnum.Penguin)?.isAvailable)
+        tipList.push("Penguins' bodies are tapered on both ends meaning they can swim with very little resistance. They are considered one of the most streamlined animals in the world.");
+
+      if (this.globalService.globalVar.animals.find(item => item.type === AnimalTypeEnum.Salamander)?.isAvailable)
+        tipList.push("Salamanders are capable of regenerating some organs and limbs. Their impressive regeneration is used as a model for scientific studies.");
+
+      var rng = this.utilityService.getRandomInteger(0, tipList.length - 1);
+      tip = tipList[rng];
+    }
+
+    return tip;
+  }
+
+  getSettingDescriptions(name: string) {
+    var description = "";
+    if (name === "Auto Skip Race Info") {
+      description = "Turn on to immediately skip to the end of any race.";
+    }
+    if (name === "Finish Training Before Switching") {
+      description = "Turn on to wait until finishing your current training before switching to the next training you select.";
+    }
+    if (name === "Hide Tips") {
+      description = "Turn on to stop displaying tips in the footer. (Tips never display in Mobile version presently)";
+    }
+    if (name === "Use Numbers For Circuit Rank") {
+      description = "Turn on to use numbers instead of letters when displaying ranks.";
+    }
+    if (name === "Auto Start Event Race") {
+      description = "When event race begins, automatically start running with your current event relay team.";
+    }
+    if (name === "Race Display Info") {
+      description = "Choose how to view races. Draw only shows the visual aspect, text only shows the textual updates, and both shows both. Both is default.";
+    }
+
+    return description;
   }
 
   getTotalFreeRacesPerPeriod() {

@@ -223,7 +223,7 @@ h6 {
   color: var(--progressionKeywordColor);
 }
 
-.specialityKeyword {
+.specialtyKeyword {
   font-weight: 550;
   color: var(--specialityKeywordColor);
 }

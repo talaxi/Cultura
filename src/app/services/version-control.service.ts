@@ -17,7 +17,7 @@ export class VersionControlService {
   constructor(private globalService: GlobalService, private lookupService: LookupService) { }
 
   //add to this in descending order
-  gameVersions = [1.06, 1.05, 1.04, 1.03, 1.02, 1.01, 1.00];
+  gameVersions = [1.07, 1.06, 1.05, 1.04, 1.03, 1.02, 1.01, 1.00];
 
   getListAscended() {
     var ascendedList: number[] = [];
@@ -74,17 +74,20 @@ export class VersionControlService {
         "Bug fixes (view Discord Change Log for full info).";
     if (version === 1.05)
       changes = "Changed all references of 'Decks' to 'Relay Teams' for ease of understanding and better theming.\n\n" +
-      "Bug fixes and UI improvements (view Discord Change Log for full info).";
+        "Bug fixes and UI improvements (view Discord Change Log for full info).";
     if (version === 1.06)
-    changes = "Barns can now reset their specialization. By clicking or tapping your Barn Upgrade level, you’ll see an overview of your barn’s benefits and the option to reset your specialization at the cost of losing 20% of your Barn Upgrade level.\n\n" +
-    "Cost for Mangoes now scale. 1 Mango from the shop costs an extra 50 per purchase and 2 Mangoes from the event shop costs an extra 1 token per purchase.\n\n" +
-    "The impact that Renown has on coin gain from race is now logarithmic. After reaching 50 renown, the coin gain will start to slightly fall off. \n\n" +
-    "Attractions now give slightly more Coins per specialization level.\n\n" +
-    "Added setting to automatically start the event race when the time period begins. This will also catch up on any time you were away between the start of the race and when you first return to the game.\n\n" +
-    "Grand Prix now requires breed level 25 instead of 50.\n\n" +
-    "Incubator now takes 2 minutes instead of 5 minutes.\n\n" +    
-    "UI Improvements and Bug Fixes (view Discord Change Log for full info).";    
-    
+      changes = "Barns can now reset their specialization. By clicking or tapping your Barn Upgrade level, you'll see an overview of your barn’s benefits and the option to reset your specialization at the cost of losing 20% of your Barn Upgrade level.\n\n" +
+        "Cost for Mangoes now scale. 1 Mango from the shop costs an extra 50 per purchase and 2 Mangoes from the event shop costs an extra 1 token per purchase.\n\n" +
+        "The impact that Renown has on coin gain from race is now logarithmic. After reaching 50 renown, the coin gain will start to slightly fall off. \n\n" +
+        "Attractions now give slightly more Coins per specialization level.\n\n" +
+        "Added setting to automatically start the event race when the time period begins. This will also catch up on any time you were away between the start of the race and when you first return to the game.\n\n" +
+        "Grand Prix now requires breed level 25 instead of 50.\n\n" +
+        "Incubator now takes 2 minutes instead of 5 minutes.\n\n" +
+        "UI Improvements and Bug Fixes (view Discord Change Log for full info).";
+    if (version === 1.07)
+      changes = "Sectioned out FAQs, added calculators to make planning easier.\n\n" +
+        "Various minor bug fixes and UI improvements.";
+
     return changes;
   }
 
@@ -103,7 +106,9 @@ export class VersionControlService {
     if (version === 1.05)
       date = new Date('2022-07-29 12:00:00');
     if (version === 1.06)
-      date = new Date('2022-08-04 12:00:00')
+      date = new Date('2022-08-04 12:00:00');
+    if (version === 1.07)
+      date = new Date('2022-08-06 12:00:00');
 
     return date.toDateString().replace(/^\S+\s/, '');
   }
@@ -158,7 +163,7 @@ export class VersionControlService {
           this.globalService.globalVar.modifiers.push(new StringNumberPair(.5, "athleticTapeEquipmentModifier"));
           this.globalService.globalVar.modifiers.push(new StringNumberPair(.2, "weatherMoraleBoostModifier"));
           this.globalService.globalVar.modifiers.push(new StringNumberPair(.03, "focusMoraleLossModifier"));
-          this.globalService.globalVar.modifiers.push(new StringNumberPair(.01, "stumbleMoraleLossModifier"));          
+          this.globalService.globalVar.modifiers.push(new StringNumberPair(.01, "stumbleMoraleLossModifier"));
           this.globalService.globalVar.modifiers.push(new StringNumberPair(.05, "segmentCompleteMoraleBoostModifier"));
           this.globalService.globalVar.modifiers.push(new StringNumberPair(5, "whistleModifier"));
           this.globalService.globalVar.modifiers.push(new StringNumberPair(10, "goldenWhistleModifier"));
@@ -360,9 +365,9 @@ export class VersionControlService {
           if (grandPrixBreedLevelRequiredModifier !== undefined)
             grandPrixBreedLevelRequiredModifier.value = 50;
         }
-        else if (version === 1.06) {     
+        else if (version === 1.06) {
           this.globalService.globalVar.previousEventRewards = [];
-          
+
           this.globalService.globalVar.resources = this.globalService.globalVar.resources.filter(item => item.name !== "Bonus Breed XP Gain From Training");
           this.globalService.globalVar.resources = this.globalService.globalVar.resources.filter(item => item.name !== "Bonus Breed XP Gain From Free Races");
           this.globalService.globalVar.resources = this.globalService.globalVar.resources.filter(item => item.name !== "Diminishing Returns per Facility Level");
@@ -377,7 +382,7 @@ export class VersionControlService {
 
           var grandPrixRenownRewardModifier = this.globalService.globalVar.modifiers.find(item => item.text === "grandPrixRenownRewardModifier");
           if (grandPrixRenownRewardModifier !== undefined)
-          grandPrixRenownRewardModifier.value = 3;          
+            grandPrixRenownRewardModifier.value = 3;
 
           var grandPrixBreedLevelRequiredModifier = this.globalService.globalVar.modifiers.find(item => item.text === "grandPrixBreedLevelRequiredModifier");
           if (grandPrixBreedLevelRequiredModifier !== undefined)
@@ -387,6 +392,42 @@ export class VersionControlService {
             this.globalService.globalVar.incubator.timeToComplete = 120;
 
           this.globalService.globalVar.settings.set("autoStartEventRace", false);
+        }
+        else if (version === 1.07) {
+          //if you bought a headband or blue baton prior to rank 8, the two were not adding together correctly
+          var headbandCount = 0;
+          var headbandTotalAmount = 0;
+          this.globalService.globalVar.resources.forEach(item => {
+            if (item.name === "Headband") {
+              headbandCount += 1;
+              headbandTotalAmount += item.amount;
+            }
+          });
+
+          if (headbandCount > 1) {
+            var firstOccurrence = this.globalService.globalVar.resources.findIndex(item => item.name === "Headband");
+            this.globalService.globalVar.resources.splice(firstOccurrence, 1);
+            var otherOccurrence = this.globalService.globalVar.resources.find(item => item.name === "Headband");
+            if (otherOccurrence !== undefined)
+              otherOccurrence.amount = headbandTotalAmount;
+          }
+
+          var blueBatonCount = 0;
+          var blueBatonTotalAmount = 0;
+          this.globalService.globalVar.resources.forEach(item => {
+            if (item.name === "Blue Baton") {
+              blueBatonCount += 1;
+              blueBatonTotalAmount += item.amount;
+            }
+          });
+
+          if (blueBatonCount > 1) {
+            var firstOccurrence = this.globalService.globalVar.resources.findIndex(item => item.name === "Blue Baton");
+            this.globalService.globalVar.resources.splice(firstOccurrence, 1);
+            var otherOccurrence = this.globalService.globalVar.resources.find(item => item.name === "Blue Baton");
+            if (otherOccurrence !== undefined)
+              otherOccurrence.amount = blueBatonTotalAmount;
+          }
         }
 
         this.globalService.globalVar.currentVersion = version;
@@ -411,7 +452,7 @@ export class VersionControlService {
       if (animal.miscStats.bonusCircuitBreedXpCertificateCount === 0)
         animal.miscStats.bonusBreedXpGainFromCircuitRaces = circuitRaceBonus;
       else
-      animal.miscStats.bonusBreedXpGainFromCircuitRaces = circuitRaceBonus + (2 * animal.miscStats.bonusCircuitBreedXpCertificateCount);
+        animal.miscStats.bonusBreedXpGainFromCircuitRaces = circuitRaceBonus + (2 * animal.miscStats.bonusCircuitBreedXpCertificateCount);
 
       if (animal.miscStats.bonusTrainingBreedXpCertificateCount === 0)
         animal.miscStats.bonusBreedXpGainFromTraining = trainingRaceBonus;
@@ -424,7 +465,7 @@ export class VersionControlService {
         animal.miscStats.diminishingReturnsBonus = drBonus + animal.miscStats.bonusDiminishingReturnsCertificateCount;
 
       animal.miscStats.trainingTimeReduction = trainingTimeReductionBonus;
-      animal.miscStats.bonusTalents = talentsBonus;      
+      animal.miscStats.bonusTalents = talentsBonus;
     });
   }
 }

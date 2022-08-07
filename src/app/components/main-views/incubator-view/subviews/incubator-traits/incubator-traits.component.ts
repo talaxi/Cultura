@@ -18,6 +18,7 @@ export class IncubatorTraitsComponent implements OnInit {
   @Input() selectedAnimal: Animal;
   @Output() returnEmitter = new EventEmitter<boolean>();
 
+  traitStatGainDescription = "";
   existingTrait: AnimalTraits | null;
   trainingProgressBarPercent: number;
   availableTraits: AnimalTraits[];
@@ -57,6 +58,9 @@ export class IncubatorTraitsComponent implements OnInit {
       'tundraColor': this.selectedAnimal.getRaceCourseType() === 'Tundra',
       'volcanicColor': this.selectedAnimal.getRaceCourseType() === 'Volcanic'
     };
+
+    if (this.selectedAnimal.trait !== undefined && this.selectedAnimal.trait !== null)
+      this.traitStatGainDescription = this.lookupService.getTraitStatGainDescription(this.selectedAnimal.trait);
 
     this.subscription = this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {
       var incubator = this.globalService.globalVar.incubator;

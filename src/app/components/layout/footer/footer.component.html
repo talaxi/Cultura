@@ -4,7 +4,7 @@
             <span></span>
         </div>
         <div *ngIf="displayTip" (click)="getNewTip()" class="area2 keyword tips">
-            <span>Tip: {{ this.randomTip }}</span>
+            <span>{{displayingFunFact ? "Fun Fact: " : "Tip: "}}{{ this.randomTip }}</span>
             
         </div>
         <div class="area3 keyword rightAlign">            

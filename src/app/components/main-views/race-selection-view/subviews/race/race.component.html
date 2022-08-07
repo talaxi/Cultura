@@ -49,7 +49,14 @@
         <div class="rewards">
             <table>
                 <tr *ngFor="let cells of rewardRows;">
-                    <td *ngFor="let c of cells;"><span class="keyword">{{c.name}}</span>: {{c.amount}}</td>
+                    <td *ngFor="let c of cells;"><span class="keyword" [ngbPopover]="popContent"
+                        triggers="mouseenter:mouseleave" popoverClass="popoverClass">{{c.name}}</span>: {{c.amount}}
+                    <ng-template #popContent>
+                        <div class="popoverClass">
+                            {{ lookupService.getResourcePopover(c.name, c.shopItemTypeEnum) }}
+                        </div>
+                    </ng-template>
+                </td>
                 </tr>
             </table>
         </div>

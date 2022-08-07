@@ -99,6 +99,9 @@ export class ShoppingItemComponent implements OnInit {
       if (this.shortDescription === "")
         this.shortDescription = this.selectedItem.shortDescription;
     }
+    else if (this.selectedItem.type === ShopItemTypeEnum.Animal) {
+      this.shortDescription = this.lookupService.getAnimalDescription(this.selectedItem.name);
+    }
     else {
       this.shortDescription = this.selectedItem.shortDescription;
       this.longDescription = this.selectedItem.longDescription;

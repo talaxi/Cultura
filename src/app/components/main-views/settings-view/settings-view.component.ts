@@ -56,28 +56,28 @@ export class SettingsViewComponent implements OnInit {
       this.skipDrawRace = false;
     else
       this.skipDrawRace = globalSkipDrawRace;
-    this.skipDrawRacePopoverText = "Turn on to immediately skip to the end of any race.";
+    this.skipDrawRacePopoverText = this.lookupService.getSettingDescriptions("Auto Skip Race Info");
 
     var finishTrainingBeforeSwitching = this.globalService.globalVar.settings.get("finishTrainingBeforeSwitching");
     if (finishTrainingBeforeSwitching === undefined)
       this.finishTrainingBeforeSwitching = false;
     else
       this.finishTrainingBeforeSwitching = finishTrainingBeforeSwitching;
-    this.finishTrainingBeforeSwitchingPopoverText = "Turn on to wait until finishing your current training before switching to the next training you select.";
+    this.finishTrainingBeforeSwitchingPopoverText = this.lookupService.getSettingDescriptions("Finish Training Before Switching");
 
     var raceDisplayInfoOptions = this.globalService.globalVar.settings.get("raceDisplayInfo");
     if (raceDisplayInfoOptions === undefined)
       this.raceDisplayInfo = this.getRaceDisplayInfoName(RaceDisplayInfoEnum.both);
     else
       this.raceDisplayInfo = this.getRaceDisplayInfoName(raceDisplayInfoOptions);
-    this.raceDisplayInfoPopoverText = "Choose how to view races. Draw only shows the visual aspect, text only shows the textual updates, and both shows both. Both is default.";
+    this.raceDisplayInfoPopoverText = this.lookupService.getSettingDescriptions("Race Display Info");
 
     var hideTips = this.globalService.globalVar.settings.get("hideTips");
     if (hideTips === undefined)
       this.hideTips = false;
     else
       this.hideTips = hideTips;
-    this.hideTipsPopoverText = "Stop displaying tips in the footer. (Tips never display in Mobile version)";
+    this.hideTipsPopoverText = this.lookupService.getSettingDescriptions("Hide Tips");
 
 
     var useNumbersForCircuitRank = this.globalService.globalVar.settings.get("useNumbersForCircuitRank");
@@ -85,14 +85,14 @@ export class SettingsViewComponent implements OnInit {
       this.useNumbersForCircuitRank = false;
     else
       this.useNumbersForCircuitRank = useNumbersForCircuitRank;
-    this.useNumbersForCircuitRankPopoverText = "Use numbers instead of letters when displaying ranks.";
+    this.useNumbersForCircuitRankPopoverText = this.lookupService.getSettingDescriptions("Use Numbers For Circuit Rank");
 
     var autoStartEventRace = this.globalService.globalVar.settings.get("autoStartEventRace");
     if (autoStartEventRace === undefined)
       this.autoStartEventRace = false;
     else
       this.autoStartEventRace = autoStartEventRace;
-    this.autoStartEventRacePopoverText = "When event race begins, automatically start running with your current event relay team.";
+    this.autoStartEventRacePopoverText = this.lookupService.getSettingDescriptions("Auto Start Event Race");
 
   }
 

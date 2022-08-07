@@ -245,9 +245,9 @@
         <div class="modal-body">
             <div class="upgradeBarnInfo">
                 <div [innerHTML]='totalBarnStatsPopover'></div>
-                <br />
-                <br />
+                <br />                                                
                 {{ upgradeBarnPopover }}
+                <br />
                 <hr />
                 <div class="resetBarn" *ngIf="this.barn.barnUpgrades.specializationLevel > 0">
                     <div class='resetSpecializationInfo'>
@@ -280,7 +280,8 @@
                             </div>
 
                         </div>
-                        <div class="modal-footer">
+                        <div class="modal-footer spaceEvenly">
+                            <span>New Barn Level will be {{ postResetBarnUpgradeLevel }}</span>
                             <button type="button" (click)="resetSpecialization()">Reset Specialization</button>
                         </div>
                     </div>

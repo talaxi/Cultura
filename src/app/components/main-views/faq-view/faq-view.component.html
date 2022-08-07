@@ -3,148 +3,646 @@
         <div class="view">
             <div class="info">
                 <h2>Frequently Asked Questions</h2>
-                <em>This FAQ and game is still a work in progress! Bear with me if certain features aren't fully fleshed out and developed yet. I tend to develop in a way where I will put something out still a bit bare bones and add more to it over time until it is complete. If you have any feedback at all, please let me know using one of the links on the bottom right. Thank you so much for playing and hope you're enjoying it!</em>
+                <em>This FAQ and game is still a work in progress! Bear with me if certain features aren't fully fleshed
+                    out and developed yet. If you have any feedback at all, please let me know using one of the links on
+                    the bottom right. Thank you so much for playing and hope you're enjoying it!</em>
             </div>
             <br />
+            <div class="subsections s4Heading">
+                <button [ngClass]="currentSection === faqSectionsEnum.basics ? 'active' : ''"
+                    class="subsectionOption buttonAsText"
+                    (click)="changeSection(faqSectionsEnum.basics)">Basics</button>
+                <button [ngClass]="currentSection === faqSectionsEnum.progression ? 'active' : ''"
+                    class="subsectionOption buttonAsText"
+                    (click)="changeSection(faqSectionsEnum.progression)">Progression</button>
+                <button [ngClass]="currentSection === faqSectionsEnum.calculators ? 'active' : ''"
+                    class="subsectionOption buttonAsText"
+                    (click)="changeSection(faqSectionsEnum.calculators)">Calculators</button>
+            </div>
+            <hr />
             <br />
             <!-- Expander - Question -->
             <!-- Answer -->
-            <div>
+            <div *ngIf="currentSection === faqSectionsEnum.basics">
                 <div>
-                    <div class="expanderMargin">
-                        <button type="button" aria-label="Expand" (click)="expandAnswer('faqAnswer1')">+</button>
+                    <div>
+                        <div class="expanderMargin">
+                            <button type="button" aria-label="Expand"
+                                (click)="expandAnswer('faqAnswerBreedGuide')">+</button>
+                        </div>
+                        <div class="faqQuestion">
+                            <p>What does Breeding do? How do I gain Breed XP?</p>
+                        </div>
                     </div>
-                    <div class="faqQuestion">
-                        <p>I'm stuck early on, how should I progress?</p>
+                    <div class="faqAnswer hide" id="faqAnswerBreedGuide">
+                        <div class="expanderMargin"></div>
+                        <p>
+                            Breeding is one of the best way to increase your animals' racing capabilities. It is a reset
+                            mechanic, meaning all of the base stats
+                            your animal has gained will be reset back to their default levels, and in return gain a
+                            permanent multiplier to your racing stats. Note
+                            that the stats your animal has prior to breeding have no impact on Breeding.
+                            <br />
+                            <br />
+                            Every time you Breed, you gain a 5% increase to the amount your base stats contribute to
+                            your racing stats. If you hover over your
+                            base stats (or tap if you are on mobile) when selecting an animal on the Animal page, you
+                            will see a breakdown of all multipliers
+                            you have obtained. Increasing your Breed level is the first step in reaching new heights in
+                            Cultura.
+                            <br />
+                            <br />
+                            There are a few ways to increase Breed XP: <br />
+                            <em>Completing any training:</em> {{ lookupService.getTrainingBreedGaugeIncrease(0) }}
+                            XP<br />
+                            <em>Successfully completing a free race:</em> {{ lookupService.getLocalBreedGaugeIncrease()
+                            }} XP<br />
+                            <em>Successfully completeing a circuit race:</em> {{
+                            lookupService.getCircuitBreedGaugeIncrease() }} XP<br /> <br />
+                            As you progress, you'll find ways to increase the amount of XP gained.
+                        </p>
                     </div>
                 </div>
-                <div class="faqAnswer hide" id="faqAnswer1">
-                    <div class="expanderMargin"></div>
-                    <p>In the early game, your biggest obstacles will be coins and breed level. Using the Stockbreeder to Auto Breed your animals can give them a big boost in stats. 
-                        <br />
-                        <br />
-                        If you are having a hard time collecting coins, look into buying Team Managers from the Shop and upgrading your barns to Attractions to build passive income. </p>
-                </div>
-            </div>
-            <hr />
-            <div>
+                <hr />
                 <div>
-                    <div class="expanderMargin">
-                        <button type="button" aria-label="Expand" (click)="expandAnswer('faqAnswerBreedGuide')">+</button>
+                    <div>
+                        <div class="expanderMargin">
+                            <button type="button" aria-label="Expand"
+                                (click)="expandAnswer('faqAnswerBreedBarnRows')">+</button>
+                        </div>
+                        <div class="faqQuestion">
+                            <p>I've got too many animals -- how do I unlock more barns?</p>
+                        </div>
                     </div>
-                    <div class="faqQuestion">
-                        <p>What does Breeding do? How do I gain Breed XP?</p>
+                    <div class="faqAnswer hide" id="faqAnswerBreedBarnRows">
+                        <div class="expanderMargin"></div>
+                        <p>
+                            Raise your circuit rank! As you progress, you'll unlock more rows of 3 barns.
+                        </p>
                     </div>
                 </div>
-                <div class="faqAnswer hide" id="faqAnswerBreedGuide">
-                    <div class="expanderMargin"></div>
-                    <p>
-                        Breeding is one of the best way to increase your animals' racing capabilities. It is a reset mechanic, meaning all of the base stats
-                        your animal has gained will be reset back to their default levels, and in return gain a permanent multiplier to your racing stats. 
-                        <br />
-                        <br />
-                        Every time you Breed, you gain a 5% increase to the amount your base stats contribute to your racing stats. If you hover over your
-                        base stats (or tap if you are on mobile) when selecting an animal on the Animal page, you will see a breakdown of all multipliers
-                        you have obtained. Increasing your Breed level is the first step in reaching new heights in Cultura.
-                        <br />
-                        <br />
-                        There are a few ways to increase Breed XP: <br />
-                        <em>Completing a training:</em> {{ lookupService.getTrainingBreedGaugeIncrease(0) }} XP<br/>
-                        <em>Successfully completing a free race:</em> {{ lookupService.getLocalBreedGaugeIncrease() }} XP<br/>
-                        <em>Successfully completeing a circuit race:</em> {{ lookupService.getCircuitBreedGaugeIncrease() }} XP<br/> <br/>
-                        As you progress, you'll find ways to increase the amount of XP gained.
-                    </p>
-                </div>
-            </div>
-            <hr />
-            <div>
+                <hr />
                 <div>
-                    <div class="expanderMargin">
-                        <button type="button" aria-label="Expand" (click)="expandAnswer('faqAnswer2')">+</button>
+                    <div>
+                        <div class="expanderMargin">
+                            <button type="button" aria-label="Expand"
+                                (click)="expandAnswer('faqAnswerAllAnimals')">+</button>
+                        </div>
+                        <div class="faqQuestion">
+                            <p>What are all of the animals and course types?</p>
+                        </div>
                     </div>
-                    <div class="faqQuestion">
-                        <p>What do team managers do and how do I set auto race?</p>
+                    <div class="faqAnswer hide" id="faqAnswerAllAnimals">
+                        <div class="expanderMargin"></div>
+                        <div>
+                            <span class="flatlandColor keyword">Flatland</span>
+                            <br />
+                            <span class="keyword">Horse</span> - {{ lookupService.getAnimalDescription("Horse") }}
+                            <br />
+                            <span class="keyword">Cheetah</span> - {{ lookupService.getAnimalDescription("Cheetah") }}
+                            <br />
+                            <span class="keyword">Hare</span> - {{ lookupService.getAnimalDescription("Hare") }}
+                            <br />
+                            <br />
+                            <span class="mountainColor keyword">Mountain</span>
+                            <br />
+                            <span class="keyword">Monkey</span> - {{ lookupService.getAnimalDescription("Monkey") }}
+                            <br />
+                            <span class="keyword">Goat</span> - {{ lookupService.getAnimalDescription("Goat") }}
+                            <br />
+                            <span class="keyword">Gecko</span> - {{ lookupService.getAnimalDescription("Gecko") }}
+                            <br />
+                            <br />
+                            <div>
+                                <span [ngClass]='seeOceanCourseTypeSpoiler ? "viewSpoiler" : "spoilerText"'
+                                    (click)="viewSpoiler('Ocean Course Type')"><span class="hidden">View
+                                        Spoiler</span><span [ngClass]='seeOceanCourseTypeSpoiler ? "waterColor" : ""'
+                                        class="keyword">Ocean</span></span>
+                                <br />
+                                <span [ngClass]='seeOceanCourseTypeSpoiler ? "viewSpoiler" : "spoilerText"'
+                                    (click)="viewSpoiler('Ocean Course Type')"><span class="hidden">View
+                                        Spoiler</span><span class="keyword">Dolphin</span> - {{
+                                    lookupService.getAnimalDescription("Dolphin") }}</span>
+                                <br />
+                                <span [ngClass]='seeOceanCourseTypeSpoiler ? "viewSpoiler" : "spoilerText"'
+                                    (click)="viewSpoiler('Ocean Course Type')"><span class="hidden">View
+                                        Spoiler</span><span class="keyword">Shark</span> - {{
+                                    lookupService.getAnimalDescription("Shark") }}</span>
+                                <br />
+                                <span [ngClass]='seeOceanCourseTypeSpoiler ? "viewSpoiler" : "spoilerText"'
+                                    (click)="viewSpoiler('Ocean Course Type')"><span class="hidden">View
+                                        Spoiler</span><span class="keyword">Octopus</span> - {{
+                                    lookupService.getAnimalDescription("Octopus") }}</span>
+                                <br />
+                                <br />
+                            </div>
+                            <div>
+                                <span (click)="viewSpoiler('Tundra Course Type')"
+                                    [ngClass]='seeTundraCourseTypeSpoiler ? "viewSpoiler" : "spoilerText"'><span
+                                        class="hidden">View
+                                        Spoiler</span><span [ngClass]='seeTundraCourseTypeSpoiler ? "tundraColor" : ""'
+                                        class="keyword">Tundra</span></span>
+                                <br />
+                                <span (click)="viewSpoiler('Tundra Course Type')"
+                                    [ngClass]='seeTundraCourseTypeSpoiler ? "viewSpoiler" : "spoilerText"'><span
+                                        class="hidden">View
+                                        Spoiler</span><span class='keyword'>Penguin</span> - {{
+                                    lookupService.getAnimalDescription("Penguin")
+                                    }}</span>
+                                <br />
+                                <span (click)="viewSpoiler('Tundra Course Type')"
+                                    [ngClass]='seeTundraCourseTypeSpoiler ? "viewSpoiler" : "spoilerText"'><span
+                                        class="hidden">View
+                                        Spoiler</span><span class='keyword'>Caribou</span> - {{
+                                    lookupService.getAnimalDescription("Caribou")
+                                    }}</span>
+                                <br />
+                                <br />
+                            </div>
+                            <div>
+                                <span (click)="viewSpoiler('Volcanic Course Type')"
+                                    [ngClass]='seeVolcanicCourseTypeSpoiler ? "viewSpoiler" : "spoilerText"'><span
+                                        class="hidden">View
+                                        Spoiler</span><span
+                                        [ngClass]='seeVolcanicCourseTypeSpoiler ? "volcanicColor" : ""'
+                                        class="keyword">Volcanic</span></span>
+                                <br />
+                                <span (click)="viewSpoiler('Volcanic Course Type')"
+                                    [ngClass]='seeVolcanicCourseTypeSpoiler ? "viewSpoiler" : "spoilerText"'><span
+                                        class="hidden">View
+                                        Spoiler</span><span class='keyword'>Salamander</span> - {{
+                                    lookupService.getAnimalDescription("Salamander") }}</span>
+                                <br />
+                                <span (click)="viewSpoiler('Volcanic Course Type')"
+                                    [ngClass]='seeVolcanicCourseTypeSpoiler ? "viewSpoiler" : "spoilerText"'><span
+                                        class="hidden">View
+                                        Spoiler</span><span class='keyword'>Fox</span> - {{
+                                    lookupService.getAnimalDescription("Fox") }}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="faqAnswer hide" id="faqAnswer2">
-                    <div class="expanderMargin"></div>
-                    <p>After buying a Team Manager from the shop, you'll have the ability to set a deck as your "Auto Run Free Race" deck. 
-                        Once selected, this deck will immediately run free races as soon as the time period resets creating a steady stream of income (assuming you win, of course!).
-                    <br/>
-                    <br/>
-                    To set a deck as your "Auto Run Free Race" deck, select 'Decks' on the right and then select the button that says "Auto Run Free Race" by the deck you want to select. Note that this option will not be available until you buy a Team Manager.
-                </p>
-                </div>
-            </div>
-            <hr />
-            <div>
+                <hr />
                 <div>
-                    <div class="expanderMargin">
-                        <button type="button" aria-label="Expand" (click)="expandAnswer('faqAnswer3')">+</button>
+                    <div>
+                        <div class="expanderMargin">
+                            <button type="button" aria-label="Expand"
+                                (click)="expandAnswer('faqAnswerTerrain')">+</button>
+                        </div>
+                        <div class="faqQuestion">
+                            <p>What are the different terrain options when racing?</p>
+                        </div>
                     </div>
-                    <div class="faqQuestion">
-                        <p>What does upgrading a barn do and how do I specialize my barn?</p>
+                    <div class="faqAnswer hide" id="faqAnswerTerrain">
+                        <div class="expanderMargin"></div>
+                        <p>
+                            Every race leg will have a random terrain. Each terrain may have a positive or negative
+                            effect for your racer and should be considered when thinking about which animal is going to
+                            race a particular leg. The terrain options are below:
+                            <br />
+                            <br />
+                            <em>Sunny</em>
+                            <br />
+                            <span [innerHTML]="sunnyTerrainInfo"></span>
+                            <br />
+                            <em>Rainy</em>
+                            <br />
+                            <span [innerHTML]="rainyTerrainInfo"></span>
+                            <br />
+                            <em>Stormy</em>
+                            <br />
+                            <span [innerHTML]="stormyTerrainInfo"></span>
+                            <br />
+                            <em>Torrid</em>
+                            <br />
+                            <span [innerHTML]="torridTerrainInfo"></span>
+                            <br />
+                            <em>Maelstrom</em>
+                            <br />
+                            <span [innerHTML]="maelstromTerrainInfo"></span>
+                            <br />
+                            <em>Snowfall</em>
+                            <br />
+                            <span [innerHTML]="snowfallTerrainInfo"></span>
+                            <br />
+                            <em>Hailstorm</em>
+                            <br />
+                            <span [innerHTML]="hailstormTerrainInfo"></span>
+                            <br />
+                            <em>Ashfall</em>
+                            <br />
+                            <span [innerHTML]="ashfallTerrainInfo"></span>
+                        </p>
                     </div>
                 </div>
-                <div class="faqAnswer hide" id="faqAnswer3">
-                    <div class="expanderMargin"></div>
-                    <p>After reaching a certain circuit rank, you will gain the ability to upgrade your barns. Every level you upgrade, you gain a multiplier for a particular stat when training. Hovering over your barn level when selecting a barn will show you your current multipliers. Increasing your barn level can be a great way to get you back in the race after breeding.
-                    <br/>
-                    <br/>                    
-                    At barn level 10, you will instead have the option to specialize. Subsequently, every 10 levels will improve your specialization instead of giving a stat multiplier. The current specialization options are below.<br/><br />
-                    <strong>Training Facility - {{ lookupService.getInDepthSpecializationDescription("Training Facility") }}</strong>
-                    <br/>
-                    <strong>Breeding Grounds - {{ lookupService.getInDepthSpecializationDescription("Breeding Grounds") }}</strong>
-                    <br/>
-                    <strong (click)="viewSpoiler('Attraction Specialization')" [ngClass]='seeAttractionSpoiler ? "viewSpoiler" : "spoilerText"'><span class="hidden">View Spoiler</span> Attraction - {{ lookupService.getInDepthSpecializationDescription("Attraction") }}</strong>
-                    <br/>
-                    <strong (click)="viewSpoiler('Research Center Specialization')" [ngClass]='seeResearchCenterSpoiler ? "viewSpoiler" : "spoilerText"'><span class="hidden">View Spoiler</span>Research Center - {{ lookupService.getInDepthSpecializationDescription("Research Center") }}</strong>
-                </p>
-                </div>
-            </div>
-            <hr />
-            <div *ngIf="lookupService.isItemUnlocked('duoRace')">
+                <hr />
                 <div>
-                    <div class="expanderMargin">
-                        <button type="button" aria-label="Expand" (click)="expandAnswer('faqAnswer4')">+</button>
+                    <div>
+                        <div class="expanderMargin">
+                            <button type="button" aria-label="Expand"
+                                (click)="expandAnswer('faqAnswerSettings')">+</button>
+                        </div>
+                        <div class="faqQuestion">
+                            <p>What does each setting do?</p>
+                        </div>
                     </div>
-                    <div class="faqQuestion">
-                        <p>What is the Incubator? How does the Incubator Upgrade item work?</p>
+                    <div class="faqAnswer hide" id="faqAnswerSettings">
+                        <div class="expanderMargin"></div>
+                        <p>
+                            <strong>Auto Skip Race Info</strong> - {{ lookupService.getSettingDescriptions("Auto Skip
+                            Race Info") }}
+                            <br />
+                            <br />
+                            <strong>Finish Training Before Switching</strong> - {{
+                            lookupService.getSettingDescriptions("Finish Training Before Switching") }}
+                            <br />
+                            <br />
+                            <strong>Hide Tips</strong> - {{ lookupService.getSettingDescriptions("Hide Tips") }}
+                            <br />
+                            <br />
+                            <strong>Use Numbers For Circuit Rank</strong> - {{ lookupService.getSettingDescriptions("Use
+                            Numbers For Circuit Rank") }}
+                            <br />
+                            <br />
+                            <strong>Auto Start Event Race</strong> - {{ lookupService.getSettingDescriptions("Auto Start
+                            Event Race") }}
+                            <br />
+                            <br />
+                            <strong>Race Display Info</strong> - {{ lookupService.getSettingDescriptions("Race Display
+                            Info") }}
+                        </p>
                     </div>
                 </div>
-                <div class="faqAnswer hide" id="faqAnswer4">
-                    <div class="expanderMargin"></div>
-                    <p>Once you've successfully completed a Duo Race, you will have access to the Incubator. The Incubator lets you select a trait for an individual animal that lets your customize your stats further. 
-                        A trait increases one stat and decreases another. As you increase your Research Level by completing Duo Races, you will unlock new traits and increase the amount the traits increase/decrease your stats. Note that traits will only decrease the chosen stat by a maximum of 25%.
-                    <br/>
-                    <br/>
-                    The Incubator Upgrade item gives you even further control over how you build your animals and allows newer animals to quickly catch up to ones of higher breed level. After purchasing this item, every time you breed you will gain a permanent increase to the stat your trait currently is providing you. The increase amount depends on your current Research Level. For example:
-                    <br/>
-                    <br/>
-                    If you have a Research Level of 15 and apply the <span class="keyword">Alert</span> trait to your Horse, it will gain 15% <span class="keyword">Focus</span> and lose 15% <span class="keyword">Endurance</span> through the trait itself. 
-                    <br/>
-                    <em>If you have Incubator Upgrade Level 1:</em> each time you Breed your Horse, it will gain an additional modifier of .01 to its <span class="keyword">Focus</span> stat. 10% of the positive trait value of 15% would come out to .015. Incubator Upgrade Level 1 only allows for the first 10% of your trait value to contribute to the modifier, so you would gain .01. 
-                    <br/>
-                    <em>If you have Incubator Upgrade Level 2:</em> each time you Breed your Horse, it will gain an additional modifier of .015 to its <span class="keyword">Focus</span> stat. 10% of the positive trait value of 15% would come to .015. Incubator Upgrade Level 2 allows for the first 25% of your trait value to contribute to the modifier. Because your trait value is only 15%, it will contribute in its entirety. 
-                </p>
+                <hr />
+                <div>
+                    <div>
+                        <div class="expanderMargin">
+                            <button type="button" aria-label="Expand"
+                                (click)="expandAnswer('faqAnswerFeedback')">+</button>
+                        </div>
+                        <div class="faqQuestion">
+                            <p>I'm having an issue with my game or have some feedback, how can I contact you?</p>
+                        </div>
+                    </div>
+                    <div class="faqAnswer hide" id="faqAnswerFeedback">
+                        <div class="expanderMargin"></div>
+                        <p>Feel free to use the links at the bottom right or email me at CulturaIdle@gmail.com to get in
+                            touch. </p>
+                    </div>
                 </div>
                 <hr />
             </div>
-            <div>
+
+            <div *ngIf="currentSection === faqSectionsEnum.progression">
                 <div>
-                    <div class="expanderMargin">
-                        <button type="button" aria-label="Expand" (click)="expandAnswer('faqAnswerFeedback')">+</button>
+                    <div>
+                        <div class="expanderMargin">
+                            <button type="button" aria-label="Expand" (click)="expandAnswer('faqAnswer1')">+</button>
+                        </div>
+                        <div class="faqQuestion">
+                            <p>I'm stuck early on, how should I progress?</p>
+                        </div>
                     </div>
-                    <div class="faqQuestion">
-                        <p>I'm having an issue with my game or have some feedback, how can I contact you?</p>
+                    <div class="faqAnswer hide" id="faqAnswer1">
+                        <div class="expanderMargin"></div>
+                        <p>In the early game, your biggest obstacles will be coins and breed level. Using the
+                            Stockbreeder to Auto Breed your animals can give them a big boost in stats.
+                            <br />
+                            <br />
+                            If you are having a hard time collecting coins, look into buying Team Managers from the Shop
+                            and upgrading your barns to Attractions to build passive income.
+                        </p>
                     </div>
                 </div>
-                <div class="faqAnswer hide" id="faqAnswerFeedback">
-                    <div class="expanderMargin"></div>
-                    <p>Feel free to use the links at the bottom right or email me at CulturaIdle@gmail.com to get in touch. </p>
+                <hr />
+                <div>
+                    <div>
+                        <div class="expanderMargin">
+                            <button type="button" aria-label="Expand" (click)="expandAnswer('faqAnswer2')">+</button>
+                        </div>
+                        <div class="faqQuestion">
+                            <p>What do team managers do and how do I set auto race?</p>
+                        </div>
+                    </div>
+                    <div class="faqAnswer hide" id="faqAnswer2">
+                        <div class="expanderMargin"></div>
+                        <p>After buying a Team Manager from the shop, you'll have the ability to set a deck as your
+                            "Auto
+                            Run Free Race" deck.
+                            Once selected, this deck will immediately run free races as soon as the time period resets
+                            creating a steady stream of income (assuming you win, of course!).
+                            <br />
+                            <br />
+                            To set a deck as your "Auto Run Free Race" deck, select 'Decks' on the right and then select
+                            the
+                            button that says "Auto Run Free Race" by the deck you want to select. Note that this option
+                            will
+                            not be available until you buy a Team Manager.
+                        </p>
+                    </div>
+                </div>
+                <hr />
+                <div>
+                    <div>
+                        <div class="expanderMargin">
+                            <button type="button" aria-label="Expand" (click)="expandAnswer('faqAnswer3')">+</button>
+                        </div>
+                        <div class="faqQuestion">
+                            <p>What does upgrading a barn do and how do I specialize my barn?</p>
+                        </div>
+                    </div>
+                    <div class="faqAnswer hide" id="faqAnswer3">
+                        <div class="expanderMargin"></div>
+                        <p>After reaching a certain circuit rank, you will gain the ability to upgrade your barns. Every
+                            level you upgrade, you gain a multiplier for a particular stat when training. Hovering over
+                            your
+                            barn level when selecting a barn will show you your current multipliers. Increasing your
+                            barn
+                            level can be a great way to get you back in the race after breeding.
+                            <br />
+                            <br />
+                            At barn level 10, you will instead have the option to specialize. Subsequently, every 10
+                            levels
+                            will improve your specialization instead of giving a stat multiplier. The current
+                            specialization
+                            options are below.<br /><br />
+                            <strong>Training Facility - {{ lookupService.getInDepthSpecializationDescription("Training
+                                Facility") }}</strong>
+                            <br />
+                            <strong>Breeding Grounds - {{ lookupService.getInDepthSpecializationDescription("Breeding
+                                Grounds") }}</strong>
+                            <br />
+                            <strong (click)="viewSpoiler('Attraction Specialization')"
+                                [ngClass]='seeAttractionSpoiler ? "viewSpoiler" : "spoilerText"'><span
+                                    class="hidden">View
+                                    Spoiler</span> Attraction - {{
+                                lookupService.getInDepthSpecializationDescription("Attraction") }}</strong>
+                            <br />
+                            <strong (click)="viewSpoiler('Research Center Specialization')"
+                                [ngClass]='seeResearchCenterSpoiler ? "viewSpoiler" : "spoilerText"'><span
+                                    class="hidden">View Spoiler</span>Research Center - {{
+                                lookupService.getInDepthSpecializationDescription("Research Center") }}</strong>
+                        </p>
+                    </div>
+                </div>
+                <hr />
+                <div *ngIf="lookupService.isItemUnlocked('duoRace')">
+                    <div>
+                        <div class="expanderMargin">
+                            <button type="button" aria-label="Expand" (click)="expandAnswer('faqAnswer4')">+</button>
+                        </div>
+                        <div class="faqQuestion">
+                            <p>What is the Incubator? How does the Incubator Upgrade item work?</p>
+                        </div>
+                    </div>
+                    <div class="faqAnswer hide" id="faqAnswer4">
+                        <div class="expanderMargin"></div>
+                        <p>Once you've successfully completed a Duo Race, you will have access to the Incubator. The
+                            Incubator lets you select a trait for an individual animal that lets your customize your
+                            stats
+                            further.
+                            A trait increases one stat and decreases another. As you increase your Research Level by
+                            completing Duo Races, you will unlock new traits and increase the amount the traits
+                            increase/decrease your stats. Note that traits will only decrease the chosen stat by a
+                            maximum
+                            of 25%.
+                            <br />
+                            <br />
+                            The Incubator Upgrade item gives you even further control over how you build your animals
+                            and
+                            allows newer animals to quickly catch up to ones of higher breed level. After purchasing
+                            this
+                            item, every time you breed you will gain a permanent increase to the stat your trait
+                            currently
+                            is providing you. The increase amount depends on your current Research Level. For example:
+                            <br />
+                            <br />
+                            If you have a Research Level of 15 and apply the <span class="keyword">Alert</span> trait to
+                            your Horse, it will gain 15% <span class="keyword">Focus</span> and lose 15% <span
+                                class="keyword">Endurance</span> through the trait itself.
+                            <br />
+                            <em>If you have Incubator Upgrade Level 1:</em> each time you Breed your Horse, it will gain
+                            an
+                            additional modifier of .01 to its <span class="keyword">Focus</span> stat. 10% of the
+                            positive
+                            trait value of 15% would come out to .015. Incubator Upgrade Level 1 only allows for the
+                            first
+                            10% of your trait value to contribute to the modifier, so you would gain .01.
+                            <br />
+                            <em>If you have Incubator Upgrade Level 2:</em> each time you Breed your Horse, it will gain
+                            an
+                            additional modifier of .015 to its <span class="keyword">Focus</span> stat. 10% of the
+                            positive
+                            trait value of 15% would come to .015. Incubator Upgrade Level 2 allows for the first 25% of
+                            your trait value to contribute to the modifier. Because your trait value is only 15%, it
+                            will
+                            contribute in its entirety.
+                        </p>
+                    </div>
+                    <hr />
                 </div>
             </div>
-            <hr />            
+
+            <div *ngIf="currentSection === faqSectionsEnum.calculators">
+                <div>
+                    <div>
+                        <div class="expanderMargin">
+                            <button type="button" aria-label="Expand"
+                                (click)="expandAnswer('faqAnswerRenownCalculator')">+</button>
+                        </div>
+                        <div class="faqQuestion">
+                            <p>Coin gain from Renown</p>
+                        </div>
+                    </div>
+                    <div class="faqAnswer hide" id="faqAnswerRenownCalculator">
+                        <div class="expanderMargin"></div>
+                        <div><em>Enter a Renown amount to see what the modifier would be on Coins won from races.</em>
+                        </div>
+                        <br />
+                        <br />
+                        <div class="inputsAndResult">
+                            <div class="mb-3 inputs">
+                                <label for="renown-amount" class="shortLabelMargin progressionKeyword">Renown:</label>
+                                <input id="renown-amount" type="number" class="spaced" maxlength="20"
+                                    [(ngModel)]="coinGainRenownAmount">
+                            </div>
+                            <div class="result">
+                                <span>Result:</span>
+                                <div [ngClass]="{'inactiveCalculation': coinGainRenownAmount > 50}"><em>If Renown <= 50:
+                                            <span class='progressionKeyword'>{{coinGainRenownAmount}}</span></em> =
+                                    <span *ngIf="coinGainRenownAmount <= 50" class='keyword'>{{ renownCoinGain }}%
+                                        Additional Coins</span></div>
+                                <br />
+                                <div [ngClass]="{'inactiveCalculation': coinGainRenownAmount <= 50}"><em>If Renown > 50:
+                                        500 *
+                                        log(.0035 * - (<span class="progressionKeyword">{{coinGainRenownAmount}}</span>
+                                        - 50) + 1) + 50 </em> = <span class='keyword'
+                                        *ngIf="coinGainRenownAmount > 50">{{ renownCoinGain.toFixed(2) }}%
+                                        Additional Coins</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                <div *ngIf="lookupService.isItemUnlocked('duoRace')">
+                    <div>
+                        <div class="expanderMargin">
+                            <button type="button" aria-label="Expand"
+                                (click)="expandAnswer('faqAnswerIncubatorGrowthCalculator')">+</button>
+                        </div>
+                        <div class="faqQuestion">
+                            <p>Modifier gain from Incubator Upgrade</p>
+                        </div>
+                    </div>
+                    <div class="faqAnswer hide" id="faqAnswerIncubatorGrowthCalculator">
+                        <div class="expanderMargin"></div>
+                        <div class="mb-3">
+                            <div><em>Enter a Facility Level and an Incubator Upgrade Level between 1 and 4 to see what
+                                    the
+                                    modifier would be on the stat corresponding to the positive trait. This pulls from
+                                    your current resources by default.</em></div>
+                            <br />
+                            <br />
+                            <div class="inputsAndResult">
+                                <div class="inputs">
+                                    <label for="incubator-upgrade-level" class="labelMargin specialtyKeyword">Incubator
+                                        Upgrade
+                                        Level:</label>
+                                    <input id="incubator-upgrade-level" type="number" class="spaced" maxlength="20"
+                                        [(ngModel)]="incubatorUpgradeLevel">
+                                    <br />
+                                    <label for="facility-level" class="labelMargin progressionKeyword">Facility
+                                        Level:</label>
+                                    <input id="facility-level" type="number" class="spaced" maxlength="20"
+                                        [(ngModel)]="facilityLevel">
+
+                                </div>
+                                <div class="result">
+                                    <span>Result:</span>
+                                    <em><span class='progressionKeyword'>{{facilityLevel}}</span> * .001 with Incubator
+                                        Upgrade Level <span class='specialtyKeyword'>{{ incubatorUpgradeLevel
+                                            }}</span>
+                                    </em>
+                                    = <span class='keyword'>*{{ incubatorModifierAmount }} to Positive Trait Stat per
+                                        Breed
+                                        Level</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                </div>
+                <div>
+                    <div>
+                        <div class="expanderMargin">
+                            <button type="button" aria-label="Expand"
+                                (click)="expandAnswer('faqAnswerTrainingBreedXpCalculator')">+</button>
+                        </div>
+                        <div class="faqQuestion">
+                            <p>Breed XP gain from Training</p>
+                        </div>
+                    </div>
+                    <div class="faqAnswer hide" id="faqAnswerTrainingBreedXpCalculator">
+                        <div class="expanderMargin"></div>
+                        <div><em>Select an animal or enter your own values to see how much Breed XP you would gain from
+                                completing a single training. Selecting an animal pulls from their current bonuses.</em>
+                        </div>
+                        <br />
+                        <br />
+                        <div class="inputsAndResult">
+                            <div class="mb-3 inputs">
+                                <div class="dropdownSelection">
+                                    <label for="breed-xp-animal" class="keyword">Animal:</label>
+                                    <select name="breed-xp-animal" id="breed-xp-animal" class="spaced"
+                                        [(ngModel)]="selectedAnimalType" (change)="newAnimalSelected()">
+                                        <option *ngFor="let animal of availableAnimals" [value]="animal.type">
+                                            {{animal.name}}</option>
+                                    </select>
+                                </div>
+                                <em>or</em>
+                                <div>
+                                    <label for="bonus-breed-xp" class="longLabelMargin keyword">Bonus Training Breed
+                                        XP:</label>
+                                    <input id="bonus-breed-xp" type="number" (change)="animalNotSelected()"
+                                        class="spaced" maxlength="20" [(ngModel)]="bonusBreedXp">
+                                    <br />
+                                    <label for="breeding-grounds-spec-level" class="longLabelMargin keyword">Breeding
+                                        Grounds
+                                        Specialization Level:</label>
+                                    <input id="breeding-grounds-spec-level" type="number" class="spaced" maxlength="20"
+                                        [(ngModel)]="breedingGroundsSpecializationLevel">
+                                </div>
+                            </div>
+                            <div class="result">
+                                <span>Result:</span>
+                                <br />
+                                <em>(5 + <span class='keyword'>{{this.bonusBreedXp}}</span>) * (1 + <span
+                                        class='keyword'>{{breedingGroundsSpecializationLevel}}</span> * .1)
+                                </em> =
+                                <span class='keyword'>{{ trainingBreedXpGain }} XP gained after completing any
+                                    Training</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                <div>
+                    <div>
+                        <div class="expanderMargin">
+                            <button type="button" aria-label="Expand"
+                                (click)="expandAnswer('faqAnswerBarnSpecializationGainCalculator')">+</button>
+                        </div>
+                        <div class="faqQuestion">
+                            <p>Barn Specialization Calculator</p>
+                        </div>
+                    </div>
+                    <div class="faqAnswer hide" id="faqAnswerBarnSpecializationGainCalculator">
+                        <div class="expanderMargin"></div>
+                        <div class="mb-3">
+                            <div><em>Select a Specialization Type and enter the Barn Upgrade Level or Specialization
+                                    Level to see what impact that specialization would have. Specialization Level
+                                    corresponds Barn Upgrade Level * 10 because your specialization improves every 10
+                                    barn upgrade levels.</em></div>
+                            <br />
+                            <br />
+                            <div class="inputsAndResult">
+                                <div class="inputs">
+                                    <label for="specialization-options" class="keyword">Specialization:</label>
+                                    <select name="specialization-options" class="spaced" id="specialization-options"
+                                        [(ngModel)]="selectedSpecialization">
+                                        <option [value]="1">Breeding Grounds</option>
+                                        <option [value]="2">Training Facility</option>
+                                        <option *ngIf="seeAttractionSpoiler" [value]="3">Attraction</option>
+                                        <option *ngIf="seeResearchCenterSpoiler" [value]="4">Research Center</option>
+                                    </select>
+                                    <br />
+                                    <br />
+                                    <div>
+                                        <label for="barn-upgrade-level" class="labelMargin keyword">Barn Upgrade
+                                            Level:</label>
+                                        <input id="barn-upgrade-level" type="number" (change)="changeBarnUpgradeLevel()"
+                                            class="spaced" maxlength="20" [(ngModel)]="barnUpgradeLevel">
+                                        <br />
+                                        <em>or</em>
+                                        <br />
+                                        <label for="barn-specialization-level" class="labelMargin keyword">Barn
+                                            Specialization Level:</label>
+                                        <input id="barn-specialization-level" type="number"
+                                            (change)="changeBarnSpecializationLevel()" class="spaced" maxlength="20"
+                                            [(ngModel)]="barnSpecializationLevel">
+                                    </div>
+                                </div>
+                                <div class="result">
+                                    <span>Result:</span>
+                                    <br />
+                                    <span [innerHTML]="barnSpecializationLevelAmount"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+            </div>
         </div>
     </div>
 </div>

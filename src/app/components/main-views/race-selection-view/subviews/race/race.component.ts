@@ -63,7 +63,7 @@ export class RaceComponent implements OnInit {
   eventRaceSubscription: any;
 
   constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private utilityService: UtilityService,
-    private lookupService: LookupService, private initializeService: InitializeService, private modalService: NgbModal,
+    public lookupService: LookupService, private initializeService: InitializeService, private modalService: NgbModal,
     private sanitizer: DomSanitizer, private raceLogicService: RaceLogicService) { }
 
   ngOnInit(): void {

@@ -37,7 +37,7 @@
         <p *ngFor="let specialty of specialtyItems;">            
             <span [ngbPopover]="specialityContent"
             triggers="mouseenter:mouseleave" popoverClass="popoverClass" class="screenMarginLeft">
-            <span class='specialityKeyword'>{{ specialty.name }}</span> <span class="rightAligned"> x {{ specialty.amount }}</span>
+            <span class='specialtyKeyword'>{{ specialty.name }}</span> <span class="rightAligned"> x {{ specialty.amount }}</span>
             <hr class="miniHr" />
         </span>
         <ng-template #specialityContent>

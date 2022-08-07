@@ -16,6 +16,22 @@ export class SpecializationService {
   constructor(private globalService: GlobalService, private utilityService: UtilityService, private lookupService: LookupService) { }
 
   getSpecializationPopoverText(specialization: BarnSpecializationEnum, specializationLevel: number) {
+    var specializationText = "";
+
+    if (specialization === BarnSpecializationEnum.TrainingFacility) {
+      if (specializationLevel <= 20)
+      specializationText = "Training Time Reduction: " + specializationLevel + "%<br/>";
+    else
+      specializationText = "Training Time Reduction: 20%<br/> All Stat Multiplier: " + ((specializationLevel - 20) / 10) + "<br/>";
+    }
+
+    if (specialization === BarnSpecializationEnum.BreedingGrounds) {
+      var breedingGroundsModifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "breedingGroundsSpecializationModifier");
+      if (breedingGroundsModifierPair !== null && breedingGroundsModifierPair !== undefined) {
+        specializationText = "Training Breed XP Multipler: " + (specializationLevel * (breedingGroundsModifierPair.value * 100)) + "%<br/>";
+      }
+    }
+
     if (specialization === BarnSpecializationEnum.Attraction) {
       var timeToCollect = 60;
       var timeToCollectPair = this.globalService.globalVar.modifiers.find(item => item.text === "attractionTimeToCollectModifier");
@@ -32,7 +48,7 @@ export class SpecializationService {
         }
       }
 
-      return "Amount Earned: " + amountEarned + " Coins / " + timeToCollect + " seconds\n";
+      specializationText = "Amount Earned: " + amountEarned + " Coins / " + timeToCollect + " seconds<br/>";
     }
     else if (specialization === BarnSpecializationEnum.ResearchCenter) {
       //this needs to mirror the logic on how it actually calculates
@@ -54,7 +70,7 @@ export class SpecializationService {
       else
         trainingAnimalStatRatio = maxStatGain.value;
 
-      var text = "Training Animal Stat Gain: " + ((trainingAnimalStatRatio) * 100).toFixed(0) + "%\n";
+      var text = "Training Animal Stat Gain: " + ((trainingAnimalStatRatio) * 100).toFixed(0) + "%<br />";
 
       var totalStudyingAnimals = (totalPercentStatGain - (maxStatGain.value - trainingAnimalDefault.value)) /
         (maxStatGain.value - studyingAnimalDefault.value);
@@ -63,21 +79,25 @@ export class SpecializationService {
       if (totalStudyingAnimals > 0) {
 
         if (Math.floor(totalStudyingAnimals) > 0)
-          text += "Additional Studying Animal Stat Gain (x" + Math.floor(totalStudyingAnimals) + "): " + ((maxStatGain.value) * 100).toFixed(0) + "%\n";
+          text += "Additional Studying Animal Stat Gain (x" + Math.floor(totalStudyingAnimals) + "): " + ((maxStatGain.value) * 100).toFixed(0) + "%<br />";
 
         if (totalStudyingAnimals > Math.floor(totalStudyingAnimals)) {
           var studyingAnimalStatRatio = (totalStudyingAnimals - Math.floor(totalStudyingAnimals)) * (maxStatGain.value - studyingAnimalDefault.value);
-          text += "Additional Studying Animal Stat Gain: " + ((studyingAnimalStatRatio + studyingAnimalDefault.value) * 100).toFixed(0) + "%\n";
+          text += "Additional Studying Animal Stat Gain: " + ((studyingAnimalStatRatio + studyingAnimalDefault.value) * 100).toFixed(0) + "%<br />";
         }
       }
       else {
-        text += "Additional Studying Animal Stat Gain: " + (studyingAnimalDefault.value * 100).toFixed(0) + "%\n";
+        text += "Additional Studying Animal Stat Gain: " + (studyingAnimalDefault.value * 100).toFixed(0) + "%<br />";
       }
 
-      return text;
+      specializationText = text;
     }
 
-    return "";
+    var sanitizedText = this.utilityService.getSanitizedHtml(specializationText);
+    if (sanitizedText !== null && sanitizedText !== undefined)
+      specializationText = sanitizedText;
+
+    return specializationText;
   }
 
   handleResearchCenterStatIncrease(animal: Animal, researchCenter: Barn) {
