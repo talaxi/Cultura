@@ -75,8 +75,8 @@ export class GlobalService {
     this.globalVar.freeRaceCounter = 0;
     this.globalVar.freeRaceTimePeriodCounter = 0;
     this.globalVar.lastTimeStamp = Date.now();
-    this.globalVar.currentVersion = 1.07; //TODO: this needs to be automatically increased or something, too easy to forget
-    this.globalVar.startingVersion = 1.07;
+    this.globalVar.currentVersion = 1.08; //TODO: this needs to be automatically increased or something, too easy to forget
+    this.globalVar.startingVersion = 1.08;
     this.globalVar.startDate = new Date();
     this.globalVar.notifications = new Notifications();
 
@@ -1370,6 +1370,19 @@ export class GlobalService {
 
       returnVal = [amount + " Headband", "Equipment can be handled when viewing an animal from the Animals tab."];
 
+      var coinAmount = 1000;
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(9) + coinAmount + " Coins";
+    }
+    else if (numericValue === 9) {
+      var amount = 1000;
+      var resource = this.globalVar.resources.find(item => item.name === "Coins");
+      if (resource === null || resource === undefined)
+        this.globalVar.resources.push(new ResourceValue("Coins", amount));
+      else
+        resource.amount += amount;
+
+      returnVal = [amount + " Coins", ""];
+
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(10) + "Dolphin";
     }
     else if (numericValue === 10) {
@@ -1461,6 +1474,19 @@ export class GlobalService {
       this.increaseAllFood(amount);
 
       returnVal = [amount + " Stat Increasing Food", amount + " Apples, Bananas, Oranges, Turnips, Carrots, and Strawberries"];
+
+      var coinAmount = 1500;
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(23) + coinAmount + " Coins";
+    }
+    else if (numericValue === 23) {
+      var amount = 1500;
+      var resource = this.globalVar.resources.find(item => item.name === "Coins");
+      if (resource === null || resource === undefined)
+        this.globalVar.resources.push(new ResourceValue("Coins", amount));
+      else
+        resource.amount += amount;
+
+      returnVal = [amount + " Coins", ""];
 
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(25) + "Research Center Specialization";
     }
@@ -2230,7 +2256,7 @@ export class GlobalService {
 
     var numericRank = this.GetCircuitRankValue(monoRank);
     var CoinsFactor = 1.01;
-    var baseCoins = 30;
+    var baseCoins = 60;
 
     var baseRenown = 1.1;
     var renownFactor = 1.03;
@@ -2247,7 +2273,7 @@ export class GlobalService {
 
     var numericRank = this.GetCircuitRankValue(duoRank);
     var CoinsFactor = 1.01;
-    var baseCoins = 100;
+    var baseCoins = 125;
 
     var baseRenown = 1.1;
     var renownFactor = 1.03;
@@ -2486,9 +2512,9 @@ export class GlobalService {
 
     var baseMeters = 90;
     var factor = 1.125;
-    var additiveAmount = 40 * numericalRank;
+    var additiveAmount = 30 * numericalRank;
     if (numericalRank >= 11)
-      additiveAmount = 70 * numericalRank;
+      additiveAmount = 65 * numericalRank;
 
     var maxRandomFactor = 1.05;
     var minRandomFactor = 0.8;
@@ -2547,12 +2573,12 @@ export class GlobalService {
       legLengthCutoff = timeToComplete / 6;
 
       var availableCourses: RaceCourseTypeEnum[] = [];
-      if (numericalRank < 37) {
+      if (numericalRank < 45) {
         availableCourses.push(RaceCourseTypeEnum.Flatland);
         availableCourses.push(RaceCourseTypeEnum.Mountain);
         availableCourses.push(RaceCourseTypeEnum.Ocean);
       }
-      else if (numericalRank < 47) {
+      else if (numericalRank < 53) {
         availableCourses.push(RaceCourseTypeEnum.Flatland);
         availableCourses.push(RaceCourseTypeEnum.Mountain);
         availableCourses.push(RaceCourseTypeEnum.Ocean);
@@ -3911,7 +3937,7 @@ export class GlobalService {
     }*/
 
     //breed level 250
-    var horse = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Horse);
+    /*var horse = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Horse);
     if (horse !== undefined) {
       horse.currentStats.topSpeed = 2000;
       horse.currentStats.acceleration = 2000;
@@ -4031,12 +4057,12 @@ export class GlobalService {
 
     var penguin = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Penguin);
     if (penguin !== undefined) {
-      penguin.currentStats.topSpeed = 60;
+      penguin.currentStats.topSpeed = 600;
       penguin.currentStats.acceleration = 200;
       penguin.currentStats.endurance = 50;
       penguin.currentStats.power = 2000;
       penguin.currentStats.focus = 200;
-      penguin.currentStats.adaptability = 20;
+      penguin.currentStats.adaptability = 200;
       penguin.incubatorStatUpgrades.powerModifier = 1;
       penguin.breedLevel = 250;
       this.calculateAnimalRacingStats(penguin);
@@ -4078,10 +4104,10 @@ export class GlobalService {
       fox.breedLevel = 250;
       fox.incubatorStatUpgrades.powerModifier = 1;
       this.calculateAnimalRacingStats(fox);
-    }
+    }*/
 
     //Breed Lvl 1000, power focused
-    /*var horse = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Horse);
+    var horse = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Horse);
     if (horse !== undefined) {
       horse.currentStats.topSpeed = 2000;
       horse.currentStats.acceleration = 2000;
@@ -4250,6 +4276,6 @@ export class GlobalService {
       fox.breedLevel = 2000;
       fox.incubatorStatUpgrades.powerModifier = 5;
       this.calculateAnimalRacingStats(fox);
-    }*/
+    }
   }
 }

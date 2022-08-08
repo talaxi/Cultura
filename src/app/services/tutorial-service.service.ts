@@ -46,7 +46,7 @@ export class TutorialService {
     {
       tutorialState.tutorialText = "Here you can get a breakdown on the status of your animals. Here's your horse along with all of the stat information we just went over. If you need a refresher, hover over any of the stats to see what they do. Check back here often as you proceed to assign new abilities and items to your animals, as well as breeding them to gain even faster offspring.\n\n" +
       "Now that your horse has had time to take a few practice laps, let's see if they have what it takes to win a race!\n\n" +
-      "<b>Select the 'Race' option on the right bordered in red.</b>";
+      "<b>Select the 'Race' option on the right (or in the menu if on mobile) bordered in red.</b>";
       tutorialState.associatedTab = NavigationEnum.animals;
     }
     if (id === 4)

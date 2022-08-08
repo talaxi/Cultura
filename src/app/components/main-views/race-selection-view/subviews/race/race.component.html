@@ -2,10 +2,10 @@
     <div class="bothDisplayValues" *ngIf="displayVisualRace && displayTextUpdates">
         <div class="headerInfo">
             <div><button *ngIf="!grandPrixRace" (click)="skipRaceAnimation()">Skip</button></div>
-            <div>Velocity: {{ velocityAtCurrentFrame }} / {{ maxSpeedAtCurrentFrame }}m/s <span
+            <div><span class="mobileVersion">Vel:</span><span class="webVersion">Velocity:</span> {{ velocityAtCurrentFrame }} / {{ maxSpeedAtCurrentFrame }}m/s <span
                     *ngIf="racerEffectAtCurrentFrame === burstEffect">BURST!</span></div>
-            <div>Stamina: {{ staminaAtCurrentFrame }}%</div>
-            <div>Position: {{ positionAtCurrentFrame }} / {{ totalRacers }}</div>
+            <div><span class="mobileVersion">Stam:</span><span class="webVersion">Stamina:</span> {{ staminaAtCurrentFrame }}%</div>
+            <div><span class="mobileVersion">Pos:</span><span class="webVersion">Position:</span> {{ positionAtCurrentFrame }} / {{ totalRacers }}</div>
             <div><button *ngIf="!grandPrixRace" (click)="pauseRaceAnimation()">Pause</button></div>
         </div>
         <div class="updates">
@@ -33,8 +33,10 @@
         <!--Draw Only-->
         <div class="individualItemHeaderInfo">
             <div><button *ngIf="!grandPrixRace" (click)="skipRaceAnimation()">Skip</button></div>
-            <div>Velocity: {{ velocityAtCurrentFrame }} / {{ maxSpeedAtCurrentFrame }}m/s </div>
-            <div>Stamina: {{ staminaAtCurrentFrame }}%</div>
+            <div><span class="mobileVersion">Vel:</span><span class="webVersion">Velocity:</span> {{ velocityAtCurrentFrame }} / {{ maxSpeedAtCurrentFrame }}m/s <span
+                *ngIf="racerEffectAtCurrentFrame === burstEffect">BURST!</span> </div>
+            <div><span class="mobileVersion">Stam:</span><span class="webVersion">Stamina:</span> {{ staminaAtCurrentFrame }}%</div>
+            <div><span class="mobileVersion">Pos:</span><span class="webVersion">Position:</span> {{ positionAtCurrentFrame }} / {{ totalRacers }}</div>
             <div><button *ngIf="!grandPrixRace" (click)="pauseRaceAnimation()">Pause</button></div>
         </div>
         <div class="drawRace onlyDraw">

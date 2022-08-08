@@ -108,7 +108,7 @@ export class SelectedAnimalComponent implements OnInit {
   }
 
   constructor(private lookupService: LookupService, private modalService: NgbModal, private globalService: GlobalService,
-    private componentCommunicationService: ComponentCommunicationService, private utilityService: UtilityService, 
+    private componentCommunicationService: ComponentCommunicationService, private utilityService: UtilityService,
     private gameLoopService: GameLoopService) { }
 
   ngOnInit(): void {
@@ -139,23 +139,26 @@ export class SelectedAnimalComponent implements OnInit {
 
     if (this.selectedAnimal.breedGaugeXp < this.selectedAnimal.breedGaugeMax)
       canBreed = false;
-    
+
     return canBreed;
   }
 
   breed(): void {
-    this.globalService.BreedAnimal(this.selectedAnimal);
+    if (!this.globalService.globalVar.showBreedWarning || confirm("Breeding will increase your base stat modifiers at the cost of resetting your base stats to their default values. You should do this when you have raced as far as you can without breeding or you have the time to spend to train your stats back. Continue?")) {
+      this.globalService.globalVar.showBreedWarning = false;
+      this.globalService.BreedAnimal(this.selectedAnimal);
 
-    this.maxSpeedModifierAmount = this.lookupService.getMaxSpeedModifierByAnimalType(this.selectedAnimal.type);
-    this.accelerationModifierAmount = this.lookupService.getAccelerationModifierByAnimalType(this.selectedAnimal.type);
-    this.staminaModifierAmount = this.lookupService.getStaminaModifierByAnimalType(this.selectedAnimal.type);
-    this.powerModifierAmount = this.lookupService.getPowerModifierByAnimalType(this.selectedAnimal.type);
-    this.focusModifierAmount = this.lookupService.getFocusModifierByAnimalType(this.selectedAnimal.type);
-    this.adaptabilityModifierAmount = this.lookupService.getAdaptabilityModifierByAnimalType(this.selectedAnimal.type);
-    this.diminishingReturnsAmount = this.globalService.GetAnimalDiminishingReturns(this.selectedAnimal);
+      this.maxSpeedModifierAmount = this.lookupService.getMaxSpeedModifierByAnimalType(this.selectedAnimal.type);
+      this.accelerationModifierAmount = this.lookupService.getAccelerationModifierByAnimalType(this.selectedAnimal.type);
+      this.staminaModifierAmount = this.lookupService.getStaminaModifierByAnimalType(this.selectedAnimal.type);
+      this.powerModifierAmount = this.lookupService.getPowerModifierByAnimalType(this.selectedAnimal.type);
+      this.focusModifierAmount = this.lookupService.getFocusModifierByAnimalType(this.selectedAnimal.type);
+      this.adaptabilityModifierAmount = this.lookupService.getAdaptabilityModifierByAnimalType(this.selectedAnimal.type);
+      this.diminishingReturnsAmount = this.globalService.GetAnimalDiminishingReturns(this.selectedAnimal);
 
-    this.breedLevelPopover = this.lookupService.getBreedLevelPopover(this.selectedAnimal.breedLevel);
-    this.abilityLevelMaxedOut = this.isAbilityLevelMaxedOut();
+      this.breedLevelPopover = this.lookupService.getBreedLevelPopover(this.selectedAnimal.breedLevel);
+      this.abilityLevelMaxedOut = this.isAbilityLevelMaxedOut();
+    }
   }
 
   editName(): void {

@@ -79,6 +79,7 @@ export class GlobalVariables {
     currentVersion: number;
     startingVersion: number;
     startDate: Date;
+    showBreedWarning = true;
 
 
     constructor(existingVariables?: GlobalVariables) {

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AnimalTypeEnum } from '../models/animal-type-enum.model';
 import { GrandPrixData } from '../models/races/event-race-data.model';
+import { ResourceValue } from '../models/resources/resource-value.model';
 import { ShopItemTypeEnum } from '../models/shop-item-type-enum.model';
 import { ShopItem } from '../models/shop/shop-item.model';
 import { Tutorials } from '../models/tutorials.model';
@@ -8,16 +9,17 @@ import { Notifications } from '../models/utility/notifications.model';
 import { StringNumberPair } from '../models/utility/string-number-pair.model';
 import { GlobalService } from './global-service.service';
 import { LookupService } from './lookup.service';
+import { UtilityService } from './utility/utility.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class VersionControlService {
 
-  constructor(private globalService: GlobalService, private lookupService: LookupService) { }
+  constructor(private globalService: GlobalService, private lookupService: LookupService, private utilityService: UtilityService) { }
 
   //add to this in descending order
-  gameVersions = [1.07, 1.06, 1.05, 1.04, 1.03, 1.02, 1.01, 1.00];
+  gameVersions = [1.08, 1.07, 1.06, 1.05, 1.04, 1.03, 1.02, 1.01, 1.00];
 
   getListAscended() {
     var ascendedList: number[] = [];
@@ -87,6 +89,14 @@ export class VersionControlService {
     if (version === 1.07)
       changes = "Sectioned out FAQs, added calculators to make planning easier.\n\n" +
         "Various minor bug fixes and UI improvements.";
+    if (version === 1.08)
+      changes = "Increased coin gain from Mono and Duo races. \n\n" +
+        "Adjusted free races so that new course types do not show up until you've completed a circuit rank with that type. \n\n" +
+        "Added circuit rank up reward for 1000 coins at rank 9 and 1500 coins at rank 23." +
+        "<ul><li>Those who have already passed these ranks will immediately receive these coins.</li></ul>\n" +
+        "Made Acceleration coaching slightly easier. \n\n" +
+        "Added warning before first Breed to better explain what will happen.\n\n" +
+        "Minor UI improvements for mobile."
 
     return changes;
   }
@@ -109,6 +119,8 @@ export class VersionControlService {
       date = new Date('2022-08-04 12:00:00');
     if (version === 1.07)
       date = new Date('2022-08-06 12:00:00');
+    if (version === 1.08)
+      date = new Date('2022-08-07 12:00:00');
 
     return date.toDateString().replace(/^\S+\s/, '');
   }
@@ -427,6 +439,31 @@ export class VersionControlService {
             var otherOccurrence = this.globalService.globalVar.resources.find(item => item.name === "Blue Baton");
             if (otherOccurrence !== undefined)
               otherOccurrence.amount = blueBatonTotalAmount;
+          }
+        }
+        else if (version === 1.08) {
+          this.globalService.globalVar.showBreedWarning = false;
+          if (this.globalService.globalVar.tutorials === undefined)
+            this.globalService.globalVar.tutorials = new Tutorials();
+
+          if (this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.circuitRank) > 9)
+          {
+            var amount = 1000;
+            var resource = this.globalService.globalVar.resources.find(item => item.name === "Coins");
+            if (resource === null || resource === undefined)
+              this.globalService.globalVar.resources.push(new ResourceValue("Coins", amount));
+            else
+              resource.amount += amount;
+          }
+
+          if (this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.circuitRank) > 23)
+          {
+            var amount = 1500;
+            var resource = this.globalService.globalVar.resources.find(item => item.name === "Coins");
+            if (resource === null || resource === undefined)
+              this.globalService.globalVar.resources.push(new ResourceValue("Coins", amount));
+            else
+              resource.amount += amount;
           }
         }
 

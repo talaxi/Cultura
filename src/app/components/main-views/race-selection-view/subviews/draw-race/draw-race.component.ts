@@ -1307,7 +1307,7 @@ export class DrawRaceComponent implements OnInit {
     var wave1BezierX3 = wave1FinishPointX - horizontalWaveLength / 3;
     var wave1BezierY3 = wave1FinishPointY - (waveHeight / 10);
     var wave1BezierX4 = wave1FinishPointX - horizontalWaveLength / 3;
-    var wave1BezierY4 = wave1FinishPointY + (2 / 5) * waveHeight;
+    var wave1BezierY4 = wave1FinishPointY + (3 / 5) * waveHeight;
     var wave1FinishPoint2X = wave1FinishPointX;
     var wave1FinishPoint2Y = startingY;
 
@@ -1332,7 +1332,7 @@ export class DrawRaceComponent implements OnInit {
     var wave2BezierX3 = wave2FinishPointX - horizontalWaveLength / 3;
     var wave2BezierY3 = wave2FinishPointY - (waveHeight / 10);
     var wave2BezierX4 = wave2FinishPointX - horizontalWaveLength / 3;
-    var wave2BezierY4 = wave2FinishPointY + (2 / 5) * waveHeight;
+    var wave2BezierY4 = wave2FinishPointY + (3 / 5) * waveHeight;
     var wave2FinishPoint2X = wave2FinishPointX;
     var wave2FinishPoint2Y = startingY;
 
@@ -1357,7 +1357,7 @@ export class DrawRaceComponent implements OnInit {
     var wave3BezierX3 = wave3FinishPointX - horizontalWaveLength / 3;
     var wave3BezierY3 = wave3FinishPointY - (waveHeight / 10);
     var wave3BezierX4 = wave3FinishPointX - horizontalWaveLength / 3;
-    var wave3BezierY4 = wave3FinishPointY + (2 / 5) * waveHeight;
+    var wave3BezierY4 = wave3FinishPointY + (3 / 5) * waveHeight;
     var wave3FinishPoint2X = wave3FinishPointX;
     var wave3FinishPoint2Y = startingY;
 

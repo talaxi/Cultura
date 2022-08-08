@@ -204,6 +204,8 @@ export class RaceComponent implements OnInit {
     this.rewardRows = [];
 
     var maxColumns = 4;
+    if (window.matchMedia("only screen and (max-width: 760px)").matches) //mobile check
+      maxColumns = 2;
 
     if (race.rewards === undefined || race.rewards === null)
       return;
@@ -218,7 +220,7 @@ export class RaceComponent implements OnInit {
 
     if (this.rewardCells.length !== 0)
       this.rewardRows.push(this.rewardCells);
-  }
+  }  
 
   goToRaceSelection(): void {
     this.raceFinished.emit(true);

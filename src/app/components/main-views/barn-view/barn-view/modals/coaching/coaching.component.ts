@@ -485,7 +485,7 @@ export class CoachingComponent implements OnInit {
     var offsetX = this.canvasWidth * .1;
     var offsetY = this.canvasHeight * .1;
 
-    var numberOfDropOffs = 11;
+    var numberOfDropOffs = 9;
     var availableWidth = this.canvasWidth - (2 * offsetX);
     var availableHeight = this.canvasHeight - (2 * offsetY);
 
@@ -500,18 +500,14 @@ export class CoachingComponent implements OnInit {
     linePoints.push([4 * availableWidth / numberOfDropOffs + offsetX, 6 * availableHeight / numberOfDropOffs + offsetY]);
     linePoints.push([4 * availableWidth / numberOfDropOffs + offsetX, 8 * availableHeight / numberOfDropOffs + offsetY]);
     linePoints.push([5 * availableWidth / numberOfDropOffs + offsetX, 8 * availableHeight / numberOfDropOffs + offsetY]);
-    linePoints.push([5 * availableWidth / numberOfDropOffs + offsetX, 10 * availableHeight / numberOfDropOffs + offsetY]);
-    linePoints.push([6 * availableWidth / numberOfDropOffs + offsetX, 10 * availableHeight / numberOfDropOffs + offsetY]);
-    linePoints.push([6 * availableWidth / numberOfDropOffs + offsetX, 8 * availableHeight / numberOfDropOffs + offsetY]);
-    linePoints.push([7 * availableWidth / numberOfDropOffs + offsetX, 8 * availableHeight / numberOfDropOffs + offsetY]);
-    linePoints.push([7 * availableWidth / numberOfDropOffs + offsetX, 6 * availableHeight / numberOfDropOffs + offsetY]);
-    linePoints.push([8 * availableWidth / numberOfDropOffs + offsetX, 6 * availableHeight / numberOfDropOffs + offsetY]);
-    linePoints.push([8 * availableWidth / numberOfDropOffs + offsetX, 4 * availableHeight / numberOfDropOffs + offsetY]);
-    linePoints.push([9 * availableWidth / numberOfDropOffs + offsetX, 4 * availableHeight / numberOfDropOffs + offsetY]);
-    linePoints.push([9 * availableWidth / numberOfDropOffs + offsetX, 2 * availableHeight / numberOfDropOffs + offsetY]);
-    linePoints.push([10 * availableWidth / numberOfDropOffs + offsetX, 2 * availableHeight / numberOfDropOffs + offsetY]);
-    linePoints.push([10 * availableWidth / numberOfDropOffs + offsetX, offsetY]);
-    linePoints.push([11 * availableWidth / numberOfDropOffs + offsetX, offsetY]);
+    linePoints.push([5 * availableWidth / numberOfDropOffs + offsetX, 6 * availableHeight / numberOfDropOffs + offsetY]);
+    linePoints.push([6 * availableWidth / numberOfDropOffs + offsetX, 6 * availableHeight / numberOfDropOffs + offsetY]);
+    linePoints.push([6 * availableWidth / numberOfDropOffs + offsetX, 4 * availableHeight / numberOfDropOffs + offsetY]);
+    linePoints.push([7 * availableWidth / numberOfDropOffs + offsetX, 4 * availableHeight / numberOfDropOffs + offsetY]);
+    linePoints.push([7 * availableWidth / numberOfDropOffs + offsetX, 2 * availableHeight / numberOfDropOffs + offsetY]);
+    linePoints.push([8 * availableWidth / numberOfDropOffs + offsetX, 2 * availableHeight / numberOfDropOffs + offsetY]);
+    linePoints.push([8 * availableWidth / numberOfDropOffs + offsetX, offsetY]);
+    linePoints.push([9 * availableWidth / numberOfDropOffs + offsetX, offsetY]);
 
     for (var i = 1; i < linePoints.length; i++) {
       context.beginPath();
