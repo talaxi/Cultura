@@ -565,7 +565,7 @@ export class VersionControlService {
             if (attractionAmountModifier !== undefined)
               attractionAmountModifier.value = 20;   
               
-            this.globalService.stopGrandPrixRace();
+            //this.globalService.stopGrandPrixRace();
           }
         }
 
