@@ -1300,7 +1300,7 @@ export class GlobalService {
       returnVal = ["Mono Race", this.utilityService.getSanitizedHtml("A new race type has been unlocked!" +
         " Take part in a Mono Race where you run an extended race as only one course type. Progressing through this race type " +
         "generates new interest in your facility, which means it's time to make some upgrades. Gain Facility Level points from winning these races that increase your Diminishing Returns max value. <br/> <br/>" +
-      "<em>Select this race and others like it by choosing the 'Special Race' option from the 'Races' menu.</em>")];
+        "<em>Select this race and others like it by choosing the 'Special Race' option from the 'Races' menu.</em>")];
 
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(3) + "Monkey";
     }
@@ -1575,8 +1575,8 @@ export class GlobalService {
         }
       }
 
-      returnVal = ["Penguin", "The Penguin is a Tundra racing animal that can slide carefully or recklessly.<br/><br/>" + 
-      this.utilityService.getSanitizedHtml("<em>" + this.getTundraDescription() + "</em>")];
+      returnVal = ["Penguin", "The Penguin is a Tundra racing animal that can slide carefully or recklessly.<br/><br/>" +
+        this.utilityService.getSanitizedHtml("<em>" + this.getTundraDescription() + "</em>")];
 
       var CoinsAmount = 3500;
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(37) + CoinsAmount + " Coins";
@@ -1641,8 +1641,8 @@ export class GlobalService {
         }
       }
 
-      returnVal = ["Salamander", "The Salamander is a Volcanic racing animal that can burrow underground to avoid lava and continously increase acceleration.<br/><br/>" + 
-      this.utilityService.getSanitizedHtml("<em>" + this.getVolcanicDescription() + "</em>")];
+      returnVal = ["Salamander", "The Salamander is a Volcanic racing animal that can burrow underground to avoid lava and continously increase acceleration.<br/><br/>" +
+        this.utilityService.getSanitizedHtml("<em>" + this.getVolcanicDescription() + "</em>")];
 
       var renownAmount = 10;
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(47) + renownAmount + " Renown";
@@ -2181,17 +2181,20 @@ export class GlobalService {
   }
 
   stopGrandPrixRace() {
-    this.globalVar.eventRaceData.animalData.forEach(item => {
-      item.isCurrentlyRacing = false;
-    });
+    if (this.globalVar.eventRaceData !== null && this.globalVar.eventRaceData !== undefined) {
+      this.globalVar.eventRaceData.animalData.forEach(item => {
+        item.isCurrentlyRacing = false;
+      });
 
-    this.globalVar.eventRaceData.isLoading = false;
-    this.globalVar.eventRaceData.animalAlreadyPrepped = false;
-    this.globalVar.eventRaceData.isRunning = false;
-    this.globalVar.eventRaceData.isCatchingUp = false;
-    this.globalVar.eventRaceData.overallTimeCounter -= this.globalVar.eventRaceData.segmentTimeCounter;
-    this.globalVar.eventRaceData.segmentTimeCounter = 0;
-    this.globalVar.eventRaceData.currentRaceSegment.reduceExportSize();
+      this.globalVar.eventRaceData.isLoading = false;
+      this.globalVar.eventRaceData.animalAlreadyPrepped = false;
+      this.globalVar.eventRaceData.isRunning = false;
+      this.globalVar.eventRaceData.isCatchingUp = false;
+      this.globalVar.eventRaceData.overallTimeCounter -= this.globalVar.eventRaceData.segmentTimeCounter;
+      this.globalVar.eventRaceData.segmentTimeCounter = 0;
+      if (this.globalVar.eventRaceData.currentRaceSegment !== undefined)
+        this.globalVar.eventRaceData.currentRaceSegment.reduceExportSize();
+    }
   }
 
   GetCircuitRankValue(circuitRank: string): number {
@@ -2709,7 +2712,7 @@ export class GlobalService {
     return totalSegments;
   }
 
-  initialGrandPrixSetup(rank: string) {      
+  initialGrandPrixSetup(rank: string) {
     this.globalVar.eventRaceData = new GrandPrixData();
     this.globalVar.eventRaceData.rank = rank;
     var numericRankValue = this.utilityService.getNumericValueOfCircuitRank(rank);
@@ -2760,8 +2763,7 @@ export class GlobalService {
           }
         }
       }
-      else
-      {
+      else {
         eventDeck.selectedAnimals.forEach(item => {
           availableOptions.push(item);
         });
