@@ -19,6 +19,8 @@ export class UtilityService {
   }
 
   getRandomInteger(min: number, max: number): number {
+    min -= .500000001;
+    max += .499999999;
     return Math.round((Math.random() * (max - min) + min));
   }
 
@@ -150,7 +152,12 @@ export class UtilityService {
   }
 
   getSanitizedHtml(text: string) {
-    return this.sanitizer.sanitize(SecurityContext.HTML, this.sanitizer.bypassSecurityTrustHtml(text));
+    var sanitizedHtml = this.sanitizer.sanitize(SecurityContext.HTML, this.sanitizer.bypassSecurityTrustHtml(text));
+
+    if (sanitizedHtml === null)
+      return "";
+    
+    return sanitizedHtml;
   }
 
   //brighten(positive percent) or darken(negative percent) colors -- see https://stackoverflow.com/questions/5560248/programmatically-lighten-or-darken-a-hex-color-or-rgb-and-blend-colors

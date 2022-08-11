@@ -5,6 +5,7 @@ import { Race } from 'src/app/models/races/race.model';
 import { ComponentCommunicationService } from 'src/app/services/component-communication.service';
 import { GameLoopService } from 'src/app/services/game-loop/game-loop.service';
 import { GlobalService } from 'src/app/services/global-service.service';
+import { LookupService } from 'src/app/services/lookup.service';
 
 @Component({
   selector: 'app-race-selection-view',
@@ -24,14 +25,14 @@ export class RaceSelectionViewComponent implements OnInit {
   communicationSubscription: any;
 
   constructor(private globalService: GlobalService, private componentCommunicationService: ComponentCommunicationService,
-    private gameLoopService: GameLoopService) { }
+    private gameLoopService: GameLoopService, private lookupService: LookupService) { }
 
   ngOnInit(): void {
     this.componentCommunicationService.setNewView(NavigationEnum.raceselection);
 
     this.subscription = this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {
-      this.newSpecialRaceAvailable = this.globalService.globalVar.notifications.isNewSpecialRaceAvailable;
-      this.eventRaceNowAvailable = this.globalService.globalVar.notifications.isEventRaceNowActive;
+      this.newSpecialRaceAvailable = this.globalService.globalVar.notifications.isNewSpecialRaceAvailable && (this.globalService.globalVar.tutorials.tutorialCompleted || this.globalService.globalVar.tutorials.currentTutorialId > 9);
+      this.eventRaceNowAvailable = this.globalService.globalVar.notifications.isEventRaceNowActive && this.lookupService.isItemUnlocked("grandPrix") && (this.globalService.globalVar.tutorials.tutorialCompleted || this.globalService.globalVar.tutorials.currentTutorialId > 9);
     });
 
     this.communicationSubscription = this.componentCommunicationService.getRaceView().subscribe((value) => {

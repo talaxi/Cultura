@@ -40,6 +40,8 @@ import { AnimalEventRaceData } from '../models/animals/animal-event-race-data.mo
 import { Notifications } from '../models/utility/notifications.model';
 import { WeatherEnum } from '../models/weather-enum.model';
 import { TalentTreeTypeEnum } from '../models/talent-tree-type-enum.model';
+import { DrawnRaceObject } from '../models/races/drawn-race-objects.model';
+import { DrawnRaceObjectEnum } from '../models/drawn-race-object-enum.model';
 
 @Injectable({
   providedIn: 'root'
@@ -75,8 +77,8 @@ export class GlobalService {
     this.globalVar.freeRaceCounter = 0;
     this.globalVar.freeRaceTimePeriodCounter = 0;
     this.globalVar.lastTimeStamp = Date.now();
-    this.globalVar.currentVersion = 1.08; //TODO: this needs to be automatically increased or something, too easy to forget
-    this.globalVar.startingVersion = 1.08;
+    this.globalVar.currentVersion = 1.09; //TODO: this needs to be automatically increased or something, too easy to forget
+    this.globalVar.startingVersion = 1.09;
     this.globalVar.startDate = new Date();
     this.globalVar.notifications = new Notifications();
 
@@ -149,7 +151,7 @@ export class GlobalService {
 
     this.globalVar.modifiers.push(new StringNumberPair(.10, "breedingGroundsSpecializationModifier"));
     this.globalVar.modifiers.push(new StringNumberPair((5 * 60), "attractionTimeToCollectModifier"));
-    this.globalVar.modifiers.push(new StringNumberPair(10, "attractionAmountModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(20, "attractionAmountModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(.05, "researchCenterIncrementsModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(.45, "researchCenterTrainingAnimalModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(.25, "researchCenterStudyingAnimalModifier"));
@@ -171,13 +173,13 @@ export class GlobalService {
     this.globalVar.modifiers.push(new StringNumberPair(.5, "athleticTapeEquipmentModifier"));
 
     //below in seconds
-    this.globalVar.modifiers.push(new StringNumberPair((2 * 60 * 60), "smallBarnTrainingTimeModifier"));
-    this.globalVar.modifiers.push(new StringNumberPair((4 * 60 * 60), "mediumBarnTrainingTimeModifier"));
-    this.globalVar.modifiers.push(new StringNumberPair((8 * 60 * 60), "largeBarnTrainingTimeModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair((4 * 60 * 60), "smallBarnTrainingTimeModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair((8 * 60 * 60), "mediumBarnTrainingTimeModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair((12 * 60 * 60), "largeBarnTrainingTimeModifier"));
 
     this.globalVar.modifiers.push(new StringNumberPair(5, "freeRacesPerTimePeriodModifier"));
     this.globalVar.modifiers.push(new StringNumberPair((5 * 60), "freeRacesTimePeriodModifier"));
-    this.globalVar.modifiers.push(new StringNumberPair((2 * 60 * 60), "autoFreeRacesMaxIdleTimePeriodModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair((8 * 60 * 60), "autoFreeRacesMaxIdleTimePeriodModifier"));
 
     this.globalVar.modifiers.push(new StringNumberPair(5000000, "metersPerCoinsGrandPrixModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(20000000, "metersPerRenownGrandPrixModifier"));
@@ -686,7 +688,7 @@ export class GlobalService {
 
     var foodShopSection = new ShopSection();
     var foodShopItems: ShopItem[] = [];
-    var baseFoodPrice = 50;
+    var baseFoodPrice = 10;
 
     var apple = new ShopItem();
     apple.name = "Apples";
@@ -1295,9 +1297,10 @@ export class GlobalService {
       this.globalVar.unlockables.set("monoRace", true);
       this.globalVar.notifications.isNewSpecialRaceAvailable = true;
 
-      returnVal = ["Mono Race", "A new race type has been unlocked!" +
+      returnVal = ["Mono Race", this.utilityService.getSanitizedHtml("A new race type has been unlocked!" +
         " Take part in a Mono Race where you run an extended race as only one course type. Progressing through this race type " +
-        "generates new interest in your facility, which means it's time to make some upgrades. Gain Facility Level points from winning these races that increase your Diminishing Returns max value."];
+        "generates new interest in your facility, which means it's time to make some upgrades. Gain Facility Level points from winning these races that increase your Diminishing Returns max value. <br/> <br/>" +
+      "<em>Select this race and others like it by choosing the 'Special Race' option from the 'Races' menu.</em>")];
 
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(3) + "Monkey";
     }
@@ -1356,7 +1359,7 @@ export class GlobalService {
     else if (numericValue === 7) {
       this.globalVar.unlockables.set("barnSpecializations", true);
 
-      returnVal = ["Barn Specializations", "As your training facility grows, so should your barns. At barn level 10, choose what direction you want your barn to progress in. Each option benefits your animals in different ways, so choose carefully."];
+      returnVal = ["Barn Specializations", "As your training facility grows, so should your barns. At barn upgrade level 10, choose what direction you want your barn to progress in. Each option benefits your animals in different ways, so choose carefully."];
 
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(8) + "Headband";
     }
@@ -1433,7 +1436,7 @@ export class GlobalService {
     else if (numericValue === 15) {
       this.globalVar.unlockables.set("attractionSpecialization", true);
 
-      returnVal = ["Attraction Specialization", this.getSpecializationDescription("Attraction")];
+      returnVal = ["Attraction Specialization", this.getSpecializationDescription("Attraction") + "<br/><br/><em>Barn Specializations are available to select once you upgrade a barn to level 10.</em>"];
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(16) + " 1 Pendant";
     }
     else if (numericValue === 16) {
@@ -1572,7 +1575,8 @@ export class GlobalService {
         }
       }
 
-      returnVal = ["Penguin", "The Penguin is a Tundra racing animal that can slide carefully or recklessly."];
+      returnVal = ["Penguin", "The Penguin is a Tundra racing animal that can slide carefully or recklessly.<br/><br/>" + 
+      this.utilityService.getSanitizedHtml("<em>" + this.getTundraDescription() + "</em>")];
 
       var CoinsAmount = 3500;
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(37) + CoinsAmount + " Coins";
@@ -1637,7 +1641,8 @@ export class GlobalService {
         }
       }
 
-      returnVal = ["Salamander", "The Salamander is a Volcanic racing animal that can burrow underground to avoid lava and continously increase acceleration."];
+      returnVal = ["Salamander", "The Salamander is a Volcanic racing animal that can burrow underground to avoid lava and continously increase acceleration.<br/><br/>" + 
+      this.utilityService.getSanitizedHtml("<em>" + this.getVolcanicDescription() + "</em>")];
 
       var renownAmount = 10;
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(47) + renownAmount + " Renown";
@@ -2209,7 +2214,7 @@ export class GlobalService {
 
   GenerateCircuitRaceRewards(circuitRank: string): ResourceValue[] {
     var numericRank = this.GetCircuitRankValue(circuitRank);
-    var CoinsFactor = 1.01;
+    var CoinsFactor = 1.0135;
     var baseCoins = 50;
 
     var baseRenown = 1.03;
@@ -2230,7 +2235,7 @@ export class GlobalService {
 
   GenerateLocalRaceRewards(circuitRank: string): ResourceValue[] {
     var numericRank = this.GetCircuitRankValue(circuitRank);
-    var CoinsFactor = 1.0075;
+    var CoinsFactor = 1.013;
     var baseCoins = 10;
 
     var baseRenown = 1.01;
@@ -2255,7 +2260,7 @@ export class GlobalService {
     rewards.push(new ResourceValue("Facility Level", 1, ShopItemTypeEnum.Progression));
 
     var numericRank = this.GetCircuitRankValue(monoRank);
-    var CoinsFactor = 1.01;
+    var CoinsFactor = 1.0135;
     var baseCoins = 60;
 
     var baseRenown = 1.1;
@@ -2272,7 +2277,7 @@ export class GlobalService {
     rewards.push(new ResourceValue("Research Level", 1, ShopItemTypeEnum.Progression));
 
     var numericRank = this.GetCircuitRankValue(duoRank);
-    var CoinsFactor = 1.01;
+    var CoinsFactor = 1.0135;
     var baseCoins = 125;
 
     var baseRenown = 1.1;
@@ -2289,7 +2294,7 @@ export class GlobalService {
     rewards.push(new ResourceValue("Talent Points", 1, ShopItemTypeEnum.Progression));
 
     var numericRank = this.GetCircuitRankValue(rainbowRank);
-    var CoinsFactor = 1.01;
+    var CoinsFactor = 1.012;
     var baseCoins = 250;
 
     var baseRenown = 1.1;
@@ -2658,8 +2663,13 @@ export class GlobalService {
       leg.pathData = this.GenerateRaceLegPaths(leg, totalDistance);
     });
 
+    //TODO: REMOVE THE BRAZIER PORTION
+    var drawnObject = new DrawnRaceObject(DrawnRaceObjectEnum.brazier, totalDistance * .1);
+    var objectList = [];
+    objectList.push(drawnObject);
+
     return new Race(raceLegs, this.globalVar.circuitRank, false,
-      1, totalDistance, timeToComplete, this.GenerateLocalRaceRewards(this.globalVar.circuitRank), LocalRaceTypeEnum.Free, undefined, RaceTypeEnum.circuit);
+      1, totalDistance, timeToComplete, this.GenerateLocalRaceRewards(this.globalVar.circuitRank), LocalRaceTypeEnum.Free, undefined, RaceTypeEnum.circuit, undefined, undefined);
   }
 
   getTotalSegments(totalDistance: number) {
@@ -3659,6 +3669,18 @@ export class GlobalService {
     return description;
   }
 
+  getTundraDescription() {
+    var description = "When racing in the Tundra, your racer will slide all over the race course as they move forward. The higher your Adaptability stat, the better control your racer will have and the less likely they will slide. You lose a percentage of max speed while sliding, and if you slide too much you may hit a wall and come to a complete stop!";
+
+    return description;
+  }
+
+  getVolcanicDescription() {
+    var description = "Volcanic racers make their way while a Volcano ominously looms in the background. As you race, the Volcano will erupt making it impossible to proceed if you get stuck behind the lava flow. If you stay ahead of the average pace for the Volcanic leg of the race, you should have no problem speeding past the lava so make sure your Max Speed and Acceleration are up to the challenge.";
+
+    return description;
+  }
+
   updateTrackedMaxStats(animal: Animal) {
     if (!animal.isAvailable)
       return;
@@ -3763,10 +3785,10 @@ export class GlobalService {
     if (this.globalVar.resources.some(item => item.name === "Renown")) {
       var renown = this.globalVar.resources.find(item => item.name === "Renown");
       if (renown !== undefined)
-        renown.amount += 5;
+        renown.amount += 50000;
     }
     else
-      this.globalVar.resources.push(this.initializeService.initializeResource("Renown", 5, ShopItemTypeEnum.Resources));
+      this.globalVar.resources.push(this.initializeService.initializeResource("Renown", 50000, ShopItemTypeEnum.Resources));
 
     this.globalVar.resources.push(this.initializeService.initializeResource("Facility Level", circuitRankNumeric * 2, ShopItemTypeEnum.Progression));
     this.globalVar.resources.push(this.initializeService.initializeResource("Research Level", circuitRankNumeric, ShopItemTypeEnum.Progression));
@@ -3934,10 +3956,10 @@ export class GlobalService {
       fox.currentStats.adaptability = 50;
       fox.breedLevel = 50;      
       this.calculateAnimalRacingStats(fox);
-    }*/
-
+    }
+*/
     //breed level 250
-    /*var horse = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Horse);
+    var horse = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Horse);
     if (horse !== undefined) {
       horse.currentStats.topSpeed = 2000;
       horse.currentStats.acceleration = 2000;
@@ -4104,10 +4126,10 @@ export class GlobalService {
       fox.breedLevel = 250;
       fox.incubatorStatUpgrades.powerModifier = 1;
       this.calculateAnimalRacingStats(fox);
-    }*/
+    }
 
     //Breed Lvl 1000, power focused
-    var horse = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Horse);
+    /*var horse = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Horse);
     if (horse !== undefined) {
       horse.currentStats.topSpeed = 2000;
       horse.currentStats.acceleration = 2000;
@@ -4276,6 +4298,6 @@ export class GlobalService {
       fox.breedLevel = 2000;
       fox.incubatorStatUpgrades.powerModifier = 5;
       this.calculateAnimalRacingStats(fox);
-    }
+    }*/
   }
 }

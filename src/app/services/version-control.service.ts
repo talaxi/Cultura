@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { AnimalTypeEnum } from '../models/animal-type-enum.model';
+import { AnimalStats } from '../models/animals/animal-stats.model';
 import { GrandPrixData } from '../models/races/event-race-data.model';
 import { ResourceValue } from '../models/resources/resource-value.model';
 import { ShopItemTypeEnum } from '../models/shop-item-type-enum.model';
 import { ShopItem } from '../models/shop/shop-item.model';
+import { TrainingOptionsEnum } from '../models/training-options-enum.model';
 import { Tutorials } from '../models/tutorials.model';
 import { Notifications } from '../models/utility/notifications.model';
 import { StringNumberPair } from '../models/utility/string-number-pair.model';
@@ -19,7 +21,7 @@ export class VersionControlService {
   constructor(private globalService: GlobalService, private lookupService: LookupService, private utilityService: UtilityService) { }
 
   //add to this in descending order
-  gameVersions = [1.08, 1.07, 1.06, 1.05, 1.04, 1.03, 1.02, 1.01, 1.00];
+  gameVersions = [1.09, 1.08, 1.07, 1.06, 1.05, 1.04, 1.03, 1.02, 1.01, 1.00];
 
   getListAscended() {
     var ascendedList: number[] = [];
@@ -78,7 +80,7 @@ export class VersionControlService {
       changes = "Changed all references of 'Decks' to 'Relay Teams' for ease of understanding and better theming.\n\n" +
         "Bug fixes and UI improvements (view Discord Change Log for full info).";
     if (version === 1.06)
-      changes = "Barns can now reset their specialization. By clicking or tapping your Barn Upgrade level, you'll see an overview of your barn’s benefits and the option to reset your specialization at the cost of losing 20% of your Barn Upgrade level.\n\n" +
+      changes = "Barns can now reset their specialization. By clicking or tapping your Barn Upgrade level, you'll see an overview of your barn's benefits and the option to reset your specialization at the cost of losing 20% of your Barn Upgrade level.\n\n" +
         "Cost for Mangoes now scale. 1 Mango from the shop costs an extra 50 per purchase and 2 Mangoes from the event shop costs an extra 1 token per purchase.\n\n" +
         "The impact that Renown has on coin gain from race is now logarithmic. After reaching 50 renown, the coin gain will start to slightly fall off. \n\n" +
         "Attractions now give slightly more Coins per specialization level.\n\n" +
@@ -97,6 +99,25 @@ export class VersionControlService {
         "Made Acceleration coaching slightly easier. \n\n" +
         "Added warning before first Breed to better explain what will happen.\n\n" +
         "Minor UI improvements for mobile."
+    if (version === 1.09)
+      changes = "<em>Just to preface, this is the first set of changes of several intended to make the early game flow better, coin gain and progression feel less punishing, and doing a better job of putting players in the intended gameplay loops. Look forward to more changes soon.</em>\n\n" +
+      "Made changes to verbiage in Tutorial and FAQ section for clarity and better guiding on how to play. \n\n" +
+        "Readjusted certain trainings so that there was clear progression going up from small to medium barns." +
+        "<ul><li><b>Footwork</b> now gives .25 Acceleration as opposed to .5 Acceleration.</li>" +
+        "<li><b>Dodge Ball</b> now gives 1 Adaptability as opposed to .5 Adaptability and takes 60 seconds to complete as opposed to 75 seconds.</li></ul>" +
+        "Some adjustments were made to passive game time while the game is not active." +
+        "<ul><li>Small barns now allow for 4 hours worth of training, up from 2 hours.</li>" +
+        "<li>Medium barns now allow for 8 hours worth of training, up from 4 hours.</li>" +
+        "<li>Large barns now allow for 12 hours worth of training, up from 8 hours.</li>" +
+        "<li>Team Managers will now cover 8 hours of inactive time worth of free races, up from 2 hours.</li></ul>" +
+        "The base price for food has been reduced." +
+        "<ul><li>All stat increasing food has been reduced to 10 Coins. The goal for these items is to give you a quick boost after breeding to cut down on wait time. This new price should make that a more viable option.</li>" +
+        "<li>The base price for Mangoes has been reduced to 100 Coins. For those who have already purchased Mangoes and the price has begun to increase, your total cost will be reduced by 400 Coins to match up with this change.</li></ul>" +
+        "Attractions now provide significantly more income. The new formula is 20 Coins * Specialization Level added on top of the previous amount. Check the calculator in the FAQ section to see exactly how much it provides at any given level.\n\n" +        
+        "For the first 10 barn upgrade levels, the cost is now 50 coins instead of 100.\n\n" +
+        "Certain RNG elements were not evenly distributed (Coaching for example) and that issue has been resolved. \n\n" +
+        "There have been bugs, balance issues, and some concerns about reward scaling with the Grand Prix. I have taken the Grand Prix down for now while I work on these issues. Look forward to it coming back up in a better state in the next couple of weeks.\n\n" +        
+        "Additional minor bug fixes.";
 
     return changes;
   }
@@ -121,6 +142,8 @@ export class VersionControlService {
       date = new Date('2022-08-06 12:00:00');
     if (version === 1.08)
       date = new Date('2022-08-07 12:00:00');
+    if (version === 1.09)
+      date = new Date('2022-08-11 12:00:00');
 
     return date.toDateString().replace(/^\S+\s/, '');
   }
@@ -446,8 +469,7 @@ export class VersionControlService {
           if (this.globalService.globalVar.tutorials === undefined)
             this.globalService.globalVar.tutorials = new Tutorials();
 
-          if (this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.circuitRank) > 9)
-          {
+          if (this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.circuitRank) > 9) {
             var amount = 1000;
             var resource = this.globalService.globalVar.resources.find(item => item.name === "Coins");
             if (resource === null || resource === undefined)
@@ -456,14 +478,94 @@ export class VersionControlService {
               resource.amount += amount;
           }
 
-          if (this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.circuitRank) > 23)
-          {
+          if (this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.circuitRank) > 23) {
             var amount = 1500;
             var resource = this.globalService.globalVar.resources.find(item => item.name === "Coins");
             if (resource === null || resource === undefined)
               this.globalService.globalVar.resources.push(new ResourceValue("Coins", amount));
             else
               resource.amount += amount;
+          }
+        }
+        else if (version === 1.09) {
+          var autoFreeRacesMaxIdleTimePeriodModifier = this.globalService.globalVar.modifiers.find(item => item.text === "autoFreeRacesMaxIdleTimePeriodModifier");
+          if (autoFreeRacesMaxIdleTimePeriodModifier !== undefined)
+            autoFreeRacesMaxIdleTimePeriodModifier.value = (8 * 60 * 60);
+
+          var smallBarnTrainingTimeModifier = this.globalService.globalVar.modifiers.find(item => item.text === "smallBarnTrainingTimeModifier");
+          if (smallBarnTrainingTimeModifier !== undefined)
+          smallBarnTrainingTimeModifier.value = (4 * 60 * 60);
+
+          var mediumBarnTrainingTimeModifier = this.globalService.globalVar.modifiers.find(item => item.text === "mediumBarnTrainingTimeModifier");
+          if (mediumBarnTrainingTimeModifier !== undefined)
+          mediumBarnTrainingTimeModifier.value = (8 * 60 * 60);
+
+          var largeBarnTrainingTimeModifier = this.globalService.globalVar.modifiers.find(item => item.text === "largeBarnTrainingTimeModifier");
+          if (largeBarnTrainingTimeModifier !== undefined)
+          largeBarnTrainingTimeModifier.value = (12 * 60 * 60);
+
+          var footwork = this.globalService.globalVar.trainingOptions.find(item => item.trainingType === TrainingOptionsEnum.Footwork);
+          if (footwork !== undefined)
+            footwork.affectedStatRatios = new AnimalStats(0, .25, 0, 0, 0, 1);
+
+          var dodgeBall = this.globalService.globalVar.trainingOptions.find(item => item.trainingType === TrainingOptionsEnum.DodgeBall);
+          if (dodgeBall !== undefined) {
+            dodgeBall.affectedStatRatios = new AnimalStats(0, 2.5, 0, 0, 0, 1);
+            dodgeBall.timeToComplete = 60;
+          }
+
+          var foodItems = this.globalService.globalVar.shop.find(item => item.name === "Food");
+          if (foodItems !== undefined) {
+            var baseFoodPrice = 10;
+
+            var apple = foodItems.itemList.find(item => item.name === "Apples");
+            if (apple !== undefined) {
+              apple.purchasePrice = [];
+              apple.purchasePrice.push(new ResourceValue("Coins", baseFoodPrice));
+            }
+
+            var banana = foodItems.itemList.find(item => item.name === "Bananas");
+            if (banana !== undefined) {
+              banana.purchasePrice = [];
+              banana.purchasePrice.push(new ResourceValue("Coins", baseFoodPrice));
+            }
+
+            var strawberries = foodItems.itemList.find(item => item.name === "Strawberries");
+            if (strawberries !== undefined) {
+              strawberries.purchasePrice = [];
+              strawberries.purchasePrice.push(new ResourceValue("Coins", baseFoodPrice));
+            }
+
+            var carrot = foodItems.itemList.find(item => item.name === "Carrots");
+            if (carrot !== undefined) {
+              carrot.purchasePrice = [];
+              carrot.purchasePrice.push(new ResourceValue("Coins", baseFoodPrice));
+            }
+
+            var turnip = foodItems.itemList.find(item => item.name === "Turnips");
+            if (turnip !== undefined) {
+              turnip.purchasePrice = [];
+              turnip.purchasePrice.push(new ResourceValue("Coins", baseFoodPrice));
+            }
+
+            var orange = foodItems.itemList.find(item => item.name === "Oranges");
+            if (orange !== undefined) {
+              orange.purchasePrice = [];
+              orange.purchasePrice.push(new ResourceValue("Coins", baseFoodPrice));
+            }
+
+            var mangoes = foodItems.itemList.find(item => item.name === "Mangoes");
+            if (mangoes !== undefined) {
+              var purchasePrice = mangoes.purchasePrice.find(item => item.name === "Coins");
+              if (purchasePrice !== undefined)
+                purchasePrice.amount -= 400;
+            }
+
+            var attractionAmountModifier = this.globalService.globalVar.modifiers.find(item => item.text === "attractionAmountModifier");
+            if (attractionAmountModifier !== undefined)
+              attractionAmountModifier.value = 20;   
+              
+            this.globalService.stopGrandPrixRace();
           }
         }
 

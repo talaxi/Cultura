@@ -29,7 +29,7 @@ export class AppComponent {
   newGame = true;
   saveTime = 0;
   saveFrequency = 20; //in seconds
-  racingSaveFrequency = 120; // in seconds
+  racingSaveFrequency = 60; // in seconds
 
   constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private lookupService: LookupService,
     private specializationService: SpecializationService, private themeService: ThemeService, private raceLogicService: RaceLogicService,
@@ -66,7 +66,7 @@ export class AppComponent {
 
     if (devMode) {
       this.globalService.globalVar.tutorials.tutorialCompleted = true;
-      this.globalService.devModeInitialize(35);
+      this.globalService.devModeInitialize(34);
     }
 
     this.versionControlService.updatePlayerVersion();
@@ -205,7 +205,7 @@ export class AppComponent {
       this.globalService.globalVar.notifications.isEventRaceNowActive = true;
 
       //if setting is active
-      if (this.globalService.globalVar.settings.get("autoStartEventRace")) {
+      /*if (false) { //TODO: this.globalService.globalVar.settings.get("autoStartEventRace") instead of false
         if (this.globalService.globalVar.eventRaceData.isRunning === false) {
 
           var timeSinceRaceStarted = this.globalService.globalVar.eventRaceData.grandPrixTimeLength - this.globalService.getRemainingEventRaceTime();
@@ -220,7 +220,7 @@ export class AppComponent {
             if (!this.globalService.globalVar.eventRaceData.animalData.some(item => item.isCurrentlyRacing)) {
               var matchingAnimalData = this.globalService.globalVar.eventRaceData.animalData.find(item => item.associatedAnimalType == racingAnimal.type);
               if (matchingAnimalData !== undefined) {
-                matchingAnimalData.isCurrentlyRacing = true;
+                //matchingAnimalData.isCurrentlyRacing = true; //TODO: uncomment this after turning grand prix back on
               }
             }
 
@@ -234,7 +234,7 @@ export class AppComponent {
             }
           }
         }
-      }
+      }*/
     }
 
     if (this.globalService.globalVar.eventRaceData.isGrandPrixCompleted) { //current rank completed
@@ -290,11 +290,9 @@ export class AppComponent {
           var racingAnimal = this.globalService.getGrandPrixRacingAnimal();
 
           if (racingAnimal.type !== undefined && racingAnimal.name !== undefined) {
-            this.globalService.globalVar.eventRaceData.isLoading = true;
             this.globalService.globalVar.eventRaceData.currentRaceSegment = this.globalService.globalVar.eventRaceData.nextRaceSegment.makeCopy(this.globalService.globalVar.eventRaceData.nextRaceSegment);
             this.globalService.globalVar.eventRaceData.currentRaceSegmentResult = this.raceLogicService.runRace(this.globalService.globalVar.eventRaceData.currentRaceSegment);            
-            this.globalService.globalVar.eventRaceData.nextRaceSegment = this.globalService.generateGrandPrixSegment(racingAnimal);
-            this.globalService.globalVar.eventRaceData.isLoading = false;            
+            this.globalService.globalVar.eventRaceData.nextRaceSegment = this.globalService.generateGrandPrixSegment(racingAnimal);                   
           }
         }
       }

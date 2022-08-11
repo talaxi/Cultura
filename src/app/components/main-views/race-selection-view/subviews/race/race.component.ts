@@ -277,7 +277,8 @@ export class RaceComponent implements OnInit {
       console.log("end");*/
 
       try {
-        if (this.selectedRace.raceUI.velocityByFrame.length <= currentFrame || this.raceSkipped) {
+        if (this.selectedRace.raceUI.velocityByFrame.length <= currentFrame || 
+          (!(this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix) && this.raceSkipped)) {
           var lastFrameCount = this.selectedRace.raceUI.velocityByFrame.length - 1;
           this.velocityAtCurrentFrame = (this.selectedRace.raceUI.velocityByFrame[lastFrameCount] * this.frameModifier).toFixed(2); //needs to be m/s
           this.staminaAtCurrentFrame = (this.selectedRace.raceUI.staminaPercentByFrame[lastFrameCount] * 100).toFixed(2);

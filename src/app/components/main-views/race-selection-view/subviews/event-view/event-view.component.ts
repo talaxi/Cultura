@@ -27,7 +27,7 @@ export class EventViewComponent implements OnInit {
   isEventRaceAvailable: boolean;
   popoverText: string = "";
   cannotRace = false;
-  eventRaceReleased = true;
+  eventRaceReleased = false; //TODO: Set this to false for next deploy
   eventRaceNotice = "";
   eventRaceTimer = "";
   bonusTime = "";
@@ -122,17 +122,9 @@ export class EventViewComponent implements OnInit {
         if (this.lookupService.slowSegmentWarning(showSlowSegmentWarning)) {          
           this.globalService.globalVar.eventRaceData.isRunning = true; 
 
-          //this.grandPrixData.isLoading = true;
-          //this.openLoadingModal(content);       
-
           this.globalService.globalVar.eventRaceData.currentRaceSegment = this.globalService.generateGrandPrixSegment(racingAnimal);
           this.globalService.globalVar.eventRaceData.currentRaceSegmentResult = this.raceLogicService.runRace(this.globalService.globalVar.eventRaceData.currentRaceSegment);
           this.globalService.globalVar.eventRaceData.nextRaceSegment = this.globalService.generateGrandPrixSegment(racingAnimal);                    
-          
-          //best you're gonna get is the confirm slow segment thing. 
-          //console.log("Total Frames: " + this.globalService.globalVar.eventRaceData.currentRaceSegmentResult.totalFramesPassed);
-          //this.grandPrixData.isLoading = false;
-          //this.modalService.dismissAll();   
           
           if (this.globalService.globalVar.eventRaceData.currentRaceSegmentCount === 0) {
             this.globalService.globalVar.eventRaceData.currentRaceSegmentCount += 1;

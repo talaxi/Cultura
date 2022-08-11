@@ -40,10 +40,11 @@ export class SettingsViewComponent implements OnInit {
 
   constructor(private globalService: GlobalService, private themeService: ThemeService, private lookupService: LookupService,
     private codeRedemptionService: CodeRedemptionService, private codeCreationService: CodeCreationService, private deploymentService: DeploymentService,
-    private componentCommunicationService: ComponentCommunicationService, private versionControlService: VersionControlService) { }
+    private componentCommunicationService: ComponentCommunicationService, private versionControlService: VersionControlService,
+    private utilityService: UtilityService) { }
 
   ngOnInit(): void {
-    //console.log(JSON.stringify(this.globalService.globalVar));
+    //console.log(JSON.stringify(this.globalService.globalVar));    
     this.componentCommunicationService.setNewView(NavigationEnum.settings);
 
     if (this.deploymentService.codeCreationMode)
@@ -108,7 +109,7 @@ export class SettingsViewComponent implements OnInit {
       var loadDataJson = <GlobalVariables>JSON.parse(decompressedData);
       if (loadDataJson !== null && loadDataJson !== undefined) {
         this.globalService.globalVar = plainToInstance(GlobalVariables, loadDataJson);
-        this.versionControlService.updatePlayerVersion();                      
+        this.versionControlService.updatePlayerVersion();
       }
     }
   }

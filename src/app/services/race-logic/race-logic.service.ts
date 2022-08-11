@@ -1329,14 +1329,15 @@ export class RaceLogicService {
   }
 
   handleStamina(racingAnimal: Animal, raceResult: RaceResult, distanceCoveredPerFrame: number, framesPassed: number, terrain: Terrain, maxStamina: number) {
-    var staminaModifier = this.getStaminaModifier(terrain, racingAnimal, maxStamina);
-
+    var staminaModifier = this.getStaminaModifier(terrain, racingAnimal, maxStamina);    
     //if using Second Wind, don't reduce stamina at all
     if (!(racingAnimal.type === AnimalTypeEnum.Horse && racingAnimal.ability.name === "Second Wind" && racingAnimal.ability.abilityInUse)) {
       if (racingAnimal.type === AnimalTypeEnum.Cheetah && racingAnimal.ability.name === "Sprint" && racingAnimal.ability.abilityInUse)
         racingAnimal.currentStats.stamina -= (distanceCoveredPerFrame * staminaModifier) * 2;
       else
+      {
         racingAnimal.currentStats.stamina -= distanceCoveredPerFrame * staminaModifier;
+      }
     }
 
     if (racingAnimal.currentStats.stamina < 0) {
@@ -1542,6 +1543,7 @@ export class RaceLogicService {
               if (this.selectedRace.localRaceType !== LocalRaceTypeEnum.Track) {
                 if (globalResource.name === "Coins") {
                   //adjust for money mark
+                  //console.log("Base Amount: " + item.amount);
                   if (raceResult.beatMoneyMark) {
                     raceResult.addRaceUpdate(raceResult.totalFramesPassed, "You beat the money mark!");
 
@@ -1552,18 +1554,21 @@ export class RaceLogicService {
                     }
 
                     item.amount = Math.round(item.amount * defaultMoneyMarkModifier);
+                    //console.log("* 1.25 for Money Mark: " + item.amount);
                   }
 
                   //adjust for renown                
                   var currentRenown = this.lookupService.getRenown();
-                  item.amount += Math.round(item.amount * this.lookupService.getRenownCoinModifier(currentRenown, false));
+                  item.amount = Math.round(item.amount * this.lookupService.getRenownCoinModifier(currentRenown, false));
+                  //console.log("* " + this.lookupService.getRenownCoinModifier(currentRenown, false) + " for Renown: " + item.amount);
 
                   //adjust for buried treasure
                   if (buriedTreasureModifier > 1)
                     raceResult.addRaceUpdate(raceResult.totalFramesPassed, octopusDisplayName + " finds buried treasure at the bottom of the ocean!");
                   item.amount = Math.round(item.amount * buriedTreasureModifier);
-
+                  
                   globalResource.amount += item.amount;
+                  //console.log("* " + buriedTreasureModifier + " for Buried Treasure: " + item.amount);
                 }
                 else if (globalResource.name === "Facility Level") {
                   globalResource.amount += item.amount;

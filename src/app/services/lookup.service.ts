@@ -183,7 +183,10 @@ export class LookupService {
     }
 
     if (!displayingPercentage)
+    {      
       modifierAmount /= 100;
+      modifierAmount += 1;
+    }
 
     return modifierAmount;
   }
@@ -1115,8 +1118,13 @@ export class LookupService {
 
   getResourcesForBarnUpgrade(currentLevel: number): ResourceValue[] {
     var allResourcesRequired: ResourceValue[] = [];
-    var Coins = new ResourceValue("Coins", 100);
-    Coins.amount *= (currentLevel + 1);
+    var coinAmount = 100;
+    if (currentLevel < 10)
+      coinAmount = 50;
+
+    var Coins = new ResourceValue("Coins", coinAmount);    
+    if (currentLevel >= 10)
+    Coins.amount *= (currentLevel - 9);
     allResourcesRequired.push(Coins);
     if (currentLevel % 10 === 9) {
       var medalCost = 1;
@@ -1234,7 +1242,7 @@ export class LookupService {
       if (amountEarnedPair !== undefined && amountEarnedPair !== null)
         amountEarned = amountEarnedPair.value;
 
-      description = "Gain a certain amount of Coins every " + timeToCollect + " seconds while an animal trains in this barn. At level 10, you gain 10 Coins and every subsequent 10 levels increases that amount by 10 Coins plus 5 Coins per Specialization Level - 1.";
+      description = "Gain a certain amount of Coins every " + timeToCollect + " seconds while an animal trains in this barn. At level 10, you gain 20 Coins and every subsequent 10 levels adds an additional 20 Coins * Specialization Level.";
     }
     else if (specializationName === "Research Center") {
       var statGainIncrementsModifier = this.globalService.globalVar.modifiers.find(item => item.text === "researchCenterIncrementsModifier");
@@ -1458,7 +1466,7 @@ export class LookupService {
     else if (itemName === "International Races")
       description = "Gain 1 medal for every " + internationalRaceCountNeeded + " free races you complete";
     else if (itemName === "Team Manager")
-      description = "Add option to automatically run 1 free race per reset period <em>(banks 2 hours worth of races when idle)</em>";
+      description = "Add option to automatically run 1 free race per reset period <em>(banks 8 hours worth of races when away from the game)</em>";
     else if (itemName === "Incubator Upgrade Lv1")
       description = "When breeding, gain a permanent stat modifier equal to 10% of positive trait bonus, up to a maximum additional modifier of .01 per Breed. <em>(10% trait value)</em>";
     else if (itemName === "Incubator Upgrade Lv2")
@@ -1933,7 +1941,7 @@ export class LookupService {
       tipList.push("After upgrading training options, reselect them to gain their benefits!");
       tipList.push("Don't forget to export your save regularly!");
       tipList.push("Have to recite the alphabet to figure out what your next circuit rank is? You're not alone, go to the settings to use numbers instead!");
-      tipList.push("Small barns allow training for 2 hours, medium for 4 hours, and large for 8 hours. Your animals will train even when the game is not active.");
+      tipList.push("Small barns allow training for 4 hours, medium for 8 hours, and large for 12 hours. Your animals will train even when the game is not active.");
       tipList.push("Each animal gains more or less racing stats from a base stat than other animals. Hover over each base stat in the Animals tab to see its modifier.");
       tipList.push("Can't quite finish a close race? Burst Chance and Distance are not affected by Diminishing Returns, so continue to increase those stats to get ahead!")
 
@@ -2008,6 +2016,9 @@ export class LookupService {
 
     var renown = this.getRenown();
     var renownBonusRaces = Math.floor(renown / 100);
+
+    if (renownBonusRaces > 15)
+      renownBonusRaces = 15;
 
     return freeRacePerTimePeriod + renownBonusRaces;
   }

@@ -55,6 +55,7 @@ export class SelectedBarnComponent implements OnInit {
   barnSpecializationsUnlocked = false;
   coachingUnlocked = false;
   tutorialActive = false;
+  tutorialSubscription: any;
   subscription: any;
   colorConditional: any;
   currentTrainingPopover: string;
@@ -75,11 +76,11 @@ export class SelectedBarnComponent implements OnInit {
     var availableBarns = this.lookupService.getAvailableBarns().filter(item => item !== undefined);
     var indexOfCurrentBarn = availableBarns.findIndex(item => this.selectedBarnNumber === item!.barnNumber);
 
-    if (indexOfCurrentBarn > -1) {
-      if (this.subscription !== undefined && this.subscription !== null)
-        this.subscription.unsubscribe();
+    if (event.key === "ArrowLeft") {
+      if (indexOfCurrentBarn > -1) {
+        if (this.subscription !== undefined && this.subscription !== null)
+          this.subscription.unsubscribe();
 
-      if (event.key === "ArrowLeft") {
         var indexOfNewBarn = indexOfCurrentBarn - 1;
         if (indexOfNewBarn < 0)
           indexOfNewBarn = availableBarns.length - 1;
@@ -88,7 +89,12 @@ export class SelectedBarnComponent implements OnInit {
         this.componentCommunicationService.setBarnView(NavigationEnum.barn, newBarn.barnNumber);
         this.resetSelectedBarnInfo(newBarn);
       }
-      else if (event.key === "ArrowRight") {
+    }
+    else if (event.key === "ArrowRight") {
+      if (indexOfCurrentBarn > -1) {
+        if (this.subscription !== undefined && this.subscription !== null)
+          this.subscription.unsubscribe();
+
         var indexOfNewBarn = indexOfCurrentBarn + 1;
         if (indexOfNewBarn === availableBarns.length)
           indexOfNewBarn = 0;
@@ -107,6 +113,12 @@ export class SelectedBarnComponent implements OnInit {
 
   ngOnInit(): void {
     this.handleTutorial();
+
+    this.tutorialSubscription = this.gameLoopService.gameUpdateEvent.subscribe(async () => {
+      if (!this.globalService.globalVar.tutorials.tutorialCompleted && this.globalService.globalVar.tutorials.currentTutorialId > 3) {        
+        this.handleSecondaryTutorial();
+      }
+    });
 
     if (this.selectedBarnNumber > 0 && this.selectedBarnNumber <= this.globalService.globalVar.barns.length + 1) {
       var globalBarn = this.globalService.globalVar.barns.find(item => item.barnNumber === this.selectedBarnNumber);
@@ -578,7 +590,7 @@ export class SelectedBarnComponent implements OnInit {
   filterSpecialization(specialization: string) {
     this.selectedSpecialization = specialization;
     this.specializationDescription = this.globalService.getSpecializationDescription(specialization);
-    this.inDepthSpecializationDescription = this.lookupService.getInDepthSpecializationDescription(specialization);    
+    this.inDepthSpecializationDescription = this.lookupService.getInDepthSpecializationDescription(specialization);
   }
 
   selectSpecialization() {
@@ -697,6 +709,19 @@ export class SelectedBarnComponent implements OnInit {
     }
   }
 
+  handleSecondaryTutorial() {
+    var monkey = this.globalService.globalVar.animals.find(item => item.type === AnimalTypeEnum.Monkey);
+
+    if (!this.globalService.globalVar.tutorials.tutorialCompleted && this.globalService.globalVar.tutorials.currentTutorialId === 8 &&
+      monkey?.isAvailable) {
+      this.tutorialActive = true;
+    }
+    else if (!this.globalService.globalVar.tutorials.tutorialCompleted && this.globalService.globalVar.tutorials.currentTutorialId > 3) {
+      this.tutorialActive = false;
+    }
+  }
+
+
   resetSelectedBarnInfo(newBarn: Barn) {
     this.specializationOptions = this.lookupService.getAllBarnSpecializations();
     this.upgradeText = "Upgrade";
@@ -751,7 +776,7 @@ export class SelectedBarnComponent implements OnInit {
 
         this.componentCommunicationService.setBarnView(NavigationEnum.barn, this.selectedBarnNumber);
 
-        this.subscription = this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {
+        this.subscription = this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {          
           if (!this.barn.isLocked) {
             var associatedAnimal = this.globalService.globalVar.animals.find(item => item.associatedBarnNumber == this.selectedBarnNumber);
             if (associatedAnimal === undefined || associatedAnimal === null) {
@@ -830,6 +855,10 @@ export class SelectedBarnComponent implements OnInit {
   ngOnDestroy() {
     if (this.subscription !== null && this.subscription !== undefined) {
       this.subscription.unsubscribe();
+    }
+
+    if (this.tutorialSubscription !== null && this.tutorialSubscription !== undefined) {
+      this.tutorialSubscription.unsubscribe();
     }
   }
 }

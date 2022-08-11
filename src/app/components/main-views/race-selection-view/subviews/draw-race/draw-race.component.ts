@@ -1,5 +1,6 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
+import { DrawnRaceObjectEnum } from 'src/app/models/drawn-race-object-enum.model';
 import { EventRaceTypeEnum } from 'src/app/models/event-race-type-enum.model';
 import { LocalRaceTypeEnum } from 'src/app/models/local-race-type-enum.model';
 import { RaceCourseTypeEnum } from 'src/app/models/race-course-type-enum.model';
@@ -335,6 +336,21 @@ export class DrawRaceComponent implements OnInit {
 
       context.globalCompositeOperation = existingContentDestinationType;
     }
+
+    
+      //draw additional objects
+      /*if (this.race.drawnObjects !== undefined && this.race.drawnObjects !== null && this.race.drawnObjects.length > 0) {
+        var existingContentDestinationType = context.globalCompositeOperation;
+        context.globalCompositeOperation = "destination-over";
+        
+        this.race.drawnObjects.forEach(object => {
+          if (object.objectType === DrawnRaceObjectEnum.brazier) {
+            this.drawBrazier(object.xDistance, context, 0, 1, 1);
+          }
+        });
+        
+      context.globalCompositeOperation = existingContentDestinationType;
+      }*/
   }
 
   displayRace(context: any, currentTime: number): void {
@@ -376,7 +392,7 @@ export class DrawRaceComponent implements OnInit {
 
     if (isGrandPrix) {
       if (this.globalService.globalVar.eventRaceData.previousRaceSegment !== undefined) {
-        raceLegs.unshift(this.globalService.globalVar.eventRaceData.previousRaceSegment.raceLegs[0]);        
+        raceLegs.unshift(this.globalService.globalVar.eventRaceData.previousRaceSegment.raceLegs[0]);
         currentDistanceTraveled += raceLegs[0].distance;
       }
     }
@@ -391,7 +407,7 @@ export class DrawRaceComponent implements OnInit {
     var previousLegDistance = 0;
     var foundLeg = false;
     var legCounter = 0;
-    
+
     raceLegs.forEach(leg => {
       if (!foundLeg) {
         if (currentDistanceTraveled >= legPinpointDistance && currentDistanceTraveled < legPinpointDistance + leg.distance) {
@@ -547,7 +563,7 @@ export class DrawRaceComponent implements OnInit {
     var waterGoingUp = true;
     var legDistanceCompleted = 0;
     var pathCounter = 0;
-    
+
     raceLegs.forEach(leg => {
       if (leg.pathData !== undefined && leg.pathData.length !== 0) {
         pathCounter = 0;
@@ -556,9 +572,9 @@ export class DrawRaceComponent implements OnInit {
           mountainLegDistance = 0;
 
         leg.pathData.forEach(path => {
-          if (leg.courseType === RaceCourseTypeEnum.Flatland) { 
+          if (leg.courseType === RaceCourseTypeEnum.Flatland) {
             //this.grandPrixMountainYReset();
-            
+
             if (path.routeDesign === RaceDesignEnum.Regular)
               this.drawRegularFlatlandOverview(context, path, xRaceModeModifier, yRaceModeModifier, xDistanceOffset, yDistanceOffset);
             if (path.routeDesign === RaceDesignEnum.S)
@@ -568,7 +584,7 @@ export class DrawRaceComponent implements OnInit {
           }
           else if (leg.courseType === RaceCourseTypeEnum.Mountain) {
             //context.lineCap = "round";
-            var goingUp = mountainLegDistance < leg.distance * this.mountainClimbPercent;            
+            var goingUp = mountainLegDistance < leg.distance * this.mountainClimbPercent;
 
             if (path.routeDesign === RaceDesignEnum.Regular) {
               this.drawRegularMountainOverview(context, path, xRaceModeModifier, yRaceModeModifier, goingUp, xDistanceOffset, yDistanceOffset);
@@ -752,6 +768,21 @@ export class DrawRaceComponent implements OnInit {
 
       context.globalCompositeOperation = existingContentDestinationType;
     }
+
+
+    //draw additional objects
+    /*if (this.race.drawnObjects !== undefined && this.race.drawnObjects !== null && this.race.drawnObjects.length > 0) {
+      var existingContentDestinationType = context.globalCompositeOperation;
+      context.globalCompositeOperation = "destination-over";
+      
+      this.race.drawnObjects.forEach(object => {
+        if (object.objectType === DrawnRaceObjectEnum.brazier) {
+          this.drawBrazier(object.xDistance, context, currentFrame, xRaceModeModifier, yRaceModeModifier, xDistanceOffset, yDistanceOffset);
+        }
+      });
+      
+      context.globalCompositeOperation = existingContentDestinationType;
+    }*/
   }
 
   getAnimalDistanceColor(currentDistanceTraveled: number, raceLegs?: RaceLeg[]) {
@@ -766,7 +797,7 @@ export class DrawRaceComponent implements OnInit {
         //we are in this leg        
         if (leg.courseType === RaceCourseTypeEnum.Flatland)
           color = "#7d3f00";//"#8f1c14";
-        if (leg.courseType === RaceCourseTypeEnum.Mountain) {          
+        if (leg.courseType === RaceCourseTypeEnum.Mountain) {
           color = "#1b630d";
         }
         if (leg.courseType === RaceCourseTypeEnum.Ocean) {
@@ -798,7 +829,7 @@ export class DrawRaceComponent implements OnInit {
       //else
       //color = "#4d6b48";
     }
-    if (courseType === RaceCourseTypeEnum.Ocean) {      
+    if (courseType === RaceCourseTypeEnum.Ocean) {
       if (this.themeService.getActiveThemeName() === "night")
         color = "#5044ab";
       else
@@ -1078,7 +1109,7 @@ export class DrawRaceComponent implements OnInit {
     context.beginPath();
     context.moveTo(startingX + xRegularOffset, startingY);
     context.lineTo(startingX + xRegularOffset + xFullBump / 2, startingY - yFullBump);
-    context.lineTo(startingX + xRegularOffset + xFullBump, startingY);    
+    context.lineTo(startingX + xRegularOffset + xFullBump, startingY);
     context.stroke();
 
     context.beginPath();
@@ -1145,10 +1176,10 @@ export class DrawRaceComponent implements OnInit {
     context.moveTo(this.lastPathEndingX - xDistanceOffset, this.lastPathEndingY + yDistanceOffset);
 
     if (goingUp) {
-      context.lineTo(this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY - verticalLength + yDistanceOffset);      
+      context.lineTo(this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY - verticalLength + yDistanceOffset);
     }
     else {
-      context.lineTo(this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY + verticalLength + yDistanceOffset);      
+      context.lineTo(this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY + verticalLength + yDistanceOffset);
     }
     context.stroke();
 
@@ -1273,7 +1304,7 @@ export class DrawRaceComponent implements OnInit {
     context.beginPath();
     context.moveTo(startingX, startingY);
     context.bezierCurveTo(bezierX1, bezierY1, bezierX2, bezierY2, finishPointX, finishPointY);
-    context.stroke();    
+    context.stroke();
 
     this.lastPathEndingX = this.lastPathEndingX + horizontalLength;
   }
@@ -1425,7 +1456,7 @@ export class DrawRaceComponent implements OnInit {
     lineSet.push([this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY + verticalDistance + yDistanceOffset]);
     lineSet.push([this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY - verticalDistance + yDistanceOffset]);
     lineSet.push([this.lastPathEndingX - xDistanceOffset, this.lastPathEndingY - verticalDistance + yDistanceOffset]);
-    this.icyPatchBackgroundLines.push(lineSet);    
+    this.icyPatchBackgroundLines.push(lineSet);
 
     this.lastPathEndingX = this.lastPathEndingX + horizontalLength;
   }
@@ -1580,11 +1611,11 @@ export class DrawRaceComponent implements OnInit {
 
   drawHillsBackgroundTundraOverview(context: any, coordinates: any): void {
     var existingContentDestinationType = context.globalCompositeOperation;
-       context.strokeStyle = "dimgray";
-    
+    context.strokeStyle = "dimgray";
+
     //Draw hills once over content and once over so they always persist no matter what
     context.globalCompositeOperation = "source-atop";
- 
+
     if (coordinates.length >= 17) {
       context.beginPath();
       context.moveTo(coordinates[6][0], coordinates[6][1]);
@@ -1618,7 +1649,7 @@ export class DrawRaceComponent implements OnInit {
     }
 
     context.globalCompositeOperation = "destination-over";
- 
+
     if (coordinates.length >= 17) {
       context.beginPath();
       context.moveTo(coordinates[6][0], coordinates[6][1]);
@@ -1678,7 +1709,7 @@ export class DrawRaceComponent implements OnInit {
 
     var xCenterOfOvalOffset = horizontalLength * (pathCounter);
     var xRegularOffset = horizontalLength / xRaceModeModifier;
-      
+
     volcanicYOffset = 0;
 
     var startingX = this.lastPathEndingX - xDistanceOffset;
@@ -1686,7 +1717,7 @@ export class DrawRaceComponent implements OnInit {
     var xCenterOfOval = startingX - (xCenterOfOvalOffset) + ((horizontalLength * numberOfPaths) / 2);
     var yCenterOfOval = startingY;
     var radiusOfOvalX = (horizontalLength * numberOfPaths) / this.volcanoRadiusXModifier;
-    
+
     var radiusOfOvalY = ((horizontalLength * numberOfPaths) / 2) - xRegularOffset;
     var rotationOfOval = Math.PI / 2;
     var baselineStartingAngle = 90; //go from 90 to 270
@@ -1718,7 +1749,7 @@ export class DrawRaceComponent implements OnInit {
     context.beginPath();
     context.ellipse(xCenterOfOval, yCenterOfOval, radiusOfOvalX, radiusOfOvalY, rotationOfOval, this.volcanoStartingAngle * (Math.PI / 180), endingAngle * (Math.PI / 180), true);
     context.stroke();
-    
+
     this.lastPathEndingX = this.lastPathEndingX + horizontalLength;
     this.volcanoStartingAngle = endingAngle;
   }
@@ -2020,16 +2051,88 @@ export class DrawRaceComponent implements OnInit {
     context.fillStyle = originalFillColor;
   }
 
+  drawBrazier(objectXDistance: number, context: any, currentFrame: number, xRaceModeModifier: number, yRaceModeModifier: number, xDistanceOffset?: number, yDistanceOffset?: number) {
+    var horizontalLength = (this.race.length * .01) * this.canvasXDistanceScale  * xRaceModeModifier;
+
+    if (xDistanceOffset === undefined || xDistanceOffset === null)
+      xDistanceOffset = 0;
+
+    if (yDistanceOffset === undefined || yDistanceOffset === null)
+      yDistanceOffset = 0;
+
+    //this.lastPathEndingX - xDistanceOffset
+    var startingXPoint = objectXDistance * this.canvasXDistanceScale * xRaceModeModifier - xDistanceOffset;
+    var startingYPoint = this.canvasHeight / 2;
+
+    var sidePanelXDistance = horizontalLength * .166667;
+    var frontPanelXDistance = horizontalLength * .333333;
+    var panelYDistance = horizontalLength * .8;
+
+    console.log("Starting X: " + startingXPoint);
+
+    context.strokeStyle = 'black';
+    context.lineWidth = '6';
+    context.fillStyle = 'gray';
+
+    //fully 2d version
+    //first panel from left
+    context.beginPath();
+    context.moveTo(startingXPoint, startingYPoint);
+    context.lineTo(startingXPoint + sidePanelXDistance, startingYPoint);
+    context.lineTo(startingXPoint + sidePanelXDistance, startingYPoint - panelYDistance);
+    context.lineTo(startingXPoint, startingYPoint - panelYDistance);
+    context.lineTo(startingXPoint, startingYPoint);
+    context.stroke();
+    context.fill();
+
+    //second panel from left
+    context.beginPath();
+    context.moveTo(startingXPoint + sidePanelXDistance, startingYPoint);
+    context.lineTo(startingXPoint + sidePanelXDistance + frontPanelXDistance, startingYPoint);
+    context.lineTo(startingXPoint + sidePanelXDistance + frontPanelXDistance, startingYPoint - panelYDistance);
+    context.lineTo(startingXPoint + sidePanelXDistance, startingYPoint - panelYDistance);
+    context.lineTo(startingXPoint + sidePanelXDistance, startingYPoint);
+    context.stroke();
+    context.fill();
+
+    //third panel from left
+    context.beginPath();
+    context.moveTo(startingXPoint + sidePanelXDistance + frontPanelXDistance, startingYPoint);
+    context.lineTo(startingXPoint + sidePanelXDistance + 2 * frontPanelXDistance, startingYPoint);
+    context.lineTo(startingXPoint + sidePanelXDistance + 2 * frontPanelXDistance, startingYPoint - panelYDistance);
+    context.lineTo(startingXPoint + sidePanelXDistance + frontPanelXDistance, startingYPoint - panelYDistance);
+    context.lineTo(startingXPoint + sidePanelXDistance + frontPanelXDistance, startingYPoint);
+    context.stroke();
+    context.fill();
+
+    //first panel from left
+    context.beginPath();
+    context.moveTo(startingXPoint + sidePanelXDistance + 2 * frontPanelXDistance, startingYPoint);
+    context.lineTo(startingXPoint + 2 * sidePanelXDistance + 2 * frontPanelXDistance, startingYPoint);
+    context.lineTo(startingXPoint + 2 * sidePanelXDistance + 2 * frontPanelXDistance, startingYPoint - panelYDistance);
+    context.lineTo(startingXPoint + sidePanelXDistance + 2 * frontPanelXDistance, startingYPoint - panelYDistance);
+    context.lineTo(startingXPoint + sidePanelXDistance + 2 * frontPanelXDistance, startingYPoint);
+    context.stroke();
+    context.fill();
+
+
+    /*context.beginPath();
+    context.moveTo(this.lastPathEndingX - xDistanceOffset, this.lastPathEndingY + yDistanceOffset);
+    context.lineTo(this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY + yDistanceOffset);
+    context.stroke();*/
+
+    this.lastPathEndingX = this.lastPathEndingX + horizontalLength;
+  }
+
   grandPrixMountainYReset(legCounter: number) {
-    if (this.race.raceType === RaceTypeEnum.event && this.race.eventRaceType === EventRaceTypeEnum.grandPrix) {      
+    if (this.race.raceType === RaceTypeEnum.event && this.race.eventRaceType === EventRaceTypeEnum.grandPrix) {
       if (this.globalService.globalVar.eventRaceData.mountainEndingY === 0 &&
         this.globalService.globalVar.eventRaceData.previousRaceSegment !== null &&
         this.globalService.globalVar.eventRaceData.previousRaceSegment !== undefined &&
         this.globalService.globalVar.eventRaceData.previousRaceSegment.raceLegs !== undefined &&
         this.globalService.globalVar.eventRaceData.previousRaceSegment.raceLegs[0].courseType === RaceCourseTypeEnum.Mountain &&
-        legCounter === 1)
-      {    
-        this.lastPathEndingY = this.canvasHeight / 2;        
+        legCounter === 1) {
+        this.lastPathEndingY = this.canvasHeight / 2;
       }
     }
   }

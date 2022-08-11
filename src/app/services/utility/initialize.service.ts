@@ -79,7 +79,7 @@ export class InitializeService {
       training.trainingType = TrainingOptionsEnum.Footwork;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
       training.statGain = 1;
-      training.affectedStatRatios = new AnimalStats(0, .5, 0, 0, 0, 1);
+      training.affectedStatRatios = new AnimalStats(0, .25, 0, 0, 0, 1);
     }
 
     if (trainingType === TrainingOptionsEnum.PracticeCommands) {      
@@ -179,11 +179,11 @@ export class InitializeService {
       training.isAvailable = false;
       training.facilitySize = FacilitySizeEnum.Medium;
       training.purchasePrice *= 4;
-      training.timeToComplete = 75;
+      training.timeToComplete = 60;
       training.trainingType = TrainingOptionsEnum.DodgeBall;
       training.trainingCourseType = RaceCourseTypeEnum.Flatland;
       training.statGain = 1;
-      training.affectedStatRatios = new AnimalStats(0, 2.5, 0, 0, 0, .5);
+      training.affectedStatRatios = new AnimalStats(0, 2.5, 0, 0, 0, 1);
     }
 
     if (trainingType === TrainingOptionsEnum.LateralVerticalDrill) {      

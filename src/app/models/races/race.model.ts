@@ -4,6 +4,7 @@ import { LocalRaceTypeEnum } from "../local-race-type-enum.model";
 import { RaceTypeEnum } from "../race-type-enum.model";
 import { ResourceValue } from "../resources/resource-value.model";
 import { TrackRaceTypeEnum } from "../track-race-type-enum.model";
+import { DrawnRaceObject } from "./drawn-race-objects.model";
 import { RaceLeg } from "./race-leg.model";
 import { RaceUI } from "./race-ui.model";
 
@@ -25,8 +26,10 @@ export class Race {
     @Type(() => RaceUI)
     raceUI: RaceUI;
     circuitIncreaseReward: [string, string];
+    @Type(() => DrawnRaceObject)
+    drawnObjects: DrawnRaceObject[];
 
-    constructor(raceLegs: RaceLeg[], requiredRank: string, isCircuitRace: boolean, raceId: number, length: number, timeToComplete: number, rewards?: ResourceValue[], localRaceType?: LocalRaceTypeEnum, trackRaceType?: TrackRaceTypeEnum, raceType?: RaceTypeEnum, eventRaceType?: EventRaceTypeEnum) {
+    constructor(raceLegs: RaceLeg[], requiredRank: string, isCircuitRace: boolean, raceId: number, length: number, timeToComplete: number, rewards?: ResourceValue[], localRaceType?: LocalRaceTypeEnum, trackRaceType?: TrackRaceTypeEnum, raceType?: RaceTypeEnum, eventRaceType?: EventRaceTypeEnum, drawnObjects?: DrawnRaceObject[]) {
         this.raceLegs = raceLegs;
         this.requiredRank = requiredRank;
         this.isCircuitRace = isCircuitRace;
@@ -50,12 +53,15 @@ export class Race {
 
         if (eventRaceType !== undefined && eventRaceType !== null)
             this.eventRaceType = eventRaceType;
+
+        if (drawnObjects !== undefined && drawnObjects !== null)
+            this.drawnObjects = drawnObjects;
     }
 
     makeCopy(originalRace: Race) {
         var copy = new Race(originalRace.raceLegs, originalRace.requiredRank, originalRace.isCircuitRace, originalRace.raceId, 
             originalRace.length, originalRace.timeToComplete, originalRace.rewards, originalRace.localRaceType, 
-            originalRace.trackRaceType, originalRace.raceType, originalRace.eventRaceType);
+            originalRace.trackRaceType, originalRace.raceType, originalRace.eventRaceType, originalRace.drawnObjects);
         
         if (originalRace.raceUI.velocityByFrame.length > 0)
         {

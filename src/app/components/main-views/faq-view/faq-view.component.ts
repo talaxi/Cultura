@@ -55,7 +55,7 @@ export class FaqViewComponent implements OnInit {
   barnSpecializationLevelAmount = "";
 
   constructor(private componentCommunicationService: ComponentCommunicationService, public lookupService: LookupService,
-    private gameLoopService: GameLoopService, private globalService: GlobalService, private specializationService: SpecializationService) { }
+    private gameLoopService: GameLoopService, public globalService: GlobalService, private specializationService: SpecializationService) { }
 
   ngOnInit(): void {
     this.componentCommunicationService.setNewView(NavigationEnum.faqs);

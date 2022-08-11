@@ -82,7 +82,7 @@
             </div>
             <br />
             <br />
-            <div>{{ selectedRace.circuitIncreaseReward[1] }}</div>
+            <div [innerHTML]="selectedRace.circuitIncreaseReward[1]"></div>
         </div>
         <div class="buttonSpacing">
             <button type="button" (click)="modal.dismiss()">Continue</button>

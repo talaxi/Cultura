@@ -1,4 +1,4 @@
-<p *ngIf="!eventRaceReleased" class="centered">Coming Soon!</p>
+<p *ngIf="!eventRaceReleased" class="centered">The Grand Prix is currently under construction. <br/> <br/> <em>I'm fixing a few bugs and making some improvements related to the Grand Prix but it will reopen soon!</em></p>
 
 <div *ngIf="eventRaceReleased" class="eventViewDiv centered">
     <div class="eventRaceHeader"></div>
@@ -35,8 +35,7 @@
 
                         <br />
                         <h6 *ngIf="grandPrixData.isRunning && !grandPrixData.isGrandPrixCompleted && !grandPrixData.isCatchingUp" class="keyword">View Race</h6>
-                        <h6 *ngIf="grandPrixData.isRunning && !grandPrixData.isGrandPrixCompleted && grandPrixData.isCatchingUp" class="raceCatchingUp"><em>Please Wait -- Offline Time Is Calculating</em></h6>
-                        <h6 *ngIf="grandPrixData.isRunning && !grandPrixData.isGrandPrixCompleted && !grandPrixData.isCatchingUp && grandPrixData.isLoading" class="raceCatchingUp"><em>Loading..</em></h6>
+                        <h6 *ngIf="grandPrixData.isRunning && !grandPrixData.isGrandPrixCompleted && grandPrixData.isCatchingUp" class="raceCatchingUp"><em>Please Wait -- Offline Time Is Calculating</em></h6>                        
                         <h6 *ngIf="!grandPrixData.isRunning && !grandPrixData.isGrandPrixCompleted" class="keyword">Start</h6>
                         <h6 *ngIf="!grandPrixData.isRunning && grandPrixData.isGrandPrixCompleted"><em>Completed!</em></h6>                        
                     </div>

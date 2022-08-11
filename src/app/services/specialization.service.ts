@@ -44,7 +44,7 @@ export class SpecializationService {
 
       if (amountEarnedPair !== undefined && amountEarnedPair !== null) {
         for (var i = 1; i <= specializationLevel; i++) {
-          amountEarned += amountEarnedPair.value + (5 * (i-1));
+          amountEarned += 20 * i;
         }
       }
 
@@ -212,7 +212,7 @@ export class SpecializationService {
 
     if (amountEarnedPair !== undefined && amountEarnedPair !== null) {
       for (var i = 1; i <= assignedBarn.barnUpgrades.specializationLevel; i++) {
-        amountEarned += amountEarnedPair.value + (5 * (i-1));
+        amountEarned += 20 * i;
       }
     }
 

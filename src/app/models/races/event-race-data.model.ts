@@ -40,6 +40,8 @@ export class GrandPrixData {
     segmentTime: number;
     segmentTimeCounter: number;
     overallTimeCounter: number;
+    currentEventStartDate: Date;
+    currentEventEndDate: Date;
     totalSegments: number;
     segmentsCompleted: number;
     currentRaceSegmentCount: number;     
