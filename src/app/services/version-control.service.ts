@@ -160,7 +160,7 @@ export class VersionControlService {
     if (version === 1.09)
       date = new Date('2022-08-11 12:00:00');
     if (version === 1.10)
-      date = new Date('2022-08-15 12:00:00');
+      date = new Date('2022-08-16 12:00:00');
 
     return date.toDateString().replace(/^\S+\s/, '');
   }
