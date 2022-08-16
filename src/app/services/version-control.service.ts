@@ -120,16 +120,16 @@ export class VersionControlService {
         "There have been bugs, balance issues, and some concerns about reward scaling with the Grand Prix. I have taken the Grand Prix down for now while I work on these issues. Look forward to it coming back up in a better state in the next couple of weeks.\n\n" +
         "Additional minor bug fixes.";
     if (version === 1.10)
-      changes = "Two new animals have been added to the game." +
+      changes = "Two new animals have been added to the game!" +
         "<ul><li>The <span class='flatlandColor'>Warthog</span> is a new Flatland racer that you can purchase from the Shop.</li>" +
         "<li>The <span class='waterColor'>Whale</span> is a new Ocean racer that is rewarded for reaching Circuit Rank B (25).</li></ul>" +
         "The <span class='flatlandColor'>Hare</span> is now rewarded for reaching Circuit Rank Q (10). It is no longer listed in the Shop and anyone who has already purchased it will receive 1000 Coins immediately.\n\n" +
-        "Buried Treasure (<span class='waterColor'>Octopus</span>) and Cold Blooded (<span class='volcanicColor'>Salamander</span>) have both been reworked.\n\n"
+        "Buried Treasure (<span class='waterColor'>Octopus</span>) and Cold Blooded (<span class='volcanicColor'>Salamander</span>) have both been reworked.\n\n" +
         "Many Circuit Rank rewards were moved around to make the early game flow better. Of note, the Dolphin is now a reward at Circuit Rank L (15) so that you have more time with only two race course types.\n\n" +
         "Certain items in the shop have been locked behind reaching Circuit Rank AZ (27) before they appear to better guide new players to aim for items better suited for early game.\n\n" +
         "By default, free races now give 1 medal per 50 free race victories.\n\n" +
         "Early game circuit races and free races in general are now easier.\n\n" +
-        "After the Attraction change last patch, upgrading barns became a bit too easy at higher levels. Coin cost per upgrade level for barns has been adjusted higher starting at level 100 to keep the time between upgrades balanced.\n\n"
+        "After the Attraction change last patch, upgrading barns became a bit too easy at higher levels. Coin cost per upgrade level for barns has been adjusted higher starting at level 100 to keep the time between upgrades balanced.\n\n" +
         "Added option to 'Export to File'/'Import from File' to make saving and loading easier.\n\n" +
         "Removed 'Stats' navigation page. It was really bare bones and just added more to the length of the navigation bar. I will eventually re-implement this in a better fashion.\n\n" +
         "Various bug fixes and UI improvements.";

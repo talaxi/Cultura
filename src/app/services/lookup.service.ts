@@ -954,7 +954,7 @@ export class LookupService {
           return "Sleep until the competition has traveled a distance equal to <span class='keyword'>" + effectiveAmountDisplay + "</span> meters from the end of your leg. Max Speed and Focus Distance are then doubled. Passive.";
         }
         if (abilityName === "Graze") {
-          return "Forage for food, gaining a 10% increase to a random stat for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. " + cooldownDisplay + " second cooldown.";
+          return "Forage for food, gaining a 10% increase to a random stat for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. This effect can stack. " + cooldownDisplay + " second cooldown.";
         }
         if (abilityName === "Mud Pit") {
           return "Right after losing focus, roll in a mud pit for 1 second. Afterwards, reduce Stamina loss by 25% and increase Burst Chance by 25% for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. Passive.";

@@ -48,7 +48,7 @@ export class RaceLogicService {
 
   runRace(race: Race, expediteRace?: boolean): RaceResult {
     //console.log("Race Info:");
-    console.log(race);
+    //console.log(race);
 
     this.currentBurstOpportunity = 0;
     this.currentLostFocusOpportunity = 0;
@@ -660,7 +660,7 @@ export class RaceLogicService {
           if (racingAnimal.raceVariables.stumbled) {
             currentRacerEffect = RacerEffectEnum.Stumble;
             var lostVelocity = velocityBeforeEffect - (velocityBeforeEffect * currentPath.stumbleSeverity);
-
+            
             if (velocity > maxSpeedFloor)
               velocity -= lostVelocity / racingAnimal.raceVariables.defaultStumbledLength;
             racingAnimal.raceVariables.currentStumbledLength -= 1;
@@ -862,9 +862,10 @@ export class RaceLogicService {
         //all max speed modifiers need to be above here
 
         //set max speed floor from long distance talent
+        maxSpeedFloor = 0;
         if (racingAnimal.talentTree.talentTreeType === TalentTreeTypeEnum.longDistance) {
           if (velocity > modifiedMaxSpeed * (racingAnimal.talentTree.column2Row4Points * .005)) {
-            maxSpeedFloor = modifiedMaxSpeed * (racingAnimal.talentTree.column2Row4Points * .005);
+            maxSpeedFloor += modifiedMaxSpeed * (racingAnimal.talentTree.column2Row4Points * .005);
           }
         }
 
@@ -901,8 +902,7 @@ export class RaceLogicService {
             pathsClearedWithoutLosingFocus = 0;
           else
             pathsClearedWithoutLosingFocus += 1;
-
-          console.log("New Path, clear count: " + pathsClearedWithoutLosingFocus);
+          
           if (pathsClearedWithoutLosingFocus >= 3) {
             if (racingAnimal.type === AnimalTypeEnum.Whale && racingAnimal.ability.name === "Unparalleled Focus") {
               racingAnimal.ability.abilityInUse = true;
