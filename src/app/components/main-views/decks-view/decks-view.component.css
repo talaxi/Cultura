@@ -10,15 +10,24 @@
 .marginGrid {
     height: 100%;
     display: grid;
-    grid-template-columns: 1% 1fr 1%;
+    /*grid-template-columns: 1% 1fr 1%;*/
     grid-template-rows: auto;
     justify-content: stretch;
     grid-template-areas: 
       ". view .";
+
+      
+    background-color: var(--background-secondary);
+    border-color: var(--background-tertiary);
+    color: var(--foreground-default);
 }
 
 .view {
     grid-area: view;
+    
+    background-color: var(--background-secondary);
+    border-color: var(--background-tertiary);
+    color: var(--foreground-default);
 }
 
 .info {

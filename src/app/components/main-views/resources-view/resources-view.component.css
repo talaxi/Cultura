@@ -14,7 +14,7 @@
       height: 100%;
       display: grid;
       grid-template-columns: 25%;
-      grid-template-rows: 100%;
+      grid-template-rows: 1fr;
       justify-content: stretch;
       grid-template-areas: 
         "resources progression specialty equipment";

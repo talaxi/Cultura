@@ -27,10 +27,14 @@
 .settingsGrid {
   display: grid;
   grid-template-columns: 1% 1fr 1fr 1%;
-  grid-template-rows: auto;
+  grid-template-rows: 1fr;
   justify-content: stretch;
   grid-template-areas: 
     ". options saveLoad .";
+
+  background-color: var(--background-secondary);
+  border-color: var(--background-tertiary);
+  color: var(--foreground-default);
 }
 
 .options {
@@ -85,7 +89,7 @@
 .settingsGrid {
   display: grid;
   grid-template-columns: 1% 1fr 1%;
-  grid-template-rows: auto;
+  grid-template-rows: 1fr;
   justify-content: stretch;
   grid-template-areas: 
     ". options ."

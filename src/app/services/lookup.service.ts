@@ -1029,7 +1029,7 @@ export class LookupService {
           "Fourth Use - Gain 30% Focus Distance.<br/>" +
           "Fifth Use - Gain 30% Max Speed.<br/>" +
           "After 5 uses, every subsequent use will give 30% to all of these stats.<br/>" +
-          " Passive.";
+          + cooldownDisplay + " second cooldown.";
         }
         if (abilityName === "Herd Mentality") {
           return "After completing your leg, <span class='keyword'>" + effectiveAmountDisplay + "</span>% of your remaining Stamina is given to the next racer and they start their leg in Burst mode. This does not occur if you run out of Stamina during your leg. Passive.";

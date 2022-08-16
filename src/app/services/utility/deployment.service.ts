@@ -18,8 +18,8 @@ export class DeploymentService {
   }
 
   setDevMode() {
-    this.devModeActive = false;
-    this.forceStartNewGame = false;
+    this.devModeActive = true;
+    this.forceStartNewGame = true;
     this.codeCreationMode = true;
   }
 }
