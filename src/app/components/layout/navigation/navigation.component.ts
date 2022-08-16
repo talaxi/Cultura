@@ -22,6 +22,7 @@ export class NavigationComponent implements OnInit {
   tutorialSubscription: any;
   tutorial3Active = false;
   tutorial6Active = false;
+  tutorial9Active = false;
 
   constructor(private componentCommunicationService: ComponentCommunicationService, private lookupService: LookupService,
     private globalService: GlobalService, private gameLoopService: GameLoopService) { }
@@ -42,32 +43,36 @@ export class NavigationComponent implements OnInit {
       else
         this.tutorial3Active = false;
 
-        if (!this.globalService.globalVar.tutorials.tutorialCompleted && this.globalService.globalVar.tutorials.currentTutorialId === 6 && 
-          this.globalService.globalVar.animals.find(item => item.type === AnimalTypeEnum.Monkey)?.isAvailable) {
-          this.tutorial6Active = true;
-        }
-        else
-          this.tutorial6Active = false;
+      if (!this.globalService.globalVar.tutorials.tutorialCompleted && this.globalService.globalVar.tutorials.currentTutorialId === 6 &&
+        this.globalService.globalVar.animals.find(item => item.type === AnimalTypeEnum.Monkey)?.isAvailable) {
+        this.tutorial6Active = true;
+      }
+      else
+        this.tutorial6Active = false;
+
+      if (!this.globalService.globalVar.tutorials.tutorialCompleted && this.globalService.globalVar.tutorials.currentTutorialId === 9 &&
+        this.globalService.globalVar.animals.find(item => item.type === AnimalTypeEnum.Hare)?.isAvailable) {
+        this.tutorial9Active = true;
+      }
+      else
+        this.tutorial9Active = false;
 
       if (this.globalService.globalVar.tutorials.tutorialCompleted)
         this.tutorialSubscription.unsubscribe();
     });
   }
 
-  switchView(selectedView: NavigationEnum) {    
-    if (this.selectedNavigation === NavigationEnum.shop)
-    {
+  switchView(selectedView: NavigationEnum) {
+    if (this.selectedNavigation === NavigationEnum.shop) {
       this.componentCommunicationService.setShopView(NavigationEnum.shop, ShopsEnum.regular);
     }
-    if (this.selectedNavigation === NavigationEnum.barn)
-    {
+    if (this.selectedNavigation === NavigationEnum.barn) {
       this.componentCommunicationService.setBarnView(NavigationEnum.barn, 0);
     }
-    if (this.selectedNavigation === NavigationEnum.animals)
-    {
+    if (this.selectedNavigation === NavigationEnum.animals) {
       this.componentCommunicationService.setAnimalView(NavigationEnum.animals, new Animal());
     }
-    
+
     this.viewChanged.emit(selectedView);
     this.selectedNavigation = selectedView;
 

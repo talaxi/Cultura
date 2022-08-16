@@ -1,7 +1,7 @@
 export enum AnimalTypeEnum {
     Horse, 
     Cheetah,
-    Hare,
+    Hare,    
     Monkey,
     Goat,
     Gecko,
@@ -11,5 +11,7 @@ export enum AnimalTypeEnum {
     Penguin,
     Caribou,
     Salamander,
-    Fox
+    Fox,
+    Warthog,
+    Whale
   }

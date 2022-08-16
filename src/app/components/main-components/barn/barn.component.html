@@ -18,7 +18,10 @@
             {{ trainingCompleteText }}
         </div>
         <br />
-        <div *ngIf="readyToBreed">
+        <div *ngIf="autoBreedActive">
+            <em>Auto Breed <strong>ON</strong></em>
+        </div>
+        <div *ngIf="!autoBreedActive && readyToBreed">
             <em>Ready to Breed</em>
         </div>
     </div>

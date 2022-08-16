@@ -21,10 +21,13 @@
         <button (click)="ResetShopFilters()" class="centered clickableText buttonAsText">
             Reset Filters
         </button>
+        <br/>
+        <br/>
+        <em>Certain items can be bought in bulk. Use the Alt, Shift, and Ctrl keys to modify the amount you are buying.</em>
     </div>
     <br/>
     <div class="shopSection" *ngFor="let section of sections;">
-        <app-shopping-list [section]="section"></app-shopping-list>
+        <app-shopping-list [section]="section" [resetShop]="resetShopSubject.asObservable()" (itemPurchasedEmitter)="itemPurchased($event)"></app-shopping-list>
     </div>
 </div>
 

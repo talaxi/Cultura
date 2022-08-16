@@ -114,11 +114,11 @@ export class SelectedBarnComponent implements OnInit {
   ngOnInit(): void {
     this.handleTutorial();
 
-    this.tutorialSubscription = this.gameLoopService.gameUpdateEvent.subscribe(async () => {
+    /*this.tutorialSubscription = this.gameLoopService.gameUpdateEvent.subscribe(async () => {
       if (!this.globalService.globalVar.tutorials.tutorialCompleted && this.globalService.globalVar.tutorials.currentTutorialId > 3) {        
         this.handleSecondaryTutorial();
       }
-    });
+    });*/
 
     if (this.selectedBarnNumber > 0 && this.selectedBarnNumber <= this.globalService.globalVar.barns.length + 1) {
       var globalBarn = this.globalService.globalVar.barns.find(item => item.barnNumber === this.selectedBarnNumber);
@@ -166,6 +166,11 @@ export class SelectedBarnComponent implements OnInit {
       this.globalService.globalVar.tutorials.currentTutorialId += 1;
       this.globalService.globalVar.tutorials.showTutorial = true;
       this.componentCommunicationService.setAnimalView(NavigationEnum.animals, this.associatedAnimal);
+    }
+
+    if (!this.globalService.globalVar.tutorials.tutorialCompleted && this.globalService.globalVar.tutorials.currentTutorialId === 8) {
+      this.tutorialActive = false;
+      this.globalService.globalVar.tutorials.currentTutorialId += 1;
     }
   }
 
@@ -339,6 +344,7 @@ export class SelectedBarnComponent implements OnInit {
       this.associatedAnimal.type === AnimalTypeEnum.Monkey) {
       this.globalService.globalVar.tutorials.currentTutorialId += 1;
       this.globalService.globalVar.tutorials.showTutorial = true;
+      this.tutorialActive = true;
     }
   }
 
@@ -708,19 +714,6 @@ export class SelectedBarnComponent implements OnInit {
       this.tutorialActive = false;
     }
   }
-
-  handleSecondaryTutorial() {
-    var monkey = this.globalService.globalVar.animals.find(item => item.type === AnimalTypeEnum.Monkey);
-
-    if (!this.globalService.globalVar.tutorials.tutorialCompleted && this.globalService.globalVar.tutorials.currentTutorialId === 8 &&
-      monkey?.isAvailable) {
-      this.tutorialActive = true;
-    }
-    else if (!this.globalService.globalVar.tutorials.tutorialCompleted && this.globalService.globalVar.tutorials.currentTutorialId > 3) {
-      this.tutorialActive = false;
-    }
-  }
-
 
   resetSelectedBarnInfo(newBarn: Barn) {
     this.specializationOptions = this.lookupService.getAllBarnSpecializations();

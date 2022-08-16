@@ -1,4 +1,5 @@
 import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
+import { Observable } from 'rxjs';
 import { ShopItem } from 'src/app/models/shop/shop-item.model';
 import { ShopSection } from 'src/app/models/shop/shop-section.model';
 import { ShopsEnum } from 'src/app/models/shops-enum.model';
@@ -17,12 +18,17 @@ export class ShoppingListComponent implements OnInit {
   screenHeight: number;
   screenWidth: number;
   public shopsEnum = ShopsEnum;
+  @Output() itemPurchasedEmitter = new EventEmitter<boolean>();
+  resetShopSubscription: any;
+  @Input() resetShop: Observable<void>;
 
   constructor(private globalService: GlobalService) { }
 
   ngOnInit(): void {    
     if (this.shopType === undefined || this.shopType === null)
       this.shopType = ShopsEnum.regular;
+
+    this.resetShopSubscription = this.resetShop.subscribe(() => this.setupDisplayItems());
 
     this.setupDisplayItems();
   }
@@ -64,5 +70,11 @@ export class ShoppingListComponent implements OnInit {
 
   itemPurchased($event: ShopItem) {     
     this.setupDisplayItems();
+    this.itemPurchasedEmitter.emit(true);
+  }
+
+  ngOnDestroy() {
+    if (this.resetShopSubscription !== undefined)
+      this.resetShopSubscription.unsubscribe();
   }
 }

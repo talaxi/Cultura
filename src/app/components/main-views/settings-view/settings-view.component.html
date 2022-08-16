@@ -9,58 +9,64 @@
             <div class="toggles">
                 <span [ngbPopover]="skipDrawRacePopoverText" class="checkboxOption" triggers="mouseenter:mouseleave">
                     <label>
-                    <input type="checkbox" class="rightSpaced" id="skipRace" [(ngModel)]="skipDrawRace"
-                        (input)="skipDrawRaceToggle()">
+                        <input type="checkbox" class="rightSpaced" id="skipRace" [(ngModel)]="skipDrawRace"
+                            (input)="skipDrawRaceToggle()">
                         <span>Auto Skip Race Info</span>
-                        </label>
+                    </label>
                 </span>
                 <br />
-                <span [ngbPopover]="finishTrainingBeforeSwitchingPopoverText" class="checkboxOption" triggers="mouseenter:mouseleave">
+                <span [ngbPopover]="finishTrainingBeforeSwitchingPopoverText" class="checkboxOption"
+                    triggers="mouseenter:mouseleave">
                     <label>
-                    <input type="checkbox" class="rightSpaced" id="finishTraining"
-                        [(ngModel)]="finishTrainingBeforeSwitching" (input)="finishTrainingBeforeSwitchingToggle()">
+                        <input type="checkbox" class="rightSpaced" id="finishTraining"
+                            [(ngModel)]="finishTrainingBeforeSwitching" (input)="finishTrainingBeforeSwitchingToggle()">
                         <span>Finish Training Before Switching </span>
                     </label>
                 </span>
                 <br />
                 <span [ngbPopover]="hideTipsPopoverText" class="checkboxOption" triggers="mouseenter:mouseleave">
                     <label>
-                    <input type="checkbox" class="rightSpaced" id="hideTips" [(ngModel)]="hideTips"
-                        (input)="hideTipsToggle()">
+                        <input type="checkbox" class="rightSpaced" id="hideTips" [(ngModel)]="hideTips"
+                            (input)="hideTipsToggle()">
                         <span>Hide Tips</span>
                     </label>
                 </span>
                 <br />
-                <span [ngbPopover]="useNumbersForCircuitRankPopoverText" class="checkboxOption" triggers="mouseenter:mouseleave">
+                <span [ngbPopover]="useNumbersForCircuitRankPopoverText" class="checkboxOption"
+                    triggers="mouseenter:mouseleave">
                     <label>
-                    <input type="checkbox" class="rightSpaced" id="useNumbersForCircuitRank"
-                        [(ngModel)]="useNumbersForCircuitRank" (input)="useNumbersForCircuitRankToggle()">
-                        <span>Use Numbers For Circuit Rank</span>                    
+                        <input type="checkbox" class="rightSpaced" id="useNumbersForCircuitRank"
+                            [(ngModel)]="useNumbersForCircuitRank" (input)="useNumbersForCircuitRankToggle()">
+                        <span>Use Numbers For Circuit Rank</span>
                     </label>
                 </span>
                 <br />
-                <span [ngbPopover]="autoStartEventRacePopoverText" class="checkboxOption" triggers="mouseenter:mouseleave">
+                <span [ngbPopover]="autoStartEventRacePopoverText" class="checkboxOption"
+                    triggers="mouseenter:mouseleave">
                     <label>
-                    <input type="checkbox" class="rightSpaced" id="autoStartEventRace"
-                        [(ngModel)]="autoStartEventRace" (input)="autoStartEventRaceToggle()">
-                        <span>Auto Start Event Race</span>                    
+                        <input type="checkbox" class="rightSpaced" id="autoStartEventRace"
+                            [(ngModel)]="autoStartEventRace" (input)="autoStartEventRaceToggle()">
+                        <span>Auto Start Event Race</span>
                     </label>
                 </span>
                 <br />
             </div>
-            <div [ngbPopover]="raceDisplayInfoPopoverText" triggers="mouseenter:mouseleave" ngbDropdown class="d-inline-block">
+            <div [ngbPopover]="raceDisplayInfoPopoverText" triggers="mouseenter:mouseleave" ngbDropdown
+                class="d-inline-block">
                 <label class="bottomAligned">Race Display Info:</label>
-                <button type="button" class="btn dropdown spaced" id="raceDisplayInfoDropdown" ngbDropdownToggle>{{raceDisplayInfo}}</button>
+                <button type="button" class="btn dropdown spaced" id="raceDisplayInfoDropdown"
+                    ngbDropdownToggle>{{raceDisplayInfo}}</button>
                 <div ngbDropdownMenu aria-labelledby="raceDisplayInfoDropdown">
                     <button (click)="changeRaceDisplayInfo(raceDisplayInfoEnum.draw)" ngbDropdownItem>Draw</button>
                     <button (click)="changeRaceDisplayInfo(raceDisplayInfoEnum.text)" ngbDropdownItem>Text</button>
                     <button (click)="changeRaceDisplayInfo(raceDisplayInfoEnum.both)" ngbDropdownItem>Both</button>
                 </div>
             </div>
-            <br/>
+            <br />
             <div ngbDropdown class="d-inline-block">
                 <label class="bottomAligned">Theme:</label>
-                <button type="button" class="btn dropdown spaced" id="themeDropdown" ngbDropdownToggle>{{currentTheme}}</button>
+                <button type="button" class="btn dropdown spaced" id="themeDropdown"
+                    ngbDropdownToggle>{{currentTheme}}</button>
                 <div ngbDropdownMenu aria-labelledby="themeDropdown">
                     <button (click)="changeTheme('White')" ngbDropdownItem>White</button>
                     <button (click)="changeTheme('Light')" ngbDropdownItem>Light</button>
@@ -82,6 +88,18 @@
                         Export
                     </button>
                 </div>
+                <br/>
+                <div class="importExportButtons">
+                    <div>
+                        <button (click)="LoadGameFromFile()">
+                            Import from File
+                        </button>
+                        <input type='file' class="spaced" id="fileUpload" (change)="fileChanged($event)">
+                    </div>
+                    <button (click)="SaveGameToFile()">
+                        Export to File
+                    </button>
+                </div>
             </div>
             <br />
             <br />
@@ -91,7 +109,8 @@
                 <br />
                 <div class="codeRedemption">
                     <label for="codeRedemptionText">Code: </label>
-                    <input id="codeRedemptionText" type="text" class="spaced codeRedemptionInput" [(ngModel)]="enteredRedemptionCode">
+                    <input id="codeRedemptionText" type="text" class="spaced codeRedemptionInput"
+                        [(ngModel)]="enteredRedemptionCode">
                     <button class="screenMarginLeft" (click)="enterRedemptionCode()">
                         Enter
                     </button>

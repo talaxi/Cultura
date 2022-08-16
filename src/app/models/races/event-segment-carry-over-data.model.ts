@@ -14,6 +14,7 @@ export class EventSegmentCarryOverData {
     coldBloodedIncreaseMultiplier: number; //Salamander Ability - Cold Blooded, created as an object so it can be passed as reference
     fleetingSpeedIncreaseMultiplier: number; //Fox Ability - Fleeting Speed
     nineTailsBuffs: [string, number][] = []; //stat, remaining distance. Fox Ability - Nine Tails
+    grazeBuffs: [string, number][] = []; //stat, remaining distance. Warthog Ability - Graze
     relayEffects: RelayEffect[] = [];
     statLossFromExhaustion: number;    
     mountainEndingY: number = 0;
@@ -21,6 +22,8 @@ export class EventSegmentCarryOverData {
     deepBreathingStaminaGain: number = 0; //Goat Ability - Deep Breathing   
     longDistanceTalentIncreaseAccelerationWithLowVelocity: boolean = false;     
     maxSpeedFloor: number = 0;
+    whalePowerStored = 0;
+    pathsClearedWithoutLosingFocus = 0;
     
     @Type(() => RaceVariables)
     raceVariables: RaceVariables = new RaceVariables();

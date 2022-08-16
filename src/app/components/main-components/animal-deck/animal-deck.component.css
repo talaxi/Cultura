@@ -24,4 +24,5 @@ font-size-adjust: 0.75;*/
     flex-direction: column;
     justify-content: space-around;
     height: 100%;
+    margin-left: .5rem;
 }

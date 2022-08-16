@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { GlobalVariables } from '../models/global/global-variables.model';
 import { AnimalTypeEnum } from '../models/animal-type-enum.model';
 import { AnimalStats } from '../models/animals/animal-stats.model';
-import { Animal, Caribou, Cheetah, Dolphin, Fox, Gecko, Goat, Hare, Horse, Monkey, Octopus, Penguin, Salamander, Shark } from '../models/animals/animal.model';
+import { Animal, Caribou, Cheetah, Dolphin, Fox, Gecko, Goat, Hare, Horse, Monkey, Octopus, Penguin, Salamander, Shark, Warthog, Whale } from '../models/animals/animal.model';
 import { RaceCourseTypeEnum } from '../models/race-course-type-enum.model';
 import { TrainingOptionsEnum } from '../models/training-options-enum.model';
 import { Race } from '../models/races/race.model';
@@ -77,8 +77,8 @@ export class GlobalService {
     this.globalVar.freeRaceCounter = 0;
     this.globalVar.freeRaceTimePeriodCounter = 0;
     this.globalVar.lastTimeStamp = Date.now();
-    this.globalVar.currentVersion = 1.09; //TODO: this needs to be automatically increased or something, too easy to forget
-    this.globalVar.startingVersion = 1.09;
+    this.globalVar.currentVersion = 1.10; //TODO: this needs to be automatically increased or something, too easy to forget
+    this.globalVar.startingVersion = 1.10;
     this.globalVar.startDate = new Date();
     this.globalVar.notifications = new Notifications();
 
@@ -142,6 +142,7 @@ export class GlobalService {
     this.globalVar.modifiers.push(new StringNumberPair(.02, "animalHandlerModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(.01, "stopwatchModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(.1, "racerMapsModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(50, "freeRacesToMedalModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(25, "nationalRacesToMedalModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(10, "internationalRacesToMedalModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(.75, "moneyMarkPaceModifier"));
@@ -246,6 +247,20 @@ export class GlobalService {
     this.globalVar.modifiers.push(new StringNumberPair(baseFocusModifier * mediumDetriment, "hareDefaultFocusModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(baseAdaptabilityModifier, "hareDefaultAdaptabilityModifier"));
 
+    this.globalVar.modifiers.push(new StringNumberPair(baseMaxSpeedModifier, "hareDefaultMaxSpeedModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseAccelerationModifier * mediumImprovement, "hareDefaultAccelerationModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseStaminaModifier, "hareDefaultStaminaModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(basePowerModifier * minorImprovement, "hareDefaultPowerModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseFocusModifier * mediumDetriment, "hareDefaultFocusModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseAdaptabilityModifier, "hareDefaultAdaptabilityModifier"));
+
+    this.globalVar.modifiers.push(new StringNumberPair(baseMaxSpeedModifier * minorImprovement, "warthogDefaultMaxSpeedModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseAccelerationModifier, "warthogDefaultAccelerationModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseStaminaModifier * mediumImprovement, "warthogDefaultStaminaModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(basePowerModifier * minorImprovement, "warthogDefaultPowerModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseFocusModifier * minorDetriment, "warthogDefaultFocusModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseAdaptabilityModifier * mediumDetriment, "warthogDefaultAdaptabilityModifier"));
+
     this.globalVar.modifiers.push(new StringNumberPair(baseMaxSpeedModifier, "monkeyDefaultMaxSpeedModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(baseAccelerationModifier * mediumDetriment, "monkeyDefaultAccelerationModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(baseStaminaModifier, "monkeyDefaultStaminaModifier"));
@@ -287,6 +302,13 @@ export class GlobalService {
     this.globalVar.modifiers.push(new StringNumberPair(basePowerModifier * majorImprovement, "octopusDefaultPowerModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(baseFocusModifier * minorImprovement, "octopusDefaultFocusModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(baseAdaptabilityModifier, "octopusDefaultAdaptabilityModifier"));
+
+    this.globalVar.modifiers.push(new StringNumberPair(baseMaxSpeedModifier * majorDetriment, "whaleDefaultMaxSpeedModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseAccelerationModifier, "whaleDefaultAccelerationModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseStaminaModifier * mediumImprovement, "whaleDefaultStaminaModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(basePowerModifier * mediumImprovement, "whaleDefaultPowerModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseFocusModifier * majorImprovement, "whaleDefaultFocusModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(baseAdaptabilityModifier * mediumDetriment, "whaleDefaultAdaptabilityModifier"));
 
     this.globalVar.modifiers.push(new StringNumberPair(baseMaxSpeedModifier * mediumDetriment, "penguinDefaultMaxSpeedModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(baseAccelerationModifier, "penguinDefaultAccelerationModifier"));
@@ -333,6 +355,10 @@ export class GlobalService {
     hare.name = "Hare";
     this.calculateAnimalRacingStats(hare);
 
+    var warthog = new Warthog();
+    warthog.name = "Warthog";
+    this.calculateAnimalRacingStats(warthog);
+
     var cheetah = new Cheetah();
     cheetah.name = "Cheetah";
     this.calculateAnimalRacingStats(cheetah);
@@ -356,6 +382,10 @@ export class GlobalService {
     var octopus = new Octopus();
     octopus.name = "Octopus";
     this.calculateAnimalRacingStats(octopus);
+
+    var whale = new Whale();
+    whale.name = "Whale";
+    this.calculateAnimalRacingStats(whale);
 
     var penguin = new Penguin();
     penguin.name = "Penguin";
@@ -386,6 +416,8 @@ export class GlobalService {
     this.globalVar.animals.push(caribou);
     this.globalVar.animals.push(salamander);
     this.globalVar.animals.push(fox);
+    this.globalVar.animals.push(warthog);
+    this.globalVar.animals.push(whale);
   }
 
   InitializeRelayTeams(): void {
@@ -620,13 +652,21 @@ export class GlobalService {
     cheetah.type = ShopItemTypeEnum.Animal;
     animalShopItems.push(cheetah);
 
-    var hare = new ShopItem();
+    /*var hare = new ShopItem();
     hare.name = "Hare";
     //hare.shortDescription = "The Hare is a Flatland racing animal with various ways to increase acceleration and focus.";
     hare.purchasePrice.push(new ResourceValue("Coins", flatlandAnimalPrice));
     hare.canHaveMultiples = false;
     hare.type = ShopItemTypeEnum.Animal;
-    animalShopItems.push(hare);
+    animalShopItems.push(hare);*/
+
+    var warthog = new ShopItem();
+    warthog.name = "Warthog";
+    //cheetah.shortDescription = "The Cheetah is a Flatland racing animal that prioritizes quickness over stamina.";
+    warthog.purchasePrice.push(new ResourceValue("Coins", flatlandAnimalPrice));
+    warthog.canHaveMultiples = false;
+    warthog.type = ShopItemTypeEnum.Animal;
+    animalShopItems.push(warthog);
 
     var goat = new ShopItem();
     goat.name = "Goat";
@@ -829,6 +869,7 @@ export class GlobalService {
     raceMaps.basePurchasePrice.push(this.getMedalResourceValue(2));
     raceMaps.quantityMultiplier = 2;
     raceMaps.totalShopQuantity = 5;
+    raceMaps.isAvailable = false;
     raceMaps.canHaveMultiples = true;
     raceMaps.type = ShopItemTypeEnum.Specialty;
     specialtyShopItems.push(raceMaps);
@@ -847,7 +888,7 @@ export class GlobalService {
     teamManager.basePurchasePrice.push(this.getMedalResourceValue(3));
     teamManager.canHaveMultiples = true;
     teamManager.quantityMultiplier = 2;
-    teamManager.totalShopQuantity = 20;
+    teamManager.totalShopQuantity = 19;
     teamManager.type = ShopItemTypeEnum.Specialty;
     specialtyShopItems.push(teamManager);
 
@@ -856,6 +897,7 @@ export class GlobalService {
     scouts.purchasePrice.push(this.getCoinsResourceValue(10000));
     scouts.basePurchasePrice.push(this.getCoinsResourceValue(10000));
     scouts.canHaveMultiples = false;
+    scouts.isAvailable = false;
     scouts.type = ShopItemTypeEnum.Specialty;
     specialtyShopItems.push(scouts);
 
@@ -872,6 +914,7 @@ export class GlobalService {
     nationalRace.purchasePrice.push(this.getCoinsResourceValue(10000));
     nationalRace.basePurchasePrice.push(this.getCoinsResourceValue(10000));
     nationalRace.canHaveMultiples = false;
+    nationalRace.isAvailable = false;
     nationalRace.type = ShopItemTypeEnum.Specialty;
     specialtyShopItems.push(nationalRace);
 
@@ -1001,6 +1044,7 @@ export class GlobalService {
     redBaton.purchasePrice.push(this.getCoinsResourceValue(2500));
     redBaton.canHaveMultiples = true;
     redBaton.infiniteAmount = true;
+    redBaton.isAvailable = false;
     redBaton.type = ShopItemTypeEnum.Equipment;
     equipmentShopItems.push(redBaton);
 
@@ -1010,6 +1054,7 @@ export class GlobalService {
     blueBaton.purchasePrice.push(this.getCoinsResourceValue(2500));
     blueBaton.canHaveMultiples = true;
     blueBaton.infiniteAmount = true;
+    blueBaton.isAvailable = false;
     blueBaton.type = ShopItemTypeEnum.Equipment;
     equipmentShopItems.push(blueBaton);
 
@@ -1019,6 +1064,7 @@ export class GlobalService {
     violetBaton.purchasePrice.push(this.getCoinsResourceValue(2500));
     violetBaton.canHaveMultiples = true;
     violetBaton.infiniteAmount = true;
+    violetBaton.isAvailable = false;
     violetBaton.type = ShopItemTypeEnum.Equipment;
     equipmentShopItems.push(violetBaton);
 
@@ -1028,6 +1074,7 @@ export class GlobalService {
     orangeBaton.purchasePrice.push(this.getCoinsResourceValue(2500));
     orangeBaton.canHaveMultiples = true;
     orangeBaton.infiniteAmount = true;
+    orangeBaton.isAvailable = false;
     orangeBaton.type = ShopItemTypeEnum.Equipment;
     equipmentShopItems.push(orangeBaton);
 
@@ -1037,6 +1084,7 @@ export class GlobalService {
     greenBaton.purchasePrice.push(this.getCoinsResourceValue(2500));
     greenBaton.canHaveMultiples = true;
     greenBaton.infiniteAmount = true;
+    greenBaton.isAvailable = false;
     greenBaton.type = ShopItemTypeEnum.Equipment;
     equipmentShopItems.push(greenBaton);
 
@@ -1046,6 +1094,7 @@ export class GlobalService {
     yellowBaton.purchasePrice.push(this.getCoinsResourceValue(2500));
     yellowBaton.canHaveMultiples = true;
     yellowBaton.infiniteAmount = true;
+    yellowBaton.isAvailable = false;
     yellowBaton.type = ShopItemTypeEnum.Equipment;
     equipmentShopItems.push(yellowBaton);
 
@@ -1324,7 +1373,7 @@ export class GlobalService {
         }
       }
 
-      returnVal = ["Monkey", "The Monkey is a Mountain climbing animal capable of slowing its competitors and leaping to victory."];
+      returnVal = ["Monkey", this.getAnimalDescription("Monkey")];
 
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(4) + "Coaching";
     }
@@ -1354,6 +1403,26 @@ export class GlobalService {
 
       returnVal = [amount + " Coins", ""];
 
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(6) + "1 Team Manager";
+    }
+    else if (numericValue === 6) {
+      var amount = 1;
+      var resource = this.globalVar.resources.find(item => item.name === "Team Manager");
+      if (resource === null || resource === undefined)
+      {
+        this.globalVar.resources.push(new ResourceValue("Team Manager", amount, ShopItemTypeEnum.Specialty));
+
+        var primaryDeck = this.globalVar.animalDecks.find(item => item.isPrimaryDeck);
+        if (primaryDeck !== null && primaryDeck !== undefined) {
+          primaryDeck.autoRunFreeRace = true;
+        }
+      }
+      else
+        resource.amount += amount;
+
+      returnVal = [amount + " Team Manager", "As your popularity has grown, you've attracted some new faces to your racing facility. Each Team Manager you receive will automatically run 1 free race per reset period. Buy more from the Shop."];
+
+      var coinAmount = 1000;
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(7) + "Barn Specializations";
     }
     else if (numericValue === 7) {
@@ -1386,9 +1455,44 @@ export class GlobalService {
 
       returnVal = [amount + " Coins", ""];
 
-      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(10) + "Dolphin";
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(10) + "Hare";
     }
     else if (numericValue === 10) {
+      var hare = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Hare);
+      if (hare !== undefined && hare !== null) {
+        hare.isAvailable = true;
+        this.unlockAnimalAbilities(hare);                
+      }
+
+      this.sortAnimalOrder();
+      returnVal = ["Hare", this.getAnimalDescription("Hare")];
+
+      var amount = 20;
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(12) + amount + " Stat Increasing Food";
+    }
+    else if (numericValue === 12) {
+      var amount = 20;
+      this.increaseAllFood(amount);
+
+      returnVal = [amount + " Stat Increasing Food", amount + " Apples, Bananas, Oranges, Turnips, Carrots, and Strawberries"];
+
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(13) + "Barn Row 2";
+    }
+    else if (numericValue === 13) {
+      this.globalVar.unlockables.set("barnRow2", true);
+
+      returnVal = ["Barn Row 2", ""];
+
+      var renownAmount = 1;
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(14) + "Attraction Specialization";
+    }
+    else if (numericValue === 14) {
+      this.globalVar.unlockables.set("attractionSpecialization", true);
+
+      returnVal = ["Attraction Specialization", this.getSpecializationDescription("Attraction") + "<br/><br/><em>Barn Specializations are available to select once you upgrade a barn to level 10.</em>"];
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(15) + "Dolphin";
+    }    
+    else if (numericValue === 15) {
       var dolphin = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Dolphin);
       if (dolphin !== undefined && dolphin !== null) {
         dolphin.isAvailable = true;
@@ -1408,37 +1512,12 @@ export class GlobalService {
         }
       }
 
-      returnVal = ["Dolphin", "The Dolphin is an Ocean swimming animal capable of ignoring detrimental terrain effects and supporting teammates on relay."];
+      this.sortAnimalOrder();
 
-      var amount = 10;
-      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(12) + amount + " Stat Increasing Food";
-    }
-    else if (numericValue === 12) {
-      var amount = 10;
-      this.increaseAllFood(amount);
+      returnVal = ["Dolphin", this.getAnimalDescription("Dolphin")];
 
-      returnVal = [amount + " Stat Increasing Food", amount + " Apples, Bananas, Oranges, Turnips, Carrots, and Strawberries"];
-
-      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(13) + "Grand Prix";
-    }
-    else if (numericValue === 13) {
-      this.globalVar.unlockables.set("grandPrix", true);
-      var primaryDeck = this.globalVar.animalDecks.find(item => item.isPrimaryDeck);
-      if (primaryDeck !== null && primaryDeck !== undefined) {
-        primaryDeck.isEventDeck = true;
-      }
-
-      returnVal = ["Grand Prix", "Now that you've climbed the ranks and your racing team has turned some heads, you've received an invite to the Grand Prix invitational. Twice per week, a marathon style race runs over multiple days. Check the 'Event Races' tab to see more info."];
-
-      var renownAmount = 1;
-      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(15) + "Attraction Specialization";
-    }
-    else if (numericValue === 15) {
-      this.globalVar.unlockables.set("attractionSpecialization", true);
-
-      returnVal = ["Attraction Specialization", this.getSpecializationDescription("Attraction") + "<br/><br/><em>Barn Specializations are available to select once you upgrade a barn to level 10.</em>"];
-      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(16) + " 1 Pendant";
-    }
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(16) + "1 Pendant";
+    }    
     else if (numericValue === 16) {
       var amount = 1;
       var resource = this.globalVar.resources.find(item => item.name === "Pendant");
@@ -1449,18 +1528,11 @@ export class GlobalService {
 
       returnVal = [amount + " Pendant", "Equipment can be handled when viewing an animal from the Animals tab."];
 
-      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(18) + "Barn Row 2";
+      var amount = 5;
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(18) + amount + " Renown";
     }
     else if (numericValue === 18) {
-      this.globalVar.unlockables.set("barnRow2", true);
-
-      returnVal = ["Barn Row 2", ""];
-
-      var renownAmount = 1;
-      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(20) + renownAmount + " Renown";
-    }
-    else if (numericValue === 20) {
-      var renownAmount = 1;
+      var renownAmount = 5;
       var renownResource = this.globalVar.resources.find(item => item.name === "Renown");
       if (renownResource === null || renownResource === undefined)
         this.globalVar.resources.push(new ResourceValue("Renown", renownAmount));
@@ -1468,6 +1540,17 @@ export class GlobalService {
         renownResource.amount += renownAmount;
 
       returnVal = [renownAmount + " Renown", ""];
+
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(20) + "Grand Prix";
+    }
+    else if (numericValue === 20) {
+      this.globalVar.unlockables.set("grandPrix", true);
+      var primaryDeck = this.globalVar.animalDecks.find(item => item.isPrimaryDeck);
+      if (primaryDeck !== null && primaryDeck !== undefined) {
+        primaryDeck.isEventDeck = true;
+      }
+
+      returnVal = ["Grand Prix", "Now that you've climbed the ranks and your racing team has turned some heads, you've received an invite to the Grand Prix invitational. Twice per week, a marathon style race runs over multiple days. Check the 'Event Races' tab to see more info."];
 
       var amount = 50;
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(22) + amount + " Stat Increasing Food";
@@ -1491,28 +1574,33 @@ export class GlobalService {
 
       returnVal = [amount + " Coins", ""];
 
-      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(25) + "Research Center Specialization";
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(25) + "Whale";
     }
-    else if (numericValue === 25) {
-      this.globalVar.unlockables.set("researchCenterSpecialization", true);
+    if (numericValue === 25) {
+      var whale = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Whale);
+      if (whale !== undefined && whale !== null) {
+        whale.isAvailable = true;
+        this.unlockAnimalAbilities(whale);
+      }
 
-      returnVal = ["Research Center Specialization", this.getSpecializationDescription("Research Center")];
+      this.sortAnimalOrder();
+      returnVal = ["Whale", this.getAnimalDescription("Whale")];
 
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(27) + "Duo Races";
     }
     else if (numericValue === 27) {
       this.globalVar.unlockables.set("duoRace", true);
       this.globalVar.notifications.isNewSpecialRaceAvailable = true;
-
-      //unlock incubator upgrade from shop
-      var specialtyShop = this.globalVar.shop.find(item => item.name === "Specialty");
-      if (specialtyShop !== null && specialtyShop !== undefined) {
-        var incubatorUpgrade = specialtyShop.itemList.find(item => item.name === "Incubator Upgrade Lv1");
-        if (incubatorUpgrade !== null && incubatorUpgrade !== undefined)
-          incubatorUpgrade.isAvailable = true;
-      }
+      this.unlockTier2ShopItems();
 
       returnVal = ["Duo Races", "A new race type has been unlocked! Race in pairs to complete this long distance race. Success here will generate more interest for your facility, this time drawing in curious researchers. Gain Research Levels that improve incubator results."];
+
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(29) + "Barn Row 3";
+    }
+    else if (numericValue === 29) {
+      this.globalVar.unlockables.set("barnRow3", true);
+
+      returnVal = ["Barn Row 3", ""];
 
       var CoinsAmount = 2500;
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(30) + CoinsAmount + " Coins";
@@ -1575,7 +1663,9 @@ export class GlobalService {
         }
       }
 
-      returnVal = ["Penguin", "The Penguin is a Tundra racing animal that can slide carefully or recklessly.<br/><br/>" +
+      this.sortAnimalOrder();
+
+      returnVal = ["Penguin", this.getAnimalDescription("Penguin") + "<br/><br/>" +
         this.utilityService.getSanitizedHtml("<em>" + this.getTundraDescription() + "</em>")];
 
       var CoinsAmount = 3500;
@@ -1606,9 +1696,16 @@ export class GlobalService {
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(40) + "Barn Row 3";
     }
     else if (numericValue === 40) {
-      this.globalVar.unlockables.set("barnRow3", true);
+      this.globalVar.unlockables.set("barnRow4", true);
 
-      returnVal = ["Barn Row 3", ""];
+      returnVal = ["Barn Row 4", ""];
+
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(41) + "Research Center Specialization";
+    }    
+    else if (numericValue === 41) {
+      this.globalVar.unlockables.set("researchCenterSpecialization", true);
+
+      returnVal = ["Research Center Specialization", this.getSpecializationDescription("Research Center")];
 
       var amount = 250;
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(43) + amount + " Stat Increasing Food";
@@ -1640,8 +1737,9 @@ export class GlobalService {
             primaryAnimalDeck.selectedAnimals.push(salamander);
         }
       }
+      this.sortAnimalOrder();
 
-      returnVal = ["Salamander", "The Salamander is a Volcanic racing animal that can burrow underground to avoid lava and continously increase acceleration.<br/><br/>" +
+      returnVal = ["Salamander", this.getAnimalDescription("Salamander") + "<br/><br/>" +
         this.utilityService.getSanitizedHtml("<em>" + this.getVolcanicDescription() + "</em>")];
 
       var renownAmount = 10;
@@ -1697,9 +1795,9 @@ export class GlobalService {
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(58) + "Barn Row 4";
     }
     else if (numericValue === 58) {
-      this.globalVar.unlockables.set("barnRow4", true);
+      this.globalVar.unlockables.set("barnRow5", true);
 
-      returnVal = ["Barn Row 4", ""];
+      returnVal = ["Barn Row 5", ""];
 
       var renownAmount = 1;
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(60) + "Sapphire Orb";
@@ -1860,11 +1958,11 @@ export class GlobalService {
         leg.distance = Math.round((baseMeters * (factor ** i) + additiveValue));
         raceLegs.push(leg);
       }
-      else if (i <= 9) {
+      else if (i <= 14) {
         if (i === 3)
-          additiveValue = 20 * i;
+          additiveValue = 5 * i;
         else
-          additiveValue = 40 * i;
+          additiveValue = 35 * i;
 
         var availableCourses: RaceCourseTypeEnum[] = [];
         availableCourses.push(RaceCourseTypeEnum.Flatland);
@@ -1906,9 +2004,9 @@ export class GlobalService {
       else {
         legLengthCutoff = timeToComplete / 6;
 
-        if (i === 10)
+        if (i === 15)
           additiveValue = 50 * i;
-        else if (i === 11)
+        else if (i === 16)
           additiveValue = 60 * i;
 
         var availableCourses: RaceCourseTypeEnum[] = [];
@@ -2197,6 +2295,104 @@ export class GlobalService {
     }
   }
 
+  unlockTier2ShopItems() {
+    //unlock incubator upgrade from shop
+    var specialtyShop = this.globalVar.shop.find(item => item.name === "Specialty");
+    if (specialtyShop !== null && specialtyShop !== undefined) {
+      var incubatorUpgrade = specialtyShop.itemList.find(item => item.name === "Incubator Upgrade Lv1");
+      if (incubatorUpgrade !== null && incubatorUpgrade !== undefined)
+        incubatorUpgrade.isAvailable = true;
+
+      var nationalRaces = specialtyShop.itemList.find(item => item.name === "National Races");
+      if (nationalRaces !== null && nationalRaces !== undefined)
+        nationalRaces.isAvailable = true;
+
+      var scouts = specialtyShop.itemList.find(item => item.name === "Scouts");
+      if (scouts !== null && scouts !== undefined)
+        scouts.isAvailable = true;
+
+      var courseMaps = specialtyShop.itemList.find(item => item.name === "Course Maps");
+      if (courseMaps !== null && courseMaps !== undefined)
+        courseMaps.isAvailable = true;
+    }
+
+    var equipmentShop = this.globalVar.shop.find(item => item.name === "Equipment");
+    if (equipmentShop !== null && equipmentShop !== undefined) {
+      var redBaton = equipmentShop.itemList.find(item => item.name === "Red Baton");
+      if (redBaton !== null && redBaton !== undefined)
+        redBaton.isAvailable = true;
+
+      var orangeBaton = equipmentShop.itemList.find(item => item.name === "Orange Baton");
+      if (orangeBaton !== null && orangeBaton !== undefined)
+        orangeBaton.isAvailable = true;
+
+      var greenBaton = equipmentShop.itemList.find(item => item.name === "Green Baton");
+      if (greenBaton !== null && greenBaton !== undefined)
+        greenBaton.isAvailable = true;
+
+      var yellowBaton = equipmentShop.itemList.find(item => item.name === "Yellow Baton");
+      if (yellowBaton !== null && yellowBaton !== undefined)
+        yellowBaton.isAvailable = true;
+
+      var blueBaton = equipmentShop.itemList.find(item => item.name === "Blue Baton");
+      if (blueBaton !== null && blueBaton !== undefined)
+        blueBaton.isAvailable = true;
+
+      var violetBaton = equipmentShop.itemList.find(item => item.name === "Violet Baton");
+      if (violetBaton !== null && violetBaton !== undefined)
+        violetBaton.isAvailable = true;
+    }
+  }
+
+  lockTier2ShopItems() {
+    //unlock incubator upgrade from shop
+    var specialtyShop = this.globalVar.shop.find(item => item.name === "Specialty");
+    if (specialtyShop !== null && specialtyShop !== undefined) {
+      var incubatorUpgrade = specialtyShop.itemList.find(item => item.name === "Incubator Upgrade Lv1");
+      if (incubatorUpgrade !== null && incubatorUpgrade !== undefined)
+        incubatorUpgrade.isAvailable = false;
+
+      var nationalRaces = specialtyShop.itemList.find(item => item.name === "National Races");
+      if (nationalRaces !== null && nationalRaces !== undefined)
+        nationalRaces.isAvailable = false;
+
+      var scouts = specialtyShop.itemList.find(item => item.name === "Scouts");
+      if (scouts !== null && scouts !== undefined)
+        scouts.isAvailable = false;
+
+      var courseMaps = specialtyShop.itemList.find(item => item.name === "Course Maps");
+      if (courseMaps !== null && courseMaps !== undefined)
+        courseMaps.isAvailable = false;
+    }
+
+    var equipmentShop = this.globalVar.shop.find(item => item.name === "Equipment");
+    if (equipmentShop !== null && equipmentShop !== undefined) {
+      var redBaton = equipmentShop.itemList.find(item => item.name === "Red Baton");
+      if (redBaton !== null && redBaton !== undefined)
+        redBaton.isAvailable = false;
+
+      var orangeBaton = equipmentShop.itemList.find(item => item.name === "Orange Baton");
+      if (orangeBaton !== null && orangeBaton !== undefined)
+        orangeBaton.isAvailable = false;
+
+      var greenBaton = equipmentShop.itemList.find(item => item.name === "Green Baton");
+      if (greenBaton !== null && greenBaton !== undefined)
+        greenBaton.isAvailable = false;
+
+      var yellowBaton = equipmentShop.itemList.find(item => item.name === "Yellow Baton");
+      if (yellowBaton !== null && yellowBaton !== undefined)
+        yellowBaton.isAvailable = false;
+
+      var blueBaton = equipmentShop.itemList.find(item => item.name === "Blue Baton");
+      if (blueBaton !== null && blueBaton !== undefined)
+        blueBaton.isAvailable = false;
+
+      var violetBaton = equipmentShop.itemList.find(item => item.name === "Violet Baton");
+      if (violetBaton !== null && violetBaton !== undefined)
+        violetBaton.isAvailable = false;
+    }
+  }
+
   GetCircuitRankValue(circuitRank: string): number {
     var rankValue = 1;
 
@@ -2339,7 +2535,7 @@ export class GlobalService {
       leg.courseType = RaceCourseTypeEnum.Flatland;
     else {
       var availableCourses: RaceCourseTypeEnum[] = [];
-      if (i < 9) {
+      if (i < 14) {
         availableCourses.push(RaceCourseTypeEnum.Flatland);
         availableCourses.push(RaceCourseTypeEnum.Mountain);
       }
@@ -2520,9 +2716,9 @@ export class GlobalService {
 
     var baseMeters = 90;
     var factor = 1.125;
-    var additiveAmount = 30 * numericalRank;
-    if (numericalRank >= 11)
-      additiveAmount = 65 * numericalRank;
+    var additiveAmount = 12 * numericalRank;
+    if (numericalRank >= 15)
+      additiveAmount = 50 * numericalRank;
 
     var maxRandomFactor = 1.05;
     var minRandomFactor = 0.8;
@@ -2539,7 +2735,7 @@ export class GlobalService {
       leg.distance = Math.round((baseMeters * (factor ** numericalRank) + additiveAmount) * this.utilityService.getRandomNumber(minRandomFactor, maxRandomFactor));
       raceLegs.push(leg);
     }
-    else if (numericalRank <= 10) {
+    else if (numericalRank <= 15) {
       var availableCourses: RaceCourseTypeEnum[] = [];
       availableCourses.push(RaceCourseTypeEnum.Flatland);
       availableCourses.push(RaceCourseTypeEnum.Mountain);
@@ -3577,6 +3773,89 @@ export class GlobalService {
     }
   }
 
+  getAnimalDescription(name: string) {
+    var description = "";
+
+    if (name === "Horse") {
+      description = "The Horse is a Flatland racing animal capable of running without losing stamina and increasing the max speed of relay racers.";
+    }
+    else if (name === "Cheetah") {
+      description = "The Cheetah is a Flatland racing animal that prioritizes quickness over stamina.";
+    }
+    else if (name === "Hare") {
+      description = "The Hare is a Flatland racing animal that can instantly enter Burst and increase adaptability and focus.";
+    }
+    else if (name === "Warthog") {
+      description = "The Warthog is a Flatland racing animal that can increase stats at random and increase Burst Chance after losing focus.";
+    }
+    else if (name === "Monkey") {
+      description = "The Monkey is a Mountain climbing animal capable of slowing its competitors and leaping to victory.";
+    }
+    else if (name === "Goat") {
+      description = "The Goat is a Mountain climbing animal that can nimbly travel terrain and increase stamina.";
+    }
+    else if (name === "Gecko") {
+      description = "The Gecko is a Mountain climbing animal that can increase speed based on focus and can increase other racers' starting velocity.";
+    }
+    else if (name === "Dolphin") {
+      description = "The Dolphin is an Ocean swimming animal capable of ignoring detrimental terrain effects and supporting teammates on relay.";
+    }
+    else if (name === "Shark") {
+      description = "The Shark is an Ocean swimming animal that can slow competitors and increase its own stats at the cost of your other racers.";
+    }
+    else if (name === "Octopus") {
+      description = "The Octopus is an Ocean swimming animal that can increase your coin rewards from races and increase power of other racers.";
+    }
+    else if (name === "Whale") {
+      description = "The Whale is an Ocean swimming animal that can set a velocity floor and becomes increasingly faster as the race goes on.";
+    }
+    else if (name === "Penguin") {
+      description = "The Penguin is a Tundra racing animal that can slide carefully or recklessly.";
+    }
+    else if (name === "Caribou") {
+      description = "The Caribou is a Tundra racing animal that boosts other racers based on stamina.";
+    }
+    else if (name === "Salamander") {
+      description = "The Salamander is a Volcanic racing animal that can burrow underground to avoid lava and continously increase acceleration.";
+    }
+    else if (name === "Fox") {
+      description = "The Fox is a Volcanic racing animal that can increase stats at random.";
+    }
+
+    return description;
+  }
+
+  sortAnimalOrder() {
+    this.globalVar.animals.sort((a,b) => a.raceCourseType - b.raceCourseType);
+
+    /*var sortedAnimals = [];
+    var existingAnimals = this.globalVar.animals;
+
+    sortedAnimals.push(existingAnimals.find(item => item.type === AnimalTypeEnum.Horse));
+    sortedAnimals.push(existingAnimals.find(item => item.type === AnimalTypeEnum.Hare));
+    sortedAnimals.push(existingAnimals.find(item => item.type === AnimalTypeEnum.Cheetah));
+    sortedAnimals.push(existingAnimals.find(item => item.type === AnimalTypeEnum.Warthog));
+
+    sortedAnimals.push(existingAnimals.find(item => item.type === AnimalTypeEnum.Monkey));
+    sortedAnimals.push(existingAnimals.find(item => item.type === AnimalTypeEnum.Goat));
+    sortedAnimals.push(existingAnimals.find(item => item.type === AnimalTypeEnum.Gecko));
+
+    sortedAnimals.push(existingAnimals.find(item => item.type === AnimalTypeEnum.Dolphin));
+    sortedAnimals.push(existingAnimals.find(item => item.type === AnimalTypeEnum.Whale));
+    sortedAnimals.push(existingAnimals.find(item => item.type === AnimalTypeEnum.Shark));
+    sortedAnimals.push(existingAnimals.find(item => item.type === AnimalTypeEnum.Octopus));
+
+    sortedAnimals.push(existingAnimals.find(item => item.type === AnimalTypeEnum.Penguin));
+    sortedAnimals.push(existingAnimals.find(item => item.type === AnimalTypeEnum.Caribou));
+
+    sortedAnimals.push(existingAnimals.find(item => item.type === AnimalTypeEnum.Salamander));
+    sortedAnimals.push(existingAnimals.find(item => item.type === AnimalTypeEnum.Fox));
+
+    if (sortedAnimals.length === existingAnimals.length && 
+      !sortedAnimals.some(item => item === undefined || item === null || item.type === undefined || item.type === null))
+      this.globalVar.animals = existingAnimals;*/
+  }
+
   getEquipmentDescription(name: string) {
     var returnVal = "";
     if (name === "Headband")
@@ -3769,7 +4048,7 @@ export class GlobalService {
     return tooSlow;
   }
 
-  devModeInitialize(circuitRankNumeric: number) {
+  devModeInitialize(circuitRankNumeric: number, progressionSetting: number) {
     var Coins = this.globalVar.resources.find(item => item.name === "Coins");
     if (Coins !== undefined)
       Coins.amount = 1000000;
@@ -3792,7 +4071,7 @@ export class GlobalService {
     else
       this.globalVar.resources.push(this.initializeService.initializeResource("Renown", 50000, ShopItemTypeEnum.Resources));
 
-    this.globalVar.resources.push(this.initializeService.initializeResource("Facility Level", circuitRankNumeric * 2, ShopItemTypeEnum.Progression));
+    this.globalVar.resources.push(this.initializeService.initializeResource("Facility Level",  1000, ShopItemTypeEnum.Progression));
     this.globalVar.resources.push(this.initializeService.initializeResource("Research Level", circuitRankNumeric, ShopItemTypeEnum.Progression));
 
     for (var i = 1; i <= circuitRankNumeric; i++) {
@@ -3802,504 +4081,61 @@ export class GlobalService {
       this.GenerateCircuitRacesForRank(this.globalVar.circuitRank);
     }
 
+    var trainingStatValue = 5;
+    var breedLevel = 1;
+    var incubatorUpgradeValue = 1;
+    var talentCount = 0;
+
     //breed level 50, relatively early game
-    /*
-    var horse = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Horse);
-    if (horse !== undefined) {
-      horse.currentStats.topSpeed = 50;
-      horse.currentStats.acceleration = 50;
-      horse.currentStats.endurance = 50;
-      horse.currentStats.power = 50;
-      horse.currentStats.focus = 50;
-      horse.currentStats.adaptability = 50;
-      horse.breedLevel = 50;
-      this.calculateAnimalRacingStats(horse);
+    if (progressionSetting === 1)
+    {
+      trainingStatValue = 50;
+      breedLevel = 50;
     }
+    else if (progressionSetting === 2)
+    {
+      trainingStatValue = 100;
+      breedLevel = 250;
+      incubatorUpgradeValue = 3;
+    }
+    else if (progressionSetting === 3)
+    {      
+      trainingStatValue = 500;
+      breedLevel = 500;
+      incubatorUpgradeValue = 7;
+      talentCount = 10;
+    }
+    else if (progressionSetting === 4)
+    {      
+      trainingStatValue = 1000;
+      breedLevel = 1000;
+      incubatorUpgradeValue = 12;
+      talentCount = 40;
+    }
+    
+    this.globalVar.animals.forEach(animal => {
+      animal.currentStats.topSpeed = trainingStatValue;
+      animal.currentStats.acceleration = trainingStatValue;
+      animal.currentStats.endurance = trainingStatValue;
+      animal.currentStats.power = trainingStatValue;
+      animal.currentStats.focus = trainingStatValue;
+      animal.currentStats.adaptability = trainingStatValue;
 
-    var cheetah = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Cheetah);
-    if (cheetah !== undefined) {
-      cheetah.currentStats.topSpeed = 50;
-      cheetah.currentStats.acceleration = 50;
-      cheetah.currentStats.endurance = 50;
-      cheetah.currentStats.power = 50;
-      cheetah.currentStats.focus = 50;
-      cheetah.currentStats.adaptability = 50;
-      cheetah.breedLevel = 50;      
-      this.calculateAnimalRacingStats(cheetah);
-    }
+      animal.breedLevel = breedLevel;
 
-    var hare = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Hare);
-    if (hare !== undefined) {
-      hare.currentStats.topSpeed = 50;
-      hare.currentStats.acceleration = 50;
-      hare.currentStats.endurance = 50;
-      hare.currentStats.power = 50;
-      hare.currentStats.focus = 50;
-      hare.currentStats.adaptability = 50;
-      hare.breedLevel = 50;      
-      this.calculateAnimalRacingStats(hare);
-    }
+      animal.incubatorStatUpgrades.maxSpeedModifier = incubatorUpgradeValue;
+      animal.incubatorStatUpgrades.accelerationModifier = incubatorUpgradeValue;
+      animal.incubatorStatUpgrades.staminaModifier = incubatorUpgradeValue;
+      animal.incubatorStatUpgrades.powerModifier = incubatorUpgradeValue;
+      animal.incubatorStatUpgrades.focusModifier = incubatorUpgradeValue;
+      animal.incubatorStatUpgrades.adaptabilityModifier = incubatorUpgradeValue;
 
-    var monkey = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Monkey);
-    if (monkey !== undefined) {
-      monkey.currentStats.topSpeed = 50;
-      monkey.currentStats.acceleration = 50;
-      monkey.currentStats.endurance = 50;
-      monkey.currentStats.power = 50;
-      monkey.currentStats.focus = 50;
-      monkey.currentStats.adaptability = 50;
-      monkey.breedLevel = 50;      
-      this.calculateAnimalRacingStats(monkey);
-    }
+      animal.ability.abilityLevel = animal.breedLevel + 25;
+      animal.availableAbilities.forEach(ability => {
+        ability.abilityLevel = animal.breedLevel + 25;
+      });
 
-    var goat = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Goat);
-    if (goat !== undefined) {
-      goat.currentStats.topSpeed = 50;
-      goat.currentStats.acceleration = 50;
-      goat.currentStats.endurance = 50;
-      goat.currentStats.power = 50;
-      goat.currentStats.focus = 50;
-      goat.currentStats.adaptability = 50;
-      goat.breedLevel = 50;      
-      this.calculateAnimalRacingStats(goat);
-    }
-
-    var gecko = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Gecko);
-    if (gecko !== undefined) {
-      gecko.currentStats.topSpeed = 50;
-      gecko.currentStats.acceleration = 50;
-      gecko.currentStats.endurance = 50;
-      gecko.currentStats.power = 50;
-      gecko.currentStats.focus = 50;
-      gecko.currentStats.adaptability = 50;
-      gecko.breedLevel = 50;      
-      this.calculateAnimalRacingStats(gecko);
-    }
-
-    var dolphin = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Dolphin);
-    if (dolphin !== undefined) {
-      dolphin.currentStats.topSpeed = 50;
-      dolphin.currentStats.acceleration = 50;
-      dolphin.currentStats.endurance = 50;
-      dolphin.currentStats.power = 50;
-      dolphin.currentStats.focus = 50;
-      dolphin.currentStats.adaptability = 50;
-      dolphin.breedLevel = 50;      
-      this.calculateAnimalRacingStats(dolphin);
-    }
-
-    var octopus = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Octopus);
-    if (octopus !== undefined) {
-      octopus.currentStats.topSpeed = 50;
-      octopus.currentStats.acceleration = 50;
-      octopus.currentStats.endurance = 50;
-      octopus.currentStats.power = 50;
-      octopus.currentStats.focus = 50;
-      octopus.currentStats.adaptability = 50;
-      octopus.breedLevel = 50;
-      octopus.incubatorStatUpgrades.powerModifier = 5;
-      this.calculateAnimalRacingStats(octopus);
-    }
-
-    var shark = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Shark);
-    if (shark !== undefined) {
-      shark.currentStats.topSpeed = 50;
-      shark.currentStats.acceleration = 50;
-      shark.currentStats.endurance = 50;
-      shark.currentStats.power = 50;
-      shark.currentStats.focus = 50;
-      shark.currentStats.adaptability = 50;      
-      shark.breedLevel = 50;
-      this.calculateAnimalRacingStats(shark);
-    }
-
-    var penguin = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Penguin);
-    if (penguin !== undefined) {
-      penguin.currentStats.topSpeed = 50;
-      penguin.currentStats.acceleration = 50;
-      penguin.currentStats.endurance = 50;
-      penguin.currentStats.power = 50;
-      penguin.currentStats.focus = 50;
-      penguin.currentStats.adaptability = 50;      
-      penguin.breedLevel = 50;
-      this.calculateAnimalRacingStats(penguin);
-    }
-
-    var caribou = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Caribou);
-    if (caribou !== undefined) {
-      caribou.currentStats.topSpeed = 50;
-      caribou.currentStats.acceleration = 50;
-      caribou.currentStats.endurance = 50;
-      caribou.currentStats.power = 50;
-      caribou.currentStats.focus = 50;
-      caribou.currentStats.adaptability = 50;
-      caribou.breedLevel = 50;      
-      this.calculateAnimalRacingStats(caribou);
-    }
-
-    var salamander = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Salamander);
-    if (salamander !== undefined) {
-      salamander.currentStats.topSpeed = 50;
-      salamander.currentStats.acceleration = 50;
-      salamander.currentStats.endurance = 50;
-      salamander.currentStats.power = 50;
-      salamander.currentStats.focus = 50;
-      salamander.currentStats.adaptability = 50;
-      salamander.breedLevel = 50;      
-      this.calculateAnimalRacingStats(salamander);
-    }
-    var fox = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Fox);
-    if (fox !== undefined) {
-      fox.currentStats.topSpeed = 50;
-      fox.currentStats.acceleration = 50;
-      fox.currentStats.endurance = 50;
-      fox.currentStats.power = 50;
-      fox.currentStats.focus = 50;
-      fox.currentStats.adaptability = 50;
-      fox.breedLevel = 50;      
-      this.calculateAnimalRacingStats(fox);
-    }
-*/
-    //breed level 250
-    var horse = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Horse);
-    if (horse !== undefined) {
-      horse.currentStats.topSpeed = 2000;
-      horse.currentStats.acceleration = 2000;
-      horse.currentStats.endurance = 1000;
-      horse.currentStats.power = 2000;
-      horse.currentStats.focus = 1000;
-      horse.currentStats.adaptability = 1000;
-      horse.breedLevel = 250;
-      horse.canEquipOrb = true;
-      horse.incubatorStatUpgrades.powerModifier = 1;
-      this.calculateAnimalRacingStats(horse);
-    }
-
-    var cheetah = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Cheetah);
-    if (cheetah !== undefined) {
-      cheetah.currentStats.topSpeed = 2000;
-      cheetah.currentStats.acceleration = 200;
-      cheetah.currentStats.endurance = 200;
-      cheetah.currentStats.power = 2000;
-      cheetah.currentStats.focus = 200;
-      cheetah.currentStats.adaptability = 200;
-      cheetah.breedLevel = 250;
-      cheetah.incubatorStatUpgrades.powerModifier = 1;
-      this.calculateAnimalRacingStats(cheetah);
-    }
-
-    var hare = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Hare);
-    if (hare !== undefined) {
-      hare.currentStats.topSpeed = 200;
-      hare.currentStats.acceleration = 200;
-      hare.currentStats.endurance = 200;
-      hare.currentStats.power = 2000;
-      hare.currentStats.focus = 200;
-      hare.currentStats.adaptability = 200;
-      hare.breedLevel = 250;
-      hare.incubatorStatUpgrades.powerModifier = 1;
-      this.calculateAnimalRacingStats(hare);
-    }
-
-    var monkey = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Monkey);
-    if (monkey !== undefined) {
-      monkey.currentStats.topSpeed = 250;
-      monkey.currentStats.acceleration = 250;
-      monkey.currentStats.endurance = 2550;
-      monkey.currentStats.power = 2000;
-      monkey.currentStats.focus = 250;
-      monkey.currentStats.adaptability = 250;
-      monkey.breedLevel = 250;
-      monkey.incubatorStatUpgrades.powerModifier = 1;
-      this.calculateAnimalRacingStats(monkey);
-    }
-
-    var goat = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Goat);
-    if (goat !== undefined) {
-      goat.currentStats.topSpeed = 200;
-      goat.currentStats.acceleration = 200;
-      goat.currentStats.endurance = 200;
-      goat.currentStats.power = 2000;
-      goat.currentStats.focus = 200;
-      goat.currentStats.adaptability = 200;
-      goat.breedLevel = 250;
-      goat.incubatorStatUpgrades.powerModifier = 1;
-      this.calculateAnimalRacingStats(goat);
-    }
-
-    var gecko = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Gecko);
-    if (gecko !== undefined) {
-      gecko.currentStats.topSpeed = 200;
-      gecko.currentStats.acceleration = 200;
-      gecko.currentStats.endurance = 200;
-      gecko.currentStats.power = 2000;
-      gecko.currentStats.focus = 200;
-      gecko.currentStats.adaptability = 200;
-      gecko.breedLevel = 250;
-      gecko.incubatorStatUpgrades.powerModifier = 1;
-      this.calculateAnimalRacingStats(gecko);
-    }
-
-    var dolphin = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Dolphin);
-    if (dolphin !== undefined) {
-      dolphin.currentStats.topSpeed = 250;
-      dolphin.currentStats.acceleration = 250;
-      dolphin.currentStats.endurance = 500;
-      dolphin.currentStats.power = 2000;
-      dolphin.currentStats.focus = 250;
-      dolphin.currentStats.adaptability = 250;
-      dolphin.breedLevel = 250;
-      dolphin.incubatorStatUpgrades.powerModifier = 1;
-      this.calculateAnimalRacingStats(dolphin);
-    }
-
-    var octopus = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Octopus);
-    if (octopus !== undefined) {
-      octopus.currentStats.topSpeed = 200;
-      octopus.currentStats.acceleration = 200;
-      octopus.currentStats.endurance = 200;
-      octopus.currentStats.power = 2000;
-      octopus.currentStats.focus = 500;
-      octopus.currentStats.adaptability = 500;
-      octopus.breedLevel = 250;
-      octopus.incubatorStatUpgrades.powerModifier = 1;
-      this.calculateAnimalRacingStats(octopus);
-    }
-
-    var shark = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Shark);
-    if (shark !== undefined) {
-      shark.currentStats.topSpeed = 200;
-      shark.currentStats.acceleration = 200;
-      shark.currentStats.endurance = 200;
-      shark.currentStats.power = 2000;
-      shark.currentStats.focus = 200;
-      shark.currentStats.adaptability = 200;
-      shark.incubatorStatUpgrades.powerModifier = 1;
-      shark.breedLevel = 250;
-      this.calculateAnimalRacingStats(shark);
-    }
-
-    var penguin = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Penguin);
-    if (penguin !== undefined) {
-      penguin.currentStats.topSpeed = 600;
-      penguin.currentStats.acceleration = 200;
-      penguin.currentStats.endurance = 50;
-      penguin.currentStats.power = 2000;
-      penguin.currentStats.focus = 200;
-      penguin.currentStats.adaptability = 200;
-      penguin.incubatorStatUpgrades.powerModifier = 1;
-      penguin.breedLevel = 250;
-      this.calculateAnimalRacingStats(penguin);
-    }
-
-    var caribou = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Caribou);
-    if (caribou !== undefined) {
-      caribou.currentStats.topSpeed = 200;
-      caribou.currentStats.acceleration = 200;
-      caribou.currentStats.endurance = 200;
-      caribou.currentStats.power = 2000;
-      caribou.currentStats.focus = 200;
-      caribou.currentStats.adaptability = 200;
-      caribou.breedLevel = 250;
-      caribou.incubatorStatUpgrades.powerModifier = 1;
-      this.calculateAnimalRacingStats(caribou);
-    }
-
-    var salamander = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Salamander);
-    if (salamander !== undefined) {
-      salamander.currentStats.topSpeed = 250;
-      salamander.currentStats.acceleration = 150;
-      salamander.currentStats.endurance = 50;
-      salamander.currentStats.power = 2000;
-      salamander.currentStats.focus = 100;
-      salamander.currentStats.adaptability = 100;
-      salamander.breedLevel = 250;
-      salamander.incubatorStatUpgrades.powerModifier = 1;
-      this.calculateAnimalRacingStats(salamander);
-    }
-    var fox = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Fox);
-    if (fox !== undefined) {
-      fox.currentStats.topSpeed = 400;
-      fox.currentStats.acceleration = 200;
-      fox.currentStats.endurance = 40;
-      fox.currentStats.power = 2000;
-      fox.currentStats.focus = 200;
-      fox.currentStats.adaptability = 200;
-      fox.breedLevel = 250;
-      fox.incubatorStatUpgrades.powerModifier = 1;
-      this.calculateAnimalRacingStats(fox);
-    }
-
-    //Breed Lvl 1000, power focused
-    /*var horse = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Horse);
-    if (horse !== undefined) {
-      horse.currentStats.topSpeed = 2000;
-      horse.currentStats.acceleration = 2000;
-      horse.currentStats.endurance = 1000;
-      horse.currentStats.power = 2000;
-      horse.currentStats.focus = 1000;
-      horse.currentStats.adaptability = 1000;
-      horse.breedLevel = 100000;
-      horse.canEquipOrb = true;
-      horse.incubatorStatUpgrades.powerModifier = 5;      
-      this.calculateAnimalRacingStats(horse);
-    }
-
-    var cheetah = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Cheetah);
-    if (cheetah !== undefined) {
-      cheetah.currentStats.topSpeed = 2000;
-      cheetah.currentStats.acceleration = 200;
-      cheetah.currentStats.endurance = 200;
-      cheetah.currentStats.power = 2000;
-      cheetah.currentStats.focus = 200;
-      cheetah.currentStats.adaptability = 200;
-      cheetah.breedLevel = 1000;
-      cheetah.incubatorStatUpgrades.powerModifier = 5;
-      this.calculateAnimalRacingStats(cheetah);
-    }
-
-    var hare = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Hare);
-    if (hare !== undefined) {
-      hare.currentStats.topSpeed = 200;
-      hare.currentStats.acceleration = 200;
-      hare.currentStats.endurance = 200;
-      hare.currentStats.power = 2000;
-      hare.currentStats.focus = 200;
-      hare.currentStats.adaptability = 200;
-      hare.breedLevel = 1000;
-      hare.incubatorStatUpgrades.powerModifier = 5;
-      this.calculateAnimalRacingStats(hare);
-    }
-
-    var monkey = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Monkey);
-    if (monkey !== undefined) {
-      monkey.currentStats.topSpeed = 2500;
-      monkey.currentStats.acceleration = 2500;
-      monkey.currentStats.endurance = 2550;
-      monkey.currentStats.power = 2000;
-      monkey.currentStats.focus = 2500;
-      monkey.currentStats.adaptability = 2500;
-      monkey.breedLevel = 151000;
-      monkey.incubatorStatUpgrades.powerModifier = 5;
-      this.calculateAnimalRacingStats(monkey);
-    }
-
-    var goat = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Goat);
-    if (goat !== undefined) {
-      goat.currentStats.topSpeed = 200;
-      goat.currentStats.acceleration = 200;
-      goat.currentStats.endurance = 200;
-      goat.currentStats.power = 2000;
-      goat.currentStats.focus = 200;
-      goat.currentStats.adaptability = 200;
-      goat.breedLevel = 1000;
-      goat.incubatorStatUpgrades.powerModifier = 5;
-      this.calculateAnimalRacingStats(goat);
-    }
-
-    var gecko = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Gecko);
-    if (gecko !== undefined) {
-      gecko.currentStats.topSpeed = 200;
-      gecko.currentStats.acceleration = 200;
-      gecko.currentStats.endurance = 200;
-      gecko.currentStats.power = 2000;
-      gecko.currentStats.focus = 200;
-      gecko.currentStats.adaptability = 200;
-      gecko.breedLevel = 1000;
-      gecko.incubatorStatUpgrades.powerModifier = 5;
-      this.calculateAnimalRacingStats(gecko);
-    }
-
-    var dolphin = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Dolphin);
-    if (dolphin !== undefined) {
-      dolphin.currentStats.topSpeed = 1000;
-      dolphin.currentStats.acceleration = 1000;
-      dolphin.currentStats.endurance = 500;
-      dolphin.currentStats.power = 2000;
-      dolphin.currentStats.focus = 1000;
-      dolphin.currentStats.adaptability = 1000;
-      dolphin.breedLevel = 10000;
-      dolphin.incubatorStatUpgrades.powerModifier = 5;
-      this.calculateAnimalRacingStats(dolphin);
-    }
-
-    var octopus = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Octopus);
-    if (octopus !== undefined) {
-      octopus.currentStats.topSpeed = 200;
-      octopus.currentStats.acceleration = 200;
-      octopus.currentStats.endurance = 200;
-      octopus.currentStats.power = 2000;
-      octopus.currentStats.focus = 500;
-      octopus.currentStats.adaptability = 500;
-      octopus.breedLevel = 1000;
-      octopus.incubatorStatUpgrades.powerModifier = 5;
-      this.calculateAnimalRacingStats(octopus);
-    }
-
-    var shark = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Shark);
-    if (shark !== undefined) {
-      shark.currentStats.topSpeed = 200;
-      shark.currentStats.acceleration = 200;
-      shark.currentStats.endurance = 200;
-      shark.currentStats.power = 2000;
-      shark.currentStats.focus = 200;
-      shark.currentStats.adaptability = 200;
-      shark.incubatorStatUpgrades.powerModifier = 5;
-      shark.breedLevel = 1000;
-      this.calculateAnimalRacingStats(shark);
-    }
-
-    var penguin = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Penguin);
-    if (penguin !== undefined) {
-      penguin.currentStats.topSpeed = 600;
-      penguin.currentStats.acceleration = 200;
-      penguin.currentStats.endurance = 500;
-      penguin.currentStats.power = 2000;
-      penguin.currentStats.focus = 200;
-      penguin.currentStats.adaptability = 200;
-      penguin.incubatorStatUpgrades.powerModifier = 5;
-      penguin.breedLevel = 10000;
-      this.calculateAnimalRacingStats(penguin);
-    }
-
-    var caribou = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Caribou);
-    if (caribou !== undefined) {
-      caribou.currentStats.topSpeed = 200;
-      caribou.currentStats.acceleration = 200;
-      caribou.currentStats.endurance = 200;
-      caribou.currentStats.power = 2000;
-      caribou.currentStats.focus = 200;
-      caribou.currentStats.adaptability = 200;
-      caribou.breedLevel = 100000;
-      caribou.incubatorStatUpgrades.powerModifier = 5;
-      this.calculateAnimalRacingStats(caribou);
-    }
-
-    var salamander = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Salamander);
-    if (salamander !== undefined) {
-      salamander.currentStats.topSpeed = 2500;
-      salamander.currentStats.acceleration = 1500;
-      salamander.currentStats.endurance = 5000;
-      salamander.currentStats.power = 2000;
-      salamander.currentStats.focus = 1000;
-      salamander.currentStats.adaptability = 1000;
-      salamander.breedLevel = 20000;
-      salamander.incubatorStatUpgrades.powerModifier = 5;
-      salamander.incubatorStatUpgrades.maxSpeedModifier = 5;
-      salamander.incubatorStatUpgrades.accelerationModifier = 5;
-      this.calculateAnimalRacingStats(salamander);
-    }
-    var fox = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Fox);
-    if (fox !== undefined) {
-      fox.currentStats.topSpeed = 400;
-      fox.currentStats.acceleration = 200;
-      fox.currentStats.endurance = 40;
-      fox.currentStats.power = 2000;
-      fox.currentStats.focus = 200;
-      fox.currentStats.adaptability = 200;
-      fox.breedLevel = 2000;
-      fox.incubatorStatUpgrades.powerModifier = 5;
-      this.calculateAnimalRacingStats(fox);
-    }*/
+      this.calculateAnimalRacingStats(animal);
+    });    
   }
 }

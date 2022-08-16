@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AnimalTypeEnum } from '../models/animal-type-enum.model';
 import { AnimalStats } from '../models/animals/animal-stats.model';
+import { Warthog, Whale } from '../models/animals/animal.model';
 import { GrandPrixData } from '../models/races/event-race-data.model';
 import { ResourceValue } from '../models/resources/resource-value.model';
 import { ShopItemTypeEnum } from '../models/shop-item-type-enum.model';
@@ -21,7 +22,7 @@ export class VersionControlService {
   constructor(private globalService: GlobalService, private lookupService: LookupService, private utilityService: UtilityService) { }
 
   //add to this in descending order
-  gameVersions = [1.09, 1.08, 1.07, 1.06, 1.05, 1.04, 1.03, 1.02, 1.01, 1.00];
+  gameVersions = [1.10, 1.09, 1.08, 1.07, 1.06, 1.05, 1.04, 1.03, 1.02, 1.01, 1.00];
 
   getListAscended() {
     var ascendedList: number[] = [];
@@ -101,7 +102,7 @@ export class VersionControlService {
         "Minor UI improvements for mobile."
     if (version === 1.09)
       changes = "<em>Just to preface, this is the first set of changes of several intended to make the early game flow better, coin gain and progression feel less punishing, and doing a better job of putting players in the intended gameplay loops. Look forward to more changes soon.</em>\n\n" +
-      "Made changes to verbiage in Tutorial and FAQ section for clarity and better guiding on how to play. \n\n" +
+        "Made changes to verbiage in Tutorial and FAQ section for clarity and better guiding on how to play. \n\n" +
         "Readjusted certain trainings so that there was clear progression going up from small to medium barns." +
         "<ul><li><b>Footwork</b> now gives .25 Acceleration as opposed to .5 Acceleration.</li>" +
         "<li><b>Dodge Ball</b> now gives 1 Adaptability as opposed to .5 Adaptability and takes 60 seconds to complete as opposed to 75 seconds.</li></ul>" +
@@ -113,11 +114,25 @@ export class VersionControlService {
         "The base price for food has been reduced." +
         "<ul><li>All stat increasing food has been reduced to 10 Coins. The goal for these items is to give you a quick boost after breeding to cut down on wait time. This new price should make that a more viable option.</li>" +
         "<li>The base price for Mangoes has been reduced to 100 Coins. For those who have already purchased Mangoes and the price has begun to increase, your total cost will be reduced by 400 Coins to match up with this change.</li></ul>" +
-        "Attractions now provide significantly more income. The new formula is 20 Coins * Specialization Level added on top of the previous amount. Check the calculator in the FAQ section to see exactly how much it provides at any given level.\n\n" +        
+        "Attractions now provide significantly more income. The new formula is 20 Coins * Specialization Level added on top of the previous amount. Check the calculator in the FAQ section to see exactly how much it provides at any given level.\n\n" +
         "For the first 10 barn upgrade levels, the cost is now 50 coins instead of 100.\n\n" +
         "Certain RNG elements were not evenly distributed (Coaching for example) and that issue has been resolved. \n\n" +
-        "There have been bugs, balance issues, and some concerns about reward scaling with the Grand Prix. I have taken the Grand Prix down for now while I work on these issues. Look forward to it coming back up in a better state in the next couple of weeks.\n\n" +        
+        "There have been bugs, balance issues, and some concerns about reward scaling with the Grand Prix. I have taken the Grand Prix down for now while I work on these issues. Look forward to it coming back up in a better state in the next couple of weeks.\n\n" +
         "Additional minor bug fixes.";
+    if (version === 1.10)
+      changes = "Two new animals have been added to the game." +
+        "<ul><li>The <span class='flatlandColor'>Warthog</span> is a new Flatland racer that you can purchase from the Shop.</li>" +
+        "<li>The <span class='waterColor'>Whale</span> is a new Ocean racer that is rewarded for reaching Circuit Rank B (25).</li></ul>" +
+        "The <span class='flatlandColor'>Hare</span> is now rewarded for reaching Circuit Rank Q (10). It is no longer listed in the Shop and anyone who has already purchased it will receive 1000 Coins immediately.\n\n" +
+        "Buried Treasure (<span class='waterColor'>Octopus</span>) and Cold Blooded (<span class='volcanicColor'>Salamander</span>) have both been reworked.\n\n"
+        "Many Circuit Rank rewards were moved around to make the early game flow better. Of note, the Dolphin is now a reward at Circuit Rank L (15) so that you have more time with only two race course types.\n\n" +
+        "Certain items in the shop have been locked behind reaching Circuit Rank AZ (27) before they appear to better guide new players to aim for items better suited for early game.\n\n" +
+        "By default, free races now give 1 medal per 50 free race victories.\n\n" +
+        "Early game circuit races and free races in general are now easier.\n\n" +
+        "After the Attraction change last patch, upgrading barns became a bit too easy at higher levels. Coin cost per upgrade level for barns has been adjusted higher starting at level 100 to keep the time between upgrades balanced.\n\n"
+        "Added option to 'Export to File'/'Import from File' to make saving and loading easier.\n\n" +
+        "Removed 'Stats' navigation page. It was really bare bones and just added more to the length of the navigation bar. I will eventually re-implement this in a better fashion.\n\n" +
+        "Various bug fixes and UI improvements.";
 
     return changes;
   }
@@ -144,11 +159,27 @@ export class VersionControlService {
       date = new Date('2022-08-07 12:00:00');
     if (version === 1.09)
       date = new Date('2022-08-11 12:00:00');
+    if (version === 1.10)
+      date = new Date('2022-08-15 12:00:00');
 
     return date.toDateString().replace(/^\S+\s/, '');
   }
 
   updatePlayerVersion() {
+    var baseMaxSpeedModifier = .3;
+    var baseAccelerationModifier = .1;
+    var baseStaminaModifier = 5;
+    var basePowerModifier = 1;
+    var baseFocusModifier = 5;
+    var baseAdaptabilityModifier = 5;
+
+    var minorImprovement = 1.025;
+    var mediumImprovement = 1.05;
+    var majorImprovement = 1.1;
+    var minorDetriment = .975;
+    var mediumDetriment = .95;
+    var majorDetriment = .9;
+
     this.getListAscended().forEach(version => {
       if (this.globalService.globalVar.currentVersion < version) {
         if (version === 1.01) {
@@ -494,15 +525,15 @@ export class VersionControlService {
 
           var smallBarnTrainingTimeModifier = this.globalService.globalVar.modifiers.find(item => item.text === "smallBarnTrainingTimeModifier");
           if (smallBarnTrainingTimeModifier !== undefined)
-          smallBarnTrainingTimeModifier.value = (4 * 60 * 60);
+            smallBarnTrainingTimeModifier.value = (4 * 60 * 60);
 
           var mediumBarnTrainingTimeModifier = this.globalService.globalVar.modifiers.find(item => item.text === "mediumBarnTrainingTimeModifier");
           if (mediumBarnTrainingTimeModifier !== undefined)
-          mediumBarnTrainingTimeModifier.value = (8 * 60 * 60);
+            mediumBarnTrainingTimeModifier.value = (8 * 60 * 60);
 
           var largeBarnTrainingTimeModifier = this.globalService.globalVar.modifiers.find(item => item.text === "largeBarnTrainingTimeModifier");
           if (largeBarnTrainingTimeModifier !== undefined)
-          largeBarnTrainingTimeModifier.value = (12 * 60 * 60);
+            largeBarnTrainingTimeModifier.value = (12 * 60 * 60);
 
           var footwork = this.globalService.globalVar.trainingOptions.find(item => item.trainingType === TrainingOptionsEnum.Footwork);
           if (footwork !== undefined)
@@ -563,10 +594,176 @@ export class VersionControlService {
 
             var attractionAmountModifier = this.globalService.globalVar.modifiers.find(item => item.text === "attractionAmountModifier");
             if (attractionAmountModifier !== undefined)
-              attractionAmountModifier.value = 20;   
-              
+              attractionAmountModifier.value = 20;
+
             this.globalService.stopGrandPrixRace();
           }
+        }
+        else if (version === 1.10) {
+          if (this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.circuitRank) < 26) {
+            this.globalService.lockTier2ShopItems();
+          }
+          else {
+            this.globalService.unlockTier2ShopItems();
+          }
+
+          this.globalService.globalVar.modifiers.push(new StringNumberPair(baseMaxSpeedModifier * minorImprovement, "warthogDefaultMaxSpeedModifier"));
+          this.globalService.globalVar.modifiers.push(new StringNumberPair(baseAccelerationModifier, "warthogDefaultAccelerationModifier"));
+          this.globalService.globalVar.modifiers.push(new StringNumberPair(baseStaminaModifier * mediumImprovement, "warthogDefaultStaminaModifier"));
+          this.globalService.globalVar.modifiers.push(new StringNumberPair(basePowerModifier * minorImprovement, "warthogDefaultPowerModifier"));
+          this.globalService.globalVar.modifiers.push(new StringNumberPair(baseFocusModifier * minorDetriment, "warthogDefaultFocusModifier"));
+          this.globalService.globalVar.modifiers.push(new StringNumberPair(baseAdaptabilityModifier * mediumDetriment, "warthogDefaultAdaptabilityModifier"));
+
+          this.globalService.globalVar.modifiers.push(new StringNumberPair(baseMaxSpeedModifier * majorDetriment, "whaleDefaultMaxSpeedModifier"));
+          this.globalService.globalVar.modifiers.push(new StringNumberPair(baseAccelerationModifier, "whaleDefaultAccelerationModifier"));
+          this.globalService.globalVar.modifiers.push(new StringNumberPair(baseStaminaModifier * mediumImprovement, "whaleDefaultStaminaModifier"));
+          this.globalService.globalVar.modifiers.push(new StringNumberPair(basePowerModifier * mediumImprovement, "whaleDefaultPowerModifier"));
+          this.globalService.globalVar.modifiers.push(new StringNumberPair(baseFocusModifier * majorImprovement, "whaleDefaultFocusModifier"));
+          this.globalService.globalVar.modifiers.push(new StringNumberPair(baseAdaptabilityModifier * mediumDetriment, "whaleDefaultAdaptabilityModifier"));
+
+          var warthogAnimal = new Warthog();
+          warthogAnimal.name = "Warthog";
+          this.globalService.calculateAnimalRacingStats(warthogAnimal);
+
+          var whaleAnimal = new Whale();
+          whaleAnimal.name = "Whale";
+          this.globalService.calculateAnimalRacingStats(whaleAnimal);
+
+          this.globalService.globalVar.animals.push(warthogAnimal);
+          this.globalService.globalVar.animals.push(whaleAnimal);
+          this.globalService.sortAnimalOrder();
+
+          var abilityShop = this.globalService.globalVar.shop.find(item => item.name === "Abilities");
+          warthogAnimal.availableAbilities.forEach(ability => {
+            if (!ability.isAbilityPurchased) {
+              var purchasableAbility = new ShopItem();
+              purchasableAbility.name = warthogAnimal.getAnimalType() + " Ability: " + ability.name;
+              purchasableAbility.purchasePrice.push(new ResourceValue("Coins", ability.purchasePrice));
+              purchasableAbility.canHaveMultiples = false;
+              purchasableAbility.type = ShopItemTypeEnum.Ability;
+              purchasableAbility.additionalIdentifier = ability.name;
+              purchasableAbility.isAvailable = warthogAnimal.isAvailable;
+              abilityShop?.itemList.push(purchasableAbility);
+            }
+          });
+
+          whaleAnimal.availableAbilities.forEach(ability => {
+            if (!ability.isAbilityPurchased) {
+              var purchasableAbility = new ShopItem();
+              purchasableAbility.name = whaleAnimal.getAnimalType() + " Ability: " + ability.name;
+              purchasableAbility.purchasePrice.push(new ResourceValue("Coins", ability.purchasePrice));
+              purchasableAbility.canHaveMultiples = false;
+              purchasableAbility.type = ShopItemTypeEnum.Ability;
+              purchasableAbility.additionalIdentifier = ability.name;
+              purchasableAbility.isAvailable = whaleAnimal.isAvailable;
+              abilityShop?.itemList.push(purchasableAbility);
+            }
+          });
+
+          var animalShop = this.globalService.globalVar.shop.find(item => item.name === "Animals");
+          if (animalShop !== null && animalShop !== undefined) {
+            var warthog = new ShopItem();
+            warthog.name = "Warthog";
+            warthog.purchasePrice.push(new ResourceValue("Coins", 1000));
+            warthog.canHaveMultiples = false;
+            warthog.type = ShopItemTypeEnum.Animal;
+            animalShop.itemList.push(warthog);
+          }
+
+          this.globalService.globalVar.modifiers.push(new StringNumberPair(50, "freeRacesToMedalModifier"));
+
+          var specialtyShop = this.globalService.globalVar.shop.find(item => item.name === "Specialty");
+          if (specialtyShop !== null && specialtyShop !== undefined) {
+            var teamManager = specialtyShop.itemList.find(item => item.name === "Team Manager");
+            if (teamManager !== null && teamManager !== undefined)
+              teamManager.totalShopQuantity = 19;
+
+              var talentPoints = new ShopItem();
+              talentPoints.name = "Talent Point Voucher";
+              talentPoints.purchasePrice.push(this.globalService.getMedalResourceValue(25));
+              talentPoints.basePurchasePrice.push(this.globalService.getMedalResourceValue(25));
+              talentPoints.infiniteAmount = true;
+              talentPoints.canHaveMultiples = true;
+              talentPoints.quantityAdditive = 25;
+              talentPoints.isAvailable = false;
+              if (this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.circuitRank) >= 53)
+                talentPoints.isAvailable = true;
+              talentPoints.type = ShopItemTypeEnum.Specialty;
+              specialtyShop.itemList.push(talentPoints);
+          }
+
+          if (this.globalService.globalVar.animals.find(item => item.type === AnimalTypeEnum.Hare)?.isAvailable) {
+            var amount = 1000;
+            var resource = this.globalService.globalVar.resources.find(item => item.name === "Coins");
+            if (resource === null || resource === undefined)
+              this.globalService.globalVar.resources.push(new ResourceValue("Coins", amount));
+            else
+              resource.amount += amount;
+          }
+
+          var animalShop = this.globalService.globalVar.shop.find(item => item.name === "Animals");
+          if (animalShop !== null && animalShop !== undefined) {
+            var hare = animalShop.itemList.find(item => item.name === "Hare");
+            if (hare !== null && hare !== undefined)
+              hare.isAvailable = false;
+          }
+
+          if (this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.circuitRank) >= 10) {
+            var hareAnimal = this.globalService.globalVar.animals.find(item => item.type === AnimalTypeEnum.Hare);
+            if (hareAnimal !== undefined) {
+              hareAnimal.isAvailable = true;
+              this.globalService.unlockAnimalAbilities(hareAnimal);
+            }
+          }
+
+          if (this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.circuitRank) >= 13) {
+            this.globalService.globalVar.unlockables.set("barnRow2", true);
+          }
+
+          if (this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.circuitRank) >= 14) {
+            this.globalService.globalVar.unlockables.set("attractionSpecialization", true);
+          }
+
+          if (this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.circuitRank) >= 25) {
+            var alsoWhaleAnimal = this.globalService.globalVar.animals.find(item => item.type === AnimalTypeEnum.Whale);
+            if (alsoWhaleAnimal !== undefined) {
+              alsoWhaleAnimal.isAvailable = true;
+              this.globalService.unlockAnimalAbilities(alsoWhaleAnimal);
+            }
+          }
+
+          if (this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.circuitRank) >= 29) {
+            this.globalService.globalVar.unlockables.set("barnRow3", true);
+          }
+
+          if (this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.circuitRank) >= 40) {
+            this.globalService.globalVar.unlockables.set("barnRow4", true);
+          }
+
+          if (this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.circuitRank) >= 58) {
+            this.globalService.globalVar.unlockables.set("barnRow5", true);
+          }
+
+          var octopus = this.globalService.globalVar.animals.find(item => item.type === AnimalTypeEnum.Octopus);
+          if (octopus !== undefined) {
+            var buriedTreasure = octopus.availableAbilities.find(ability => ability.name === "Buried Treasure");
+            if (buriedTreasure !== undefined)
+              buriedTreasure.efficiency = 100;
+
+            if (octopus.ability.name === "Buried Treasure")
+              octopus.ability.efficiency = 100;
+          }
+
+          var salamander = this.globalService.globalVar.animals.find(item => item.type === AnimalTypeEnum.Salamander);
+          if (salamander !== undefined) {
+            var coldBlooded = salamander.availableAbilities.find(ability => ability.name === "Cold Blooded");
+            if (coldBlooded !== undefined)
+              coldBlooded.efficiency = 45;
+
+            if (salamander.ability.name === "Cold Blooded")
+              salamander.ability.efficiency = 45;
+          }
+
         }
 
         this.globalService.globalVar.currentVersion = version;

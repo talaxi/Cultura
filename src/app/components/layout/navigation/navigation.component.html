@@ -11,7 +11,7 @@
     <hr />
     <div class="navSpace clickableText" (click)="switchView(navigationEnum.animals)">
         <button class="buttonAsText"
-            [ngClass]="selectedNavigation === navigationEnum.animals ? 'active' : ''">Animals</button>
+            [ngClass]="{'active': selectedNavigation === navigationEnum.animals, 'tutorialActive' : tutorial9Active }">Animals</button>
     </div>
     <hr />
     <div class="navSpace clickableText" (click)="switchView(navigationEnum.relayTeams)" >
@@ -38,9 +38,9 @@
         <button class="buttonAsText"
             [ngClass]="selectedNavigation === navigationEnum.settings ? 'active' : ''">Settings</button>
     </div>
-    <hr />
+    <!--<hr />
     <div class="navSpace clickableText" (click)="switchView(navigationEnum.stats)">
         <button class="buttonAsText" 
             [ngClass]="selectedNavigation === navigationEnum.stats ? 'active' : ''">Stats</button>
-    </div>    
+    </div>    -->
 </div>

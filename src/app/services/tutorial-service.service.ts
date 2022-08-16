@@ -14,7 +14,7 @@ export class TutorialService {
   skipTutorial()
   {
     this.globalService.globalVar.tutorials.tutorialCompleted = true;
-    this.globalService.globalVar.tutorials.currentTutorialId = 9; //need to keep this updated or come up with better idea
+    this.globalService.globalVar.tutorials.currentTutorialId = 10; //need to keep this updated or come up with better idea
   }
 
   getTutorialState(id: number)
@@ -56,14 +56,14 @@ export class TutorialService {
     if (id === 4)
     {
       tutorialState.tutorialText = "You've got a few options here. Circuit races are all about deciding where you stand against the competition. If you win all of the circuit races for your rank, you'll move up into the next rank which may net you some nifty rewards and open up new opportunities for your facility. Improving your Circuit Rank should be your number one goal in becoming a top tier racing facility!\n\n" + 
-      "You can also run some free races against local competition. Only a few races are available at a time, but it can be a great way to get some practice in and make some quick money. It may be helpful at times to make sure you make quick work of free races before proceeding to the next circuit rank.\n\n" +
+      "You can also run some free races against local competition. Only a few races are available at a time, but it can be a great way to get some practice in and make some quick money.\n\n" +
       "For now, let's see if you can make it up to the next circuit rank. It's a nice sunny day today and that might impact how your racer runs. If you hover over a race, you'll see how the terrain or weather might impact the conditions of the race. When in doubt, hovering over text usually gives you the information you need. Whenever you're ready, start the race. Your goal is to get to the finish line before your competition (represented as the little black dot). Good luck!\n\n" +
       "<b>Click (or tap if you are on mobile) the race option outlined in red.</b>";
       tutorialState.associatedTab = NavigationEnum.raceselection;
     }
     if (id === 5)
     {
-      tutorialState.tutorialText = "Way to go! Exciting stuff there. Looks like you've got the gist of it for now. Keep racing, make some money, and build up your facility to be as great as it can be. Don't forget to train both your Horse and Monkey, and try to keep their stats well rounded. I'll check in with you again a little later. I look forward to seeing how far you can go!\n\n" + 
+      tutorialState.tutorialText = "Way to go! Exciting stuff there. Looks like you've got the gist of it for now. Keep racing, make some money, and build up your facility to be as great as it can be. I'll check in with you again a little later. I look forward to seeing how far you can go!\n\n" + 
       "<b>Continue training your animals and completing Circuit Races to raise your Circuit Rank. If you are stuck or are confused about anything as you progress, check the 'FAQs' link down below on the right side of the footer.</b>";      
       tutorialState.associatedTab = NavigationEnum.raceselection;
     }
@@ -82,19 +82,29 @@ export class TutorialService {
     }
     if (id === 8)
     {
-      tutorialState.tutorialText = "Nicely done. One last thing to talk about before I let you do whatever you want. First, select a training option from the options below so that your Monkey can start getting acclimated to racing. Then, click your animal's name to take a shortcut to the animal page and let's talk about breeding. If you haven't named your animal, its type is its name (so for example, Monkey's name is Monkey).\n\n" +
-      "<b>Select a training option below and then click (or tap if you are on mobile) your animal's type or name to jump to its page.</b>";      
+      /*tutorialState.tutorialText = "Nicely done. One last thing to talk about before I let you do whatever you want. First, select a training option from the options below so that your Monkey can start getting acclimated to racing. Then, click your animal's name to take a shortcut to the animal page and let's talk about breeding. If you haven't named your animal, its type is its name (so for example, Monkey's name is Monkey).\n\n" +
+      "<b>Select a training option below and then click (or tap if you are on mobile) your animal's type or name to jump to its page.</b>";      */
+      tutorialState.tutorialText = "Nicely done. Now you can set a training for your Monkey so it can start to get acclimated to racing. Once your Monkey has caught up to your Horse in stats, you'll be back to winning races in no time. Don't forget to train both your Horse and your Monkey, and to try to keep their stats balanced! I'll check back in with you after awhile.\n\n" +
+      "<b>Continue training your animals and completing Circuit Races to raise your Circuit Rank. If you are stuck or are confused about anything as you progress, check the 'FAQs' link down below on the right side of the footer.</b>";    
       tutorialState.associatedTab = NavigationEnum.barn;
     }
-    if (id === 9)
+    if (id === 9) //move this tutorial to later
     {
-      tutorialState.tutorialText = "Here you can see how close your animal is to being able to breed. Training and racing both contribute to this. Once you're ready, you can breed your animal and start racing the offspring. There's a strategic element to this. <b>After breeding, your animal will have its stats set back to their starting points, but the amount that the base stats contribute to the racing stats will increase.</b> You won't need to worry about breeding for awhile, but to eventually keep up with the competition you'll need to keep breeding and getting faster. Don't breed right before a big race though or you might have to spend some extra time training!\n\n" +
+      /*tutorialState.tutorialText = "Here you can see how close your animal is to being able to breed. Training and racing both contribute to this. Once you're ready, you can breed your animal and start racing the offspring. There's a strategic element to this. <b>After breeding, your animal will have its stats set back to their starting points, but the amount that the base stats contribute to the racing stats will increase.</b> You won't need to worry about breeding for awhile, but to eventually keep up with the competition you'll need to keep breeding and getting faster. Don't breed right before a big race though or you might have to spend some extra time training!\n\n" +
       "There's an ebb and flow to it. Race as far as your animals can go, breed them many times in quick succession to get a large percentage upgrade to stats, and then get back in the race. <b>This game is intended to be a slow burn and skews towards idle play. If you play very actively, you may find yourself needing to wait at certain points especially early on. Breeding once, training to max, breeding one time again, and so on is not recommended. Cycle between breeding in batches and then racing with your much higher stat modifiers.\n\n" +
+      "That's all I have for you. Good luck and have fun!";*/
+      tutorialState.tutorialText = "Looks like you've won a nice racing Hare. The Hare and Horse are both Flatland animals, meaning only one of them will be able to run the Flatland portion of a race at a time. Ideally, you'll want one getting faster while the other is winning races. Let's head over to your animals and talk about Breeding.\n\n" +
+      "<b>Click (or tap if you are on mobile) 'Animals' on the right bordered in red and select an animal.</b>";      ;
+      tutorialState.associatedTab = NavigationEnum.raceselection;
+    }
+    if (id === 10)
+    {
+      tutorialState.tutorialText = "Breeding is where your speed really starts to grow. Firstly, to Breed you need a sufficient amount of Breed XP. Training and racing both contribute to this. Once you're ready, you can breed your animal to increase its Breed Level. This gives it a 5% increase to how much the base stats affect the racing stats. There's a strategic element to this. <b>After breeding, your animal will have its stats reset back to their starting points, but the amount that the base stats contribute to the racing stats will increase.</b>\n\n Because you only need 1 Flatland animal to race at any given time, you can choose one to start Breeding and another to keep racing. For best results, you should keep Breeding the same animal multiple times so that you don't need to spend too much time training. 5% may not make a huge difference at first, but 50% will. Once your racing animal can no longer keep up with the competition, swap them! The animal you were breeding will surely torch the competition and the animal you were racing can start to catch up in speed.\n\n" +
+      "There's an ebb and flow to it. Race as far as your animals can go, breed them many times in quick succession to get a large percentage upgrade to stats, and then get back in the race. <b>This game is intended to be a slow burn and skews towards idle play. If you play very actively, you may find yourself needing to wait at certain points early on. Breeding once, training to max, breeding one time again, and so on is not recommended. Cycle between breeding in batches and then racing with your much higher stat modifiers.\n\n" +
       "That's all I have for you. Good luck and have fun!";
       tutorialState.associatedTab = NavigationEnum.animals;
       this.globalService.globalVar.tutorials.tutorialCompleted = true;
     }
-    
 
     return tutorialState;
   }

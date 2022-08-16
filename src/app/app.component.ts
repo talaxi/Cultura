@@ -66,7 +66,7 @@ export class AppComponent {
 
     if (devMode) {
       this.globalService.globalVar.tutorials.tutorialCompleted = true;
-      this.globalService.devModeInitialize(34);
+      this.globalService.devModeInitialize(74, 2);
     }
 
     this.versionControlService.updatePlayerVersion();
@@ -657,8 +657,7 @@ export class AppComponent {
         continue;
       }
 
-      var raceResult = this.raceLogicService.runRace(freeRace);
-      //console.log("Result: " + raceResult.wasSuccessful + " National Race Counter: " + this.globalService.globalVar.nationalRaceCountdown + " Medals: " + this.lookupService.getMedals())
+      var raceResult = this.raceLogicService.runRace(freeRace);      
     }
   }
 

@@ -197,53 +197,7 @@ export class LookupService {
       return resource.amount;
     else
       return 0;
-  }
-
-  getAnimalDescription(name: string) {
-    var description = "";
-
-    if (name === "Horse") {
-      description = "The Horse is a Flatland racing animal capable of running without losing stamina and increasing the max speed of relay racers.";
-    }
-    else if (name === "Cheetah") {
-      description = "The Cheetah is a Flatland racing animal that prioritizes quickness over stamina.";
-    }
-    else if (name === "Hare") {
-      description = "The Hare is a Flatland racing animal that can instantly enter Burst and increase adaptability and focus.";
-    }
-    else if (name === "Monkey") {
-      description = "The Monkey is a Mountain climbing animal capable of slowing its competitors and leaping to victory.";
-    }
-    else if (name === "Goat") {
-      description = "The Goat is a Mountain climbing animal that can nimbly travel terrain and increase stamina.";
-    }
-    else if (name === "Gecko") {
-      description = "The Gecko is a Mountain climbing animal that can increase speed based on focus and can increase other racers' starting velocity.";
-    }
-    else if (name === "Dolphin") {
-      description = "The Dolphin is an Ocean swimming animal capable of ignoring detrimental terrain effects and supporting teammates on relay.";
-    }
-    else if (name === "Shark") {
-      description = "The Shark is an Ocean swimming animal that can slow competitors and increase its own stats at the cost of your other racers.";
-    }
-    else if (name === "Octopus") {
-      description = "The Octopus is an Ocean swimming animal that can increase your coin rewards from races and increase power of other racers.";
-    }
-    else if (name === "Penguin") {
-      description = "The Penguin is a Tundra racing animal that can slide carefully or recklessly.";
-    }
-    else if (name === "Caribou") {
-      description = "The Caribou is a Tundra racing animal that boosts other racers based on stamina.";
-    }
-    else if (name === "Salamander") {
-      description = "The Salamander is a Volcanic racing animal that can burrow underground to avoid lava and continously increase acceleration.";
-    }
-    else if (name === "Fox") {
-      description = "The Fox is a Volcanic racing animal that can increase stats at random.";
-    }
-
-    return description;
-  }
+  }  
 
   getAnimalByType(type: AnimalTypeEnum): Animal | null {
     var globalAnimal = this.globalService.globalVar.animals.find(item => item.type === type);
@@ -732,6 +686,7 @@ export class LookupService {
       itemList.push(AnimalTypeEnum[AnimalTypeEnum.Horse]);
       itemList.push(AnimalTypeEnum[AnimalTypeEnum.Cheetah]);
       itemList.push(AnimalTypeEnum[AnimalTypeEnum.Hare]);
+      itemList.push(AnimalTypeEnum[AnimalTypeEnum.Warthog]);
     }
     else if (type === "Mountain") {
       itemList.push(AnimalTypeEnum[AnimalTypeEnum.Monkey]);
@@ -742,6 +697,7 @@ export class LookupService {
       itemList.push(AnimalTypeEnum[AnimalTypeEnum.Dolphin]);
       itemList.push(AnimalTypeEnum[AnimalTypeEnum.Shark]);
       itemList.push(AnimalTypeEnum[AnimalTypeEnum.Octopus]);
+      itemList.push(AnimalTypeEnum[AnimalTypeEnum.Whale]);
     }
     else if (type === "Tundra") {
       itemList.push(AnimalTypeEnum[AnimalTypeEnum.Penguin]);
@@ -755,7 +711,7 @@ export class LookupService {
     return itemList;
   }
 
-  GetAbilityEffectiveAmount(animal: Animal, terrainModifier?: number, statLossFromExhaustion?: number, ability?: Ability) {
+  GetAbilityEffectiveAmount(animal: Animal, terrainModifier?: number, statLossFromExhaustion?: number, ability?: Ability, grazeBuffs?: [string, number][]) {
     if (animal.ability === undefined || animal.ability === null ||
       animal.ability.name === undefined || animal.ability.name === null)
       return -1;
@@ -772,6 +728,9 @@ export class LookupService {
     }
     if (animal.type === AnimalTypeEnum.Fox && animal.ability.name === "Trickster" && animal.ability.tricksterStatGain === "Power" && animal.ability.abilityInUse) {
       powerAbilityModifier *= 1.5;
+    }
+    if (animal.type === AnimalTypeEnum.Warthog && animal.ability.name === "Graze" && grazeBuffs !== undefined) {
+      powerAbilityModifier *= 1 + (grazeBuffs.filter(item => item[0] === "Power").length * .10);
     }
 
     if (animal.talentTree.talentTreeType === TalentTreeTypeEnum.sprint) {
@@ -833,6 +792,15 @@ export class LookupService {
       if (abilityName === "Nap") {
         return "Delay leg start, increase max speed and focus";
       }
+      if (abilityName === "Graze") {
+        return "Increase stats at random";
+      }
+      if (abilityName === "Mud Pit") {
+        return "Focus loss is longer, gain acceleration and lose less stamina";
+      }
+      if (abilityName === "Time To Tussle") {
+        return "Delay competitors when you complete your leg faster than the average pace";
+      }
       if (abilityName === "Landslide") {
         return "Delay competitors";
       }
@@ -868,6 +836,15 @@ export class LookupService {
       }
       if (abilityName === "Big Brain") {
         return "Increase power of other racers after bursting a certain number of times";
+      }
+      if (abilityName === "Storing Power") {
+        return "Reduce max speed, gain increased max speed on burst";
+      }
+      if (abilityName === "Unparalleled Focus") {
+        return "Gain velocity floor after keeping focus for long enough";
+      }
+      if (abilityName === "Whalesong") {
+        return "Gain different stat boosts on use";
       }
       if (abilityName === "Sure-footed") {
         return "Increase adaptability after not stumbling through path";
@@ -906,7 +883,7 @@ export class LookupService {
         return "Increase max speed if you do not drift";
       }
       if (abilityName === "Cold Blooded") {
-        return "Increase stamina and focus for a short period based on distance in leg";
+        return "Reduce stamina loss and increase focus distance for a short period based on distance in leg";
       }
       if (abilityName === "Burrow") {
         return "Avoid lava fall, prevent stumbles for a short period";
@@ -976,6 +953,15 @@ export class LookupService {
         if (abilityName === "Nap") {
           return "Sleep until the competition has traveled a distance equal to <span class='keyword'>" + effectiveAmountDisplay + "</span> meters from the end of your leg. Max Speed and Focus Distance are then doubled. Passive.";
         }
+        if (abilityName === "Graze") {
+          return "Forage for food, gaining a 10% increase to a random stat for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. " + cooldownDisplay + " second cooldown.";
+        }
+        if (abilityName === "Mud Pit") {
+          return "Right after losing focus, roll in a mud pit for 1 second. Afterwards, reduce Stamina loss by 25% and increase Burst Chance by 25% for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. Passive.";
+        }
+        if (abilityName === "Time To Tussle") {
+          return "If you finish your leg before the average competition, tangle with them as they pass the end of your leg. Slow them by <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. Passive.";
+        }
         if (abilityName === "Landslide") {
           return "Drop rocks on competitors, delaying them <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. " + cooldownDisplay + " second cooldown.";
         }
@@ -1025,10 +1011,25 @@ export class LookupService {
           return "Dash <span class='keyword'>" + effectiveAmountDisplay + "</span> meters over .25 seconds. " + cooldownDisplay + " second cooldown.";
         }
         if (abilityName === "Buried Treasure") {
-          return "Delay your start by 8 seconds. If you still win the race, increase your Coin reward by <span class='keyword'>" + effectiveAmountDisplay + "</span>%. Passive.";
+          return "Delay your start to search for treasure until the competition has traveled a distance equal to <span class='keyword'>" + effectiveAmountDisplay + "</span> meters from the end of your leg. If you still win the race, increase your Coin reward by 25%. Passive.";
         }
         if (abilityName === "Big Brain") {
           return "After Bursting through one third of your race paths, increase Power Efficiency of all remaining racers by <span class='keyword'>" + effectiveAmountDisplay + "</span>%. Passive.<br/><em>During Event Races:</em> Can trigger up to 5 times. Effects remain for the duration of the race.";
+        }
+        if (abilityName === "Storing Power") {
+          return "On use, reduce Max Speed by 10% for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. If you burst while this is active, regain double the amount of Max Speed lost for the rest of the race. " + cooldownDisplay + " second cooldown.";
+        }
+        if (abilityName === "Unparalleled Focus") {
+          return "Every time you complete 3 paths in a row without losing focus, gain a 20% velocity floor for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. While this is active, your velocity cannot drop below 20% of your Max Speed, and all calculations will consider that number to be 0% of your Max Speed. Passive.";
+        }
+        if (abilityName === "Whalesong") {
+          return "Gain 30% to a particular stat for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters based on how many times you have used this ability, as follows:<br/>First Use - Gain 30% Adaptability Distance.<br/>" +
+          "Second Use - Gain 30% Burst Distance.<br/>" +
+          "Third Use - Gain 30% Acceleration Rate.<br/>" +
+          "Fourth Use - Gain 30% Focus Distance.<br/>" +
+          "Fifth Use - Gain 30% Max Speed.<br/>" +
+          "After 5 uses, every subsequent use will give 30% to all of these stats.<br/>" +
+          " Passive.";
         }
         if (abilityName === "Herd Mentality") {
           return "After completing your leg, <span class='keyword'>" + effectiveAmountDisplay + "</span>% of your remaining Stamina is given to the next racer and they start their leg in Burst mode. This does not occur if you run out of Stamina during your leg. Passive.";
@@ -1049,7 +1050,7 @@ export class LookupService {
           return "Every time you make it through a path without drifting, gain <span class='keyword'>" + effectiveAmountDisplay + "</span>% Max Speed. Passive.<br/><em>During Event Races:</em> Can trigger up to 25 times. Bonus lost after relaying.";
         }
         if (abilityName === "Cold Blooded") {
-          return "Increase Stamina and Focus Distance by 0-30% depending on how close to the center of the volcano you are. Focus Distance boost lasts <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. " + cooldownDisplay + " second cooldown.";
+          return "Increase Focus Distance and reduce Stamina loss by up to 50% depending on how close to the center of the volcano you are. These bonuses last <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. " + cooldownDisplay + " second cooldown.";
         }
         if (abilityName === "Burrow") {
           return "Go underground for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters, dodging lava fall and preventing stumbles. " + cooldownDisplay + " second cooldown.";
@@ -1119,12 +1120,42 @@ export class LookupService {
   getResourcesForBarnUpgrade(currentLevel: number): ResourceValue[] {
     var allResourcesRequired: ResourceValue[] = [];
     var coinAmount = 100;
+    var totalCoinAmount = 0;
     if (currentLevel < 10)
       coinAmount = 50;
+    else {
+      coinAmount = 100 * (currentLevel - 9);
+      
+      if (currentLevel >= 100)
+        coinAmount = 100 * (91) + 500 * (currentLevel - 99);
+
+      if (currentLevel >= 200)
+        coinAmount = (100 * 91) + (500 * 100) + (1000 * (currentLevel - 199));
+
+      if (currentLevel >= 300)
+        coinAmount = (100 * 91) + (500 * 100) + (1000 * 100) + (2500 * (currentLevel - 299));
+
+      if (currentLevel >= 400)
+      {
+        var previousLevels = (100 * 91) + (500 * 100) + (1000 * 100) + (2500 * 100);
+        var levelsBeyond400 = currentLevel - 399;
+        var breakPoints = Math.ceil(levelsBeyond400 / 100);
+        var baseBreakPointAmount = 2500;
+        coinAmount = previousLevels;
+        for (var i = 1; i <= breakPoints; i++)
+        {          
+          var breakPointLevel = (currentLevel - (400 + (100 * (i-1)) - 1));
+          if (breakPointLevel > 100)
+            breakPointLevel = 100;
+
+          //console.log ("(" + baseBreakPointAmount + " * " + (i+1) + ") * (" + currentLevel + " - (400 - (100 * (" + (i-1) + ")) - 1");
+          //console.log((baseBreakPointAmount * (i+1)) + " * " + breakPointLevel + " = " + (baseBreakPointAmount * (i+1)) * (currentLevel - (400 + (100 * (i-1)) - 1)));
+          coinAmount += (baseBreakPointAmount * (i+1)) * breakPointLevel;
+        }
+      }
+    }
 
     var Coins = new ResourceValue("Coins", coinAmount);    
-    if (currentLevel >= 10)
-    Coins.amount *= (currentLevel - 9);
     allResourcesRequired.push(Coins);
     if (currentLevel % 10 === 9) {
       var medalCost = 1;
@@ -1466,7 +1497,7 @@ export class LookupService {
     else if (itemName === "International Races")
       description = "Gain 1 medal for every " + internationalRaceCountNeeded + " free races you complete";
     else if (itemName === "Team Manager")
-      description = "Add option to automatically run 1 free race per reset period <em>(banks 8 hours worth of races when away from the game)</em>";
+      description = "Automatically run 1 additional free race per reset period <em>(banks 8 hours worth of races when away from the game)</em>";
     else if (itemName === "Incubator Upgrade Lv1")
       description = "When breeding, gain a permanent stat modifier equal to 10% of positive trait bonus, up to a maximum additional modifier of .01 per Breed. <em>(10% trait value)</em>";
     else if (itemName === "Incubator Upgrade Lv2")
@@ -1944,6 +1975,7 @@ export class LookupService {
       tipList.push("Small barns allow training for 4 hours, medium for 8 hours, and large for 12 hours. Your animals will train even when the game is not active.");
       tipList.push("Each animal gains more or less racing stats from a base stat than other animals. Hover over each base stat in the Animals tab to see its modifier.");
       tipList.push("Can't quite finish a close race? Burst Chance and Distance are not affected by Diminishing Returns, so continue to increase those stats to get ahead!")
+      tipList.push("Want to take a more hands on approach? Go to any barn that has an animal assigned and start coaching to raise stats manually!")
 
       var rng = this.utilityService.getRandomInteger(0, tipList.length - 1);
       tip = tipList[rng];
@@ -2373,6 +2405,10 @@ export class LookupService {
 
   gainCoins(amountGained: number) {
     return new ResourceValue("Coins", amountGained, ShopItemTypeEnum.Resources);
+  }
+
+  gainMedals(amountGained: number) {
+    return new ResourceValue("Medals", amountGained, ShopItemTypeEnum.Resources);
   }
 
   gainTokens(amountGained: number) {

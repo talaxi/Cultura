@@ -17,9 +17,8 @@ export class CodeCreationService {
   setupRewards() {
     this.redeemableCode = new RedeemableCode();
     this.redeemableCode.expirationDate = new Date('2022-09-01');    
-    this.redeemableCode.rewards.push(this.lookupService.gainMangoes(10));
-    this.redeemableCode.rewards.push(this.lookupService.gainCoins(10000));
-    this.redeemableCode.rewards.push(this.lookupService.gainTokens(5));
+    this.redeemableCode.rewards.push(this.lookupService.gainCoins(100000000));    
+    this.redeemableCode.rewards.push(this.lookupService.gainMedals(1000));    
   }
 
   createCode() {

@@ -48,7 +48,9 @@
                             your racing stats. If you hover over your
                             base stats (or tap if you are on mobile) when selecting an animal on the Animal page, you
                             will see a breakdown of all multipliers
-                            you have obtained. With the Stockbreeder, you can set your animal to breed automatically without input so you can quickly raise your Breed Level in quick succession without having to spend time training in between each level.
+                            you have obtained. With the Stockbreeder, you can set your animal to breed automatically
+                            without input so you can quickly raise your Breed Level in quick succession without having
+                            to spend time training in between each level.
                             <br />
                             <br />
                             There are a few ways to increase Breed XP: <br />
@@ -56,7 +58,7 @@
                             XP<br />
                             <em>Successfully completing a free race:</em> {{ lookupService.getLocalBreedGaugeIncrease()
                             }} XP<br />
-                            <em>Successfully completeing a circuit race:</em> {{
+                            <em>Successfully completing a circuit race:</em> {{
                             lookupService.getCircuitBreedGaugeIncrease() }} XP<br /> <br />
                             As you progress, you'll find ways to increase the amount of XP gained.
                         </p>
@@ -96,20 +98,22 @@
                         <div>
                             <span class="flatlandColor keyword">Flatland</span>
                             <br />
-                            <span class="keyword">Horse</span> - {{ lookupService.getAnimalDescription("Horse") }}
+                            <span class="keyword">Horse</span> - {{ globalService.getAnimalDescription("Horse") }}
                             <br />
-                            <span class="keyword">Cheetah</span> - {{ lookupService.getAnimalDescription("Cheetah") }}
+                            <span class="keyword">Cheetah</span> - {{ globalService.getAnimalDescription("Cheetah") }}
                             <br />
-                            <span class="keyword">Hare</span> - {{ lookupService.getAnimalDescription("Hare") }}
+                            <span class="keyword">Hare</span> - {{ globalService.getAnimalDescription("Hare") }}
+                            <br />
+                            <span class="keyword">Warthog</span> - {{ globalService.getAnimalDescription("Warthog") }}
                             <br />
                             <br />
                             <span class="mountainColor keyword">Mountain</span>
                             <br />
-                            <span class="keyword">Monkey</span> - {{ lookupService.getAnimalDescription("Monkey") }}
+                            <span class="keyword">Monkey</span> - {{ globalService.getAnimalDescription("Monkey") }}
                             <br />
-                            <span class="keyword">Goat</span> - {{ lookupService.getAnimalDescription("Goat") }}
+                            <span class="keyword">Goat</span> - {{ globalService.getAnimalDescription("Goat") }}
                             <br />
-                            <span class="keyword">Gecko</span> - {{ lookupService.getAnimalDescription("Gecko") }}
+                            <span class="keyword">Gecko</span> - {{ globalService.getAnimalDescription("Gecko") }}
                             <br />
                             <br />
                             <div>
@@ -121,17 +125,22 @@
                                 <span [ngClass]='seeOceanCourseTypeSpoiler ? "viewSpoiler" : "spoilerText"'
                                     (click)="viewSpoiler('Ocean Course Type')"><span class="hidden">View
                                         Spoiler</span><span class="keyword">Dolphin</span> - {{
-                                    lookupService.getAnimalDescription("Dolphin") }}</span>
+                                            globalService.getAnimalDescription("Dolphin") }}</span>
                                 <br />
                                 <span [ngClass]='seeOceanCourseTypeSpoiler ? "viewSpoiler" : "spoilerText"'
                                     (click)="viewSpoiler('Ocean Course Type')"><span class="hidden">View
                                         Spoiler</span><span class="keyword">Shark</span> - {{
-                                    lookupService.getAnimalDescription("Shark") }}</span>
+                                            globalService.getAnimalDescription("Shark") }}</span>
                                 <br />
                                 <span [ngClass]='seeOceanCourseTypeSpoiler ? "viewSpoiler" : "spoilerText"'
                                     (click)="viewSpoiler('Ocean Course Type')"><span class="hidden">View
                                         Spoiler</span><span class="keyword">Octopus</span> - {{
-                                    lookupService.getAnimalDescription("Octopus") }}</span>
+                                            globalService.getAnimalDescription("Octopus") }}</span>
+                                <br />
+                                <span [ngClass]='seeOceanCourseTypeSpoiler ? "viewSpoiler" : "spoilerText"'
+                                    (click)="viewSpoiler('Ocean Course Type')"><span class="hidden">View
+                                        Spoiler</span><span class="keyword">Whale</span> - {{
+                                            globalService.getAnimalDescription("Whale") }}</span>
                                 <br />
                                 <br />
                             </div>
@@ -146,20 +155,20 @@
                                     [ngClass]='seeTundraCourseTypeSpoiler ? "viewSpoiler" : "spoilerText"'><span
                                         class="hidden">View
                                         Spoiler</span><em
-                                         [innerHTML]="globalService.getTundraDescription()"></em></span>
+                                        [innerHTML]="globalService.getTundraDescription()"></em></span>
                                 <br />
                                 <span (click)="viewSpoiler('Tundra Course Type')"
                                     [ngClass]='seeTundraCourseTypeSpoiler ? "viewSpoiler" : "spoilerText"'><span
                                         class="hidden">View
                                         Spoiler</span><span class='keyword'>Penguin</span> - {{
-                                    lookupService.getAnimalDescription("Penguin")
+                                            globalService.getAnimalDescription("Penguin")
                                     }}</span>
                                 <br />
                                 <span (click)="viewSpoiler('Tundra Course Type')"
                                     [ngClass]='seeTundraCourseTypeSpoiler ? "viewSpoiler" : "spoilerText"'><span
                                         class="hidden">View
                                         Spoiler</span><span class='keyword'>Caribou</span> - {{
-                                    lookupService.getAnimalDescription("Caribou")
+                                            globalService.getAnimalDescription("Caribou")
                                     }}</span>
                                 <br />
                                 <br />
@@ -176,19 +185,19 @@
                                     [ngClass]='seeVolcanicCourseTypeSpoiler ? "viewSpoiler" : "spoilerText"'><span
                                         class="hidden">View
                                         Spoiler</span><em
-                                         [innerHTML]="globalService.getVolcanicDescription()"></em></span>
+                                        [innerHTML]="globalService.getVolcanicDescription()"></em></span>
                                 <br />
                                 <span (click)="viewSpoiler('Volcanic Course Type')"
                                     [ngClass]='seeVolcanicCourseTypeSpoiler ? "viewSpoiler" : "spoilerText"'><span
                                         class="hidden">View
                                         Spoiler</span><span class='keyword'>Salamander</span> - {{
-                                    lookupService.getAnimalDescription("Salamander") }}</span>
+                                            globalService.getAnimalDescription("Salamander") }}</span>
                                 <br />
                                 <span (click)="viewSpoiler('Volcanic Course Type')"
                                     [ngClass]='seeVolcanicCourseTypeSpoiler ? "viewSpoiler" : "spoilerText"'><span
                                         class="hidden">View
                                         Spoiler</span><span class='keyword'>Fox</span> - {{
-                                    lookupService.getAnimalDescription("Fox") }}</span>
+                                            globalService.getAnimalDescription("Fox") }}</span>
                             </div>
                         </div>
                     </div>
@@ -260,9 +269,11 @@
                     <div class="faqAnswer hide" id="faqAnswerBreedKeybinds">
                         <div class="expanderMargin"></div>
                         <p>
-                            Use the left and right arrow keys to quickly jump between barns under the 'Barns' page and between animals under the 'Animals' page.
-                            <br/>
-                            Use the ctrl, shift, and alt keys to add multipliers to certain items in the shop to buy them in bulk.
+                            Use the left and right arrow keys to quickly jump between barns under the 'Barns' page and
+                            between animals under the 'Animals' page.
+                            <br />
+                            Use the ctrl, shift, and alt keys to add multipliers to certain items in the shop to buy
+                            them in bulk.
                         </p>
                     </div>
                 </div>
@@ -332,29 +343,63 @@
                                 (click)="expandAnswer('faqAnswerOverwhelmed')">+</button>
                         </div>
                         <div class="faqQuestion">
-                            <p>I'm overwhelmed -- what am I supposed to be doing? What are all of the different races?</p>
+                            <p>I'm overwhelmed -- what am I supposed to be doing? What are all of the different races?
+                            </p>
                         </div>
                     </div>
                     <div class="faqAnswer hide" id="faqAnswerOverwhelmed">
                         <div class="expanderMargin"></div>
-                        <p>That's okay! There is a lot of information that comes at you at first. The first thing to understand is that this game has two basic loops at its core: Training/Racing cycles and Breeding cycles. At the beginning, you simply want to make sure your animals are training in a balanced way.
-                            Make sure to pay attention to what each animal's diminishing returns value is (20 by default), because after you train a base stat to that point then any further training of that stat becomes progressively weaker. You can keep up with your animal's stats and Diminishing Returns value by viewing any particular animal after clicking 'Animals' in the navigation menu. With that in mind, once you've got at least one animal of each available course type with stats close to their Diminishing Returns value, you're ready to race.
-                            
-                            When you click on the 'Races' section of the navigation menu, there are a few subsections at the top. Here is what they mean:
-                            <br/>
-                            <br/>
-                            <strong>Circuit Races:</strong> Raising your circuit rank as high as possible is your ultimate aim, and completing Circuit Races is the only way to do so. You'll unlock new animals, races, items, and upgrades by doing this. On this page, you also have access to free races which
-                            are easier races that provide a smaller amount of coin. Free race difficulty scales with your circuit rank, so if you plan to play a more active playstyle then you may benefit from not speeding through circuit ranks too quickly as you may have trouble completing free races. If you are okay with a more idle play style though, then you can simply complete Circuit Races as you are able to.
-                            <br/>
-                            <strong>Special Races:</strong> These races types are unlocked as you increase your circuit rank. They work just like Circuit Races in that you have to complete each rank's races before you increase your rank, but they each reward something unique. For example, the Mono Races you unlock at circuit rank 2 increase your animal's Diminishing Returns value.
-                            Your rank at any particular Special Race cannot exceed your circuit rank, so as you increase your circuit rank make sure to check back and complete your Special Races as you are able to.
-                            <br/>
-                            <strong>Event Races:</strong> After reaching circuit rank 13, you have access to the Grand Prix. The Grand Prix is a multi day race that runs in the background where you can easily swap in and out different racers. This race may be difficult for those who are just starting and you are safe to ignore it until you have a handle on everything else.
-                            <br/>
-                            <strong>Training Track</strong>: At the training track, each animal has the opportunity to race against a number of competitors to gain some Coins and some unique rewards. You'll likely need to raise your breed levels a bit before seeing success here, but do check in after you've played a little while and give it a shot.
-                            <br/>
-                            <br/>
-                            Once you've trained your animals up to their Diminishing Returns value, you've completed Special Races to increase your Diminishing Returns value, and you've pushed your Circuit Rank as high as you can go, that's when you will want to start breeding your animals. There are other FAQ sections dedicated to Breeding so check those out for more information. After Breeding for awhile, you'll go back to training and racing. Cycling between these two flows is key to success in Cultura. Once you start unlocking multiple animals per course type, you can have one set breeding while the others train and race to cut down on wait time.
+                        <p>That's okay! There is a lot of information that comes at you at first. The first thing to
+                            understand is that this game has two basic loops at its core: Training/Racing cycles and
+                            Breeding cycles. At the beginning, you simply want to make sure your animals are training in
+                            a balanced way.
+                            Make sure to pay attention to what each animal's diminishing returns value is (20 by
+                            default), because after you train a base stat to that point then any further training of
+                            that stat becomes progressively weaker. You can keep up with your animal's stats and
+                            Diminishing Returns value by viewing any particular animal after clicking 'Animals' in the
+                            navigation menu. With that in mind, once you've got at least one animal of each available
+                            course type with stats close to their Diminishing Returns value, you're ready to race.
+
+                            When you click on the 'Races' section of the navigation menu, there are a few subsections at
+                            the top. Here is what they mean:
+                            <br />
+                            <br />
+                            <strong>Circuit Races:</strong> Raising your circuit rank as high as possible is your
+                            ultimate aim, and completing Circuit Races is the only way to do so. You'll unlock new
+                            animals, races, items, and upgrades by doing this. On this page, you also have access to
+                            free races which
+                            are easier races that provide a smaller amount of coin. Free race difficulty scales with
+                            your circuit rank, so if you plan to play a more active playstyle then you may benefit from
+                            not speeding through circuit ranks too quickly as you may have trouble completing free
+                            races. If you are okay with a more idle play style though, then you can simply complete
+                            Circuit Races as you are able to.
+                            <br />
+                            <strong>Special Races:</strong> These races types are unlocked as you increase your circuit
+                            rank. They work just like Circuit Races in that you have to complete each rank's races
+                            before you increase your rank, but they each reward something unique. For example, the Mono
+                            Races you unlock at circuit rank 2 increase your animal's Diminishing Returns value.
+                            Your rank at any particular Special Race cannot exceed your circuit rank, so as you increase
+                            your circuit rank make sure to check back and complete your Special Races as you are able
+                            to.
+                            <br />
+                            <strong>Event Races:</strong> After reaching circuit rank 13, you have access to the Grand
+                            Prix. The Grand Prix is a multi day race that runs in the background where you can easily
+                            swap in and out different racers. This race may be difficult for those who are just starting
+                            and you are safe to ignore it until you have a handle on everything else.
+                            <br />
+                            <strong>Training Track</strong>: At the training track, each animal has the opportunity to
+                            race against a number of competitors to gain some Coins and some unique rewards. You'll
+                            likely need to raise your breed levels a bit before seeing success here, but do check in
+                            after you've played a little while and give it a shot.
+                            <br />
+                            <br />
+                            Once you've trained your animals up to their Diminishing Returns value, you've completed
+                            Special Races to increase your Diminishing Returns value, and you've pushed your Circuit
+                            Rank as high as you can go, that's when you will want to start breeding your animals. There
+                            are other FAQ sections dedicated to Breeding so check those out for more information. After
+                            Breeding for awhile, you'll go back to training and racing. Cycling between these two flows
+                            is key to success in Cultura. Once you start unlocking multiple animals per course type, you
+                            can have one set breeding while the others train and race to cut down on wait time.
                         </p>
                     </div>
                 </div>
@@ -371,18 +416,29 @@
                     <div class="faqAnswer hide" id="faqAnswer1">
                         <div class="expanderMargin"></div>
                         <p>In the early game, your biggest obstacles will be coins and breed level. Using the
-                            Stockbreeder to Auto Breed your animals can give them a big boost in stats. <em>Note that you should typically 
-                            wait to Breed until you've gotten as far as you can in circuit races as Breeding will reset your base stats to 
-                            their defaults and require you to train them back up again. </em>
+                            Stockbreeder to Auto Breed your animals can give them a big boost in stats. <em>Note that
+                                you should typically
+                                wait to Breed until you've gotten as far as you can in circuit races as Breeding will
+                                reset your base stats to
+                                their defaults and require you to train them back up again. </em>
                             <br />
                             <br />
-                            If you are having a hard time collecting coins, look into buying the Money Mark and Team Managers from the Shop
-                            and upgrading your barns to Attractions to build passive income. The Money Mark will add a new competitor to your races (gold colored as opposed to black) that will run 25% faster than the average speed. If you finish the race first, your coin gain will increase by 25%.<br/>
-                            Team Managers will automatically run free races for you every reset period, making sure you're getting as much value as possible from free races. <br/>
-                            Attractions require reaching barn level 10 and will take a little longer than buying the Money Mark and Team Manager, but it will provide passive income as long as there is an animal training in the barn.
+                            If you are having a hard time collecting coins, look into buying the Money Mark and Team
+                            Managers from the Shop
+                            and upgrading your barns to Attractions to build passive income. The Money Mark will add a
+                            new competitor to your races (gold colored as opposed to black) that will run 25% faster
+                            than the average speed. If you finish the race first, your coin gain will increase by
+                            25%.<br />
+                            Team Managers will automatically run free races for you every reset period, making sure
+                            you're getting as much value as possible from free races. <br />
+                            Attractions require reaching barn level 10 and will take a little longer than buying the
+                            Money Mark and Team Manager, but it will provide passive income as long as there is an
+                            animal training in the barn.
                             <br />
                             <br />
-                            Some early game goals to set for yourself are to complete the Novice level training track, buy enough barns to train at least 1 animal of each course type available to you, raise your circuit rank, and make sure you raise your mono rank to match your circuit rank.
+                            Some early game goals to set for yourself are to complete the Novice level training track,
+                            buy enough barns to train at least 1 animal of each course type available to you, raise your
+                            circuit rank, and make sure you raise your mono rank to match your circuit rank.
                         </p>
                     </div>
                 </div>
@@ -543,7 +599,8 @@
                                 <div [ngClass]="{'inactiveCalculation': coinGainRenownAmount > 50}"><em>If Renown <= 50:
                                             <span class='progressionKeyword'>{{coinGainRenownAmount}}</span></em> =
                                     <span *ngIf="coinGainRenownAmount <= 50" class='keyword'>{{ renownCoinGain }}%
-                                        Additional Coins</span></div>
+                                        Additional Coins</span>
+                                </div>
                                 <br />
                                 <div [ngClass]="{'inactiveCalculation': coinGainRenownAmount <= 50}"><em>If Renown > 50:
                                         500 *
@@ -555,7 +612,7 @@
                         </div>
                     </div>
                 </div>
-                <hr />                
+                <hr />
                 <div>
                     <div>
                         <div class="expanderMargin">
@@ -701,7 +758,7 @@
                                 </div>
                                 <div class="result">
                                     <span>Result:</span>
-                                    <br/>
+                                    <br />
                                     <em><span class='progressionKeyword'>{{facilityLevel}}</span> * .001 with Incubator
                                         Upgrade Level <span class='specialtyKeyword'>{{ incubatorUpgradeLevel
                                             }}</span>

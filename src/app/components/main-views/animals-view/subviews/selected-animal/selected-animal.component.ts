@@ -1,5 +1,6 @@
 import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { AnimalTypeEnum } from 'src/app/models/animal-type-enum.model';
 import { Ability } from 'src/app/models/animals/ability.model';
 import { AnimalStats } from 'src/app/models/animals/animal-stats.model';
 import { Animal } from 'src/app/models/animals/animal.model';
@@ -625,10 +626,13 @@ export class SelectedAnimalComponent implements OnInit {
   }
 
   handleIntroTutorial() {
+    var hare = this.globalService.globalVar.animals.find(item => item.type === AnimalTypeEnum.Hare);
+    
     if (!this.globalService.globalVar.tutorials.tutorialCompleted && this.globalService.globalVar.tutorials.currentTutorialId === 3) {
       this.globalService.globalVar.tutorials.showTutorial = true;
-    }
-    if (!this.globalService.globalVar.tutorials.tutorialCompleted && this.globalService.globalVar.tutorials.currentTutorialId === 8) {
+    }    
+    if (!this.globalService.globalVar.tutorials.tutorialCompleted && this.globalService.globalVar.tutorials.currentTutorialId === 9 && 
+      hare?.isAvailable) {
       this.globalService.globalVar.tutorials.currentTutorialId += 1;
       this.globalService.globalVar.tutorials.showTutorial = true;
     }

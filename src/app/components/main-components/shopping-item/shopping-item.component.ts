@@ -100,7 +100,7 @@ export class ShoppingItemComponent implements OnInit {
         this.shortDescription = this.selectedItem.shortDescription;
     }
     else if (this.selectedItem.type === ShopItemTypeEnum.Animal) {
-      this.shortDescription = this.lookupService.getAnimalDescription(this.selectedItem.name);
+      this.shortDescription = this.globalService.getAnimalDescription(this.selectedItem.name);
     }
     else {
       this.shortDescription = this.selectedItem.shortDescription;
@@ -239,6 +239,7 @@ export class ShoppingItemComponent implements OnInit {
   }
 
   buyAnimal() {
+    this.globalService.sortAnimalOrder();
     var animal = this.globalService.globalVar.animals.find(item => item.name === this.selectedItem.name);
     if (animal !== null && animal !== undefined) {
       animal.isAvailable = true;
@@ -366,7 +367,9 @@ export class ShoppingItemComponent implements OnInit {
       }
     }
 
-    if (this.selectedItem.name === "Team Manager" && this.selectedItem.amountPurchased === 1) {
+    var teamManager = this.lookupService.getResourceByName("Team Manager");
+    if (this.selectedItem.name === "Team Manager" && this.selectedItem.amountPurchased === 1 &&
+     (teamManager === undefined || teamManager === null || teamManager === 0) && !this.globalService.globalVar.animalDecks.some(item => item.autoRunFreeRace)) {
       var primaryDeck = this.globalService.globalVar.animalDecks.find(item => item.isPrimaryDeck);
       if (primaryDeck !== null && primaryDeck !== undefined) {
         primaryDeck.autoRunFreeRace = true;

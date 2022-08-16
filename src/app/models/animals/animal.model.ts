@@ -296,6 +296,45 @@ export class Hare extends Animal {
     }
 }
 
+export class Warthog extends Animal {
+
+    constructor() {
+        super();
+        this.baseStats = new AnimalStats(5, 5, 5, 5, 5, 5);
+        this.currentStats = new AnimalStats(5, 5, 5, 5, 5, 5);
+
+        this.type = AnimalTypeEnum.Warthog;
+        this.raceCourseType = RaceCourseTypeEnum.Flatland;
+
+        this.ability = new Ability();
+        this.ability.cooldown = 5;
+        this.ability.efficiency = 45;
+        this.ability.oneTimeEffect = false;
+        this.ability.name = "Graze";
+        this.ability.description = "Graze";
+        this.ability.isAbilityPurchased = true;
+        this.availableAbilities.push(this.ability);
+
+        var ability2 = new Ability();
+        ability2.efficiency = 80;
+        ability2.oneTimeEffect = false;
+        ability2.name = "Mud Pit";
+        ability2.description = "Mud Pit";
+        ability2.isAbilityPurchased = false;
+        ability2.purchasePrice = 1000;
+        this.availableAbilities.push(ability2);
+
+        var ability3 = new Ability();
+        ability3.efficiency = 30;
+        ability3.oneTimeEffect = true;
+        ability3.name = "Time To Tussle";
+        ability3.description = "Time To Tussle";
+        ability3.isAbilityPurchased = false;
+        ability3.purchasePrice = 1000;
+        this.availableAbilities.push(ability3);
+    }
+}
+
 export class Monkey extends Animal {
 
     constructor() {
@@ -497,7 +536,7 @@ export class Octopus extends Animal {
         this.availableAbilities.push(this.ability);
 
         var ability2 = new Ability();
-        ability2.efficiency = 1;
+        ability2.efficiency = 100;
         ability2.oneTimeEffect = false;
         ability2.name = "Buried Treasure";
         ability2.isAbilityPurchased = false;
@@ -508,6 +547,46 @@ export class Octopus extends Animal {
         ability3.efficiency = 2;
         ability3.oneTimeEffect = true;
         ability3.name = "Big Brain";
+        ability3.isAbilityPurchased = false;
+        ability3.purchasePrice = 1000;
+        this.availableAbilities.push(ability3);
+    }
+}
+
+export class Whale extends Animal {
+
+    constructor() {
+        super();
+        this.baseStats = new AnimalStats(5, 5, 5, 5, 5, 5);
+        this.currentStats = new AnimalStats(5, 5, 5, 5, 5, 5);
+
+        this.type = AnimalTypeEnum.Whale;
+        this.raceCourseType = RaceCourseTypeEnum.Ocean;
+
+        this.ability = new Ability();
+        this.ability.cooldown = 9;
+        this.ability.efficiency = 75;
+        this.ability.oneTimeEffect = false;
+        this.ability.name = "Storing Power";
+        this.ability.description = "Storing Power";
+        this.ability.isAbilityPurchased = true;
+        this.availableAbilities.push(this.ability);
+
+        var ability2 = new Ability();
+        ability2.efficiency = 80;
+        ability2.oneTimeEffect = false;
+        ability2.name = "Unparalleled Focus";
+        ability2.description = "Mud Pit";
+        ability2.isAbilityPurchased = false;
+        ability2.purchasePrice = 1000;
+        this.availableAbilities.push(ability2);
+
+        var ability3 = new Ability();
+        ability3.efficiency = 45;
+        ability3.cooldown = 8;
+        ability3.oneTimeEffect = false;
+        ability3.name = "Whalesong";
+        ability3.description = "Whalesong";
         ability3.isAbilityPurchased = false;
         ability3.purchasePrice = 1000;
         this.availableAbilities.push(ability3);
@@ -598,7 +677,7 @@ export class Salamander extends Animal {
 
         this.ability = new Ability();
         this.ability.cooldown = 7;
-        this.ability.efficiency = 70;
+        this.ability.efficiency = 45;
         this.ability.oneTimeEffect = false;
         this.ability.name = "Cold Blooded";
         this.ability.isAbilityPurchased = true;

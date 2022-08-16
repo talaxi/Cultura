@@ -23,6 +23,7 @@ export class CircuitViewComponent implements OnInit {
   totalFreeRaces = 10;
   availableLocalRaces: Race[];
   subscription: any;
+  winsNeededUntilNextMedal: number;
 
   constructor(private globalService: GlobalService, private utilityService: UtilityService, private lookupService: LookupService,
     private gameLoopService: GameLoopService) { }
@@ -33,8 +34,7 @@ export class CircuitViewComponent implements OnInit {
     
     this.availableLocalRaces.push(this.globalService.generateFreeRace());
     this.availableLocalRaces.push(this.globalService.generateFreeRace());
-    this.availableLocalRaces.push(this.globalService.generateFreeRace());
-
+    this.availableLocalRaces.push(this.globalService.generateFreeRace());  
     
     var rank = this.globalService.globalVar.circuitRank;
     if (this.globalService.globalVar.settings.get("useNumbersForCircuitRank"))
@@ -70,6 +70,7 @@ export class CircuitViewComponent implements OnInit {
           secondsDisplay = String(secondsDisplay).padStart(2, '0');
       }
 
+      this.getRacesRequiredForMedal();
       this.freeRaceTimer = minutes + ":" + secondsDisplay;
       this.freeRacesRemaining = this.lookupService.getRemainingFreeRacesPerPeriod();//freeRacePerTimePeriod - this.globalService.globalVar.freeRaceCounter;
     });
@@ -136,6 +137,35 @@ export class CircuitViewComponent implements OnInit {
     }
   }
 
+  getRacesRequiredForMedal() {
+    var internationalRaceItem = this.globalService.globalVar.resources.find(item => item.name === "International Races");
+    var nationalRaceItem = this.globalService.globalVar.resources.find(item => item.name === "National Races");
+    if (internationalRaceItem !== undefined && internationalRaceItem !== null && internationalRaceItem.amount > 0) {
+      var internationalRaceCountNeeded = 5;
+      var internationalRaceCountNeededModifier = this.globalService.globalVar.modifiers.find(item => item.text === "internationalRacesToMedalModifier");
+      if (internationalRaceCountNeededModifier !== undefined && internationalRaceCountNeededModifier !== null)
+        internationalRaceCountNeeded = internationalRaceCountNeededModifier.value;
+
+      this.winsNeededUntilNextMedal = internationalRaceCountNeeded - this.globalService.globalVar.nationalRaceCountdown;      
+    }
+    else if (nationalRaceItem !== undefined && nationalRaceItem !== null && nationalRaceItem.amount > 0) {
+      var nationalRaceCountNeeded = 12;
+      var nationalRaceCountNeededModifier = this.globalService.globalVar.modifiers.find(item => item.text === "nationalRacesToMedalModifier");
+      if (nationalRaceCountNeededModifier !== undefined && nationalRaceCountNeededModifier !== null)
+        nationalRaceCountNeeded = nationalRaceCountNeededModifier.value;
+
+        this.winsNeededUntilNextMedal = nationalRaceCountNeeded - this.globalService.globalVar.nationalRaceCountdown;
+    }
+    else { //default amount
+      var freeRaceCountNeeded = 50;
+      var freeRaceCountNeededModifier = this.globalService.globalVar.modifiers.find(item => item.text === "freeRacesToMedalModifier");
+      if (freeRaceCountNeededModifier !== undefined && freeRaceCountNeededModifier !== null)
+      freeRaceCountNeeded = freeRaceCountNeededModifier.value;
+
+      this.winsNeededUntilNextMedal = freeRaceCountNeeded - this.globalService.globalVar.nationalRaceCountdown;
+    }
+  }
+
   handleTutorial() {
     if (!this.globalService.globalVar.tutorials.tutorialCompleted && this.globalService.globalVar.tutorials.currentTutorialId === 3) {
       this.tutorialActive = true;
@@ -149,6 +179,12 @@ export class CircuitViewComponent implements OnInit {
 
     if (!this.globalService.globalVar.tutorials.tutorialCompleted && this.globalService.globalVar.tutorials.currentTutorialId === 6 &&
       this.globalService.globalVar.animals.find(item => item.type === AnimalTypeEnum.Monkey)?.isAvailable)
+    {
+      this.globalService.globalVar.tutorials.showTutorial = true;  
+    }
+
+    if (!this.globalService.globalVar.tutorials.tutorialCompleted && this.globalService.globalVar.tutorials.currentTutorialId === 9 &&
+      this.globalService.globalVar.animals.find(item => item.type === AnimalTypeEnum.Hare)?.isAvailable)
     {
       this.globalService.globalVar.tutorials.showTutorial = true;  
     }

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Subject } from 'rxjs';
 import { NavigationEnum } from 'src/app/models/navigation-enum.model';
 import { ShopSection } from 'src/app/models/shop/shop-section.model';
 import { ShopsEnum } from 'src/app/models/shops-enum.model';
@@ -21,6 +22,7 @@ export class ShopViewComponent implements OnInit {
   activeShopView: ShopsEnum;
   ShopsEnum = ShopsEnum;
   subscription: any;
+  resetShopSubject: Subject<void> = new Subject<void>();
 
   constructor(private globalService: GlobalService, private componentCommunicationService: ComponentCommunicationService) { }
 
@@ -106,5 +108,10 @@ export class ShopViewComponent implements OnInit {
   ngOnDestroy() {
     if (this.subscription !== null && this.subscription !== undefined)
       this.subscription.unsubscribe();
+  }
+
+  itemPurchased($event: boolean) {  
+    this.getShopOptions();
+    this.resetShopSubject.next();
   }
 }

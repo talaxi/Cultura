@@ -337,20 +337,20 @@ export class DrawRaceComponent implements OnInit {
       context.globalCompositeOperation = existingContentDestinationType;
     }
 
-    
-      //draw additional objects
-      /*if (this.race.drawnObjects !== undefined && this.race.drawnObjects !== null && this.race.drawnObjects.length > 0) {
-        var existingContentDestinationType = context.globalCompositeOperation;
-        context.globalCompositeOperation = "destination-over";
-        
-        this.race.drawnObjects.forEach(object => {
-          if (object.objectType === DrawnRaceObjectEnum.brazier) {
-            this.drawBrazier(object.xDistance, context, 0, 1, 1);
-          }
-        });
-        
-      context.globalCompositeOperation = existingContentDestinationType;
-      }*/
+
+    //draw additional objects
+    /*if (this.race.drawnObjects !== undefined && this.race.drawnObjects !== null && this.race.drawnObjects.length > 0) {
+      var existingContentDestinationType = context.globalCompositeOperation;
+      context.globalCompositeOperation = "destination-over";
+      
+      this.race.drawnObjects.forEach(object => {
+        if (object.objectType === DrawnRaceObjectEnum.brazier) {
+          this.drawBrazier(object.xDistance, context, 0, 1, 1);
+        }
+      });
+      
+    context.globalCompositeOperation = existingContentDestinationType;
+    }*/
   }
 
   displayRace(context: any, currentTime: number): void {
@@ -2052,7 +2052,7 @@ export class DrawRaceComponent implements OnInit {
   }
 
   drawBrazier(objectXDistance: number, context: any, currentFrame: number, xRaceModeModifier: number, yRaceModeModifier: number, xDistanceOffset?: number, yDistanceOffset?: number) {
-    var horizontalLength = (this.race.length * .01) * this.canvasXDistanceScale  * xRaceModeModifier;
+    var horizontalLength = (this.race.length * .01) * this.canvasXDistanceScale * xRaceModeModifier;
 
     if (xDistanceOffset === undefined || xDistanceOffset === null)
       xDistanceOffset = 0;
@@ -2116,10 +2116,22 @@ export class DrawRaceComponent implements OnInit {
     context.fill();
 
 
-    /*context.beginPath();
-    context.moveTo(this.lastPathEndingX - xDistanceOffset, this.lastPathEndingY + yDistanceOffset);
-    context.lineTo(this.lastPathEndingX + horizontalLength - xDistanceOffset, this.lastPathEndingY + yDistanceOffset);
-    context.stroke();*/
+    context.fillStyle = 'brown';
+    context.strokeStyle = "black";
+
+    //bottom stones
+    var width = (horizontalLength / 6) - (context.lineWidth / 2);
+    var bottomStoneStartingX = 225 - 1;
+    var xDifferential = (horizontalLength / 6) + 1;
+    var stoneHeight = panelYDistance / 6;
+    var bottomStoneStartingY = startingYPoint + panelYDistance - stoneHeight;
+    this.drawRoundedRectangle(context, bottomStoneStartingX, bottomStoneStartingY, width, stoneHeight, 3);
+    this.drawRoundedRectangle(context, bottomStoneStartingX + xDifferential, bottomStoneStartingY, width, stoneHeight, 3);
+    this.drawRoundedRectangle(context, bottomStoneStartingX + 2 * xDifferential, bottomStoneStartingY, width, stoneHeight, 3);
+    this.drawRoundedRectangle(context, bottomStoneStartingX + 3 * xDifferential, bottomStoneStartingY, width, stoneHeight, 3);
+    this.drawRoundedRectangle(context, bottomStoneStartingX + 4 * xDifferential, bottomStoneStartingY, width, stoneHeight, 3);
+    this.drawRoundedRectangle(context, bottomStoneStartingX + 5 * xDifferential, bottomStoneStartingY, width, stoneHeight, 3);
+
 
     this.lastPathEndingX = this.lastPathEndingX + horizontalLength;
   }
@@ -2135,6 +2147,23 @@ export class DrawRaceComponent implements OnInit {
         this.lastPathEndingY = this.canvasHeight / 2;
       }
     }
+  }
+
+  drawRoundedRectangle(context: any, x: number, y: number, w: number, h: number, radius: number) {
+    var r = x + w;
+    var b = y + h;
+    context.beginPath();
+    context.moveTo(x + radius, y);
+    context.lineTo(r - radius, y);
+    context.quadraticCurveTo(r, y, r, y + radius);
+    context.lineTo(r, y + h - radius);
+    context.quadraticCurveTo(r, b, r - radius, b);
+    context.lineTo(x + radius, b);
+    context.quadraticCurveTo(x, b, x, b - radius);
+    context.lineTo(x, y + radius);
+    context.quadraticCurveTo(x, y, x + radius, y);
+    context.stroke();
+    context.fill();
   }
 
   ngOnDestroy() {

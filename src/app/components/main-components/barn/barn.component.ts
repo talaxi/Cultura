@@ -7,6 +7,7 @@ import { GlobalService } from 'src/app/services/global-service.service';
 import { LookupService } from 'src/app/services/lookup.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Animal } from 'src/app/models/animals/animal.model';
+import { UtilityService } from 'src/app/services/utility/utility.service';
 
 @Component({
   selector: 'app-barn',
@@ -27,12 +28,14 @@ export class BarnComponent implements OnInit {
   showTrainingAnimation = false;
   previousTrainedAmount: number;
   readyToBreed: boolean;
+  autoBreedActive: boolean;
   colorConditional: any;
 
   @Output() selectedBarn = new EventEmitter<number>();
   trainingProgressBarPercent: number;
 
-  constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private lookupService: LookupService) { }
+  constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private lookupService: LookupService,
+    private utilityService: UtilityService) { }
 
   ngOnInit(): void {
     if (this.barnNumber > 0 && this.barnNumber <= this.globalService.globalVar.barns.length + 1) {
@@ -91,7 +94,8 @@ export class BarnComponent implements OnInit {
             }, 3000);
           }
 
-          this.readyToBreed = associatedAnimal.breedGaugeXp >= associatedAnimal.breedGaugeMax;
+          this.readyToBreed = associatedAnimal.breedGaugeXp >= associatedAnimal.breedGaugeMax && this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.circuitRank) >= 10;          
+          this.autoBreedActive = associatedAnimal.autoBreedActive;
 
           this.previousTrainedAmount = associatedAnimal.currentTraining.timeTrained;
           this.trainingProgressBarPercent = ((associatedAnimal.currentTraining.timeTrained / associatedAnimal.currentTraining.timeToComplete) * 100);
