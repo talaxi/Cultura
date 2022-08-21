@@ -3,9 +3,15 @@
         <span *ngIf="selectedAnimal.name !== selectedAnimal.getAnimalType()">{{ selectedAnimal.name }}</span>
         <br />
         <span>{{ selectedAnimal.getAnimalType() }}</span>
+        <div *ngIf="isAnimalDetailView">
+            Breed Level {{breedLevel}}
+        </div>
     </h6>
     <h6 class="keyword" *ngIf="selectedAnimal.name === selectedAnimal.getAnimalType()">
         <span>{{ selectedAnimal.getAnimalType() }}</span>
+        <div *ngIf="isAnimalDetailView">
+            Breed Level {{breedLevel}}
+        </div>
     </h6>
     <br />
     <br />
@@ -14,8 +20,5 @@
         <br />
         <br />
         <h6 class="keyword"><em>{{trainingTrackRewardsRemaining}} / {{ trainingTrackTotalRewards }} rewards remaining</em></h6>
-    </div>
-    <!--<div *ngIf="isAnimalDetailView">
-        
-    </div>-->
+    </div>    
 </div>

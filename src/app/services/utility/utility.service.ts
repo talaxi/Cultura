@@ -160,6 +160,12 @@ export class UtilityService {
     return sanitizedHtml;
   }
 
+  addDaysToDate(date: Date, numberOfDays: number) {
+    var result = new Date(date);
+    result.setDate(result.getDate() + numberOfDays);
+    return result;
+  }
+
   //brighten(positive percent) or darken(negative percent) colors -- see https://stackoverflow.com/questions/5560248/programmatically-lighten-or-darken-a-hex-color-or-rgb-and-blend-colors
   shadeColor(color: string, percent: number) {
     var newColor = '#' + color.replace(/^#/, '').replace(/../g, color => ('0' + Math.min(255, Math.max(0, parseInt(color, 16) + percent)).toString(16)).substr(-2));

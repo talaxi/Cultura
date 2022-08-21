@@ -488,7 +488,7 @@ export class SelectedBarnComponent implements OnInit {
           this.barn.barnUpgrades.upgradedStatGain.adaptability += defaultStatGain;
       }
 
-      this.totalBarnStatsPopover = this.getTotalBarnStatsPopover();
+      this.totalBarnStatsPopover = this.getTotalBarnStatsPopover(true);
       this.upgradeBarnPopover = this.getUpgradeBarnPopover();
     }
 
@@ -522,11 +522,16 @@ export class SelectedBarnComponent implements OnInit {
     return canUpgrade;
   }
 
-  getTotalBarnStatsPopover() {
-    var popover = "Upgrade to gain barn bonuses";
+  getTotalBarnStatsPopover(showClickInfo: boolean) {
+    var popover = "Upgrade to gain barn bonuses. ";
 
-    if (this.barn.barnUpgrades.barnLevel >= 1)
-      popover = "Barn Upgrades: <br/>"
+    if (this.barn.barnUpgrades.barnLevel >= 1)    
+      if (showClickInfo)
+      popover = "<em>Click to view full information and to change Barn specialization.</em><br/><br/>";
+      else
+      popover = "";
+
+      popover += "Barn Upgrades: <br/>"
 
     if (this.barn.barnUpgrades.specialization === BarnSpecializationEnum.TrainingFacility) {
       var popoverSpecializationText = this.specializationService.getSpecializationPopoverText(BarnSpecializationEnum.TrainingFacility, this.barn.barnUpgrades.specializationLevel);
@@ -586,9 +591,9 @@ export class SelectedBarnComponent implements OnInit {
     popover += this.barn.facilityUpgradePrice + " Coins \n\n";
 
     if (this.barn.size === FacilitySizeEnum.Small)
-      popover += "You will be able to do Medium trainings and increase idle training time to 4 hours.";
+      popover += "You will be able to do Medium trainings and increase idle training time to 8 hours.";
     else if (this.barn.size === FacilitySizeEnum.Medium)
-      popover += "You will be able to do Large trainings and increase idle training time to 8 hours.";
+      popover += "You will be able to do Large trainings and increase idle training time to 12 hours.";
 
     return popover;
   }
@@ -617,7 +622,7 @@ export class SelectedBarnComponent implements OnInit {
     if (this.barn.barnUpgrades.specialization === BarnSpecializationEnum.TrainingFacility) {
       this.availableTrainings = this.GetAvailableTrainingOptions(this.associatedAnimal);
     }
-    this.totalBarnStatsPopover = this.getTotalBarnStatsPopover();
+    this.totalBarnStatsPopover = this.getTotalBarnStatsPopover(true);
     this.upgradeBarnPopover = this.getUpgradeBarnPopover();
     this.canUpgrade = this.canUpgradeBarn(this.lookupService.getResourcesForBarnUpgrade(this.barn.barnUpgrades.barnLevel));
     this.canBuild = this.canBuildLargerBarn();
@@ -686,7 +691,7 @@ export class SelectedBarnComponent implements OnInit {
     }
 
     this.availableTrainings = this.GetAvailableTrainingOptions(this.associatedAnimal);
-    this.totalBarnStatsPopover = this.getTotalBarnStatsPopover();
+    this.totalBarnStatsPopover = this.getTotalBarnStatsPopover(true);
     this.upgradeBarnPopover = this.getUpgradeBarnPopover();
     this.canUpgrade = this.canUpgradeBarn(this.lookupService.getResourcesForBarnUpgrade(this.barn.barnUpgrades.barnLevel));
     this.canBuild = this.canBuildLargerBarn();
@@ -729,7 +734,7 @@ export class SelectedBarnComponent implements OnInit {
         this.barn = globalBarn;
         this.barnName = this.lookupService.getBarnName(globalBarn);
         this.getSizeValue();
-        this.totalBarnStatsPopover = this.getTotalBarnStatsPopover();
+        this.totalBarnStatsPopover = this.getTotalBarnStatsPopover(true);
         this.upgradeBarnPopover = this.getUpgradeBarnPopover();
         this.buildBiggerBarnPopover = this.getBuildLargerBarnPopover();
         this.canUpgrade = this.canUpgradeBarn(this.lookupService.getResourcesForBarnUpgrade(this.barn.barnUpgrades.barnLevel));
@@ -836,6 +841,7 @@ export class SelectedBarnComponent implements OnInit {
 
   openBarnUpgradeModal(content: any) {
     this.specializationOptions = this.lookupService.getAllBarnSpecializations();
+    this.totalBarnStatsPopover = this.getTotalBarnStatsPopover(false);
 
     if (this.barn.barnUpgrades.specialization !== BarnSpecializationEnum.None) {
       var currentSpecializationName = this.lookupService.convertSpecializationEnumToName(this.barn.barnUpgrades.specialization);

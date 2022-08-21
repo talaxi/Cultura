@@ -17,6 +17,7 @@ export class RaceDescriptionComponent implements OnInit {
   @Input() index: number;
   @Input() race: Race;
   @Input() showStartText: boolean;
+  @Input() selectedAnimal: Animal; //used for trainingTrack
   cannotRace: boolean;
   popoverText: string;
   missingRacers: RaceCourseTypeEnum[] = [];
@@ -40,8 +41,11 @@ export class RaceDescriptionComponent implements OnInit {
           this.cannotRace = true;
           this.missingRacers.push(leg.courseType);
         }
-        else {
+        else {          
           var selectedAnimal = selectedDeck?.selectedAnimals.find(item => item.raceCourseType === leg.courseType);
+          if (this.race.raceType === RaceTypeEnum.trainingTrack)
+            selectedAnimal = this.selectedAnimal;
+
           if (selectedAnimal !== undefined && !this.lookupService.canAnimalRace(selectedAnimal)) {
             this.cannotRace = true;
             this.busyRacers.push(selectedAnimal);

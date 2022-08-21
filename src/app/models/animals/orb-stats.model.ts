@@ -6,6 +6,8 @@ export class OrbStats {
     focusDistanceIncrease: number;
     adaptabilityDistanceIncrease: number;
 
+    amethystOrbLevel: number; //power
+
     constructor() {
         this.maxSpeedIncrease = 1.1;
         this.accelerationRateIncrease = 1.1;

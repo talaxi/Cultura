@@ -7,6 +7,7 @@ import { RaceCourseTypeEnum } from 'src/app/models/race-course-type-enum.model';
 import { RaceDesignEnum } from 'src/app/models/race-design-enum.model';
 import { RaceTypeEnum } from 'src/app/models/race-type-enum.model';
 import { RacerEffectEnum } from 'src/app/models/racer-effect-enum.model';
+import { DrawnRaceObject } from 'src/app/models/races/drawn-race-objects.model';
 import { RaceLeg } from 'src/app/models/races/race-leg.model';
 import { RacePath } from 'src/app/models/races/race-path.model';
 import { Race } from 'src/app/models/races/race.model';
@@ -301,6 +302,23 @@ export class DrawRaceComponent implements OnInit {
       });
     }
 
+    //draw additional objects
+    if (this.race.drawnObjects !== undefined && this.race.drawnObjects !== null && this.race.drawnObjects.length > 0) {
+      var existingContentDestinationType = context.globalCompositeOperation;
+      context.globalCompositeOperation = "destination-over";
+
+      this.race.drawnObjects.forEach(object => {
+        if (object.objectType === DrawnRaceObjectEnum.amberBrazier || object.objectType === DrawnRaceObjectEnum.rubyBrazier ||
+          object.objectType === DrawnRaceObjectEnum.topazBrazier || object.objectType === DrawnRaceObjectEnum.sapphireBrazier ||
+          object.objectType === DrawnRaceObjectEnum.amethystBrazier || object.objectType === DrawnRaceObjectEnum.emeraldBrazier) {
+          this.drawBrazier(object, RaceCourseTypeEnum.Flatland, object.xDistance, context, 0, 5, 5);
+        }
+      });
+
+      context.globalCompositeOperation = existingContentDestinationType;
+    }
+
+    //draw background items
     if (this.icyPatchBackgroundLines.length > 0) {
       this.icyPatchBackgroundLines.forEach(item => {
         if (item[0] === "Hills")
@@ -336,21 +354,6 @@ export class DrawRaceComponent implements OnInit {
 
       context.globalCompositeOperation = existingContentDestinationType;
     }
-
-
-    //draw additional objects
-    /*if (this.race.drawnObjects !== undefined && this.race.drawnObjects !== null && this.race.drawnObjects.length > 0) {
-      var existingContentDestinationType = context.globalCompositeOperation;
-      context.globalCompositeOperation = "destination-over";
-      
-      this.race.drawnObjects.forEach(object => {
-        if (object.objectType === DrawnRaceObjectEnum.brazier) {
-          this.drawBrazier(object.xDistance, context, 0, 1, 1);
-        }
-      });
-      
-    context.globalCompositeOperation = existingContentDestinationType;
-    }*/
   }
 
   displayRace(context: any, currentTime: number): void {
@@ -680,6 +683,22 @@ export class DrawRaceComponent implements OnInit {
 
     context.fillRect(this.canvasWidth / 2 - 5, 0, 5, this.canvasHeight);
 
+    //draw additional objects
+    if (this.race.drawnObjects !== undefined && this.race.drawnObjects !== null && this.race.drawnObjects.length > 0) {
+      var existingContentDestinationType = context.globalCompositeOperation;
+      context.globalCompositeOperation = "destination-over";
+
+      this.race.drawnObjects.forEach(object => {
+        if (object.objectType === DrawnRaceObjectEnum.amberBrazier || object.objectType === DrawnRaceObjectEnum.rubyBrazier ||
+          object.objectType === DrawnRaceObjectEnum.topazBrazier || object.objectType === DrawnRaceObjectEnum.sapphireBrazier ||
+          object.objectType === DrawnRaceObjectEnum.amethystBrazier || object.objectType === DrawnRaceObjectEnum.emeraldBrazier) {
+          this.drawBrazier(object, this.currentLeg.courseType, object.xDistance, context, currentFrame, xRaceModeModifier, yRaceModeModifier, xDistanceOffset, yDistanceOffset);
+        }
+      });
+
+      context.globalCompositeOperation = existingContentDestinationType;
+    }
+
     //Draw background effects -- still covered by other racers
     if (this.icyPatchBackgroundLines.length > 0) {
       this.icyPatchBackgroundLines.forEach(item => {
@@ -768,21 +787,6 @@ export class DrawRaceComponent implements OnInit {
 
       context.globalCompositeOperation = existingContentDestinationType;
     }
-
-
-    //draw additional objects
-    /*if (this.race.drawnObjects !== undefined && this.race.drawnObjects !== null && this.race.drawnObjects.length > 0) {
-      var existingContentDestinationType = context.globalCompositeOperation;
-      context.globalCompositeOperation = "destination-over";
-      
-      this.race.drawnObjects.forEach(object => {
-        if (object.objectType === DrawnRaceObjectEnum.brazier) {
-          this.drawBrazier(object.xDistance, context, currentFrame, xRaceModeModifier, yRaceModeModifier, xDistanceOffset, yDistanceOffset);
-        }
-      });
-      
-      context.globalCompositeOperation = existingContentDestinationType;
-    }*/
   }
 
   getAnimalDistanceColor(currentDistanceTraveled: number, raceLegs?: RaceLeg[]) {
@@ -2051,8 +2055,8 @@ export class DrawRaceComponent implements OnInit {
     context.fillStyle = originalFillColor;
   }
 
-  drawBrazier(objectXDistance: number, context: any, currentFrame: number, xRaceModeModifier: number, yRaceModeModifier: number, xDistanceOffset?: number, yDistanceOffset?: number) {
-    var horizontalLength = (this.race.length * .01) * this.canvasXDistanceScale * xRaceModeModifier;
+  drawBrazier(object: DrawnRaceObject, courseType: RaceCourseTypeEnum, objectXDistance: number, context: any, currentFrame: number, xRaceModeModifier: number, yRaceModeModifier: number, xDistanceOffset?: number, yDistanceOffset?: number) {
+    var horizontalLength = (this.race.length * .007) * this.canvasXDistanceScale * xRaceModeModifier;
 
     if (xDistanceOffset === undefined || xDistanceOffset === null)
       xDistanceOffset = 0;
@@ -2068,10 +2072,55 @@ export class DrawRaceComponent implements OnInit {
     var frontPanelXDistance = horizontalLength * .333333;
     var panelYDistance = horizontalLength * .8;
 
-    console.log("Starting X: " + startingXPoint);
+    if (courseType === RaceCourseTypeEnum.Flatland || courseType === RaceCourseTypeEnum.Ocean) {
+      startingYPoint -= this.canvasHeight / 6;
+    }
+
+    else if (courseType === RaceCourseTypeEnum.Tundra) {
+      startingYPoint -= this.canvasHeight / 15;
+    }
+    else if (courseType === RaceCourseTypeEnum.Mountain) {
+      //startingYPoint -= yDistanceOffset;
+      startingYPoint = this.lastPathEndingY + yDistanceOffset;
+      startingXPoint -= this.canvasWidth / 10;
+      console.log("StartingYPoint: " + startingYPoint);
+    }
+    else if (courseType === RaceCourseTypeEnum.Volcanic) {
+      startingYPoint -= yDistanceOffset;
+      console.log("StartingYPoint: " + startingYPoint);
+    }
+
+    context.fillStyle = 'brown';
+    context.strokeStyle = "black";
+    context.lineWidth = '2';
+
+    //bottom stones
+    var width = (horizontalLength / 6) - (context.lineWidth / 2);
+    var bottomStoneStartingX = startingXPoint - 1;
+    var xDifferential = (horizontalLength / 6) + 1;
+    var stoneHeight = panelYDistance / 6;
+    var bottomStoneStartingY = startingYPoint - stoneHeight;
+    this.drawRoundedRectangle(context, bottomStoneStartingX, bottomStoneStartingY, width, stoneHeight, 3);
+    this.drawRoundedRectangle(context, bottomStoneStartingX + xDifferential, bottomStoneStartingY, width, stoneHeight, 3);
+    this.drawRoundedRectangle(context, bottomStoneStartingX + 2 * xDifferential, bottomStoneStartingY, width, stoneHeight, 3);
+    this.drawRoundedRectangle(context, bottomStoneStartingX + 3 * xDifferential, bottomStoneStartingY, width, stoneHeight, 3);
+    this.drawRoundedRectangle(context, bottomStoneStartingX + 4 * xDifferential, bottomStoneStartingY, width, stoneHeight, 3);
+    this.drawRoundedRectangle(context, bottomStoneStartingX + 5 * xDifferential, bottomStoneStartingY, width, stoneHeight, 3);
+
+    //top stones
+    var width = (horizontalLength / 6) - (context.lineWidth / 2);
+    var topStoneStartingX = startingXPoint - 1;
+    var xDifferential = (horizontalLength / 6) + 1;
+    var stoneHeight = panelYDistance / 6;
+    var topStoneStartingY = startingYPoint - panelYDistance - stoneHeight;
+    this.drawRoundedRectangle(context, topStoneStartingX, topStoneStartingY, width, stoneHeight, 3);
+    this.drawRoundedRectangle(context, topStoneStartingX + xDifferential, topStoneStartingY, width, stoneHeight, 3);
+    this.drawRoundedRectangle(context, topStoneStartingX + 2 * xDifferential, topStoneStartingY, width, stoneHeight, 3);
+    this.drawRoundedRectangle(context, topStoneStartingX + 3 * xDifferential, topStoneStartingY, width, stoneHeight, 3);
+    this.drawRoundedRectangle(context, topStoneStartingX + 4 * xDifferential, topStoneStartingY, width, stoneHeight, 3);
+    this.drawRoundedRectangle(context, topStoneStartingX + 5 * xDifferential, topStoneStartingY, width, stoneHeight, 3);
 
     context.strokeStyle = 'black';
-    context.lineWidth = '6';
     context.fillStyle = 'gray';
 
     //fully 2d version
@@ -2115,25 +2164,110 @@ export class DrawRaceComponent implements OnInit {
     context.stroke();
     context.fill();
 
+    var flameHorizontalLength = horizontalLength / 3;
+    var defaultFlameHeight = panelYDistance * 2;
+    var startingFlameYPoint = startingYPoint - panelYDistance - 2 * stoneHeight;
+    var xOverlap = flameHorizontalLength / 3;
 
-    context.fillStyle = 'brown';
-    context.strokeStyle = "black";
+    if (object.objectType === DrawnRaceObjectEnum.amberBrazier)
+      context.fillStyle = '#FFBF00';
+    if (object.objectType === DrawnRaceObjectEnum.sapphireBrazier)
+      context.fillStyle = '#2554C7';
+    if (object.objectType === DrawnRaceObjectEnum.topazBrazier)
+      context.fillStyle = '#f5e342';
+    if (object.objectType === DrawnRaceObjectEnum.amethystBrazier)
+      context.fillStyle = '#9966cc';
+    if (object.objectType === DrawnRaceObjectEnum.emeraldBrazier)
+      context.fillStyle = '#50C878';
+    if (object.objectType === DrawnRaceObjectEnum.rubyBrazier)
+      context.fillStyle = '#9b111e';
 
-    //bottom stones
-    var width = (horizontalLength / 6) - (context.lineWidth / 2);
-    var bottomStoneStartingX = 225 - 1;
-    var xDifferential = (horizontalLength / 6) + 1;
-    var stoneHeight = panelYDistance / 6;
-    var bottomStoneStartingY = startingYPoint + panelYDistance - stoneHeight;
-    this.drawRoundedRectangle(context, bottomStoneStartingX, bottomStoneStartingY, width, stoneHeight, 3);
-    this.drawRoundedRectangle(context, bottomStoneStartingX + xDifferential, bottomStoneStartingY, width, stoneHeight, 3);
-    this.drawRoundedRectangle(context, bottomStoneStartingX + 2 * xDifferential, bottomStoneStartingY, width, stoneHeight, 3);
-    this.drawRoundedRectangle(context, bottomStoneStartingX + 3 * xDifferential, bottomStoneStartingY, width, stoneHeight, 3);
-    this.drawRoundedRectangle(context, bottomStoneStartingX + 4 * xDifferential, bottomStoneStartingY, width, stoneHeight, 3);
-    this.drawRoundedRectangle(context, bottomStoneStartingX + 5 * xDifferential, bottomStoneStartingY, width, stoneHeight, 3);
+    //handle animation stuff
+    var flame1Height = defaultFlameHeight * .5;
+    var flame2Height = defaultFlameHeight;
+    var flame3Height = defaultFlameHeight * .5;
 
+    //flame 1
+    var bezierX1 = startingXPoint + flameHorizontalLength / 2;
+    var bezierY1 = startingFlameYPoint - flame1Height / 8;
+    var bezierX2 = startingXPoint + flameHorizontalLength / 2;
+    var bezierY2 = startingFlameYPoint - flame1Height / 2;
+    var finishPointX = startingXPoint + flameHorizontalLength / 1.75;
+    var finishPointY = startingFlameYPoint - flame1Height / 2;
 
-    this.lastPathEndingX = this.lastPathEndingX + horizontalLength;
+    context.beginPath();
+    context.moveTo(startingXPoint, startingFlameYPoint);
+    context.bezierCurveTo(bezierX1, bezierY1, bezierX2, bezierY2, finishPointX, finishPointY);
+    //context.stroke();
+
+    var bezierX3 = startingXPoint + flameHorizontalLength / 1.75;
+    var bezierY3 = startingFlameYPoint - flame1Height / 8;
+    var bezierX4 = startingXPoint + flameHorizontalLength;
+    var bezierY4 = startingFlameYPoint;
+    var finishPoint2X = startingXPoint + flameHorizontalLength;
+    var finishPoint2Y = startingFlameYPoint;
+
+    //context.beginPath();
+    //context.moveTo(finishPointX, finishPointY);
+    context.bezierCurveTo(bezierX3, bezierY3, bezierX4, bezierY4, finishPoint2X + xOverlap, finishPoint2Y);
+    //context.stroke();
+
+    //flame 2    
+    var bezierX5 = finishPoint2X + flameHorizontalLength / 2;
+    var bezierY5 = finishPoint2Y - flame2Height / 8;
+    var bezierX6 = finishPoint2X + flameHorizontalLength / 2;
+    var bezierY6 = finishPoint2Y - flame2Height / 2;
+    var finishPoint3X = finishPoint2X + flameHorizontalLength / 1.75;
+    var finishPoint3Y = finishPoint2Y - flame2Height / 2;
+
+    //context.beginPath();
+    context.moveTo(finishPoint2X - xOverlap, finishPoint2Y);
+    context.bezierCurveTo(bezierX5, bezierY5, bezierX6, bezierY6, finishPoint3X, finishPoint3Y);
+    //context.stroke();
+
+    var bezierX7 = finishPoint2X + flameHorizontalLength / 1.75;
+    var bezierY7 = finishPoint2Y - flame2Height / 8;
+    var bezierX8 = finishPoint2X + flameHorizontalLength;
+    var bezierY8 = finishPoint2Y;
+    var finishPoint4X = finishPoint2X + flameHorizontalLength;
+    var finishPoint4Y = finishPoint2Y;
+
+    //context.beginPath();
+    //context.moveTo(finishPoint3X, finishPoint3Y);
+    context.bezierCurveTo(bezierX7, bezierY7, bezierX8, bezierY8, finishPoint4X + xOverlap, finishPoint4Y);
+    //context.stroke();
+
+    //flame 3
+    var bezierX9 = finishPoint4X + flameHorizontalLength / 2;
+    var bezierY9 = finishPoint4Y - flame3Height / 8;
+    var bezierX10 = finishPoint4X + flameHorizontalLength / 2;
+    var bezierY10 = finishPoint4Y - flame3Height / 2;
+    var finishPoint5X = finishPoint4X + flameHorizontalLength / 1.75;
+    var finishPoint5Y = finishPoint4Y - flame3Height / 2;
+
+    //context.beginPath();
+    context.moveTo(finishPoint4X - xOverlap, finishPoint4Y);
+    context.bezierCurveTo(bezierX9, bezierY9, bezierX10, bezierY10, finishPoint5X, finishPoint5Y);
+    //context.stroke();
+
+    var bezierX11 = finishPoint4X + flameHorizontalLength / 1.75;
+    var bezierY11 = finishPoint4Y - flame3Height / 8;
+    var bezierX12 = finishPoint4X + flameHorizontalLength;
+    var bezierY12 = finishPoint4Y;
+    var finishPoint6X = finishPoint4X + flameHorizontalLength;
+    var finishPoint6Y = finishPoint4Y;
+
+    //context.beginPath();
+    //context.moveTo(finishPoint5X, finishPoint5Y);
+    context.bezierCurveTo(bezierX11, bezierY11, bezierX12, bezierY12, finishPoint6X, finishPoint6Y);
+    //context.stroke();
+
+    //context.beginPath();
+    context.moveTo(finishPoint6X, finishPoint6Y);
+    context.lineTo(startingXPoint, startingFlameYPoint);
+    context.fill();
+
+    //this.lastPathEndingX = this.lastPathEndingX + horizontalLength;
   }
 
   grandPrixMountainYReset(legCounter: number) {

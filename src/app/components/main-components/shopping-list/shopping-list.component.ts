@@ -28,7 +28,10 @@ export class ShoppingListComponent implements OnInit {
     if (this.shopType === undefined || this.shopType === null)
       this.shopType = ShopsEnum.regular;
 
-    this.resetShopSubscription = this.resetShop.subscribe(() => this.setupDisplayItems());
+    if (this.shopType === ShopsEnum.regular)
+    {
+      this.resetShopSubscription = this.resetShop.subscribe(() => this.setupDisplayItems());
+    }
 
     this.setupDisplayItems();
   }

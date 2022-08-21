@@ -51,6 +51,14 @@
         <div>
             <app-event-animal-deck></app-event-animal-deck>
         </div>
+        <br/>
+
+        <div *ngIf="isEventRaceAvailable">
+            <label for="relay-energy">Your animals will automatically relay the segment after they lose energy and it is below </label>
+            <input id="relay-energy" name="relay-energy" type="text" class="spaced energyInput" minlength="2" maxlength="2" [(ngModel)]="relayEnergy" (change)="updateRelayEnergy()">
+             %. <em>Must be between 50% and 99%.</em>
+        </div>
+
         <div *ngIf="previousRaceRewardList !== undefined && previousRaceRewardList !== null && !isEventRaceAvailable">
             <br/>
             <br/>
@@ -86,7 +94,7 @@
                 The further you go in the Grand Prix invitational, the more rewards you'll receive. Every {{
                 coinRewardInterval | number: '1.' }} meters, you'll receive {{ coinRewardAmount }} Coins.
                 Every {{ renownRewardInterval | number: '1.' }} meters, you'll receive {{ renownRewardAmount }} Renown.
-                Also, you'll be able to obtain rare tokens that can be spent on rare upgrades.
+                Also, you'll be able to obtain rare tokens that can be spent on unique upgrades.
                 <br />
                 <br />
                 Distance Covered: {{(grandPrixData.totalDistance - remainingMeters).toFixed(0) | number: '1.'}} /
@@ -95,6 +103,8 @@
                 <br />
                 <div class="rewards" [innerHTML]="getGrandPrixCoinRewardsPopover()"></div>
                 <div class="rewards" [innerHTML]="getGrandPrixRenownRewardsPopover()"></div>
+                <br/>
+                <div class="rewards" [innerHTML]="getGrandPrixFoodRewardsPopover()"></div>
                 <div class="rewards" [innerHTML]="getGrandPrixTokenRewardsPopover()"></div>
             </div>
 
@@ -127,12 +137,12 @@
                 energy. 
                 <br />
                 <br />
-                <span class='keyword'>Morale</span> - This affects how much your stats reduce when running out of stamina. By default, your stats will reduce by 10% while Morale is at 100%. Morale can range from 50% to 300%.
+                <span class='keyword'>Morale</span> - This affects how much your stats reduce when running out of stamina. By default, your stats will reduce by 10% while Morale is at 100%. Morale can range from 50% to 300%. Gain Morale by completing segments and Bursting. Lose Morale when you stumble or lose focus.
                 <br/>
                 <span class='keyword'>Energy</span> - The percent your stats are currently at from their maximum. This is increased slightly over time while a racer is not racing.
                 <br/>
                 <span class='keyword'>*Note that these values have no impact on any race other than the Grand Prix.</span>
-                <br />
+                <br />                
                 <br />
                 Maintain your morale and energy to get the most out of your racing animals. You can Relay to another
                 animal in your event deck at any point, although the Relay will only occur after the completion of the

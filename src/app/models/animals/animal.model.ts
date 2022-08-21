@@ -40,6 +40,7 @@ export class Animal {
     incubatorStatUpgrades: IncubatorStatUpgrades;
     @Type(() => AllTrainingTracks)
     allTrainingTracks: AllTrainingTracks;
+    previousBreedLevel: number; //used for gingko leaves
     breedLevel: number;
     breedGaugeXp: number;
     breedGaugeMax: number;
@@ -56,6 +57,7 @@ export class Animal {
     talentTree: TalentTree;
     canTrain: boolean;
     canEquipOrb: boolean;
+    mangoesUsed = 0;
     totalRacesRun: number; //for tracked stats
 
     constructor() {
@@ -67,6 +69,7 @@ export class Animal {
         this.breedLevel = 1;
         this.breedGaugeXp = 0;
         this.breedGaugeMax = 200;
+        this.previousBreedLevel = 1;
         this.totalRacesRun = 0;
         this.equippedOrb = null;
         this.canEquipOrb = false;

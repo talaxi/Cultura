@@ -42,6 +42,7 @@ import { WeatherEnum } from '../models/weather-enum.model';
 import { TalentTreeTypeEnum } from '../models/talent-tree-type-enum.model';
 import { DrawnRaceObject } from '../models/races/drawn-race-objects.model';
 import { DrawnRaceObjectEnum } from '../models/drawn-race-object-enum.model';
+import { OrbTypeEnum } from '../models/orb-type-enum.model';
 
 @Injectable({
   providedIn: 'root'
@@ -77,10 +78,11 @@ export class GlobalService {
     this.globalVar.freeRaceCounter = 0;
     this.globalVar.freeRaceTimePeriodCounter = 0;
     this.globalVar.lastTimeStamp = Date.now();
-    this.globalVar.currentVersion = 1.10; //TODO: this needs to be automatically increased or something, too easy to forget
-    this.globalVar.startingVersion = 1.10;
+    this.globalVar.currentVersion = 1.11; //TODO: this needs to be automatically increased or something, too easy to forget
+    this.globalVar.startingVersion = 1.11;
     this.globalVar.startDate = new Date();
     this.globalVar.notifications = new Notifications();
+    this.globalVar.relayEnergyFloor = 50;
 
     //Initialize modifiers
     this.InitializeModifiers();
@@ -109,6 +111,7 @@ export class GlobalService {
     this.globalVar.monoRank = "Z";
     this.globalVar.duoRank = "Z";
     this.globalVar.rainbowRank = "Z";
+    this.globalVar.pinnacleFloor = "Z";
     this.GenerateLocalRaces();
 
     //Initialize resources
@@ -182,7 +185,7 @@ export class GlobalService {
     this.globalVar.modifiers.push(new StringNumberPair((5 * 60), "freeRacesTimePeriodModifier"));
     this.globalVar.modifiers.push(new StringNumberPair((8 * 60 * 60), "autoFreeRacesMaxIdleTimePeriodModifier"));
 
-    this.globalVar.modifiers.push(new StringNumberPair(5000000, "metersPerCoinsGrandPrixModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(2500000, "metersPerCoinsGrandPrixModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(20000000, "metersPerRenownGrandPrixModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(100, "grandPrixCoinRewardModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(3, "grandPrixRenownRewardModifier"));
@@ -194,11 +197,11 @@ export class GlobalService {
     this.globalVar.modifiers.push(new StringNumberPair(.02, "exhaustionGainGrandPrixModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(2 * 60 * 60, "weatherClusterTimerCapGrandPrixModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(25, "grandPrixBreedLevelRequiredModifier"));
-    this.globalVar.modifiers.push(new StringNumberPair(.2, "weatherMoraleBoostModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(.5, "weatherMoraleBoostModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(.03, "focusMoraleLossModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(.02, "burstMoraleBoostModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(.01, "stumbleMoraleLossModifier"));
-    this.globalVar.modifiers.push(new StringNumberPair(.05, "segmentCompleteMoraleBoostModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(.1, "segmentCompleteMoraleBoostModifier"));
 
     //ability modifiers
     this.globalVar.modifiers.push(new StringNumberPair(25, "abilityLevelCapModifier"));
@@ -556,8 +559,8 @@ export class GlobalService {
     var coins = new ShopItem();
     coins.name = "Coins";
     coins.shortDescription = "";
-    coins.purchasePrice.push(this.getTokenResourceValue(3));
-    coins.basePurchasePrice.push(this.getTokenResourceValue(3));
+    coins.purchasePrice.push(this.getTokenResourceValue(1));
+    coins.basePurchasePrice.push(this.getTokenResourceValue(1));
     coins.canHaveMultiples = true;
     coins.numberPurchasing = 5000;
     coins.type = ShopItemTypeEnum.Resources;
@@ -567,8 +570,8 @@ export class GlobalService {
     var diminishingReturnsIncrease = new ShopItem();
     diminishingReturnsIncrease.name = "Diminishing Returns Increase Certificate";
     diminishingReturnsIncrease.shortDescription = this.getItemDescription(diminishingReturnsIncrease.name);
-    diminishingReturnsIncrease.purchasePrice.push(this.getTokenResourceValue(5));
-    diminishingReturnsIncrease.basePurchasePrice.push(this.getTokenResourceValue(5));
+    diminishingReturnsIncrease.purchasePrice.push(this.getTokenResourceValue(4));
+    diminishingReturnsIncrease.basePurchasePrice.push(this.getTokenResourceValue(4));
     diminishingReturnsIncrease.canHaveMultiples = true;
     diminishingReturnsIncrease.type = ShopItemTypeEnum.Consumable;
     diminishingReturnsIncrease.infiniteAmount = true;
@@ -577,8 +580,8 @@ export class GlobalService {
     var trainingBonusBreedXp = new ShopItem();
     trainingBonusBreedXp.name = "Training Breed XP Gain Certificate";
     trainingBonusBreedXp.shortDescription = this.getItemDescription(trainingBonusBreedXp.name);
-    trainingBonusBreedXp.purchasePrice.push(this.getTokenResourceValue(1));
-    trainingBonusBreedXp.basePurchasePrice.push(this.getTokenResourceValue(1));
+    trainingBonusBreedXp.purchasePrice.push(this.getTokenResourceValue(2));
+    trainingBonusBreedXp.basePurchasePrice.push(this.getTokenResourceValue(2));
     trainingBonusBreedXp.canHaveMultiples = true;
     trainingBonusBreedXp.type = ShopItemTypeEnum.Consumable;
     trainingBonusBreedXp.infiniteAmount = true;
@@ -792,6 +795,16 @@ export class GlobalService {
     mango.type = ShopItemTypeEnum.Food;
     mango.infiniteAmount = true;
     foodShopItems.push(mango);
+
+    var gingkoLeaf = new ShopItem();
+    gingkoLeaf.name = "Gingko Leaves";
+    gingkoLeaf.shortDescription = "Reset Breed Level for a single animal back to 1 and remove all incubator upgrade gains. Increase Breed XP Gain by 1000% until Breed Level returns to what it was.";
+    gingkoLeaf.purchasePrice.push(new ResourceValue("Coins", 3500));
+    gingkoLeaf.canHaveMultiples = true;
+    gingkoLeaf.type = ShopItemTypeEnum.Food;
+    gingkoLeaf.infiniteAmount = true;
+    gingkoLeaf.isAvailable = false;
+    foodShopItems.push(gingkoLeaf);
 
     foodShopSection.name = "Food";
     foodShopSection.itemList = foodShopItems;
@@ -1870,7 +1883,18 @@ export class GlobalService {
 
       returnVal = ["Ruby Orb", "You receive a glowing red orb. What it does is a mystery."];
 
-      this.globalVar.circuitRankUpRewardDescription = "More Coming Soon!";
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(79) + "The Pinnacle";
+    }
+    else if (numericValue === 79) {
+      this.globalVar.unlockables.set("thePinnacle", false); //TODO: set this to true when launching pinnacle, turn on in version control
+      this.globalVar.notifications.isNewSpecialRaceAvailable = true;
+
+      returnVal = ["The Pinnacle", this.utilityService.getSanitizedHtml("A new race type has been unlocked!" +
+        " The Pinnacle is an old and mysterious fortress. Researchers have struggled to map out its interior due to the ever changing terrain and constantly shifting weather. Your team has been contracted out to help map the area out. <br/>" +
+        " As you race through each floor, you notice that you can insert the Orbs you have received into braziers to activate them. This increases your Orb level, allowing you to further power them up. <br/> <br/>" +
+        "<em>Select this race and others like it by choosing the 'Special Race' option from the 'Races' menu. <b>This race is not implemented yet but will be soon!</b></em>")];
+
+        this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(80) + "More Coming Soon!";
     }
 
     return returnVal;
@@ -2179,6 +2203,32 @@ export class GlobalService {
     return new Terrain(availableTerrainsList[rng - 1]);
   }
 
+  getRandomOrbListOrder(orbList: OrbTypeEnum[], seedValue: string = "seeded") {
+    var randomizedList: OrbTypeEnum[] = [];
+    var length = orbList.length;
+    for (var i = 0; i < length; i++) {
+      var rng = this.utilityService.getRandomSeededInteger(1, orbList.length, seedValue);
+      randomizedList.push(orbList[rng - 1]);
+      orbList = orbList.filter(item => item !== orbList[rng - 1]);
+    }
+
+    return randomizedList;
+  }
+
+  getAnimalStatLossFromExhaustionEventRace(animal: Animal) {
+    if (this.globalVar.eventRaceData.animalData === null || this.globalVar.eventRaceData.animalData === undefined ||
+      this.globalVar.eventRaceData.animalData.length === 0)
+      return 0;
+
+    var associatedAnimalData = this.globalVar.eventRaceData.animalData.find(item => item.associatedAnimalType === animal.type);
+    if (associatedAnimalData === null || associatedAnimalData === undefined)
+      return 0;
+
+    var exhaustionLevel = associatedAnimalData.exhaustionStatReduction;
+
+    return exhaustionLevel;
+  }
+
   getRandomGrandPrixWeatherCluster(seed?: string, previousWeather?: WeatherEnum) {
     var availableClusterList: WeatherEnum[] = [];
 
@@ -2341,6 +2391,13 @@ export class GlobalService {
       var violetBaton = equipmentShop.itemList.find(item => item.name === "Violet Baton");
       if (violetBaton !== null && violetBaton !== undefined)
         violetBaton.isAvailable = true;
+    }
+
+    var foodShop = this.globalVar.shop.find(item => item.name === "Food");
+    if (foodShop !== null && foodShop !== undefined) {
+      var gingkoLeaves = foodShop.itemList.find(item => item.name === "Gingko Leaves");
+      if (gingkoLeaves !== null && gingkoLeaves !== undefined)
+        gingkoLeaves.isAvailable = true;
     }
   }
 
@@ -2509,6 +2566,7 @@ export class GlobalService {
     this.GenerateMonoRaces(this.globalVar.monoRank);
     this.GenerateDuoRaces(this.globalVar.duoRank);
     this.GenerateRainbowRaces(this.globalVar.rainbowRank);
+    this.GeneratePinnacleRaces(this.globalVar.pinnacleFloor);
   }
 
   GenerateMonoRaces(monoRank: string): void {
@@ -2709,6 +2767,85 @@ export class GlobalService {
     raceIndex += 1;
   }
 
+  GeneratePinnacleRaces(pinnacleFloor: string): void {
+    var i = this.utilityService.getNumericValueOfCircuitRank(pinnacleFloor);
+    this.globalVar.localRaces = this.globalVar.localRaces.filter(item => item.localRaceType !== LocalRaceTypeEnum.Pinnacle);
+
+    if (i >= this.utilityService.getNumericValueOfCircuitRank(this.globalVar.circuitRank))
+      return;
+
+    var raceIndex = 1;
+    var timeToComplete = 180;
+
+    var baseMeters = 1250000;
+    var factor = 1.115;
+
+    var maxRandomFactor = 1.2;
+    var minRandomFactor = 0.8;
+    var raceLegs: RaceLeg[] = [];
+    var randomFactor = this.utilityService.getRandomSeededNumber(minRandomFactor, maxRandomFactor);
+
+    var primaryDeck = this.globalVar.animalDecks.find(item => item.isPrimaryDeck);
+    if (primaryDeck === undefined)
+      return;
+
+    var first4Animals = primaryDeck.selectedAnimals.slice(0, 4);
+    var totalDistance = (Math.round((baseMeters * (factor ** i) * randomFactor) * .2));
+
+    for (var j=0; j < first4Animals.length; j++)
+    {
+      var percentOfRace = 1 / first4Animals.length;
+
+      var leg = new RaceLeg();
+      leg.courseType = first4Animals[j].raceCourseType;
+      leg.distance = percentOfRace * baseMeters;
+      leg.terrain = this.getRandomTerrain(leg.courseType, 'pinnaclel' + pinnacleFloor + i + j);
+      raceLegs.push(leg);
+    }
+
+    raceLegs.forEach(leg => {
+      leg.pathData = this.GenerateRaceLegPaths(leg, totalDistance);
+    });    
+
+    //randomize list
+    var orbList: OrbTypeEnum[] = [];
+    orbList.push(OrbTypeEnum.amber);
+    orbList.push(OrbTypeEnum.amethyst);
+    orbList.push(OrbTypeEnum.ruby);
+    orbList.push(OrbTypeEnum.emerald);
+    orbList.push(OrbTypeEnum.sapphire);
+    orbList.push(OrbTypeEnum.topaz);
+    var randomizedList = this.getRandomOrbListOrder(orbList, 'pinnaclel1' + pinnacleFloor + i);
+    var brazierDistanceCounter = 0;
+    var objectList: DrawnRaceObject[] = [];
+    randomizedList.forEach(item => {
+      brazierDistanceCounter += 1;      
+      var drawnObject = new DrawnRaceObject(this.getBrazierFromOrbType(item), totalDistance * (brazierDistanceCounter / randomizedList.length + 1));      
+      objectList.push(drawnObject);  
+    });
+
+    this.globalVar.localRaces.push(new Race(raceLegs, pinnacleFloor, false, raceIndex, totalDistance, timeToComplete, undefined, LocalRaceTypeEnum.Pinnacle, undefined, RaceTypeEnum.special, undefined, objectList));
+
+    raceIndex += 1;
+  }
+
+  getBrazierFromOrbType(orbType: OrbTypeEnum) {
+    if (orbType === OrbTypeEnum.amber)
+        return DrawnRaceObjectEnum.amberBrazier;
+    if (orbType === OrbTypeEnum.amethyst)
+        return DrawnRaceObjectEnum.amethystBrazier;
+    if (orbType === OrbTypeEnum.ruby)
+        return DrawnRaceObjectEnum.rubyBrazier;
+    if (orbType === OrbTypeEnum.topaz)
+        return DrawnRaceObjectEnum.topazBrazier;
+    if (orbType === OrbTypeEnum.emerald)
+        return DrawnRaceObjectEnum.emeraldBrazier;
+    if (orbType === OrbTypeEnum.sapphire)
+        return DrawnRaceObjectEnum.sapphireBrazier;
+
+    return undefined;
+}
+
   generateFreeRace() {
     var numericalRank = this.utilityService.getNumericValueOfCircuitRank(this.globalVar.circuitRank);
     var timeToComplete = 60;
@@ -2862,13 +2999,8 @@ export class GlobalService {
       leg.pathData = this.GenerateRaceLegPaths(leg, totalDistance);
     });
 
-    //TODO: REMOVE THE BRAZIER PORTION
-    var drawnObject = new DrawnRaceObject(DrawnRaceObjectEnum.brazier, totalDistance * .1);
-    var objectList = [];
-    objectList.push(drawnObject);
-
     return new Race(raceLegs, this.globalVar.circuitRank, false,
-      1, totalDistance, timeToComplete, this.GenerateLocalRaceRewards(this.globalVar.circuitRank), LocalRaceTypeEnum.Free, undefined, RaceTypeEnum.circuit, undefined, undefined);
+      1, totalDistance, timeToComplete, this.GenerateLocalRaceRewards(this.globalVar.circuitRank), LocalRaceTypeEnum.Free, undefined, RaceTypeEnum.circuit, undefined);
   }
 
   getTotalSegments(totalDistance: number) {
@@ -3010,10 +3142,12 @@ export class GlobalService {
     return this.globalVar.eventRaceData.animalData.find(item => item.associatedAnimalType === type)?.morale;
   }
 
-  generateGrandPrixSegment(racingAnimal: Animal) {
+  generateGrandPrixSegment(racingAnimal: Animal, catchUpTime?: number) {
     var eventData = this.globalVar.eventRaceData;
     //var numericalRank = this.utilityService.getNumericValueOfCircuitRank(eventData.rank);
     var remainingRaceTime = this.getRemainingEventRaceTime();
+    if (catchUpTime !== undefined && (remainingRaceTime === 0 || remainingRaceTime === undefined || remainingRaceTime === null))
+      remainingRaceTime = catchUpTime;
 
     var segmentMeters = eventData.totalDistance / eventData.totalSegments;
 
@@ -3049,8 +3183,9 @@ export class GlobalService {
     var totalCoinRewards = this.globalVar.eventRaceData.totalDistance / (metersPerCoinsGrandPrixModifierValue * numericalRank);
     var totalRenownRewards = this.globalVar.eventRaceData.totalDistance / (metersPerRenownGrandPrixModifierValue * numericalRank);
     var totalTokenRewards = 4;
+    var totalFoodRewards = 8;
 
-    return totalCoinRewards + totalRenownRewards + totalTokenRewards;
+    return totalCoinRewards + totalRenownRewards + totalTokenRewards + totalFoodRewards;
   }
 
   getEventStartDateTime() {
@@ -3105,6 +3240,63 @@ export class GlobalService {
     else {
       return event1StartDate;
     }
+  }
+
+  getCurrentEventStartEndDateTime(getEndDate: boolean) {
+    var currentDate = new Date();
+
+    var currentDay = currentDate.getDay();
+    var currentHour = currentDate.getHours();
+    var eventData = this.globalVar.eventRaceData;
+
+    var event1StartDate = new Date();
+    var event1EndDate = new Date();
+    var event2StartDate = new Date();
+    var event2EndDate = new Date();
+
+    if (currentDate.getDay() === 0 && currentHour < eventData.weekendEndHour)
+      event1StartDate = new Date(new Date().setDate(new Date().getDate() - 7 - currentDay + eventData.weekStartDay));
+    else
+      event1StartDate = new Date(new Date().setDate(new Date().getDate() - currentDay + eventData.weekStartDay));
+    event1StartDate.setHours(event1StartDate.getHours() - currentHour + eventData.weekStartHour);
+    event1StartDate.setMinutes(0, 0, 0);
+
+    if (currentDate.getDay() === 0 && currentHour < eventData.weekendEndHour)
+      event1EndDate = new Date(new Date().setDate(new Date().getDate() - 7 - currentDay + eventData.weekEndDay));
+    else
+      event1EndDate = new Date(new Date().setDate(new Date().getDate() - currentDay + eventData.weekEndDay));
+    event1EndDate.setHours(event1EndDate.getHours() - currentHour + eventData.weekEndHour);
+    event1EndDate.setMinutes(0, 0, 0);
+
+    if (currentDate.getDay() === 0 && currentHour < eventData.weekendEndHour)
+      event2StartDate = new Date(new Date().setDate(new Date().getDate() - 7 - currentDay + eventData.weekendStartDay));
+    else
+      event2StartDate = new Date(new Date().setDate(new Date().getDate() - currentDay + eventData.weekendStartDay));
+    event2StartDate.setHours(event2StartDate.getHours() - currentHour + eventData.weekendStartHour);
+    event2StartDate.setMinutes(0, 0, 0);
+    //need to move into next week since sunday is first of the week
+
+    if (currentDate.getDay() === 0 && currentHour < eventData.weekendEndHour)
+      event2EndDate = new Date(new Date().setDate(new Date().getDate() - currentDay + eventData.weekendEndDay));
+    else
+      event2EndDate = new Date(new Date().setDate(new Date().getDate() + 7 - currentDay + eventData.weekendEndDay));
+    event2EndDate.setHours(event2EndDate.getHours() - currentHour + eventData.weekendEndHour);
+    event2EndDate.setMinutes(0, 0, 0);
+
+    if (currentDate >= event1StartDate && currentDate <= event1EndDate) {
+      if (getEndDate)
+      return event1EndDate;
+      else
+      return event1StartDate;
+    }
+    else if (currentDate >= event2StartDate && currentDate <= event2EndDate) {
+      if (getEndDate)
+      return event2EndDate;
+      else
+      return event2StartDate;
+    }
+
+    return 0;
   }
 
   //return time in seconds to next event
@@ -3720,6 +3912,7 @@ export class GlobalService {
     this.globalVar.unlockables.set("monoRace", false);
     this.globalVar.unlockables.set("duoRace", false);
     this.globalVar.unlockables.set("rainbowRace", false);
+    this.globalVar.unlockables.set("thePinnacle", false);
     this.globalVar.unlockables.set("grandPrix", false);
     this.globalVar.unlockables.set("orbs", false);
     this.globalVar.unlockables.set("barnRow2", false);
@@ -3919,6 +4112,8 @@ export class GlobalService {
       description = "+1 Adaptability to a single animal";
     if (name === "Mangoes")
       description = "+1 Breed Level to a single animal";
+    if (name === "Gingko Leaves")
+      description = "Reset Breed Level for a single animal back to 1 and remove all incubator upgrade gains. Increase Breed XP Gain by 1000% until Breed Level returns to what it was.";
     if (name === "Circuit Race Breed XP Gain Certificate")
       description = "Give an animal +2 Bonus Breed XP Gain from Circuit Races. Can use up to 30 of these certificates on any individual animal.";
     if (name === "Free Race Breed XP Gain Certificate")

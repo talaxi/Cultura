@@ -7,7 +7,7 @@
         <hr/>
     </div>
     <div class="listView" *ngIf="!animalSelected">
-    <app-animal-list [availableAnimals]="availableAnimals" (selectedAnimal)="selectedAnimal($event)"></app-animal-list>
+    <app-animal-list [availableAnimals]="availableAnimals" (selectedAnimal)="selectedAnimal($event)" [isAnimalDetailView]="true"></app-animal-list>
 </div>
     <div class="selectedView" *ngIf="animalSelected">
         <app-selected-animal [selectedAnimal]="animal" (returnEmitter)="returnToAnimalView($event)"></app-selected-animal>

@@ -90,7 +90,7 @@ export class IncubatorTraitsComponent implements OnInit {
     this.existingTrait = newTrait;
 
     //cancel any trainings
-    this.selectedAnimal.currentTraining = null;
+    //this.selectedAnimal.currentTraining = null;
     this.selectedAnimal.canTrain = false;
   }
 

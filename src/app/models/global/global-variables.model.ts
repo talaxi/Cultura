@@ -36,6 +36,7 @@ export class GlobalVariables {
     monoRank: string;
     duoRank: string;
     rainbowRank: string;
+    pinnacleFloor: string;
     @Type(() => Pinnacle) 
     pinnacle: Pinnacle;   
     @Type(() => ResourceValue)
@@ -80,7 +81,7 @@ export class GlobalVariables {
     startingVersion: number;
     startDate: Date;
     showBreedWarning = true;
-
+    relayEnergyFloor: number;
 
     constructor(existingVariables?: GlobalVariables) {
         if (existingVariables !== undefined && existingVariables !== null) {            

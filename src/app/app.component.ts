@@ -66,7 +66,7 @@ export class AppComponent {
 
     if (devMode) {
       this.globalService.globalVar.tutorials.tutorialCompleted = true;
-      this.globalService.devModeInitialize(74, 2);
+      this.globalService.devModeInitialize(80, 3);
     }
 
     this.versionControlService.updatePlayerVersion();
@@ -110,7 +110,7 @@ export class AppComponent {
     });
 
     var allTrainingAnimals = this.globalService.globalVar.animals.filter(item => item.isAvailable &&
-      item.currentTraining !== undefined && item.currentTraining !== null);
+      item.currentTraining !== undefined && item.currentTraining !== null && item.canTrain);
 
     if (allTrainingAnimals.length > 0) {
       allTrainingAnimals.forEach(animal => {
@@ -176,14 +176,27 @@ export class AppComponent {
 
   handleGrandPrix(deltaTime: number) {
     var raceTimeOver = false;
-    if (this.globalService.getTimeToEventRace() > 0 && this.globalService.globalVar.eventRaceData.bonusTime === 0) {
+    if (this.globalService.globalVar.eventRaceData.currentEventEndDate !== null && this.globalService.globalVar.eventRaceData.currentEventEndDate !== undefined &&
+      new Date() > this.utilityService.addDaysToDate(this.globalService.globalVar.eventRaceData.currentEventEndDate, 1)) {
       raceTimeOver = true;
+      this.globalService.globalVar.eventRaceData = new GrandPrixData();
+      this.globalService.globalVar.eventRaceData.initialSetupComplete = false;
+      return;
+    }
+
+    if ((this.globalService.getTimeToEventRace() > 0 && this.globalService.globalVar.eventRaceData.bonusTime === 0)) {
+      raceTimeOver = true;
+
+      if (this.globalService.globalVar.eventRaceData.isCatchingUp)
+        raceTimeOver = false;
+
+      //console.log("Remaining: " + this.globalService.globalVar.eventRaceData.remainingEventRaceTime + " Catching UP: " + this.globalService.globalVar.eventRaceData.isCatchingUp);
 
       if (this.globalService.globalVar.eventRaceData.initialSetupComplete) {
         //first check if delta time was in between starting/stopping and calculate any necessary race during that time
-        if (this.globalService.globalVar.eventRaceData.remainingEventRaceTime > 0) {                
+        if (this.globalService.globalVar.eventRaceData.remainingEventRaceTime > 0 && new Date() < this.utilityService.addDaysToDate(this.globalService.globalVar.eventRaceData.currentEventEndDate, 1)) {
           this.globalService.globalVar.eventRaceData.segmentTimeCounter = this.globalService.globalVar.eventRaceData.remainingEventRaceTime;
-          this.globalService.globalVar.eventRaceData.overallTimeCounter = this.globalService.globalVar.eventRaceData.remainingEventRaceTime;
+          this.globalService.globalVar.eventRaceData.overallTimeCounter = this.globalService.globalVar.eventRaceData.remainingEventRaceTime;          
         }
         else if (!this.globalService.globalVar.eventRaceData.isCatchingUp) {
           //reset race
@@ -192,20 +205,28 @@ export class AppComponent {
       }
 
       if (!this.globalService.globalVar.eventRaceData.isCatchingUp && this.globalService.globalVar.eventRaceData.remainingEventRaceTime === 0) {
-        this.globalService.globalVar.eventRaceData.initialSetupComplete = false;        
+        this.globalService.globalVar.eventRaceData.initialSetupComplete = false;
         return;
       }
     }
 
     if (!this.globalService.globalVar.eventRaceData.initialSetupComplete) //wasn't within event and now you are
-    {      
+    {
       //do initial set up
       this.globalService.initialGrandPrixSetup("Z");
       this.globalService.globalVar.eventRaceData.initialSetupComplete = true;
       this.globalService.globalVar.notifications.isEventRaceNowActive = true;
 
+      var startDate = this.globalService.getCurrentEventStartEndDateTime(false);
+      if (startDate instanceof Date)
+        this.globalService.globalVar.eventRaceData.currentEventStartDate = startDate;
+
+      var endDate = this.globalService.getCurrentEventStartEndDateTime(true);
+      if (endDate instanceof Date)
+        this.globalService.globalVar.eventRaceData.currentEventEndDate = endDate;
+
       //if setting is active
-      /*if (false) { //TODO: this.globalService.globalVar.settings.get("autoStartEventRace") instead of false
+      if (this.globalService.globalVar.settings.get("autoStartEventRace")) {        
         if (this.globalService.globalVar.eventRaceData.isRunning === false) {
 
           var timeSinceRaceStarted = this.globalService.globalVar.eventRaceData.grandPrixTimeLength - this.globalService.getRemainingEventRaceTime();
@@ -220,7 +241,7 @@ export class AppComponent {
             if (!this.globalService.globalVar.eventRaceData.animalData.some(item => item.isCurrentlyRacing)) {
               var matchingAnimalData = this.globalService.globalVar.eventRaceData.animalData.find(item => item.associatedAnimalType == racingAnimal.type);
               if (matchingAnimalData !== undefined) {
-                //matchingAnimalData.isCurrentlyRacing = true; //TODO: uncomment this after turning grand prix back on
+                matchingAnimalData.isCurrentlyRacing = true;
               }
             }
 
@@ -234,11 +255,19 @@ export class AppComponent {
             }
           }
         }
-      }*/
+      }
     }
 
     if (this.globalService.globalVar.eventRaceData.isGrandPrixCompleted) { //current rank completed
       this.globalService.increaseGrandPrixRaceRank();
+    }
+
+    //count down from bonus time after race ends
+    if (this.globalService.getTimeToEventRace() > 0 && this.globalService.globalVar.eventRaceData.bonusTime > 0) {
+      this.globalService.globalVar.eventRaceData.bonusTime -= deltaTime;
+
+      if (this.globalService.globalVar.eventRaceData.bonusTime <= 0)
+        this.globalService.globalVar.eventRaceData.bonusTime = 0;
     }
 
     if (this.globalService.globalVar.eventRaceData.isRunning) {
@@ -249,27 +278,28 @@ export class AppComponent {
       if (!raceTimeOver) {
         this.globalService.globalVar.eventRaceData.segmentTimeCounter += deltaTime;
         this.globalService.globalVar.eventRaceData.overallTimeCounter += deltaTime;
+        //console.log("rollin -- " + this.globalService.globalVar.eventRaceData.segmentTimeCounter + " vs " + (this.globalService.globalVar.eventRaceData.currentRaceSegmentResult.totalFramesPassed / 60));
       }
-      this.globalService.globalVar.eventRaceData.remainingEventRaceTime = this.globalService.getRemainingEventRaceTime();
-      if (this.globalService.getTimeToEventRace() > 0 && this.globalService.globalVar.eventRaceData.bonusTime > 0) {
-        this.globalService.globalVar.eventRaceData.bonusTime -= deltaTime;
 
-        if (this.globalService.globalVar.eventRaceData.bonusTime <= 0)
-          this.globalService.globalVar.eventRaceData.bonusTime = 0;
-      }
+      if (new Date() < this.utilityService.addDaysToDate(this.globalService.globalVar.eventRaceData.currentEventEndDate, 1))
+        this.globalService.globalVar.eventRaceData.remainingEventRaceTime = 0;
+      else
+        this.globalService.globalVar.eventRaceData.remainingEventRaceTime = this.globalService.getRemainingEventRaceTime();
 
       var timeToComplete = this.globalService.globalVar.eventRaceData.currentRaceSegmentResult.totalFramesPassed / 60; //framemodifier =
 
       //game is far enough behind that trying to view would be problematic. let event catch up first
       //if expedite race was really a thing, you could turn it on while this is active      
-      if (this.globalService.globalVar.eventRaceData.segmentTimeCounter >= timeToComplete * 2) {
+      if (this.globalService.globalVar.eventRaceData.segmentTimeCounter >= timeToComplete * 2 && new Date() < this.utilityService.addDaysToDate(this.globalService.globalVar.eventRaceData.currentEventEndDate, 1)) { //&& within 24 hours after end of race
         this.globalService.globalVar.eventRaceData.isCatchingUp = true;
+        //console.log("Catching up");
       }
       else {
         this.globalService.globalVar.eventRaceData.isCatchingUp = false;
       }
 
       if (this.globalService.globalVar.eventRaceData.segmentTimeCounter >= timeToComplete) {
+        //console.log("Segment complete");
         this.globalService.globalVar.eventRaceData.currentRaceSegmentCount += 1;
         this.globalService.globalVar.eventRaceData.segmentTimeCounter -= timeToComplete;
         this.globalService.globalVar.eventRaceData.distanceCovered += this.globalService.globalVar.eventRaceData.currentRaceSegmentResult.distanceCovered;
@@ -282,29 +312,32 @@ export class AppComponent {
           this.grandPrixRaceCompleted();
         }
         else {
-          var didAnimalSwitch = this.checkForEventRelayAnimal();
+          var didAnimalSwitch = this.checkForEventRelayAnimal(this.globalService.globalVar.eventRaceData.isCatchingUp, this.globalService.globalVar.eventRaceData.segmentTimeCounter);
           if (didAnimalSwitch) {
             this.resetEventAbilityUseCounts();
           }
-          
+
           var racingAnimal = this.globalService.getGrandPrixRacingAnimal();
 
+          //console.log("Racing Animal: " + racingAnimal.name);
           if (racingAnimal.type !== undefined && racingAnimal.name !== undefined) {
             this.globalService.globalVar.eventRaceData.currentRaceSegment = this.globalService.globalVar.eventRaceData.nextRaceSegment.makeCopy(this.globalService.globalVar.eventRaceData.nextRaceSegment);
-            this.globalService.globalVar.eventRaceData.currentRaceSegmentResult = this.raceLogicService.runRace(this.globalService.globalVar.eventRaceData.currentRaceSegment);            
-            this.globalService.globalVar.eventRaceData.nextRaceSegment = this.globalService.generateGrandPrixSegment(racingAnimal);                   
+            this.globalService.globalVar.eventRaceData.currentRaceSegmentResult = this.raceLogicService.runRace(this.globalService.globalVar.eventRaceData.currentRaceSegment);
+            //console.log("Ran segment " + this.globalService.globalVar.eventRaceData.currentRaceSegmentCount);
+            //console.log("Resulting frames: " + this.globalService.globalVar.eventRaceData.currentRaceSegmentResult.totalFramesPassed + "(" + (this.globalService.globalVar.eventRaceData.currentRaceSegmentResult.totalFramesPassed / 60) + ")");            
+            this.globalService.globalVar.eventRaceData.nextRaceSegment = this.globalService.generateGrandPrixSegment(racingAnimal, this.globalService.globalVar.eventRaceData.isCatchingUp ? this.globalService.globalVar.eventRaceData.segmentTimeCounter : undefined);
           }
         }
       }
 
       this.checkForGrandPrixRewards();
     }
-    else
-    {
+    else {
       //event race is not running
       this.globalService.globalVar.eventRaceData.isCatchingUp = false;
     }
 
+    //do is catching up check here, if true handle it differently. maybe wait until segmentcounter reaches the desired amount
     this.updateExhaustionAndMorale(deltaTime);
     this.updateWeatherCluster(deltaTime);
   }
@@ -315,7 +348,12 @@ export class AppComponent {
   }
 
   updateExhaustionAndMorale(deltaTime: number) {
-    this.globalService.globalVar.eventRaceData.exhaustionMoraleUpdateCounter += deltaTime;
+    if (this.globalService.globalVar.eventRaceData.isCatchingUp) {
+      this.globalService.globalVar.eventRaceData.exhaustionMoraleUpdateCounter += this.globalService.globalVar.eventRaceData.currentRaceSegmentResult.totalFramesPassed / 60;
+    }
+    else {
+      this.globalService.globalVar.eventRaceData.exhaustionMoraleUpdateCounter += deltaTime;
+    }
 
     var timerCap = 5 * 60;
     var timerCapPair = this.globalService.globalVar.modifiers.find(item => item.text === "exhaustionGainTimerCapGrandPrixModifier");
@@ -355,8 +393,9 @@ export class AppComponent {
     }
   }
 
-  checkForEventRelayAnimal() {
+  checkForEventRelayAnimal(isCatchingUp: boolean, catchUpTime: number) {
     var didAnimalSwitch = false;
+    //var energyFloorToRelay = this.globalService.globalVar.eventRaceData.energyFloorToRelay / 100;
 
     if (this.globalService.globalVar.eventRaceData.animalData.some(animal => animal.isSetToRelay)) {
       this.globalService.globalVar.eventRaceData.animalData.forEach(data => {
@@ -377,7 +416,8 @@ export class AppComponent {
       var racingAnimal = this.globalService.getGrandPrixRacingAnimal();
       var exhaustionOfRacingAnimal = this.globalService.getExhaustionOfAnimal(racingAnimal.type);
       var requiredBreedLevel = this.lookupService.getBreedLevelRequiredForGrandPrix();
-      if (exhaustionOfRacingAnimal !== undefined && exhaustionOfRacingAnimal < .5) {
+      if (exhaustionOfRacingAnimal !== undefined && (exhaustionOfRacingAnimal < .5 || this.globalService.globalVar.eventRaceData.triggerEnergyFloorRelay)) {
+        this.globalService.globalVar.eventRaceData.triggerEnergyFloorRelay = false;
         var eventDeck = this.globalService.globalVar.animalDecks.find(item => item.isEventDeck);
 
         if (eventDeck !== undefined && eventDeck !== null) {
@@ -393,7 +433,7 @@ export class AppComponent {
 
             return false;
           });
-          
+
           if (animalsCapableOfRacing.length > 1) {
             var indexInEventDeck = 0;
             var animalFound = false;
@@ -424,7 +464,7 @@ export class AppComponent {
                   if (this.lookupService.getCourseTypeFromAnimalType(data.associatedAnimalType) === RaceCourseTypeEnum.Mountain) {
                     this.globalService.globalVar.eventRaceData.mountainEndingY = 0;
                   }
-                  this.globalService.globalVar.eventRaceData.nextRaceSegment = this.globalService.generateGrandPrixSegment(animalsCapableOfRacing[nextIndex]);
+                  this.globalService.globalVar.eventRaceData.nextRaceSegment = this.globalService.generateGrandPrixSegment(animalsCapableOfRacing[nextIndex], isCatchingUp ? catchUpTime : undefined);
                 }
               });
             }
@@ -436,14 +476,14 @@ export class AppComponent {
                   if (this.lookupService.getCourseTypeFromAnimalType(data.associatedAnimalType) === RaceCourseTypeEnum.Mountain) {
                     this.globalService.globalVar.eventRaceData.mountainEndingY = 0;
                   }
-                  this.globalService.globalVar.eventRaceData.nextRaceSegment = this.globalService.generateGrandPrixSegment(animalsCapableOfRacing[0]);
+                  this.globalService.globalVar.eventRaceData.nextRaceSegment = this.globalService.generateGrandPrixSegment(animalsCapableOfRacing[0], isCatchingUp ? catchUpTime : undefined);
                 }
               });
             }
 
             this.globalService.globalVar.eventRaceData.animalAlreadyPrepped = false;
           }
-          else {            
+          else {
             //no capable racers in event deck
             this.globalService.globalVar.eventRaceData.animalData.forEach(item => {
               item.isCurrentlyRacing = false;
@@ -524,8 +564,8 @@ export class AppComponent {
       var globalResource = this.globalService.globalVar.resources.find(x => x.name === "Coins");
       if (globalResource !== null && globalResource !== undefined)
         globalResource.amount += coinRewardAmount;
-      
-      this.lookupService.addResourceToResourceList(new ResourceValue("Coins", coinRewardAmount, ShopItemTypeEnum.Resources), this.globalService.globalVar.previousEventRewards);      
+
+      this.lookupService.addResourceToResourceList(new ResourceValue("Coins", coinRewardAmount, ShopItemTypeEnum.Resources), this.globalService.globalVar.previousEventRewards);
     }
 
     if (distanceCovered >= (metersPerRenownRewardValue * numericRankValue) * (this.globalService.globalVar.eventRaceData.renownRewardsObtained + 1) &&
@@ -536,7 +576,7 @@ export class AppComponent {
       if (globalResource !== null && globalResource !== undefined)
         globalResource.amount += renownRewardAmount;
 
-        this.lookupService.addResourceToResourceList(new ResourceValue("Renown", renownRewardAmount, ShopItemTypeEnum.Progression), this.globalService.globalVar.previousEventRewards);
+      this.lookupService.addResourceToResourceList(new ResourceValue("Renown", renownRewardAmount, ShopItemTypeEnum.Progression), this.globalService.globalVar.previousEventRewards);
     }
 
     if (this.globalService.globalVar.eventRaceData.tokenRewardsObtained <= 0 && distanceCovered >= token1MeterCount * numericRankValue) {
@@ -585,6 +625,125 @@ export class AppComponent {
         this.globalService.globalVar.resources.push(new ResourceValue("Tokens", (4 * numericRankValue), ShopItemTypeEnum.Resources));
 
       this.lookupService.addResourceToResourceList(new ResourceValue("Tokens", (4 * numericRankValue), ShopItemTypeEnum.Resources), this.globalService.globalVar.previousEventRewards);
+    }
+
+    //early race food rewards
+    if (numericRankValue === 1) {
+      var strawberryRewardDistance = 25000;
+      var appleRewardDistance = 50000;
+      var orangeRewardDistance = 75000;
+      var mangoRewardDistance = 100000;
+      var turnipRewardDistance = 250000;
+      var bananaRewardDistance = 500000;
+      var carrotRewardDistance = 750000;
+      var mangoReward2Distance = 1000000;
+      var baseFoodAmount = 100;
+      var firstMangoAmount = 5;
+      var secondMangoAmount = 10;
+
+      if (distanceCovered >= strawberryRewardDistance * numericRankValue &&
+        this.globalService.globalVar.eventRaceData.foodRewardsObtained === 0) {
+        this.globalService.globalVar.eventRaceData.remainingRewards -= 1;
+        this.globalService.globalVar.eventRaceData.foodRewardsObtained += 1;
+        var globalResource = this.globalService.globalVar.resources.find(x => x.name === "Strawberries");
+        if (globalResource !== null && globalResource !== undefined)
+          globalResource.amount += (baseFoodAmount * numericRankValue);
+        else
+          this.globalService.globalVar.resources.push(new ResourceValue("Strawberries", (baseFoodAmount * numericRankValue), ShopItemTypeEnum.Resources));
+
+        this.lookupService.addResourceToResourceList(new ResourceValue("Strawberries", (baseFoodAmount * numericRankValue), ShopItemTypeEnum.Resources), this.globalService.globalVar.previousEventRewards);
+      }
+
+      if (distanceCovered >= appleRewardDistance * numericRankValue &&
+        this.globalService.globalVar.eventRaceData.foodRewardsObtained === 1) {
+        this.globalService.globalVar.eventRaceData.remainingRewards -= 1;
+        this.globalService.globalVar.eventRaceData.foodRewardsObtained += 1;
+        var globalResource = this.globalService.globalVar.resources.find(x => x.name === "Apples");
+        if (globalResource !== null && globalResource !== undefined)
+          globalResource.amount += (baseFoodAmount * numericRankValue);
+        else
+          this.globalService.globalVar.resources.push(new ResourceValue("Apples", (baseFoodAmount * numericRankValue), ShopItemTypeEnum.Resources));
+
+        this.lookupService.addResourceToResourceList(new ResourceValue("Apples", (baseFoodAmount * numericRankValue), ShopItemTypeEnum.Resources), this.globalService.globalVar.previousEventRewards);
+      }
+
+      if (distanceCovered >= orangeRewardDistance * numericRankValue &&
+        this.globalService.globalVar.eventRaceData.foodRewardsObtained === 2) {
+        this.globalService.globalVar.eventRaceData.remainingRewards -= 1;
+        this.globalService.globalVar.eventRaceData.foodRewardsObtained += 1;
+        var globalResource = this.globalService.globalVar.resources.find(x => x.name === "Oranges");
+        if (globalResource !== null && globalResource !== undefined)
+          globalResource.amount += (baseFoodAmount * numericRankValue);
+        else
+          this.globalService.globalVar.resources.push(new ResourceValue("Oranges", (baseFoodAmount * numericRankValue), ShopItemTypeEnum.Resources));
+
+        this.lookupService.addResourceToResourceList(new ResourceValue("Oranges", (baseFoodAmount * numericRankValue), ShopItemTypeEnum.Resources), this.globalService.globalVar.previousEventRewards);
+      }
+
+      if (distanceCovered >= mangoRewardDistance * numericRankValue &&
+        this.globalService.globalVar.eventRaceData.foodRewardsObtained === 3) {
+        this.globalService.globalVar.eventRaceData.remainingRewards -= 1;
+        this.globalService.globalVar.eventRaceData.foodRewardsObtained += 1;
+        var globalResource = this.globalService.globalVar.resources.find(x => x.name === "Mangoes");
+        if (globalResource !== null && globalResource !== undefined)
+          globalResource.amount += (firstMangoAmount * numericRankValue);
+        else
+          this.globalService.globalVar.resources.push(new ResourceValue("Mangoes", (firstMangoAmount * numericRankValue), ShopItemTypeEnum.Resources));
+
+        this.lookupService.addResourceToResourceList(new ResourceValue("Mangoes", (firstMangoAmount * numericRankValue), ShopItemTypeEnum.Resources), this.globalService.globalVar.previousEventRewards);
+      }
+
+      if (distanceCovered >= turnipRewardDistance * numericRankValue &&
+        this.globalService.globalVar.eventRaceData.foodRewardsObtained === 4) {
+        this.globalService.globalVar.eventRaceData.remainingRewards -= 1;
+        this.globalService.globalVar.eventRaceData.foodRewardsObtained += 1;
+        var globalResource = this.globalService.globalVar.resources.find(x => x.name === "Turnips");
+        if (globalResource !== null && globalResource !== undefined)
+          globalResource.amount += (baseFoodAmount * numericRankValue);
+        else
+          this.globalService.globalVar.resources.push(new ResourceValue("Turnips", (baseFoodAmount * numericRankValue), ShopItemTypeEnum.Resources));
+
+        this.lookupService.addResourceToResourceList(new ResourceValue("Turnips", (baseFoodAmount * numericRankValue), ShopItemTypeEnum.Resources), this.globalService.globalVar.previousEventRewards);
+      }
+
+      if (distanceCovered >= bananaRewardDistance * numericRankValue &&
+        this.globalService.globalVar.eventRaceData.foodRewardsObtained === 5) {
+        this.globalService.globalVar.eventRaceData.remainingRewards -= 1;
+        this.globalService.globalVar.eventRaceData.foodRewardsObtained += 1;
+        var globalResource = this.globalService.globalVar.resources.find(x => x.name === "Bananas");
+        if (globalResource !== null && globalResource !== undefined)
+          globalResource.amount += (baseFoodAmount * numericRankValue);
+        else
+          this.globalService.globalVar.resources.push(new ResourceValue("Bananas", (baseFoodAmount * numericRankValue), ShopItemTypeEnum.Resources));
+
+        this.lookupService.addResourceToResourceList(new ResourceValue("Bananas", (baseFoodAmount * numericRankValue), ShopItemTypeEnum.Resources), this.globalService.globalVar.previousEventRewards);
+      }
+
+      if (distanceCovered >= carrotRewardDistance * numericRankValue &&
+        this.globalService.globalVar.eventRaceData.foodRewardsObtained === 6) {
+        this.globalService.globalVar.eventRaceData.remainingRewards -= 1;
+        this.globalService.globalVar.eventRaceData.foodRewardsObtained += 1;
+        var globalResource = this.globalService.globalVar.resources.find(x => x.name === "Carrots");
+        if (globalResource !== null && globalResource !== undefined)
+          globalResource.amount += (baseFoodAmount * numericRankValue);
+        else
+          this.globalService.globalVar.resources.push(new ResourceValue("Carrots", (baseFoodAmount * numericRankValue), ShopItemTypeEnum.Resources));
+
+        this.lookupService.addResourceToResourceList(new ResourceValue("Carrots", (baseFoodAmount * numericRankValue), ShopItemTypeEnum.Resources), this.globalService.globalVar.previousEventRewards);
+      }
+
+      if (distanceCovered >= mangoReward2Distance * numericRankValue &&
+        this.globalService.globalVar.eventRaceData.foodRewardsObtained === 7) {
+        this.globalService.globalVar.eventRaceData.remainingRewards -= 1;
+        this.globalService.globalVar.eventRaceData.foodRewardsObtained += 1;
+        var globalResource = this.globalService.globalVar.resources.find(x => x.name === "Mangoes");
+        if (globalResource !== null && globalResource !== undefined)
+          globalResource.amount += (secondMangoAmount * numericRankValue);
+        else
+          this.globalService.globalVar.resources.push(new ResourceValue("Mangoes", (secondMangoAmount * numericRankValue), ShopItemTypeEnum.Resources));
+
+        this.lookupService.addResourceToResourceList(new ResourceValue("Mangoes", (secondMangoAmount * numericRankValue), ShopItemTypeEnum.Resources), this.globalService.globalVar.previousEventRewards);
+      }
     }
   }
 
@@ -657,7 +816,7 @@ export class AppComponent {
         continue;
       }
 
-      var raceResult = this.raceLogicService.runRace(freeRace);      
+      var raceResult = this.raceLogicService.runRace(freeRace);
     }
   }
 

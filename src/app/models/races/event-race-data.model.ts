@@ -25,7 +25,7 @@ export class GrandPrixData {
     eventAbilityData: EventAbilityData;
     isCatchingUp: boolean;
     isLoading: boolean;
-
+    
     rank: string;
     @Type(() => Terrain) 
     raceTerrain: Terrain;    
@@ -33,6 +33,7 @@ export class GrandPrixData {
     distanceCovered: number;  
     remainingRewards: number;
     totalRewards: number;
+    foodRewardsObtained: number;
     coinRewardsObtained: number;
     renownRewardsObtained: number;
     tokenRewardsObtained: number;  
@@ -67,6 +68,7 @@ export class GrandPrixData {
     @Type(() => RelayEffect)
     queuedRelayEffects: RelayEffect[];
     isGrandPrixCompleted: boolean;
+    triggerEnergyFloorRelay = false;
     
     constructor() {
         this.weekStartDay = 2;// TODO: set this back to 2 //tues 9 am to thurs 12 pm (noon)
@@ -91,6 +93,7 @@ export class GrandPrixData {
 
         this.remainingRewards = 0;
         this.totalRewards = 0;
+        this.foodRewardsObtained = 0;
         this.coinRewardsObtained = 0;
         this.renownRewardsObtained = 0;
         this.tokenRewardsObtained = 0;

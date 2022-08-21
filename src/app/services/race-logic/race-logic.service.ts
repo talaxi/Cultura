@@ -48,7 +48,7 @@ export class RaceLogicService {
 
   runRace(race: Race, expediteRace?: boolean): RaceResult {
     //console.log("Race Info:");
-    //console.log(race);
+    //console.log(race);    
 
     this.currentBurstOpportunity = 0;
     this.currentLostFocusOpportunity = 0;
@@ -242,8 +242,9 @@ export class RaceLogicService {
 
         //check previous animal for relay effects here                
         if (!(this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix &&
-          this.globalService.globalVar.eventRaceData.animalAlreadyPrepped))
-          this.PrepareRacingAnimal(raceResult, framesPassed, lastAnimalDisplayName, racingAnimal, completedAnimals, item, lastLeg, undefined, undefined, previousRacerVelocity, previousRacerFocusMs, previousRacerAdaptabilityMs);
+          this.globalService.globalVar.eventRaceData.animalAlreadyPrepped)) {
+          this.PrepareRacingAnimal(raceResult, framesPassed, lastAnimalDisplayName, racingAnimal, completedAnimals, item, lastLeg, undefined, undefined, previousRacerVelocity, previousRacerFocusMs, previousRacerAdaptabilityMs);          
+        }
 
         this.prepareRacingLeg(item, racingAnimal);
 
@@ -303,6 +304,11 @@ export class RaceLogicService {
           passedAveragePace = true;
 
         aheadOfAveragePace = false;
+      }
+
+      if (this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix)
+      {
+        statLossFromExhaustion = this.globalService.getAnimalStatLossFromExhaustionEventRace(racingAnimal);        
       }
 
       if (previousEventRaceSegmentData !== undefined && previousEventRaceSegmentData !== null) {
@@ -580,7 +586,7 @@ export class RaceLogicService {
           raceResult.addRaceUpdate(framesPassed, animalDisplayName + " stumbles!");
         }
 
-        if (racingAnimal.currentStats.stamina === 0) {
+        if (racingAnimal.currentStats.stamina === 0) {          
           var exhaustionStatLossModifier = .9;
           var exhaustionStatLossPair = this.globalService.globalVar.modifiers.find(item => item.text === "exhaustionStatLossModifier");
           if (exhaustionStatLossPair !== undefined)
@@ -593,7 +599,7 @@ export class RaceLogicService {
             exhaustionStatLossModifier = 1 - statLoss;
           }
 
-          statLossFromExhaustion = statLossFromExhaustion * exhaustionStatLossModifier;
+          statLossFromExhaustion = statLossFromExhaustion * exhaustionStatLossModifier;          
 
           var exhaustionStatLossMinimumModifier = .1;
           var exhaustionStatLossMinimumModifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "exhaustionStatLossMinimumModifier");
@@ -660,7 +666,7 @@ export class RaceLogicService {
           if (racingAnimal.raceVariables.stumbled) {
             currentRacerEffect = RacerEffectEnum.Stumble;
             var lostVelocity = velocityBeforeEffect - (velocityBeforeEffect * currentPath.stumbleSeverity);
-            
+
             if (velocity > maxSpeedFloor)
               velocity -= lostVelocity / racingAnimal.raceVariables.defaultStumbledLength;
             racingAnimal.raceVariables.currentStumbledLength -= 1;
@@ -902,7 +908,7 @@ export class RaceLogicService {
             pathsClearedWithoutLosingFocus = 0;
           else
             pathsClearedWithoutLosingFocus += 1;
-          
+
           if (pathsClearedWithoutLosingFocus >= 3) {
             if (racingAnimal.type === AnimalTypeEnum.Whale && racingAnimal.ability.name === "Unparalleled Focus") {
               racingAnimal.ability.abilityInUse = true;
@@ -1440,7 +1446,7 @@ export class RaceLogicService {
       raceResult.wasSuccessful = true;
       raceResult.totalFramesPassed = framesPassed;
       raceResult.distanceCovered = race.raceUI.distanceCoveredByFrame[framesPassed - 1];
-
+      
       raceResult.addRaceUpdate(framesPassed, "You won the race!");
     }
     else {
@@ -1718,7 +1724,7 @@ export class RaceLogicService {
     this.racingAnimals.forEach(animal => {
       if (this.selectedRace.isCircuitRace)
         breedGaugeIncrease = this.lookupService.getCircuitBreedGaugeIncrease(animal);
-      else
+      else if (this.selectedRace.raceType !== RaceTypeEnum.trainingTrack)
         breedGaugeIncrease = this.lookupService.getLocalBreedGaugeIncrease(animal);
 
       this.globalService.IncreaseAnimalBreedGauge(animal, breedGaugeIncrease);
@@ -3130,8 +3136,13 @@ export class RaceLogicService {
 
   setStaminaLossForEventAnimal(statLossFromExhaustion: number, type: AnimalTypeEnum) {
     this.globalService.globalVar.eventRaceData.animalData.forEach(animal => {
-      if (animal.associatedAnimalType === type)
+      if (animal.associatedAnimalType === type) {
         animal.exhaustionStatReduction = statLossFromExhaustion;
+        if (statLossFromExhaustion < (this.globalService.globalVar.relayEnergyFloor / 100))
+        {          
+          this.globalService.globalVar.eventRaceData.triggerEnergyFloorRelay = true;
+        }
+      }
     });
   }
 }

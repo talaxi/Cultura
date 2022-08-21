@@ -52,6 +52,14 @@
     margin: 1rem;
 }
 
+.spaced {
+    margin-left: .5em;
+}
+
+.energyInput {
+    width: 2rem;
+}
+
 .rightSpaced {
     margin-right: 1rem;
   }

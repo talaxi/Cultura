@@ -22,7 +22,7 @@ export class VersionControlService {
   constructor(private globalService: GlobalService, private lookupService: LookupService, private utilityService: UtilityService) { }
 
   //add to this in descending order
-  gameVersions = [1.10, 1.09, 1.08, 1.07, 1.06, 1.05, 1.04, 1.03, 1.02, 1.01, 1.00];
+  gameVersions = [1.11, 1.10, 1.09, 1.08, 1.07, 1.06, 1.05, 1.04, 1.03, 1.02, 1.01, 1.00];
 
   getListAscended() {
     var ascendedList: number[] = [];
@@ -133,6 +133,15 @@ export class VersionControlService {
         "Added option to 'Export to File'/'Import from File' to make saving and loading easier.\n\n" +
         "Removed 'Stats' navigation page. It was really bare bones and just added more to the length of the navigation bar. I will eventually re-implement this in a better fashion.\n\n" +
         "Various bug fixes and UI improvements.";
+    if (version === 1.11)
+      changes = "The Grand Prix has returned!" +
+        "<ul><li>New items have been added as rewards up to the 1 million meter mark for the first rank of the Grand Prix.</li>" +
+        "<li>There were some minor adjustments to Token cost of items from the Token shop.</li>" +
+        "<li>You can now set the desired energy level of your animals before they relay.</li>" +
+        "<li>Bug fixes related to Grand Prix.</li></ul>" +
+        "A new item has been added to the shop (Gingko Leaves) that allow you to reset your Breed level and incubator upgrades back to their default levels. In return, you gain 1000% Breed XP until you get back to the Breed Level you were originally at. This will allow those who felt like they want to redo their incubator upgrades to be able to do so quickly.\n\n" +
+        "Putting an animal in the incubator now pauses their current training instead of cancelling it.\n\n" +
+    "Various bug fixes and UI improvements.";
 
     return changes;
   }
@@ -161,6 +170,8 @@ export class VersionControlService {
       date = new Date('2022-08-11 12:00:00');
     if (version === 1.10)
       date = new Date('2022-08-16 12:00:00');
+    if (version === 1.11)
+      date = new Date('2022-08-21 12:00:00');
 
     return date.toDateString().replace(/^\S+\s/, '');
   }
@@ -678,18 +689,18 @@ export class VersionControlService {
             if (teamManager !== null && teamManager !== undefined)
               teamManager.totalShopQuantity = 19;
 
-              var talentPoints = new ShopItem();
-              talentPoints.name = "Talent Point Voucher";
-              talentPoints.purchasePrice.push(this.globalService.getMedalResourceValue(25));
-              talentPoints.basePurchasePrice.push(this.globalService.getMedalResourceValue(25));
-              talentPoints.infiniteAmount = true;
-              talentPoints.canHaveMultiples = true;
-              talentPoints.quantityAdditive = 25;
-              talentPoints.isAvailable = false;
-              if (this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.circuitRank) >= 53)
-                talentPoints.isAvailable = true;
-              talentPoints.type = ShopItemTypeEnum.Specialty;
-              specialtyShop.itemList.push(talentPoints);
+            var talentPoints = new ShopItem();
+            talentPoints.name = "Talent Point Voucher";
+            talentPoints.purchasePrice.push(this.globalService.getMedalResourceValue(25));
+            talentPoints.basePurchasePrice.push(this.globalService.getMedalResourceValue(25));
+            talentPoints.infiniteAmount = true;
+            talentPoints.canHaveMultiples = true;
+            talentPoints.quantityAdditive = 25;
+            talentPoints.isAvailable = false;
+            if (this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.circuitRank) >= 53)
+              talentPoints.isAvailable = true;
+            talentPoints.type = ShopItemTypeEnum.Specialty;
+            specialtyShop.itemList.push(talentPoints);
           }
 
           if (this.globalService.globalVar.animals.find(item => item.type === AnimalTypeEnum.Hare)?.isAvailable) {
@@ -764,6 +775,64 @@ export class VersionControlService {
               salamander.ability.efficiency = 45;
           }
 
+        }
+        else if (version === 1.11) {
+          if (this.globalService.globalVar.eventRaceData !== undefined &&
+            (this.globalService.globalVar.eventRaceData.currentEventEndDate === null || this.globalService.globalVar.eventRaceData.currentEventEndDate === undefined)) {
+            this.globalService.globalVar.eventRaceData = new GrandPrixData();
+            this.globalService.globalVar.eventRaceData.initialSetupComplete = false;
+          }
+
+          var specialtyShop = this.globalService.globalVar.shop.find(item => item.name === "Food");
+          if (specialtyShop !== null && specialtyShop !== undefined) {
+            var gingkoLeaf = new ShopItem();
+            gingkoLeaf.name = "Gingko Leaves";
+            gingkoLeaf.shortDescription = "Reset Breed Level for a single animal back to 1 and remove all incubator upgrade gains. Increase Breed XP Gain by 1000% until Breed Level returns to what it was.";
+            gingkoLeaf.purchasePrice.push(new ResourceValue("Coins", 3500));
+            gingkoLeaf.canHaveMultiples = true;
+            gingkoLeaf.type = ShopItemTypeEnum.Food;
+            gingkoLeaf.infiniteAmount = true;
+            gingkoLeaf.isAvailable = true;
+            specialtyShop.itemList.push(gingkoLeaf);
+          }
+
+          var metersPerCoinsGrandPrixModifier = this.globalService.globalVar.modifiers.find(item => item.text === "metersPerCoinsGrandPrixModifier");
+          if (metersPerCoinsGrandPrixModifier !== undefined)
+            metersPerCoinsGrandPrixModifier.value = 2500000;
+
+          var segmentCompleteMoraleBoostModifier = this.globalService.globalVar.modifiers.find(item => item.text === "segmentCompleteMoraleBoostModifier");
+          if (segmentCompleteMoraleBoostModifier !== undefined)
+            segmentCompleteMoraleBoostModifier.value = .1;
+
+          var weatherMoraleBoostModifier = this.globalService.globalVar.modifiers.find(item => item.text === "weatherMoraleBoostModifier");
+          if (weatherMoraleBoostModifier !== undefined)
+            weatherMoraleBoostModifier.value = .5;
+
+          this.globalService.globalVar.relayEnergyFloor = 50;
+          this.globalService.globalVar.pinnacleFloor = "Z";
+          this.globalService.globalVar.unlockables.set("thePinnacle", false);
+
+          var tier2 = this.globalService.globalVar.tokenShop.find(item => item.name === "Tier 2");
+          if (tier2 !== undefined) {
+            var coins = tier2.itemList.find(item => item.name === "Coins");
+            var breedXpCertificate = tier2.itemList.find(item => item.name === "Training Breed XP Gain Certificate");
+            var drCertificate = tier2.itemList.find(item => item.name === "Diminishing Returns Increase Certificate");
+
+            if (coins !== undefined) {
+              coins.purchasePrice = [];
+              coins.purchasePrice.push(new ResourceValue("Tokens", 1));
+            }
+
+            if (breedXpCertificate !== undefined) {
+              breedXpCertificate.purchasePrice = [];
+              breedXpCertificate.purchasePrice.push(new ResourceValue("Tokens", 2));
+            }
+
+            if (drCertificate !== undefined) {
+              drCertificate.purchasePrice = [];
+              drCertificate.purchasePrice.push(new ResourceValue("Tokens", 4));
+            }
+          }
         }
 
         this.globalService.globalVar.currentVersion = version;

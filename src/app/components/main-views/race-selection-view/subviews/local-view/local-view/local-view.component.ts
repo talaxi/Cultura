@@ -20,12 +20,15 @@ export class LocalViewComponent implements OnInit {
   availableMonoRace: Race;
   availableDuoRace: Race;
   availableRainbowRace: Race;
+  availablePinnacleRace: Race;
   areMonoRacesAvailable: boolean;
   areDuoRacesAvailable: boolean;
   areRainbowRacesAvailable: boolean;
+  arePinnacleRacesAvailable: boolean;
   monoRaceRank: string;
   duoRaceRank: string;
   rainbowRaceRank: string;
+  pinnacleRaceFloor: string;
   @Output() raceSelected = new EventEmitter<Race>();
   freeRaceTimer = "";
   freeRacesRemaining = 10;
@@ -49,6 +52,10 @@ export class LocalViewComponent implements OnInit {
     var nextRainbowRace = this.getNextAvailableSpecialRace(LocalRaceTypeEnum.Rainbow);
     if (nextRainbowRace !== undefined)
       this.availableRainbowRace = nextRainbowRace;
+
+      var nextPinnacleRace = this.getNextAvailableSpecialRace(LocalRaceTypeEnum.Pinnacle);
+      if (nextPinnacleRace !== undefined)
+        this.availablePinnacleRace = nextPinnacleRace;
       
     var primaryDeck = this.globalService.globalVar.animalDecks.find(item => item.isPrimaryDeck);
     if (primaryDeck !== undefined && primaryDeck !== null)
@@ -66,6 +73,8 @@ export class LocalViewComponent implements OnInit {
         this.duoRaceRank = this.utilityService.getNumericValueOfCircuitRank(this.availableDuoRace.requiredRank).toString();
       if (this.availableRainbowRace !== null && this.availableRainbowRace !== undefined)
         this.rainbowRaceRank = this.utilityService.getNumericValueOfCircuitRank(this.availableRainbowRace.requiredRank).toString();
+      if (this.availablePinnacleRace !== null && this.availablePinnacleRace !== undefined)
+        this.pinnacleRaceFloor = this.utilityService.getNumericValueOfCircuitRank(this.availablePinnacleRace.requiredRank).toString();
     }
     else {
       if (this.availableMonoRace !== null && this.availableMonoRace !== undefined)
@@ -74,11 +83,14 @@ export class LocalViewComponent implements OnInit {
         this.duoRaceRank = this.availableDuoRace.requiredRank;
       if (this.availableRainbowRace !== null && this.availableRainbowRace !== undefined)
         this.rainbowRaceRank = this.availableRainbowRace.requiredRank;
+      if (this.availablePinnacleRace !== null && this.availablePinnacleRace !== undefined)
+        this.pinnacleRaceFloor = this.availablePinnacleRace.requiredRank;
     }
 
     this.areMonoRacesAvailable = this.lookupService.isItemUnlocked("monoRace");
     this.areDuoRacesAvailable = this.lookupService.isItemUnlocked("duoRace");
     this.areRainbowRacesAvailable = this.lookupService.isItemUnlocked("rainbowRace");
+    this.arePinnacleRacesAvailable = this.lookupService.isItemUnlocked("thePinnacle");
   }
 
   getNextAvailableSpecialRace(raceType: LocalRaceTypeEnum) {
@@ -88,6 +100,8 @@ export class LocalViewComponent implements OnInit {
       this.globalService.GenerateDuoRaces(this.globalService.globalVar.duoRank);
     if (raceType === LocalRaceTypeEnum.Rainbow)
       this.globalService.GenerateRainbowRaces(this.globalService.globalVar.rainbowRank);
+    if (raceType === LocalRaceTypeEnum.Pinnacle)
+      this.globalService.GeneratePinnacleRaces(this.globalService.globalVar.pinnacleFloor);
 
     return this.globalService.globalVar.localRaces.find(item => item.localRaceType === raceType);
   }

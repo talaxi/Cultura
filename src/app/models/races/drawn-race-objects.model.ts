@@ -1,4 +1,5 @@
 import { DrawnRaceObjectEnum } from "../drawn-race-object-enum.model";
+import { OrbTypeEnum } from "../orb-type-enum.model";
 
 export class DrawnRaceObject {
     objectType: DrawnRaceObjectEnum;
@@ -10,5 +11,5 @@ export class DrawnRaceObject {
 
         if (xDistance !== undefined)
             this.xDistance = xDistance;
-    }
+    }    
 }

@@ -155,6 +155,8 @@ export class ShoppingItemComponent implements OnInit {
         this.displayName = "Turnip";
       if (this.displayName === "Mangoes")
         this.displayName = "Mango";
+        if (this.displayName === "Gingko Leaves")
+        this.displayName = "Gingko Leaf";
     }
 
     if (this.selectedItem.type === ShopItemTypeEnum.Food || this.selectedItem.type === ShopItemTypeEnum.Resources) {

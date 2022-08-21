@@ -11,9 +11,11 @@ import { GlobalService } from 'src/app/services/global-service.service';
 export class AnimalComponent implements OnInit {
   @Input() selectedAnimal: Animal;
   @Input() isTrainingTrackView: boolean = false;
+  @Input() isAnimalDetailView = false;
   colorConditional: any;
   trainingTrackRewardsRemaining = 0;
-  trainingTrackTotalRewards = 0;
+  trainingTrackTotalRewards = 0;  
+  breedLevel = 0;
 
   constructor() { }
 
@@ -30,6 +32,8 @@ export class AnimalComponent implements OnInit {
       this.trainingTrackRewardsRemaining = this.selectedAnimal.allTrainingTracks.getTotalRewardsRemaining();
       this.trainingTrackTotalRewards = this.selectedAnimal.allTrainingTracks.getTotalRewardCount();
     }
+
+    this.breedLevel = this.selectedAnimal.breedLevel;
   }
 
 }

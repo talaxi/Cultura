@@ -17,7 +17,7 @@
                 <br />
                 <h6 class="clickableText keyword" (click)="openRewardsModal(noviceRewardModal)">{{selectedAnimal.allTrainingTracks.noviceTrack.totalRewards - selectedAnimal.allTrainingTracks.noviceTrack.rewardsObtained}} / {{ selectedAnimal.allTrainingTracks.noviceTrack.totalRewards }} rewards remaining</h6>
                 <br />
-                <app-race-description (click)="selectTrackRace(noviceTrackRace)" [race]="noviceTrackRace" [showStartText]="true"></app-race-description>
+                <app-race-description (click)="selectTrackRace(noviceTrackRace)" [race]="noviceTrackRace" [selectedAnimal]="selectedAnimal" [showStartText]="true"></app-race-description>
             </div>
             <hr />
         </div>
@@ -28,7 +28,7 @@
                 <br />
                 <h6 class="clickableText keyword" (click)="openRewardsModal(intermediateRewardModal)">{{selectedAnimal.allTrainingTracks.intermediateTrack.totalRewards - selectedAnimal.allTrainingTracks.intermediateTrack.rewardsObtained}} / {{ selectedAnimal.allTrainingTracks.intermediateTrack.totalRewards }} rewards remaining</h6>
                 <br />
-                <app-race-description (click)="selectTrackRace(intermediateTrackRace)" [race]="intermediateTrackRace" [showStartText]="true"></app-race-description>
+                <app-race-description (click)="selectTrackRace(intermediateTrackRace)" [race]="intermediateTrackRace" [selectedAnimal]="selectedAnimal" [showStartText]="true"></app-race-description>
             </div>
             <hr />
         </div>
@@ -39,7 +39,7 @@
                 <br />
                 <h6 class="clickableText keyword" (click)="openRewardsModal(masterRewardModal)">{{selectedAnimal.allTrainingTracks.masterTrack.totalRewards - selectedAnimal.allTrainingTracks.masterTrack.rewardsObtained}} / {{ selectedAnimal.allTrainingTracks.masterTrack.totalRewards }} rewards remaining</h6>
                 <br />
-                <app-race-description (click)="selectTrackRace(masterTrackRace)" [race]="masterTrackRace" [showStartText]="true"></app-race-description>
+                <app-race-description (click)="selectTrackRace(masterTrackRace)" [race]="masterTrackRace" [selectedAnimal]="selectedAnimal" [showStartText]="true"></app-race-description>
             </div>
             <hr />
         </div>

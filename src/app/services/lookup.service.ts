@@ -398,6 +398,9 @@ export class LookupService {
       }
     }
 
+    if (animal !== undefined && animal.previousBreedLevel > animal.breedLevel)
+      increaseAmount *= 10;
+
     return increaseAmount;
   }
 
@@ -410,6 +413,9 @@ export class LookupService {
     if (animal !== undefined && animal.miscStats.bonusBreedXpGainFromCircuitRaces !== undefined && animal.miscStats.bonusBreedXpGainFromCircuitRaces !== null && animal.miscStats.bonusBreedXpGainFromCircuitRaces > 0)
       increaseAmount += animal.miscStats.bonusBreedXpGainFromCircuitRaces;
 
+      if (animal !== undefined && animal.previousBreedLevel > animal.breedLevel)
+      increaseAmount *= 10;
+
     return increaseAmount;
   }
 
@@ -421,6 +427,9 @@ export class LookupService {
 
     if (animal !== undefined && animal.miscStats.bonusBreedXpGainFromLocalRaces !== undefined && animal.miscStats.bonusBreedXpGainFromLocalRaces !== null && animal.miscStats.bonusBreedXpGainFromLocalRaces > 0)
       increaseAmount += animal.miscStats.bonusBreedXpGainFromLocalRaces;
+
+      if (animal !== undefined && animal.previousBreedLevel > animal.breedLevel)
+      increaseAmount *= 10;
 
     return increaseAmount;
   }
@@ -1028,7 +1037,7 @@ export class LookupService {
           "Third Use - Gain 30% Acceleration Rate.<br/>" +
           "Fourth Use - Gain 30% Focus Distance.<br/>" +
           "Fifth Use - Gain 30% Max Speed.<br/>" +
-          "After 5 uses, every subsequent use will give 30% to all of these stats.<br/>" +
+          "After 5 uses, every subsequent use will give 30% to all of these stats. " +
           + cooldownDisplay + " second cooldown.";
         }
         if (abilityName === "Herd Mentality") {
@@ -1536,11 +1545,11 @@ export class LookupService {
     var text = "";
 
     if (weatherCluster === WeatherEnum.clearSkies)
-      text = "Race terrain shifts between Sunny, Torrid, and Ashfall. \n Flatland and Volcanic Morale increased by 20%.";
+      text = "Race terrain shifts between Sunny, Torrid, and Ashfall. \n Flatland and Volcanic Morale increased by 50%.";
     else if (weatherCluster === WeatherEnum.inclementWeather)
-      text = "Race terrain shifts between Rainy, Stormy, Maelstrom, and Hailstorm. \n Ocean Morale increased by 20%.";
+      text = "Race terrain shifts between Rainy, Stormy, Maelstrom, and Hailstorm. \n Ocean Morale increased by 50%.";
     else if (weatherCluster === WeatherEnum.coldSpell)
-      text = "Race terrain shifts between Sunny, Snowfall, and Hailstorm. \n Tundra and Mountain Morale increased by 20%.";
+      text = "Race terrain shifts between Sunny, Snowfall, and Hailstorm. \n Tundra and Mountain Morale increased by 50%.";
 
     return text;
   }

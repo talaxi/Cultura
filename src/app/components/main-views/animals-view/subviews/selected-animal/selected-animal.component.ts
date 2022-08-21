@@ -4,6 +4,7 @@ import { AnimalTypeEnum } from 'src/app/models/animal-type-enum.model';
 import { Ability } from 'src/app/models/animals/ability.model';
 import { AnimalStats } from 'src/app/models/animals/animal-stats.model';
 import { Animal } from 'src/app/models/animals/animal.model';
+import { IncubatorStatUpgrades } from 'src/app/models/animals/incubator-stat-upgrades.model';
 import { NavigationEnum } from 'src/app/models/navigation-enum.model';
 import { ResourceValue } from 'src/app/models/resources/resource-value.model';
 import { ShopItemTypeEnum } from 'src/app/models/shop-item-type-enum.model';
@@ -381,7 +382,18 @@ export class SelectedAnimalComponent implements OnInit {
     if (this.selectedItem.itemType === ShopItemTypeEnum.Food) {
       if (this.selectedItem.name === "Mangoes") {
         this.selectedAnimal.breedLevel += +this.selectedItemQuantity;
+        if (this.selectedAnimal.mangoesUsed === null || this.selectedAnimal.mangoesUsed === undefined)
+          this.selectedAnimal.mangoesUsed = 0;
+        this.selectedAnimal.mangoesUsed += +this.selectedItemQuantity;
+
         this.globalService.calculateAnimalRacingStats(this.selectedAnimal);
+      }
+      else if (this.selectedItem.name === "Gingko Leaves") {        
+        this.selectedAnimal.previousBreedLevel = this.selectedAnimal.breedLevel;
+        this.selectedAnimal.breedLevel = 1;
+        this.selectedAnimal.breedGaugeMax = 200;
+        this.selectedAnimal.breedGaugeXp = 0;
+        this.selectedAnimal.incubatorStatUpgrades = new IncubatorStatUpgrades();
       }
       else {
         var increaseStats = new AnimalStats(0, 0, 0, 0, 0, 0);

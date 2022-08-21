@@ -40,6 +40,19 @@
                 Next Rainbow Race Available After Circuit Rank Up
             </div>
             <hr />
-        </div>    
+        </div>  
+        
+        <div id="pinnacleRaceSection" *ngIf="arePinnacleRacesAvailable">
+            <div (click)="selectLocalRace(availablePinnacleRace)" class="pinnacleRace"
+                *ngIf="availablePinnacleRace !== undefined && availablePinnacleRace !== null">
+                <span class="s4Heading">Pinnacle Floor <strong>{{ pinnacleRaceFloor }}</strong> </span>
+                <br />
+                <app-race-description [race]="availablePinnacleRace" [showStartText]="true"></app-race-description>
+            </div>
+            <div class="pinnacleRace" *ngIf="availablePinnacleRace === undefined || availablePinnacleRace == null">
+                Next Pinnacle Floor Available After Circuit Rank Up
+            </div>
+            <hr />
+        </div>
     </div>
 </div>

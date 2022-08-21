@@ -3,5 +3,6 @@ export enum LocalRaceTypeEnum {
     Free,
     Mono,
     Duo,
-    Rainbow
+    Rainbow,
+    Pinnacle
 }

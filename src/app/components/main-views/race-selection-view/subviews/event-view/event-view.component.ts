@@ -27,7 +27,7 @@ export class EventViewComponent implements OnInit {
   isEventRaceAvailable: boolean;
   popoverText: string = "";
   cannotRace = false;
-  eventRaceReleased = false; //TODO: Set this to false for next deploy
+  eventRaceReleased = true;
   eventRaceNotice = "";
   eventRaceTimer = "";
   bonusTime = "";
@@ -43,6 +43,7 @@ export class EventViewComponent implements OnInit {
   rewardRows: any[][];
   rewardCells: any[];
   @ViewChild('loadingModal', { static: true }) loadingContent: ElementRef;
+  relayEnergy = 50;
 
   constructor(public globalService: GlobalService, private gameLoopService: GameLoopService, public lookupService: LookupService,
     private raceLogicService: RaceLogicService, private sanitizer: DomSanitizer, private modalService: NgbModal,
@@ -51,7 +52,8 @@ export class EventViewComponent implements OnInit {
   ngOnInit(): void {
     this.grandPrixData = this.globalService.globalVar.eventRaceData;
     this.previousRaceRewardList = this.globalService.globalVar.previousEventRewards;
-    
+    this.relayEnergy = this.globalService.globalVar.relayEnergyFloor;
+
     this.grandPrixUnlocked = this.lookupService.isItemUnlocked("grandPrix");
     this.weekDayGrandPrixTimeSpan = this.lookupService.getWeekDayGrandPrixTimeSpan();
     this.weekEndGrandPrixTimeSpan = this.lookupService.getWeekEndGrandPrixTimeSpan();
@@ -119,13 +121,13 @@ export class EventViewComponent implements OnInit {
       else {
         var showSlowSegmentWarning = this.globalService.shouldShowSlowSegmentWarning(racingAnimal);
 
-        if (this.lookupService.slowSegmentWarning(showSlowSegmentWarning)) {          
-          this.globalService.globalVar.eventRaceData.isRunning = true; 
+        if (this.lookupService.slowSegmentWarning(showSlowSegmentWarning)) {
+          this.globalService.globalVar.eventRaceData.isRunning = true;
 
           this.globalService.globalVar.eventRaceData.currentRaceSegment = this.globalService.generateGrandPrixSegment(racingAnimal);
           this.globalService.globalVar.eventRaceData.currentRaceSegmentResult = this.raceLogicService.runRace(this.globalService.globalVar.eventRaceData.currentRaceSegment);
-          this.globalService.globalVar.eventRaceData.nextRaceSegment = this.globalService.generateGrandPrixSegment(racingAnimal);                    
-          
+          this.globalService.globalVar.eventRaceData.nextRaceSegment = this.globalService.generateGrandPrixSegment(racingAnimal);
+
           if (this.globalService.globalVar.eventRaceData.currentRaceSegmentCount === 0) {
             this.globalService.globalVar.eventRaceData.currentRaceSegmentCount += 1;
           }
@@ -145,6 +147,7 @@ export class EventViewComponent implements OnInit {
 
   setupEventTime() {
     var secondsToEvent = this.globalService.getTimeToEventRace();
+    //console.log("Seconds To Event: " + secondsToEvent + " Bonus Time: " + this.globalService.globalVar.eventRaceData.bonusTime);
     if (secondsToEvent > 0) {
       if (this.globalService.globalVar.eventRaceData.bonusTime > 0)
         this.isEventRaceAvailable = true;
@@ -230,9 +233,74 @@ export class EventViewComponent implements OnInit {
   openInfoModal(content: any) {
     this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
   }
-  
+
   openLoadingModal(content: any) {
     this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
+  }
+
+  getGrandPrixFoodRewardsPopover() {
+    var text = "";
+    var rewardsObtained = 0;
+    var totalRewards = 0;
+    var numericRankModifier = this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.eventRaceData.rank);
+
+    if (numericRankModifier > 1)
+      return text;
+
+    var strawberryRewardDistance = 25000;
+    var appleRewardDistance = 50000;
+    var orangeRewardDistance = 75000;
+    var mangoRewardDistance = 100000;
+    var turnipRewardDistance = 250000;
+    var bananaRewardDistance = 500000;
+    var carrotRewardDistance = 750000;
+    var mangoReward2Distance = 1000000;
+    var baseFoodAmount = 100;
+    var firstMangoAmount = 5;
+    var secondMangoAmount = 10;
+    
+    if (this.globalService.globalVar.eventRaceData.distanceCovered >= strawberryRewardDistance)
+      text += "<span class='crossed'>" + strawberryRewardDistance.toLocaleString() + " meters - +" + baseFoodAmount + " Strawberries</span><br/>";
+    else
+      text += strawberryRewardDistance.toLocaleString() + " meters - +" + baseFoodAmount + " Strawberries<br/>";
+
+    if (this.globalService.globalVar.eventRaceData.distanceCovered >= appleRewardDistance)
+    text += "<span class='crossed'>" + appleRewardDistance.toLocaleString() + " meters - +" + baseFoodAmount + " Apples</span><br/>";
+    else
+      text += appleRewardDistance.toLocaleString() + " meters - +" + baseFoodAmount + " Apples<br/>";
+
+    if (this.globalService.globalVar.eventRaceData.distanceCovered >= orangeRewardDistance)
+    text += "<span class='crossed'>" + orangeRewardDistance.toLocaleString() + " meters - +" + baseFoodAmount + " Oranges</span><br/>";
+    else
+      text += orangeRewardDistance.toLocaleString() + " meters - +" + baseFoodAmount + " Oranges<br/>";
+
+    if (this.globalService.globalVar.eventRaceData.distanceCovered >= mangoRewardDistance)
+    text += "<span class='crossed'>" + mangoRewardDistance.toLocaleString() + " meters - +" + firstMangoAmount + " Mangoes</span><br/>";
+    else
+      text += mangoRewardDistance.toLocaleString() + " meters - +" + baseFoodAmount + " Mangoes<br/>";
+
+    if (this.globalService.globalVar.eventRaceData.distanceCovered >= turnipRewardDistance)
+    text += "<span class='crossed'>" + turnipRewardDistance.toLocaleString() + " meters - +" + baseFoodAmount + " Turnips</span><br/>";
+    else
+      text += turnipRewardDistance.toLocaleString() + " meters - +" + baseFoodAmount + " Turnips<br/>";
+
+    if (this.globalService.globalVar.eventRaceData.distanceCovered >= bananaRewardDistance)
+    text += "<span class='crossed'>" + bananaRewardDistance.toLocaleString() + " meters - +" + baseFoodAmount + " Bananas</span><br/>";
+    else
+      text += bananaRewardDistance.toLocaleString() + " meters - +" + baseFoodAmount + " Bananas<br/>";
+
+    if (this.globalService.globalVar.eventRaceData.distanceCovered >= carrotRewardDistance)
+    text += "<span class='crossed'>" + carrotRewardDistance.toLocaleString() + " meters - +" + baseFoodAmount + " Carrots</span><br/>";
+    else
+      text += carrotRewardDistance.toLocaleString() + " meters - +" + baseFoodAmount + " Carrots<br/>";  
+
+      if (this.globalService.globalVar.eventRaceData.distanceCovered >= mangoReward2Distance)
+      text += "<span class='crossed'>" + mangoReward2Distance.toLocaleString() + " meters - +" + secondMangoAmount + " Mangoes</span><br/>";
+      else
+        text += mangoReward2Distance.toLocaleString() + " meters - +" + secondMangoAmount + " Mangoes<br/>";
+  
+
+    return text;
   }
 
   getGrandPrixRenownRewardsPopover() {
@@ -352,6 +420,17 @@ export class EventViewComponent implements OnInit {
 
     if (this.rewardCells.length !== 0)
       this.rewardRows.push(this.rewardCells);
+  }
+
+  updateRelayEnergy() {
+    if (this.relayEnergy < 50)
+      this.relayEnergy = 50;
+
+    if (this.relayEnergy > 99)
+      this.relayEnergy = 99;
+
+    if (this.globalService.globalVar.eventRaceData !== null && this.globalService.globalVar.eventRaceData !== undefined)
+      this.globalService.globalVar.relayEnergyFloor = this.relayEnergy;
   }
 
   ngOnDestroy() {
