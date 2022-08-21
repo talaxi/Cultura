@@ -1706,7 +1706,7 @@ export class GlobalService {
 
       returnVal = [medalsAmount + " Medals", ""];
 
-      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(40) + "Barn Row 3";
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(40) + "Barn Row 4";
     }
     else if (numericValue === 40) {
       this.globalVar.unlockables.set("barnRow4", true);
@@ -1805,7 +1805,7 @@ export class GlobalService {
 
       returnVal = ["Amethyst Orb", "You receive a glowing violet orb. What it does is a mystery."];
 
-      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(58) + "Barn Row 4";
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(58) + "Barn Row 5";
     }
     else if (numericValue === 58) {
       this.globalVar.unlockables.set("barnRow5", true);

@@ -77,6 +77,13 @@ export class ComponentCommunicationService {
       this.switchView.next(newView);
   }
 
+  setShopType(newShop: ShopsEnum) {
+    if (newShop !== this.selectShopView.value)
+    {      
+      this.selectShopView.next(newShop);
+    }
+  }
+
   getShopView(): Observable<ShopsEnum> {
     return this.selectShopView.asObservable();
   }

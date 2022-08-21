@@ -50,6 +50,7 @@ export class TokenShopViewComponent implements OnInit {
   }
 
   returnToEventRaceView() {
+    this.componentCommunicationService.setShopType(ShopsEnum.regular);
     this.componentCommunicationService.setRaceView(NavigationEnum.raceselection, RaceTypeEnum.event);
   }
 
