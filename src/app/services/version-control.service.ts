@@ -143,7 +143,7 @@ export class VersionControlService {
         "Putting an animal in the incubator now pauses their current training instead of cancelling it.\n\n" +
     "Various bug fixes and UI improvements.";
     if (version === 1.12)
-      changes = "Added ability to not relay to animals below entered energy amount.\n\n" + 
+      changes = "Added option to not relay to animals below entered energy amount during Grand Prix.\n\n" + 
       "Bug fixes related to Grand Prix.";
     return changes;
   }
