@@ -22,7 +22,7 @@ export class VersionControlService {
   constructor(private globalService: GlobalService, private lookupService: LookupService, private utilityService: UtilityService) { }
 
   //add to this in descending order
-  gameVersions = [1.11, 1.10, 1.09, 1.08, 1.07, 1.06, 1.05, 1.04, 1.03, 1.02, 1.01, 1.00];
+  gameVersions = [1.12, 1.11, 1.10, 1.09, 1.08, 1.07, 1.06, 1.05, 1.04, 1.03, 1.02, 1.01, 1.00];
 
   getListAscended() {
     var ascendedList: number[] = [];
@@ -142,7 +142,9 @@ export class VersionControlService {
         "A new item has been added to the shop (Gingko Leaves) that allow you to reset your Breed level and incubator upgrades back to their default levels. In return, you gain 1000% Breed XP until you get back to the Breed Level you were originally at. This will allow those who felt like they want to redo their incubator upgrades to be able to do so quickly.\n\n" +
         "Putting an animal in the incubator now pauses their current training instead of cancelling it.\n\n" +
     "Various bug fixes and UI improvements.";
-
+    if (version === 1.12)
+      changes = "Added ability to not relay to animals below entered energy amount.\n\n" + 
+      "Bug fixes related to Grand Prix.";
     return changes;
   }
 
@@ -172,6 +174,8 @@ export class VersionControlService {
       date = new Date('2022-08-16 12:00:00');
     if (version === 1.11)
       date = new Date('2022-08-21 12:00:00');
+    if (version === 1.12)
+      date = new Date('2022-08-22 12:00:00');
 
     return date.toDateString().replace(/^\S+\s/, '');
   }
@@ -833,6 +837,9 @@ export class VersionControlService {
               drCertificate.purchasePrice.push(new ResourceValue("Tokens", 4));
             }
           }
+        }
+        else if (version === 1.12) {
+          this.globalService.globalVar.doNotRelayBelowEnergyFloor = false;
         }
 
         this.globalService.globalVar.currentVersion = version;

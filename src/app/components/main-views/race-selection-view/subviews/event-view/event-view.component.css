@@ -56,6 +56,20 @@
     margin-left: .5em;
 }
 
+  .checkboxOption label {
+    display: inline-block;
+    white-space: nowrap;
+  }
+  
+  .checkboxOption input {
+    vertical-align: middle;
+  }
+  
+  .checkboxOption label span {
+    vertical-align: middle;
+  }
+  
+
 .energyInput {
     width: 2rem;
 }

@@ -57,6 +57,14 @@
             <label for="relay-energy">Your animals will automatically relay the segment after they lose energy and it is below </label>
             <input id="relay-energy" name="relay-energy" type="text" class="spaced energyInput" minlength="2" maxlength="2" [(ngModel)]="relayEnergy" (change)="updateRelayEnergy()">
              %. <em>Must be between 50% and 99%.</em>
+             <br/>
+             <span class="checkboxOption" triggers="mouseenter:mouseleave">
+                <label>
+                    <input type="checkbox" class="rightSpaced" id="skipRace" [(ngModel)]="doNotAutoRelayBelowEnergyFloor"
+                        (input)="doNotAutoRelayBelowEnergyFloorToggle()">
+                    <span>Do not relay to animals below <strong>{{relayEnergy}}</strong>% energy.</span>
+                </label>
+            </span>
         </div>
 
         <div *ngIf="previousRaceRewardList !== undefined && previousRaceRewardList !== null && !isEventRaceAvailable">

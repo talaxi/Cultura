@@ -1047,7 +1047,7 @@ export class LookupService {
           return "Reduce stamina by 10%. For <span class='keyword'>" + effectiveAmountDisplay + "</span> meters, Acceleration Rate is increased by 25% of the amount of stamina lost. " + cooldownDisplay + " second cooldown.";
         }
         if (abilityName === "Special Delivery") {
-          return "Increase all remaining racers' Burst Max Speed Bonus by <span class='keyword'>" + effectiveAmountDisplay + "</span>% of your remaining Stamina percentage, up to 100%, after completing your leg. This does not occur if you run out of Stamina during your leg. Passive.<br/><em>During Event Races:</em> Relay effectiveness reduced to 25%. Can trigger up to 25 times. Effects remain for the duration of the race.";
+          return "Increase all remaining racers' Burst Max Speed Bonus by <span class='keyword'>" + effectiveAmountDisplay + "</span>% of your remaining Stamina percentage, up to 100%, after completing your leg. This does not occur if you run out of Stamina during your leg. Passive.<br/><em>During Event Races:</em> Relay effectiveness reduced to 25%. Can trigger up to 25 times. This does not occur if your energy is below 100% at the end of the segment. Effects remain for the duration of the race.";
         }
         if (abilityName === "Careful Toboggan") {
           return "Increase Adaptability Distance by 60% for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. " + cooldownDisplay + " second cooldown.";

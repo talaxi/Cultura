@@ -83,7 +83,7 @@ export class GrandPrixData {
 
         this.distanceCovered = 0;
         this.grandPrixTimeLength = 51 * 60 * 60; //TODO: set back to 51 hours
-        this.segmentTime = 180; //each segment is 180 seconds on average
+        this.segmentTime = 120; //each segment is 120 seconds on average
         this.segmentTimeCounter = 0;
         this.overallTimeCounter = 0;
         this.rank = "Z";

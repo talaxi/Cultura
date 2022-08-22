@@ -44,6 +44,7 @@ export class EventViewComponent implements OnInit {
   rewardCells: any[];
   @ViewChild('loadingModal', { static: true }) loadingContent: ElementRef;
   relayEnergy = 50;
+  doNotAutoRelayBelowEnergyFloor = false;
 
   constructor(public globalService: GlobalService, private gameLoopService: GameLoopService, public lookupService: LookupService,
     private raceLogicService: RaceLogicService, private sanitizer: DomSanitizer, private modalService: NgbModal,
@@ -53,6 +54,7 @@ export class EventViewComponent implements OnInit {
     this.grandPrixData = this.globalService.globalVar.eventRaceData;
     this.previousRaceRewardList = this.globalService.globalVar.previousEventRewards;
     this.relayEnergy = this.globalService.globalVar.relayEnergyFloor;
+    this.doNotAutoRelayBelowEnergyFloor = this.globalService.globalVar.doNotRelayBelowEnergyFloor;
 
     this.grandPrixUnlocked = this.lookupService.isItemUnlocked("grandPrix");
     this.weekDayGrandPrixTimeSpan = this.lookupService.getWeekDayGrandPrixTimeSpan();
@@ -431,6 +433,11 @@ export class EventViewComponent implements OnInit {
 
     if (this.globalService.globalVar.eventRaceData !== null && this.globalService.globalVar.eventRaceData !== undefined)
       this.globalService.globalVar.relayEnergyFloor = this.relayEnergy;
+  }
+  
+  doNotAutoRelayBelowEnergyFloorToggle = () => {
+    this.doNotAutoRelayBelowEnergyFloor = !this.doNotAutoRelayBelowEnergyFloor;
+    this.globalService.globalVar.doNotRelayBelowEnergyFloor = this.doNotAutoRelayBelowEnergyFloor;
   }
 
   ngOnDestroy() {

@@ -179,7 +179,7 @@ export class RaceLogicService {
       var previousEventRaceSegmentData: EventSegmentCarryOverData | undefined = undefined;
       //do carry over for event race segments -- should not carry over if prep hasn't happened because animal may have switched
       if (this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix &&
-        this.globalService.globalVar.eventRaceData.animalAlreadyPrepped) {
+        this.globalService.globalVar.eventRaceData.animalAlreadyPrepped && this.globalService.globalVar.eventRaceData.previousRaceSegmentData.racingAnimalType === racingAnimal.type) {          
         previousEventRaceSegmentData = this.globalService.globalVar.eventRaceData.previousRaceSegmentData;
       }
 
@@ -308,10 +308,13 @@ export class RaceLogicService {
 
       if (this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix)
       {
-        statLossFromExhaustion = this.globalService.getAnimalStatLossFromExhaustionEventRace(racingAnimal);        
+        statLossFromExhaustion = this.globalService.getAnimalStatLossFromExhaustionEventRace(racingAnimal);    
+                  
+        if (statLossFromExhaustion < 1)
+          racingAnimal.raceVariables.ranOutOfStamina = true;    
       }
 
-      if (previousEventRaceSegmentData !== undefined && previousEventRaceSegmentData !== null) {
+      if (previousEventRaceSegmentData !== undefined && previousEventRaceSegmentData !== null) {        
         velocity = previousEventRaceSegmentData.velocity;
         racingAnimal.currentStats.stamina = previousEventRaceSegmentData.stamina;
         deepBreathingStaminaGain = previousEventRaceSegmentData.deepBreathingStaminaGain;
@@ -324,7 +327,7 @@ export class RaceLogicService {
         fleetingSpeedIncreaseMultiplier = previousEventRaceSegmentData.fleetingSpeedIncreaseMultiplier;
         whalePowerStored = previousEventRaceSegmentData.whalePowerStored;
         pathsClearedWithoutLosingFocus = previousEventRaceSegmentData.pathsClearedWithoutLosingFocus;
-        racingAnimal.raceVariables = previousEventRaceSegmentData.raceVariables.makeCopy();
+        racingAnimal.raceVariables = previousEventRaceSegmentData.raceVariables.makeCopy();        
 
         if (previousEventRaceSegmentData.nineTailsBuffs.length > 0) {
           previousEventRaceSegmentData.nineTailsBuffs.forEach(buff => {
@@ -356,7 +359,7 @@ export class RaceLogicService {
         }
         longDistanceTalentIncreaseAccelerationWithLowVelocity = previousEventRaceSegmentData.longDistanceTalentIncreaseAccelerationWithLowVelocity;
         maxSpeedFloor = previousEventRaceSegmentData.maxSpeedFloor;
-        statLossFromExhaustion = previousEventRaceSegmentData.statLossFromExhaustion;
+        statLossFromExhaustion = previousEventRaceSegmentData.statLossFromExhaustion;      
       }
 
       //get values from relay effects      
@@ -1164,6 +1167,8 @@ export class RaceLogicService {
         race.raceUI.staminaPercentByFrame.push((Math.round((racingAnimal.currentStats.stamina / animalMaxStamina) * precisionModifier) / precisionModifier));
         race.raceUI.racerEffectByFrame.push(currentRacerEffect);
 
+        //console.log("Stamina By Frame: " + racingAnimal.currentStats.stamina + " / " + animalMaxStamina + " = " + (racingAnimal.currentStats.stamina / animalMaxStamina))
+
         this.handleRacePositionByFrame(race, distancePerSecond, framesPassed,
           this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix ?
             this.globalService.globalVar.eventRaceData.distanceCovered + distanceCovered : distanceCovered);
@@ -1453,7 +1458,7 @@ export class RaceLogicService {
       raceResult.wasSuccessful = false;
       raceResult.totalFramesPassed = framesPassed;
       raceResult.distanceCovered = race.raceUI.distanceCoveredByFrame[framesPassed - 1];
-
+      //console.log("Lost race somehow? "); //if you've changed event race start time, it triggers this
       raceResult.addRaceUpdate(framesPassed, "You lost the race...");
     }
 
@@ -2030,6 +2035,7 @@ export class RaceLogicService {
           this.globalService.increaseAbilityXp(animalGivingRelayEffect, relayAbilityXpIncrease);
         }
       }
+      
       if (animalGivingRelayEffect.type === AnimalTypeEnum.Caribou && animalGivingRelayEffect.ability.name === "Special Delivery" && !animalGivingRelayEffect.raceVariables.ranOutOfStamina) {
         if (animalMaxStamina === undefined)
           animalMaxStamina = 1;

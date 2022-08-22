@@ -78,11 +78,12 @@ export class GlobalService {
     this.globalVar.freeRaceCounter = 0;
     this.globalVar.freeRaceTimePeriodCounter = 0;
     this.globalVar.lastTimeStamp = Date.now();
-    this.globalVar.currentVersion = 1.11; //TODO: this needs to be automatically increased or something, too easy to forget
-    this.globalVar.startingVersion = 1.11;
+    this.globalVar.currentVersion = 1.12; //TODO: this needs to be automatically increased or something, too easy to forget
+    this.globalVar.startingVersion = 1.12;
     this.globalVar.startDate = new Date();
     this.globalVar.notifications = new Notifications();
     this.globalVar.relayEnergyFloor = 50;
+    this.globalVar.doNotRelayBelowEnergyFloor = false;
 
     //Initialize modifiers
     this.InitializeModifiers();
@@ -3009,7 +3010,7 @@ export class GlobalService {
     if (this.globalVar.circuitRaces === null || this.globalVar.circuitRaces === undefined || this.globalVar.circuitRaces.length === 0)
       this.GenerateCircuitRacesForRank(this.globalVar.circuitRank);
 
-    //TODO: if doing holiday event, need to reconsider this
+    //TODO: if doing holiday event, need to reconsider using grandprix variables
     var expectedSegmentTotals = Math.ceil(this.globalVar.eventRaceData.grandPrixTimeLength / this.globalVar.eventRaceData.segmentTime);
     var expectedSegmentDistance = totalDistance / expectedSegmentTotals;
     var smoothnessModifier = 1; //if the distance is particularly low, make the segment feel longer and vice versa. range from .75 to 1.25 maybe        

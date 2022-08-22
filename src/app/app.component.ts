@@ -17,6 +17,7 @@ import { ShopItemTypeEnum } from './models/shop-item-type-enum.model';
 import { GrandPrixData } from './models/races/event-race-data.model';
 import { RaceCourseTypeEnum } from './models/race-course-type-enum.model';
 import { UtilityService } from './services/utility/utility.service';
+import { Animal } from './models/animals/animal.model';
 declare var LZString: any;
 
 @Component({
@@ -66,7 +67,7 @@ export class AppComponent {
 
     if (devMode) {
       this.globalService.globalVar.tutorials.tutorialCompleted = true;
-      this.globalService.devModeInitialize(80, 3);
+      this.globalService.devModeInitialize(45, 2);
     }
 
     this.versionControlService.updatePlayerVersion();
@@ -393,9 +394,8 @@ export class AppComponent {
     }
   }
 
-  checkForEventRelayAnimal(isCatchingUp: boolean, catchUpTime: number) {
+  checkForEventRelayAnimal(isCatchingUp: boolean, catchUpTime: number) {    
     var didAnimalSwitch = false;
-    //var energyFloorToRelay = this.globalService.globalVar.eventRaceData.energyFloorToRelay / 100;
 
     if (this.globalService.globalVar.eventRaceData.animalData.some(animal => animal.isSetToRelay)) {
       this.globalService.globalVar.eventRaceData.animalData.forEach(data => {
@@ -421,14 +421,36 @@ export class AppComponent {
         var eventDeck = this.globalService.globalVar.animalDecks.find(item => item.isEventDeck);
 
         if (eventDeck !== undefined && eventDeck !== null) {
-          var animalsCapableOfRacing = eventDeck?.selectedAnimals.filter(item => item.breedLevel >= requiredBreedLevel);
+          var filteredAnimals = eventDeck.selectedAnimals.filter(item => item.breedLevel >= requiredBreedLevel);
+          var animalsCapableOfRacing: Animal[] = [];
+
+            if (eventDeck.isCourseOrderActive) {
+              for (var i = 0; i < filteredAnimals.length; i++) {
+                if (eventDeck.courseTypeOrder.length > i) {
+                  var type = eventDeck.courseTypeOrder[i];
+                  var matchingAnimal = filteredAnimals.find(animal => animal.raceCourseType === type);
+                  if (matchingAnimal !== undefined)
+                    animalsCapableOfRacing.push(matchingAnimal);
+                }
+              }
+            }
+            else {
+              filteredAnimals.forEach(animal => {
+                animalsCapableOfRacing.push(animal);
+              });
+            }       
+            
+            var relayExhaustionFloor = .5;
+            if (this.globalService.globalVar.doNotRelayBelowEnergyFloor)
+              relayExhaustionFloor = this.globalService.globalVar.relayEnergyFloor / 100;   
+            
           animalsCapableOfRacing = animalsCapableOfRacing.filter(item => {
             var associatedData = this.globalService.globalVar.eventRaceData.animalData.find(data => data.associatedAnimalType === item.type);
 
             if (associatedData !== undefined && associatedData !== null) {
-              var globalData = this.globalService.globalVar.animals.find(data => data.type === item.type);
+              var globalData = this.globalService.globalVar.animals.find(data => data.type === item.type);              
 
-              return (associatedData.exhaustionStatReduction >= .5 && !this.globalService.shouldShowSlowSegmentWarning(globalData)) || associatedData.associatedAnimalType === racingAnimal.type;
+              return (associatedData.exhaustionStatReduction >= relayExhaustionFloor && !this.globalService.shouldShowSlowSegmentWarning(globalData)) || associatedData.associatedAnimalType === racingAnimal.type;
             }
 
             return false;
@@ -488,7 +510,7 @@ export class AppComponent {
             this.globalService.globalVar.eventRaceData.animalData.forEach(item => {
               item.isCurrentlyRacing = false;
             });
-
+            
             this.globalService.globalVar.eventRaceData.animalAlreadyPrepped = false;
             this.globalService.globalVar.eventRaceData.isRunning = false;
             this.globalService.globalVar.eventRaceData.overallTimeCounter -= this.globalService.globalVar.eventRaceData.segmentTimeCounter;

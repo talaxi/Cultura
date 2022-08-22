@@ -82,6 +82,7 @@ export class GlobalVariables {
     startDate: Date;
     showBreedWarning = true;
     relayEnergyFloor: number;
+    doNotRelayBelowEnergyFloor: boolean;
 
     constructor(existingVariables?: GlobalVariables) {
         if (existingVariables !== undefined && existingVariables !== null) {            
