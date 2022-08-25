@@ -1,0 +1,18 @@
+.orbView {    
+    background-color: var(--background-secondary);
+    border-color: var(--background-tertiary);
+    color: var(--foreground-default);
+  }
+
+.centered {
+    text-align: center;
+}
+
+.progressBar {
+    width: 50%;
+}
+
+.progressBarContainer {
+    display: flex;
+    justify-content: space-evenly;
+}

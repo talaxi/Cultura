@@ -1927,26 +1927,7 @@ export class LookupService {
       return 0;
 
     return affectedAnimalData.morale;
-  }
-
-  changeGrandPrixMorale(type: AnimalTypeEnum, change: number) {
-    if (this.globalService.globalVar.eventRaceData === undefined || this.globalService.globalVar.eventRaceData === null ||
-      this.globalService.globalVar.eventRaceData.animalData === undefined || this.globalService.globalVar.eventRaceData.animalData === null ||
-      this.globalService.globalVar.eventRaceData.animalData.length === 0)
-      return;
-
-    var affectedAnimalData = this.globalService.globalVar.eventRaceData.animalData.find(item => item.associatedAnimalType === type);
-    if (affectedAnimalData === null || affectedAnimalData === undefined)
-      return;
-
-    affectedAnimalData.morale += change;
-
-    if (affectedAnimalData.morale >= 3)
-      affectedAnimalData.morale = 3;
-
-    if (affectedAnimalData.morale <= .5)
-      affectedAnimalData.morale = .5;
-  }
+  }  
 
   slowSegmentWarning(showWarning: boolean) {
     if (!showWarning)

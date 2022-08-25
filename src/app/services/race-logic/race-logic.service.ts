@@ -4,10 +4,13 @@ import { Subject } from 'rxjs';
 import { AnimalTypeEnum } from 'src/app/models/animal-type-enum.model';
 import { AnimalStats } from 'src/app/models/animals/animal-stats.model';
 import { Animal } from 'src/app/models/animals/animal.model';
+import { Orb } from 'src/app/models/animals/orb.model';
 import { RaceVariables } from 'src/app/models/animals/race-variables.model';
+import { DrawnRaceObjectEnum } from 'src/app/models/drawn-race-object-enum.model';
 import { EquipmentEnum } from 'src/app/models/equipment-enum.model';
 import { EventRaceTypeEnum } from 'src/app/models/event-race-type-enum.model';
 import { LocalRaceTypeEnum } from 'src/app/models/local-race-type-enum.model';
+import { OrbTypeEnum } from 'src/app/models/orb-type-enum.model';
 import { RaceCourseTypeEnum } from 'src/app/models/race-course-type-enum.model';
 import { RaceDesignEnum } from 'src/app/models/race-design-enum.model';
 import { RaceTypeEnum } from 'src/app/models/race-type-enum.model';
@@ -46,7 +49,7 @@ export class RaceLogicService {
   constructor(private globalService: GlobalService, private lookupService: LookupService, private utilityService: UtilityService,
     private initializeService: InitializeService) { }
 
-  runRace(race: Race, expediteRace?: boolean): RaceResult {
+  runRace(race: Race, isAutoFreeRace?: boolean, expediteRace?: boolean): RaceResult {
     //console.log("Race Info:");
     //console.log(race);    
 
@@ -68,6 +71,9 @@ export class RaceLogicService {
       race.timeToComplete = 60;
     var distancePerSecond = totalRaceDistance / race.timeToComplete;
     var selectedDeck = this.globalService.globalVar.animalDecks.find(item => item.isPrimaryDeck);
+    if (isAutoFreeRace !== undefined && isAutoFreeRace)
+      selectedDeck = this.globalService.globalVar.animalDecks.find(item => item.autoRunFreeRace);
+
     var completedLegCount = 0;
     this.timeToComplete = race.timeToComplete;
     var completedAnimals: Animal[] = [];
@@ -91,6 +97,8 @@ export class RaceLogicService {
     }
 
     this.racingAnimals = this.lookupService.getAnimalsFromAnimalDeck(selectedDeck);
+
+    this.setupBraziers();
 
     race.raceUI.distanceCoveredByFrame = [];
     race.raceUI.velocityByFrame = [];
@@ -146,7 +154,8 @@ export class RaceLogicService {
       else
         racingAnimal = this.racingAnimals.find(animal => animal.raceCourseType === item.courseType);
 
-      if (racingAnimal === null || racingAnimal === undefined) {
+      if (racingAnimal === null || racingAnimal === undefined) {        
+        console.log(this.selectedRace);
         alert("You've run into an error! Please try again. If you have the time, please export your data under the Settings tab and send me the data and any relevant info at CulturaIdle@gmail.com. Thank you!");
         return;
       }
@@ -169,7 +178,8 @@ export class RaceLogicService {
       else
         racingAnimal = this.racingAnimals.find(animal => animal.raceCourseType === item.courseType);
 
-      if (racingAnimal === null || racingAnimal === undefined) {
+      if (racingAnimal === null || racingAnimal === undefined) {        
+        console.log(this.selectedRace);
         alert("You've run into an error! Please try again. If you have the time, please export your data under the Settings tab and send me the data and any relevant info at CulturaIdle@gmail.com. Thank you!");
         return;
       }
@@ -179,7 +189,7 @@ export class RaceLogicService {
       var previousEventRaceSegmentData: EventSegmentCarryOverData | undefined = undefined;
       //do carry over for event race segments -- should not carry over if prep hasn't happened because animal may have switched
       if (this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix &&
-        this.globalService.globalVar.eventRaceData.animalAlreadyPrepped && this.globalService.globalVar.eventRaceData.previousRaceSegmentData.racingAnimalType === racingAnimal.type) {          
+        this.globalService.globalVar.eventRaceData.animalAlreadyPrepped && this.globalService.globalVar.eventRaceData.previousRaceSegmentData.racingAnimalType === racingAnimal.type) {
         previousEventRaceSegmentData = this.globalService.globalVar.eventRaceData.previousRaceSegmentData;
       }
 
@@ -243,7 +253,7 @@ export class RaceLogicService {
         //check previous animal for relay effects here                
         if (!(this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix &&
           this.globalService.globalVar.eventRaceData.animalAlreadyPrepped)) {
-          this.PrepareRacingAnimal(raceResult, framesPassed, lastAnimalDisplayName, racingAnimal, completedAnimals, item, lastLeg, undefined, undefined, previousRacerVelocity, previousRacerFocusMs, previousRacerAdaptabilityMs);          
+          this.PrepareRacingAnimal(raceResult, framesPassed, lastAnimalDisplayName, racingAnimal, completedAnimals, item, lastLeg, undefined, undefined, previousRacerVelocity, previousRacerFocusMs, previousRacerAdaptabilityMs);
         }
 
         this.prepareRacingLeg(item, racingAnimal);
@@ -306,15 +316,14 @@ export class RaceLogicService {
         aheadOfAveragePace = false;
       }
 
-      if (this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix)
-      {
-        statLossFromExhaustion = this.globalService.getAnimalStatLossFromExhaustionEventRace(racingAnimal);    
-                  
+      if (this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix) {
+        statLossFromExhaustion = this.globalService.getAnimalStatLossFromExhaustionEventRace(racingAnimal);
+
         if (statLossFromExhaustion < 1)
-          racingAnimal.raceVariables.ranOutOfStamina = true;    
+          racingAnimal.raceVariables.ranOutOfStamina = true;
       }
 
-      if (previousEventRaceSegmentData !== undefined && previousEventRaceSegmentData !== null) {        
+      if (previousEventRaceSegmentData !== undefined && previousEventRaceSegmentData !== null) {
         velocity = previousEventRaceSegmentData.velocity;
         racingAnimal.currentStats.stamina = previousEventRaceSegmentData.stamina;
         deepBreathingStaminaGain = previousEventRaceSegmentData.deepBreathingStaminaGain;
@@ -327,7 +336,7 @@ export class RaceLogicService {
         fleetingSpeedIncreaseMultiplier = previousEventRaceSegmentData.fleetingSpeedIncreaseMultiplier;
         whalePowerStored = previousEventRaceSegmentData.whalePowerStored;
         pathsClearedWithoutLosingFocus = previousEventRaceSegmentData.pathsClearedWithoutLosingFocus;
-        racingAnimal.raceVariables = previousEventRaceSegmentData.raceVariables.makeCopy();        
+        racingAnimal.raceVariables = previousEventRaceSegmentData.raceVariables.makeCopy();
 
         if (previousEventRaceSegmentData.nineTailsBuffs.length > 0) {
           previousEventRaceSegmentData.nineTailsBuffs.forEach(buff => {
@@ -359,7 +368,8 @@ export class RaceLogicService {
         }
         longDistanceTalentIncreaseAccelerationWithLowVelocity = previousEventRaceSegmentData.longDistanceTalentIncreaseAccelerationWithLowVelocity;
         maxSpeedFloor = previousEventRaceSegmentData.maxSpeedFloor;
-        statLossFromExhaustion = previousEventRaceSegmentData.statLossFromExhaustion;      
+        statLossFromExhaustion = previousEventRaceSegmentData.statLossFromExhaustion;
+        //console.log("Previous Segment Stat Loss: " + statLossFromExhaustion);
       }
 
       //get values from relay effects      
@@ -407,6 +417,7 @@ export class RaceLogicService {
         }
       }
 
+      //console.log("Stat Loss Before Race: " + statLossFromExhaustion);
       for (var i = framesPassed; i <= this.timeToComplete * this.frameModifier; i++) {
         //Race logic here
         framesInCurrentLeg += 1;
@@ -545,7 +556,7 @@ export class RaceLogicService {
             if (lostFocusMoraleLossPair !== null && lostFocusMoraleLossPair !== undefined)
               lostFocusMoraleLoss = lostFocusMoraleLossPair.value;
 
-            this.lookupService.changeGrandPrixMorale(racingAnimal.type, -lostFocusMoraleLoss);
+            this.globalService.changeGrandPrixMorale(racingAnimal.type, -lostFocusMoraleLoss);
           }
 
           if (racingAnimal.ability.name === "Night Vision" && racingAnimal.type === AnimalTypeEnum.Gecko) {
@@ -583,13 +594,13 @@ export class RaceLogicService {
             if (stumbleMoraleLossPair !== null && stumbleMoraleLossPair !== undefined)
               stumbleMoraleLoss = stumbleMoraleLossPair.value;
 
-            this.lookupService.changeGrandPrixMorale(racingAnimal.type, -stumbleMoraleLoss);
+            this.globalService.changeGrandPrixMorale(racingAnimal.type, -stumbleMoraleLoss);
           }
 
           raceResult.addRaceUpdate(framesPassed, animalDisplayName + " stumbles!");
         }
 
-        if (racingAnimal.currentStats.stamina === 0) {          
+        if (racingAnimal.currentStats.stamina === 0) {
           var exhaustionStatLossModifier = .9;
           var exhaustionStatLossPair = this.globalService.globalVar.modifiers.find(item => item.text === "exhaustionStatLossModifier");
           if (exhaustionStatLossPair !== undefined)
@@ -602,9 +613,9 @@ export class RaceLogicService {
             exhaustionStatLossModifier = 1 - statLoss;
           }
 
-          statLossFromExhaustion = statLossFromExhaustion * exhaustionStatLossModifier;          
+          statLossFromExhaustion = statLossFromExhaustion * exhaustionStatLossModifier;
 
-          var exhaustionStatLossMinimumModifier = .1;
+          var exhaustionStatLossMinimumModifier = .3;
           var exhaustionStatLossMinimumModifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "exhaustionStatLossMinimumModifier");
           if (exhaustionStatLossMinimumModifierPair !== undefined)
             exhaustionStatLossMinimumModifier = exhaustionStatLossMinimumModifierPair.value;
@@ -791,6 +802,7 @@ export class RaceLogicService {
           velocity = 0;
 
         var modifiedMaxSpeed = racingAnimal.currentStats.maxSpeedMs;
+        //console.log("Pre Mod Max Speed: " + modifiedMaxSpeed);
         modifiedMaxSpeed *= item.terrain.maxSpeedModifier;
 
         modifiedMaxSpeed *= statLossFromExhaustion;
@@ -941,7 +953,7 @@ export class RaceLogicService {
             if (burstMoraleBoostPair !== null && burstMoraleBoostPair !== undefined)
               burstMoraleBoost = burstMoraleBoostPair.value;
 
-            this.lookupService.changeGrandPrixMorale(racingAnimal.type, burstMoraleBoost);
+            this.globalService.changeGrandPrixMorale(racingAnimal.type, burstMoraleBoost);
           }
 
           if (racingAnimal.type === AnimalTypeEnum.Monkey && racingAnimal.ability.name === "Frenzy") {
@@ -1151,6 +1163,8 @@ export class RaceLogicService {
         distanceCovered += distanceCoveredPerFrame > distanceToGo ? distanceToGo : distanceCoveredPerFrame;
         distanceToGo -= distanceCoveredPerFrame;
 
+        this.giveOrbXpBasedOnMeters(distanceCovered, racingAnimal, velocity);
+
         var precisionModifier = 1e5;
         if (this.timeToComplete * this.frameModifier > 20000) //333 seconds
           precisionModifier = 1e4;
@@ -1174,6 +1188,11 @@ export class RaceLogicService {
             this.globalService.globalVar.eventRaceData.distanceCovered + distanceCovered : distanceCovered);
 
         this.handleStamina(racingAnimal, raceResult, distanceCoveredPerFrame, framesPassed, item.terrain, animalMaxStamina, currentDistanceInLeg, item, coldBloodedIncreaseMultiplierObj);
+
+        if (this.selectedRace.drawnObjects !== null && this.selectedRace.drawnObjects !== undefined && this.selectedRace.drawnObjects.length > 0) {
+          //handle braziers
+          this.handleBrazierLighting(i, distanceCovered);
+        }
 
         if (!didAnimalLoseFocus)
           racingAnimal.raceVariables.metersSinceLostFocus += distanceCoveredPerFrame;
@@ -1437,7 +1456,7 @@ export class RaceLogicService {
         if (segmentMoraleBoostPair !== null && segmentMoraleBoostPair !== undefined)
           segmentMoraleBoost = segmentMoraleBoostPair.value;
 
-        this.lookupService.changeGrandPrixMorale(racingAnimal.type, segmentMoraleBoost);
+        this.globalService.changeGrandPrixMorale(racingAnimal.type, segmentMoraleBoost);
 
         this.globalService.globalVar.eventRaceData.previousRaceSegmentData = this.carryOverEventRaceSegmentData(racingAnimal, velocity, permanentMaxSpeedIncreaseMultiplier, permanentAdaptabilityIncreaseMultiplierObj.permanentAdaptabilityIncreaseMultiplier,
           permanentMaxSpeedIncreaseMultiplierObj.permanentMaxSpeedIncreaseMultiplier, feedingFrenzyIncreaseMultiplier, greatMigrationAccelerationIncreaseAdditive,
@@ -1451,7 +1470,7 @@ export class RaceLogicService {
       raceResult.wasSuccessful = true;
       raceResult.totalFramesPassed = framesPassed;
       raceResult.distanceCovered = race.raceUI.distanceCoveredByFrame[framesPassed - 1];
-      
+
       raceResult.addRaceUpdate(framesPassed, "You won the race!");
     }
     else {
@@ -1982,6 +2001,7 @@ export class RaceLogicService {
     }
 
     this.globalService.calculateAnimalRacingStats(animal);
+    //console.log("After Calculating Max Speed: " + animal.currentStats.maxSpeedMs);
 
     if (raceFinished !== true) {
       if (completedAnimals !== undefined && completedAnimals !== null && completedAnimals.length > 0) {
@@ -2035,7 +2055,7 @@ export class RaceLogicService {
           this.globalService.increaseAbilityXp(animalGivingRelayEffect, relayAbilityXpIncrease);
         }
       }
-      
+
       if (animalGivingRelayEffect.type === AnimalTypeEnum.Caribou && animalGivingRelayEffect.ability.name === "Special Delivery" && !animalGivingRelayEffect.raceVariables.ranOutOfStamina) {
         if (animalMaxStamina === undefined)
           animalMaxStamina = 1;
@@ -2410,6 +2430,12 @@ export class RaceLogicService {
 
     //made it through without stumbling
     if (currentPath.currentStumbleOpportunity === currentPath.stumbleOpportunities && currentPath.routeDesign !== RaceDesignEnum.Regular) {
+      //add to emerald when you make it through a path without stumbling
+    if (racingAnimal.equippedOrb !== undefined && racingAnimal.equippedOrb !== null &&
+      this.globalService.getOrbTypeFromResource(racingAnimal.equippedOrb) === OrbTypeEnum.emerald) {
+      this.globalService.increaseEmeraldOrbXp(currentPath.length);
+    }
+
       if (racingAnimal.type === AnimalTypeEnum.Goat && racingAnimal.ability.name === "Sure-footed") {
         if (!(this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix &&
           this.globalService.globalVar.eventRaceData.eventAbilityData.sureFootedUseCount >= this.globalService.globalVar.eventRaceData.eventAbilityData.sureFootedUseCap)) {
@@ -2509,6 +2535,36 @@ export class RaceLogicService {
       animal.type === AnimalTypeEnum.Penguin && animal.ability.name === "Wild Toboggan" ||
       animal.type === AnimalTypeEnum.Fox && animal.ability.name === "Fleeting Speed")
       this.globalService.increaseAbilityXp(animal, 3);
+  }
+
+  giveOrbXpBasedOnMeters(distanceCovered: number, racingAnimal: Animal, velocity: number) {
+    //add to ruby when at or above max speed
+    if (racingAnimal.equippedOrb !== undefined && racingAnimal.equippedOrb !== null &&
+      this.globalService.getOrbTypeFromResource(racingAnimal.equippedOrb) === OrbTypeEnum.ruby &&
+      velocity >= racingAnimal.currentStats.maxSpeedMs) {
+      this.globalService.increaseRubyOrbXp(distanceCovered);
+    }
+
+    //add to amber when below max speed
+    if (racingAnimal.equippedOrb !== undefined && racingAnimal.equippedOrb !== null &&
+      this.globalService.getOrbTypeFromResource(racingAnimal.equippedOrb) === OrbTypeEnum.amber &&
+      velocity >= racingAnimal.currentStats.maxSpeedMs) {
+      this.globalService.increaseAmberOrbXp(distanceCovered);
+    }
+
+    //add to topaz when you haven't run out of stamina
+    if (racingAnimal.equippedOrb !== undefined && racingAnimal.equippedOrb !== null &&
+      this.globalService.getOrbTypeFromResource(racingAnimal.equippedOrb) === OrbTypeEnum.topaz &&
+      !racingAnimal.raceVariables.ranOutOfStamina) {
+      this.globalService.increaseTopazOrbXp(distanceCovered);
+    }
+
+    //add to sapphire when you haven't lost focus
+    if (racingAnimal.equippedOrb !== undefined && racingAnimal.equippedOrb !== null &&
+      this.globalService.getOrbTypeFromResource(racingAnimal.equippedOrb) === OrbTypeEnum.sapphire &&
+      !racingAnimal.raceVariables.hasLostFocusDuringRace) {
+      this.globalService.increaseSapphireOrbXp(distanceCovered);
+    }
   }
 
   //only use abilities when they are actually useful/able to be used
@@ -3038,6 +3094,52 @@ export class RaceLogicService {
     return ranIntoLava;
   }
 
+  handleBrazierLighting(currentFrame: number, currentDistance: number) {
+    //at the end of drawing, set changeonframe to 1 if the value isn't 0 or undefined. that way it will immediately show up
+    //and will not be caught here so it won't level up again
+    this.selectedRace.drawnObjects.forEach(item => {
+      if (item.changeOnFrame === undefined || item.changeOnFrame === 0) {
+        if (currentDistance > item.xDistance) {
+          item.changeOnFrame = currentFrame;
+
+          //increase Orb level
+          var orbType = this.globalService.getOrbTypeFromBrazier(item.objectType);
+          var orbDetails: Orb | undefined;
+          if (orbType !== undefined)
+            orbDetails = this.globalService.getOrbDetailsFromType(orbType!);
+
+          if (orbType !== undefined && orbDetails !== undefined) {
+            this.selectedRace.rewards.push(this.initializeService.initializeResource(this.globalService.getOrbNameFromType(orbType) + " Level Up", 1, ShopItemTypeEnum.Other));
+            orbDetails.maxLevel += 1;
+          }
+        }
+      }
+    });
+  }
+
+  //need to set frames if they've already been reached because each pinnacle race is regenerated
+  setupBraziers() {
+    if (this.selectedRace.drawnObjects !== undefined && this.selectedRace.drawnObjects.length > 0) {
+      var numericValueOfPinnacleFloor = this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.pinnacleFloor);
+
+      this.selectedRace.drawnObjects.forEach(item => {
+        if (item.objectType === DrawnRaceObjectEnum.amberBrazier || item.objectType === DrawnRaceObjectEnum.rubyBrazier ||
+          item.objectType === DrawnRaceObjectEnum.topazBrazier || item.objectType === DrawnRaceObjectEnum.sapphireBrazier ||
+          item.objectType === DrawnRaceObjectEnum.amethystBrazier || item.objectType === DrawnRaceObjectEnum.emeraldBrazier) {
+          var orbType = this.globalService.getOrbTypeFromBrazier(item.objectType);
+          var orbDetails: Orb | undefined;
+          if (orbType !== undefined)
+            orbDetails = this.globalService.getOrbDetailsFromType(orbType!);
+
+          //console.log(orbDetails?.maxLevel + " vs " + numericValueOfPinnacleFloor);
+          if (orbType !== undefined && orbDetails !== undefined && orbDetails.maxLevel > numericValueOfPinnacleFloor) {
+            item.changeOnFrame = 1;
+          }
+        }
+      });
+    }
+  }
+
   handleRacePositionByFrame(race: Race, averageDistancePerSecond: number, framesPassed: number, distanceCovered: number) {
     var totalRacers = this.lookupService.getTotalRacersByRace(race);
     var currentPosition = totalRacers;
@@ -3144,8 +3246,7 @@ export class RaceLogicService {
     this.globalService.globalVar.eventRaceData.animalData.forEach(animal => {
       if (animal.associatedAnimalType === type) {
         animal.exhaustionStatReduction = statLossFromExhaustion;
-        if (statLossFromExhaustion < (this.globalService.globalVar.relayEnergyFloor / 100))
-        {          
+        if (statLossFromExhaustion < (this.globalService.globalVar.relayEnergyFloor / 100)) {
           this.globalService.globalVar.eventRaceData.triggerEnergyFloorRelay = true;
         }
       }

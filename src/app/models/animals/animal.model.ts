@@ -97,6 +97,7 @@ export class Animal {
         copyAnimal.breedLevel = originalAnimal.breedLevel;
         copyAnimal.trackedAnimalStats = originalAnimal.trackedAnimalStats;
         copyAnimal.trait = originalAnimal.trait;
+        copyAnimal.miscStats = originalAnimal.miscStats.makeCopy(originalAnimal.miscStats);
 
         return copyAnimal;
     }

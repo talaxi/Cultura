@@ -128,6 +128,13 @@
   --progressionKeywordColor: #501da8;
   --specialityKeywordColor: #000000;
   --equipmentKeywordColor: #2C6854;
+
+  --amberColor: #ed8207;
+  --amethystColor: #7b2bcc;
+  --emeraldColor: #50C878;
+  --rubyColor: #9b111e;
+  --sapphireColor: #2554C7;
+  --topazColor: #f5e342;
 }
 
 body {
@@ -402,4 +409,28 @@ button:active:enabled {
 
 .versionListMargin {
   margin-left: 2.5rem;
+}
+
+.amberColor {
+  color: var(--amberColor);
+}
+
+.amethystColor {
+  color: var(--amethystColor);
+}
+
+.emeraldColor {
+  color: var(--emeraldColor);
+}
+
+.rubyColor {
+  color: var(--rubyColor);
+}
+
+.sapphireColor {
+  color: var(--sapphireColor);
+}
+
+.topazColor {
+  color: var(--topazColor);
 }

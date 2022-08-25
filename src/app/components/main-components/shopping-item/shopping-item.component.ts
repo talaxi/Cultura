@@ -193,7 +193,7 @@ export class ShoppingItemComponent implements OnInit {
   BuyItem(): void {
     if (this.canBuyItem()) {
       this.spendResourcesOnItem();
-
+      
       if (this.selectedItem.type === ShopItemTypeEnum.Animal) {
         this.buyAnimal();
       }
@@ -461,12 +461,14 @@ export class ShoppingItemComponent implements OnInit {
     if (this.globalService.globalVar.resources !== undefined && this.globalService.globalVar.resources !== null) {
       if (this.globalService.globalVar.resources.some(x => x.name === this.selectedItem.name)) {
         var globalResource = this.globalService.globalVar.resources.find(x => x.name === this.selectedItem.name);
-        if (globalResource !== null && globalResource !== undefined) {
+        if (globalResource !== null && globalResource !== undefined) {          
           globalResource.amount += modifiedAmountPurchasing;
         }
       }
       else
+      {
         this.globalService.globalVar.resources.push(new ResourceValue(this.selectedItem.name, modifiedAmountPurchasing, ShopItemTypeEnum.Consumable));
+      }
     }
   }
 

@@ -26,4 +26,22 @@ export class MiscStats {
         this.bonusDiminishingReturnsCertificateCount = 0;
         this.certificateUseCap = 30;
     }
+
+    makeCopy(originalStats: MiscStats) {
+        var copyStats = new MiscStats();
+
+        copyStats.bonusBreedXpGainFromCircuitRaces = originalStats.bonusBreedXpGainFromCircuitRaces;
+        copyStats.bonusBreedXpGainFromLocalRaces = originalStats.bonusBreedXpGainFromLocalRaces;
+        copyStats.bonusBreedXpGainFromTraining = originalStats.bonusBreedXpGainFromTraining;
+        copyStats.bonusCircuitBreedXpCertificateCount = originalStats.bonusCircuitBreedXpCertificateCount;
+        copyStats.bonusDiminishingReturnsCertificateCount = originalStats.bonusDiminishingReturnsCertificateCount;
+        copyStats.bonusLocalBreedXpCertificateCount = originalStats.bonusLocalBreedXpCertificateCount;
+        copyStats.bonusTalents = originalStats.bonusTalents;
+        copyStats.bonusTrainingBreedXpCertificateCount = originalStats.bonusTrainingBreedXpCertificateCount;
+        copyStats.certificateUseCap = originalStats.certificateUseCap;
+        copyStats.diminishingReturnsBonus = originalStats.diminishingReturnsBonus;
+        copyStats.trainingTimeReduction = originalStats.trainingTimeReduction;
+
+        return copyStats;
+    }
 }

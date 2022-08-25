@@ -67,7 +67,7 @@ export class AppComponent {
 
     if (devMode) {
       this.globalService.globalVar.tutorials.tutorialCompleted = true;
-      this.globalService.devModeInitialize(45, 2);
+      this.globalService.devModeInitialize(90, 3);
     }
 
     this.versionControlService.updatePlayerVersion();
@@ -197,7 +197,7 @@ export class AppComponent {
         //first check if delta time was in between starting/stopping and calculate any necessary race during that time
         if (this.globalService.globalVar.eventRaceData.remainingEventRaceTime > 0 && new Date() < this.utilityService.addDaysToDate(this.globalService.globalVar.eventRaceData.currentEventEndDate, 1)) {
           this.globalService.globalVar.eventRaceData.segmentTimeCounter = this.globalService.globalVar.eventRaceData.remainingEventRaceTime;
-          this.globalService.globalVar.eventRaceData.overallTimeCounter = this.globalService.globalVar.eventRaceData.remainingEventRaceTime;          
+          this.globalService.globalVar.eventRaceData.overallTimeCounter = this.globalService.globalVar.eventRaceData.remainingEventRaceTime;
         }
         else if (!this.globalService.globalVar.eventRaceData.isCatchingUp) {
           //reset race
@@ -227,7 +227,7 @@ export class AppComponent {
         this.globalService.globalVar.eventRaceData.currentEventEndDate = endDate;
 
       //if setting is active
-      if (this.globalService.globalVar.settings.get("autoStartEventRace")) {        
+      if (this.globalService.globalVar.settings.get("autoStartEventRace")) {
         if (this.globalService.globalVar.eventRaceData.isRunning === false) {
 
           var timeSinceRaceStarted = this.globalService.globalVar.eventRaceData.grandPrixTimeLength - this.globalService.getRemainingEventRaceTime();
@@ -366,11 +366,16 @@ export class AppComponent {
     if (exhaustionGainPair !== null && exhaustionGainPair !== undefined)
       exhaustionGain = exhaustionGainPair.value;
 
+    var currentRacer = this.globalService.getGrandPrixRacingAnimal();
+
     if (this.globalService.globalVar.eventRaceData.exhaustionMoraleUpdateCounter > timerCap) {
       this.globalService.globalVar.eventRaceData.animalData.forEach(item => {
-        item.exhaustionStatReduction += exhaustionGain;
-        if (item.exhaustionStatReduction >= 1)
-          item.exhaustionStatReduction = 1;
+        if (item.associatedAnimalType !== currentRacer?.type) {
+
+          item.exhaustionStatReduction += exhaustionGain;
+          if (item.exhaustionStatReduction >= 1)
+            item.exhaustionStatReduction = 1;
+        }
 
         if (item.morale < 1)
           item.morale += exhaustionGain;
@@ -394,7 +399,7 @@ export class AppComponent {
     }
   }
 
-  checkForEventRelayAnimal(isCatchingUp: boolean, catchUpTime: number) {    
+  checkForEventRelayAnimal(isCatchingUp: boolean, catchUpTime: number) {
     var didAnimalSwitch = false;
 
     if (this.globalService.globalVar.eventRaceData.animalData.some(animal => animal.isSetToRelay)) {
@@ -424,31 +429,31 @@ export class AppComponent {
           var filteredAnimals = eventDeck.selectedAnimals.filter(item => item.breedLevel >= requiredBreedLevel);
           var animalsCapableOfRacing: Animal[] = [];
 
-            if (eventDeck.isCourseOrderActive) {
-              for (var i = 0; i < filteredAnimals.length; i++) {
-                if (eventDeck.courseTypeOrder.length > i) {
-                  var type = eventDeck.courseTypeOrder[i];
-                  var matchingAnimal = filteredAnimals.find(animal => animal.raceCourseType === type);
-                  if (matchingAnimal !== undefined)
-                    animalsCapableOfRacing.push(matchingAnimal);
-                }
+          if (eventDeck.isCourseOrderActive) {
+            for (var i = 0; i < filteredAnimals.length; i++) {
+              if (eventDeck.courseTypeOrder.length > i) {
+                var type = eventDeck.courseTypeOrder[i];
+                var matchingAnimal = filteredAnimals.find(animal => animal.raceCourseType === type);
+                if (matchingAnimal !== undefined)
+                  animalsCapableOfRacing.push(matchingAnimal);
               }
             }
-            else {
-              filteredAnimals.forEach(animal => {
-                animalsCapableOfRacing.push(animal);
-              });
-            }       
-            
-            var relayExhaustionFloor = .5;
-            if (this.globalService.globalVar.doNotRelayBelowEnergyFloor)
-              relayExhaustionFloor = this.globalService.globalVar.relayEnergyFloor / 100;   
-            
+          }
+          else {
+            filteredAnimals.forEach(animal => {
+              animalsCapableOfRacing.push(animal);
+            });
+          }
+
+          var relayExhaustionFloor = .5;
+          if (this.globalService.globalVar.doNotRelayBelowEnergyFloor)
+            relayExhaustionFloor = this.globalService.globalVar.relayEnergyFloor / 100;
+
           animalsCapableOfRacing = animalsCapableOfRacing.filter(item => {
             var associatedData = this.globalService.globalVar.eventRaceData.animalData.find(data => data.associatedAnimalType === item.type);
 
             if (associatedData !== undefined && associatedData !== null) {
-              var globalData = this.globalService.globalVar.animals.find(data => data.type === item.type);              
+              var globalData = this.globalService.globalVar.animals.find(data => data.type === item.type);
 
               return (associatedData.exhaustionStatReduction >= relayExhaustionFloor && !this.globalService.shouldShowSlowSegmentWarning(globalData)) || associatedData.associatedAnimalType === racingAnimal.type;
             }
@@ -510,7 +515,7 @@ export class AppComponent {
             this.globalService.globalVar.eventRaceData.animalData.forEach(item => {
               item.isCurrentlyRacing = false;
             });
-            
+
             this.globalService.globalVar.eventRaceData.animalAlreadyPrepped = false;
             this.globalService.globalVar.eventRaceData.isRunning = false;
             this.globalService.globalVar.eventRaceData.overallTimeCounter -= this.globalService.globalVar.eventRaceData.segmentTimeCounter;
@@ -671,9 +676,9 @@ export class AppComponent {
         if (globalResource !== null && globalResource !== undefined)
           globalResource.amount += (baseFoodAmount * numericRankValue);
         else
-          this.globalService.globalVar.resources.push(new ResourceValue("Strawberries", (baseFoodAmount * numericRankValue), ShopItemTypeEnum.Resources));
+          this.globalService.globalVar.resources.push(new ResourceValue("Strawberries", (baseFoodAmount * numericRankValue), ShopItemTypeEnum.Food));
 
-        this.lookupService.addResourceToResourceList(new ResourceValue("Strawberries", (baseFoodAmount * numericRankValue), ShopItemTypeEnum.Resources), this.globalService.globalVar.previousEventRewards);
+        this.lookupService.addResourceToResourceList(new ResourceValue("Strawberries", (baseFoodAmount * numericRankValue), ShopItemTypeEnum.Food), this.globalService.globalVar.previousEventRewards);
       }
 
       if (distanceCovered >= appleRewardDistance * numericRankValue &&
@@ -684,9 +689,9 @@ export class AppComponent {
         if (globalResource !== null && globalResource !== undefined)
           globalResource.amount += (baseFoodAmount * numericRankValue);
         else
-          this.globalService.globalVar.resources.push(new ResourceValue("Apples", (baseFoodAmount * numericRankValue), ShopItemTypeEnum.Resources));
+          this.globalService.globalVar.resources.push(new ResourceValue("Apples", (baseFoodAmount * numericRankValue), ShopItemTypeEnum.Food));
 
-        this.lookupService.addResourceToResourceList(new ResourceValue("Apples", (baseFoodAmount * numericRankValue), ShopItemTypeEnum.Resources), this.globalService.globalVar.previousEventRewards);
+        this.lookupService.addResourceToResourceList(new ResourceValue("Apples", (baseFoodAmount * numericRankValue), ShopItemTypeEnum.Food), this.globalService.globalVar.previousEventRewards);
       }
 
       if (distanceCovered >= orangeRewardDistance * numericRankValue &&
@@ -697,9 +702,9 @@ export class AppComponent {
         if (globalResource !== null && globalResource !== undefined)
           globalResource.amount += (baseFoodAmount * numericRankValue);
         else
-          this.globalService.globalVar.resources.push(new ResourceValue("Oranges", (baseFoodAmount * numericRankValue), ShopItemTypeEnum.Resources));
+          this.globalService.globalVar.resources.push(new ResourceValue("Oranges", (baseFoodAmount * numericRankValue), ShopItemTypeEnum.Food));
 
-        this.lookupService.addResourceToResourceList(new ResourceValue("Oranges", (baseFoodAmount * numericRankValue), ShopItemTypeEnum.Resources), this.globalService.globalVar.previousEventRewards);
+        this.lookupService.addResourceToResourceList(new ResourceValue("Oranges", (baseFoodAmount * numericRankValue), ShopItemTypeEnum.Food), this.globalService.globalVar.previousEventRewards);
       }
 
       if (distanceCovered >= mangoRewardDistance * numericRankValue &&
@@ -710,9 +715,9 @@ export class AppComponent {
         if (globalResource !== null && globalResource !== undefined)
           globalResource.amount += (firstMangoAmount * numericRankValue);
         else
-          this.globalService.globalVar.resources.push(new ResourceValue("Mangoes", (firstMangoAmount * numericRankValue), ShopItemTypeEnum.Resources));
+          this.globalService.globalVar.resources.push(new ResourceValue("Mangoes", (firstMangoAmount * numericRankValue), ShopItemTypeEnum.Food));
 
-        this.lookupService.addResourceToResourceList(new ResourceValue("Mangoes", (firstMangoAmount * numericRankValue), ShopItemTypeEnum.Resources), this.globalService.globalVar.previousEventRewards);
+        this.lookupService.addResourceToResourceList(new ResourceValue("Mangoes", (firstMangoAmount * numericRankValue), ShopItemTypeEnum.Food), this.globalService.globalVar.previousEventRewards);
       }
 
       if (distanceCovered >= turnipRewardDistance * numericRankValue &&
@@ -723,9 +728,9 @@ export class AppComponent {
         if (globalResource !== null && globalResource !== undefined)
           globalResource.amount += (baseFoodAmount * numericRankValue);
         else
-          this.globalService.globalVar.resources.push(new ResourceValue("Turnips", (baseFoodAmount * numericRankValue), ShopItemTypeEnum.Resources));
+          this.globalService.globalVar.resources.push(new ResourceValue("Turnips", (baseFoodAmount * numericRankValue), ShopItemTypeEnum.Food));
 
-        this.lookupService.addResourceToResourceList(new ResourceValue("Turnips", (baseFoodAmount * numericRankValue), ShopItemTypeEnum.Resources), this.globalService.globalVar.previousEventRewards);
+        this.lookupService.addResourceToResourceList(new ResourceValue("Turnips", (baseFoodAmount * numericRankValue), ShopItemTypeEnum.Food), this.globalService.globalVar.previousEventRewards);
       }
 
       if (distanceCovered >= bananaRewardDistance * numericRankValue &&
@@ -736,9 +741,9 @@ export class AppComponent {
         if (globalResource !== null && globalResource !== undefined)
           globalResource.amount += (baseFoodAmount * numericRankValue);
         else
-          this.globalService.globalVar.resources.push(new ResourceValue("Bananas", (baseFoodAmount * numericRankValue), ShopItemTypeEnum.Resources));
+          this.globalService.globalVar.resources.push(new ResourceValue("Bananas", (baseFoodAmount * numericRankValue), ShopItemTypeEnum.Food));
 
-        this.lookupService.addResourceToResourceList(new ResourceValue("Bananas", (baseFoodAmount * numericRankValue), ShopItemTypeEnum.Resources), this.globalService.globalVar.previousEventRewards);
+        this.lookupService.addResourceToResourceList(new ResourceValue("Bananas", (baseFoodAmount * numericRankValue), ShopItemTypeEnum.Food), this.globalService.globalVar.previousEventRewards);
       }
 
       if (distanceCovered >= carrotRewardDistance * numericRankValue &&
@@ -749,9 +754,9 @@ export class AppComponent {
         if (globalResource !== null && globalResource !== undefined)
           globalResource.amount += (baseFoodAmount * numericRankValue);
         else
-          this.globalService.globalVar.resources.push(new ResourceValue("Carrots", (baseFoodAmount * numericRankValue), ShopItemTypeEnum.Resources));
+          this.globalService.globalVar.resources.push(new ResourceValue("Carrots", (baseFoodAmount * numericRankValue), ShopItemTypeEnum.Food));
 
-        this.lookupService.addResourceToResourceList(new ResourceValue("Carrots", (baseFoodAmount * numericRankValue), ShopItemTypeEnum.Resources), this.globalService.globalVar.previousEventRewards);
+        this.lookupService.addResourceToResourceList(new ResourceValue("Carrots", (baseFoodAmount * numericRankValue), ShopItemTypeEnum.Food), this.globalService.globalVar.previousEventRewards);
       }
 
       if (distanceCovered >= mangoReward2Distance * numericRankValue &&
@@ -762,9 +767,9 @@ export class AppComponent {
         if (globalResource !== null && globalResource !== undefined)
           globalResource.amount += (secondMangoAmount * numericRankValue);
         else
-          this.globalService.globalVar.resources.push(new ResourceValue("Mangoes", (secondMangoAmount * numericRankValue), ShopItemTypeEnum.Resources));
+          this.globalService.globalVar.resources.push(new ResourceValue("Mangoes", (secondMangoAmount * numericRankValue), ShopItemTypeEnum.Food));
 
-        this.lookupService.addResourceToResourceList(new ResourceValue("Mangoes", (secondMangoAmount * numericRankValue), ShopItemTypeEnum.Resources), this.globalService.globalVar.previousEventRewards);
+        this.lookupService.addResourceToResourceList(new ResourceValue("Mangoes", (secondMangoAmount * numericRankValue), ShopItemTypeEnum.Food), this.globalService.globalVar.previousEventRewards);
       }
     }
   }
@@ -838,7 +843,7 @@ export class AppComponent {
         continue;
       }
 
-      var raceResult = this.raceLogicService.runRace(freeRace);
+      var raceResult = this.raceLogicService.runRace(freeRace, true);
     }
   }
 

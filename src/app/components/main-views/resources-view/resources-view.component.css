@@ -10,6 +10,12 @@
     color: var(--foreground-default);
   }
 
+  .orbContent {    
+    background-color: var(--background-secondary);
+    border-color: var(--background-tertiary);
+    color: var(--foreground-default);
+  }
+
   .gridContainer {
       height: 100%;
       display: grid;

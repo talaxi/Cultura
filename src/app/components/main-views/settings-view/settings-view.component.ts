@@ -45,7 +45,7 @@ export class SettingsViewComponent implements OnInit {
     private utilityService: UtilityService) { }
 
   ngOnInit(): void {    
-    //console.log(JSON.stringify(this.globalService.globalVar));     
+    //console.log(JSON.stringify(this.globalService.globalVar.resources));     
     this.componentCommunicationService.setNewView(NavigationEnum.settings);
 
     if (this.deploymentService.codeCreationMode)

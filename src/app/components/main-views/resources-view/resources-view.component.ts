@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NavigationEnum } from 'src/app/models/navigation-enum.model';
 import { ResourceValue } from 'src/app/models/resources/resource-value.model';
 import { ShopItemTypeEnum } from 'src/app/models/shop-item-type-enum.model';
@@ -19,7 +20,8 @@ export class ResourcesViewComponent implements OnInit {
   progressionResources: ResourceValue[] = [];
 
   constructor(private globalService: GlobalService, private lookupService: LookupService, 
-    private componentCommunicationService: ComponentCommunicationService, private utilityService: UtilityService) { }
+    private componentCommunicationService: ComponentCommunicationService, private utilityService: UtilityService,
+    private modalService: NgbModal) { }
 
   ngOnInit(): void {
     this.componentCommunicationService.setNewView(NavigationEnum.resources);
@@ -32,5 +34,19 @@ export class ResourcesViewComponent implements OnInit {
 
   getPopover(name: string, itemType: ShopItemTypeEnum) {
     return this.utilityService.getSanitizedHtml(this.lookupService.getResourcePopover(name, itemType));
+  }
+
+  //check if it's an orb, if it is then open a modal with the orb view displaying
+  isResourceAnOrb(resource: ResourceValue) {
+    if (resource.itemType === ShopItemTypeEnum.Equipment && (resource.name === "Sapphire Orb" || resource.name === "Amethyst Orb" ||
+    resource.name === "Topaz Orb" || resource.name === "Amber Orb" || resource.name === "Emerald Orb" || resource.name === "Ruby Orb"))
+      return true;
+
+    return false;
+  }
+
+  openOrbModal(content: any, name: string) {
+    //this.setupDisplayItems();
+    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
   }
 }
