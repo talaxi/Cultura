@@ -153,8 +153,7 @@ export class VersionControlService {
     if (version === 1.14)
       changes = "Added option to minimize special races/training tracks for better visibility.\n\n" +
       "Added trait % value under the animals when looking at the Incubator to easily see an animal's current status.\n\n" +
-      "You can now preview a talent tree before selecting.\n\n" +
-        "Refunded a team manager and tokens to those who started on earlier versions and did not correctly receive or had bugs related to them.\n\n" +
+      "You can now preview a talent tree before selecting.\n\n" +        
         "More bug fixes. (view Discord Change Log for full info)";
     return changes;
   }
