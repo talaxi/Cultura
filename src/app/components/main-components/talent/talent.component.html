@@ -1,6 +1,6 @@
 <div class="talent">
     <div class="header keyword">
-        <span>Sprint Column {{(column + 1)}} Row {{(row + 1)}}</span>
+        <span>{{lookupService.getNameByTalentTree(talentTreeType) }} Column {{(column + 1)}} Row {{(row + 1)}}</span>
     </div>
 
     <div class="content">
@@ -10,7 +10,7 @@
             <br />
             <br />
         </div>
-        <div *ngIf="pointsNeededInColumn <= 0 && pointsInTalent === 0" class="centeredText">
+        <div *ngIf="pointsNeededInColumn <= 0 && pointsInTalent === 0 && !isPreview" class="centeredText">
             <em>
                 Click Upgrade to unlock this talent.
                 <br />
@@ -26,7 +26,7 @@
             [innerHTML]="talentDescription">
         </div>
 
-        <div *ngIf="pointsInTalent > 0 && pointsInTalent < totalPossiblePoints">
+        <div *ngIf="pointsInTalent > 0 && pointsInTalent < totalPossiblePoints && !isPreview">
             <br />
 
             <em><div class='centeredText'>Next Upgrade: </div></em>
@@ -34,7 +34,7 @@
        
         </div>
         <br />
-        <div class="footer">
+        <div *ngIf="!isPreview" class="footer">
             {{pointsInTalent}} / {{totalPossiblePoints}} Points <button (click)="spendTalentPoint()"
                 [disabled]="!hasTalentPoint || !hasEnoughPointsInColumn || isTalentMaxed()">Upgrade</button>
         </div>

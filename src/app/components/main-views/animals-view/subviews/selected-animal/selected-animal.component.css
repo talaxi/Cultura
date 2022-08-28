@@ -84,6 +84,10 @@
   grid-area: miscStats;
 }
 
+.centered {
+  text-align: center;
+}
+
 ::ng-deep ngb-modal-backdrop {
   z-index: 1050 !important;
 }
@@ -110,6 +114,10 @@
 
 .popoverClass {
   white-space: pre-line;
+}
+
+.rightTextAlign {
+  text-align: right;
 }
 
 .rightAlign {

@@ -24,3 +24,22 @@
     text-align: right;
     margin: 1rem;
 }
+
+.minimizer {
+    display: flex;
+    justify-content: space-around;
+  }
+  
+  .minimizerSideSpacing {
+    width: 3rem;
+  }
+  
+  .inlineDescription {
+    width: 40%;
+    margin-top: auto;
+    margin-bottom:auto;
+  }
+  
+  .raceNameSpacing {
+    width: 20%;
+  }

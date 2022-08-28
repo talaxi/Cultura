@@ -27,6 +27,7 @@ export class GrandPrixData {
     isLoading: boolean;
     
     rank: string;
+    rankDistanceMultiplier = 1;
     @Type(() => Terrain) 
     raceTerrain: Terrain;    
     weatherCluster: WeatherEnum;

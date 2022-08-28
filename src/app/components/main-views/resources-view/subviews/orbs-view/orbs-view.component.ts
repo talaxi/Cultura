@@ -11,21 +11,19 @@ import { GlobalService } from 'src/app/services/global-service.service';
 export class OrbsViewComponent implements OnInit {
 
   allOrbs: Orb[];
-  progressBarPercent = 50;
 
   constructor(public globalService: GlobalService) { }
 
   ngOnInit(): void {
-    this.allOrbs = this.globalService.globalVar.orbStats.allOrbs;
-
-    this.progressBarPercent 
+    this.allOrbs = this.globalService.globalVar.orbStats.allOrbs;    
   }
 
   getProgressBarPercent(type: OrbTypeEnum) {
     var orb = this.globalService.getOrbDetailsFromType(type);
     if (orb !== undefined)
-      return orb.xp / orb.xpNeededForLevel;
-
+    {      
+      return (orb.xp / orb.xpNeededForLevel) * 100;
+    }
     return 0;
   }
 

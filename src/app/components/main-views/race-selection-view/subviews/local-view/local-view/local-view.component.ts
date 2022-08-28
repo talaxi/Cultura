@@ -1,5 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { LocalRaceTypeEnum } from 'src/app/models/local-race-type-enum.model';
+import { EasyPinnacleConditionsEnum, MediumPinnacleConditionsEnum } from 'src/app/models/pinnacle-conditions-enum.model';
 import { RaceCourseTypeEnum } from 'src/app/models/race-course-type-enum.model';
 import { RaceLeg } from 'src/app/models/races/race-leg.model';
 import { Race } from 'src/app/models/races/race.model';
@@ -34,12 +35,21 @@ export class LocalViewComponent implements OnInit {
   freeRacesRemaining = 10;
   totalFreeRaces = 10;
   subscription: any;
+  isMonoRaceToggled = false;
+  isDuoRaceToggled = false;
+  isRainbowRaceToggled = false;
+  isPinnacleRaceToggled = false;
 
-  constructor(private globalService: GlobalService, private utilityService: UtilityService, private lookupService: LookupService,
+  constructor(public globalService: GlobalService, private utilityService: UtilityService, private lookupService: LookupService,
     private gameLoopService: GameLoopService) { }
 
   ngOnInit(): void {
     this.availableLocalRaces = [];
+
+    this.isMonoRaceToggled = this.globalService.globalVar.settings.get("monoRaceToggled");
+    this.isDuoRaceToggled = this.globalService.globalVar.settings.get("duoRaceToggled");
+    this.isRainbowRaceToggled = this.globalService.globalVar.settings.get("rainbowRaceToggled");
+    this.isPinnacleRaceToggled = this.globalService.globalVar.settings.get("pinnacleRaceToggled");
 
     var nextMonoRace = this.getNextAvailableSpecialRace(LocalRaceTypeEnum.Mono);
     if (nextMonoRace !== undefined)
@@ -53,17 +63,16 @@ export class LocalViewComponent implements OnInit {
     if (nextRainbowRace !== undefined)
       this.availableRainbowRace = nextRainbowRace;
 
-      var nextPinnacleRace = this.getNextAvailableSpecialRace(LocalRaceTypeEnum.Pinnacle);
-      if (nextPinnacleRace !== undefined)
-        this.availablePinnacleRace = nextPinnacleRace;
-      
+    var nextPinnacleRace = this.getNextAvailableSpecialRace(LocalRaceTypeEnum.Pinnacle);
+    if (nextPinnacleRace !== undefined)
+      this.availablePinnacleRace = nextPinnacleRace;
+
     var primaryDeck = this.globalService.globalVar.animalDecks.find(item => item.isPrimaryDeck);
-    if (primaryDeck !== undefined && primaryDeck !== null)
-    {
+    if (primaryDeck !== undefined && primaryDeck !== null) {
       if (this.availableDuoRace !== null && this.availableDuoRace !== undefined)
-        this.availableDuoRace.raceLegs = this.globalService.reorganizeLegsByDeckOrder(this.availableDuoRace.raceLegs, primaryDeck);      
+        this.availableDuoRace.raceLegs = this.globalService.reorganizeLegsByDeckOrder(this.availableDuoRace.raceLegs, primaryDeck);
       if (this.availableRainbowRace !== null && this.availableRainbowRace !== undefined)
-        this.availableRainbowRace.raceLegs = this.globalService.reorganizeLegsByDeckOrder(this.availableRainbowRace.raceLegs, primaryDeck);      
+        this.availableRainbowRace.raceLegs = this.globalService.reorganizeLegsByDeckOrder(this.availableRainbowRace.raceLegs, primaryDeck);
     }
 
     if (this.globalService.globalVar.settings.get("useNumbersForCircuitRank")) {
@@ -134,6 +143,21 @@ export class LocalViewComponent implements OnInit {
       }
     });
 
+    if (race.pinnacleConditions !== undefined) {
+      if (race.pinnacleConditions.containsCondition(EasyPinnacleConditionsEnum[EasyPinnacleConditionsEnum.twoRacersOnly])) {
+        if (racingAnimals.selectedAnimals.length < 2)
+          canRace = false;
+      }
+      if (race.pinnacleConditions.containsCondition(EasyPinnacleConditionsEnum[EasyPinnacleConditionsEnum.threeRacersOnly])) {
+        if (racingAnimals.selectedAnimals.length < 3)
+          canRace = false;
+      }
+      if (race.pinnacleConditions.containsCondition(MediumPinnacleConditionsEnum[MediumPinnacleConditionsEnum.fourRacersOnly])) {
+        if (racingAnimals.selectedAnimals.length < 4)
+          canRace = false;
+      }
+    }
+
     if (canRace) {
       /* bubble back up to race selection with the chosen race, over there show the race occur */
       if (isFreeRace)
@@ -141,6 +165,20 @@ export class LocalViewComponent implements OnInit {
 
       this.raceSelected.emit(race);
     }
+  }
+
+  toggleRace(type: string) {
+    var currentStatus = this.globalService.globalVar.settings.get(type);
+    this.globalService.globalVar.settings.set(type, !currentStatus);
+
+    if (type === "monoRaceToggled")
+      this.isMonoRaceToggled = !this.isMonoRaceToggled;
+    if (type === "duoRaceToggled")
+      this.isDuoRaceToggled = !this.isDuoRaceToggled;
+    if (type === "rainbowRaceToggled")
+      this.isRainbowRaceToggled = !this.isRainbowRaceToggled;
+    if (type === "pinnacleRaceToggled")
+      this.isPinnacleRaceToggled = !this.isPinnacleRaceToggled;
   }
 
   ngOnDestroy() {

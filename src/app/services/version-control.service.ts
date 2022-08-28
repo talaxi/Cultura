@@ -23,7 +23,7 @@ export class VersionControlService {
   constructor(private globalService: GlobalService, private lookupService: LookupService, private utilityService: UtilityService) { }
 
   //add to this in descending order
-  gameVersions = [1.13, 1.12, 1.11, 1.10, 1.09, 1.08, 1.07, 1.06, 1.05, 1.04, 1.03, 1.02, 1.01, 1.00];
+  gameVersions = [1.14, 1.13, 1.12, 1.11, 1.10, 1.09, 1.08, 1.07, 1.06, 1.05, 1.04, 1.03, 1.02, 1.01, 1.00];
 
   getListAscended() {
     var ascendedList: number[] = [];
@@ -147,9 +147,15 @@ export class VersionControlService {
       changes = "Added option to not relay to animals below entered energy amount during Grand Prix.\n\n" +
         "Bug fixes related to Grand Prix.";
     if (version === 1.13)
-      changes = "Change energy floor from 10% to 30%.\n\n" +
+      changes = "Changed energy floor from 10% to 30%.\n\n" +
         "Refunded a team manager and tokens to those who started on earlier versions and did not correctly receive or had bugs related to them.\n\n" +
         "More bug fixes.";
+    if (version === 1.14)
+      changes = "Added option to minimize special races/training tracks for better visibility.\n\n" +
+      "Added trait % value under the animals when looking at the Incubator to easily see an animal's current status.\n\n" +
+      "You can now preview a talent tree before selecting.\n\n" +
+        "Refunded a team manager and tokens to those who started on earlier versions and did not correctly receive or had bugs related to them.\n\n" +
+        "More bug fixes. (view Discord Change Log for full info)";
     return changes;
   }
 
@@ -183,6 +189,8 @@ export class VersionControlService {
       date = new Date('2022-08-22 12:00:00');
     if (version === 1.13)
       date = new Date('2022-08-25 12:00:00');
+    if (version === 1.14)
+      date = new Date('2022-08-28 12:00:00');
 
     return date.toDateString().replace(/^\S+\s/, '');
   }
@@ -870,7 +878,7 @@ export class VersionControlService {
 
           //forgot to give this out when changing ranks to give a free team manager
           if (this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.circuitRank) >= 6 &&
-          this.globalService.globalVar.startingVersion <= 1.09) {
+            this.globalService.globalVar.startingVersion <= 1.09) {
             var amount = 1;
             var resource = this.globalService.globalVar.resources.find(item => item.name === "Team Manager");
             if (resource === null || resource === undefined) {
@@ -920,6 +928,15 @@ export class VersionControlService {
               drCertificate.type = ShopItemTypeEnum.Consumable;
             }
           }
+        }
+        else if (version === 1.14) {
+          this.globalService.globalVar.settings.set("monoRaceToggled", false);
+          this.globalService.globalVar.settings.set("duoRaceToggled", false);
+          this.globalService.globalVar.settings.set("rainbowRaceToggled", false);
+          this.globalService.globalVar.settings.set("pinnacleRaceToggled", false);
+          this.globalService.globalVar.settings.set("noviceTrainingTrackToggled", false);
+          this.globalService.globalVar.settings.set("intermediateTrainingTrackToggled", false);
+          this.globalService.globalVar.settings.set("masterTrainingTrackToggled", false);
         }
 
         this.globalService.globalVar.currentVersion = version;

@@ -13,6 +13,7 @@ export class AnimalListComponent implements OnInit {
   @Input() availableAnimals: Animal[];
   @Input() isTrainingTrackView: boolean = false;
   @Input() isAnimalDetailView: boolean = false;
+  @Input() isIncubatorDetailView: boolean = false;
   @Output() selectedAnimal = new EventEmitter<Animal>(); 
   animalRows: Animal[][];
   animalCells: Animal[];

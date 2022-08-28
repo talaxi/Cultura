@@ -72,7 +72,6 @@ export class SelectedAnimalComponent implements OnInit {
   orbCells: ResourceValue[]; //for display purposes
   selectedOrb: ResourceValue | undefined;
 
-  talentsReleased = true;
   talentTreeOptions: string[];
   selectedTalentTree: string;
   talentTreeDescription: string;
@@ -658,7 +657,7 @@ export class SelectedAnimalComponent implements OnInit {
 
   filterTalentTree(talentTree: string) {
     this.selectedTalentTree = talentTree;
-    this.inDepthTalentTreeDescription = this.lookupService.getInDepthTalentTreeDescription(talentTree);
+    this.inDepthTalentTreeDescription = this.lookupService.getInDepthTalentTreeDescription(talentTree);    
   }
 
   selectTalentTree() {

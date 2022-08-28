@@ -1,8 +1,28 @@
-<div class="raceDescription">
-    <span *ngIf="index !== undefined && index !== null && index > -1">Race {{ index+1 }} </span>        
+<div class="raceDescription" *ngIf="condensedVersion">
+    <span *ngIf="index !== undefined && index !== null && index > -1">Race {{ index+1 }} </span>
+    <div [ngClass]="{'raceNotAllowed': cannotRace}" class="clickableText" [ngbPopover]="popContent"
+        [disablePopover]="popoverText === ''" triggers="mouseenter:mouseleave" popoverClass="popoverClass">
+        <div class="flex">
+            <div>
+            <span> {{ race.length | number : '1.2-2' }} Total Meters </span>
+            <span *ngFor="let raceLeg of race.raceLegs; let i = index;" [ngClass]="getNoRacerClass(raceLeg)">
+                <span class="coloredText" [ngClass]="getColorClass(raceLeg)"> {{ raceLeg.getCourseTypeName() }}
+                    <span *ngIf="i < race.raceLegs.length - 1" class="defaultColor"> / </span>
+                </span>
+            </span>    
+        </div>    
+        <h6 class="inline" *ngIf="showStartText && race.isCompleted"><em>Completed!</em></h6>
+        <h6 class="inline" *ngIf="showStartText && !race.isCompleted && cannotRace"><em>Cannot Run</em></h6>
+        <h6 class="keyword inline" *ngIf="showStartText && !race.isCompleted && !cannotRace">Start</h6>
+    </div>
+    </div>
+</div>
+
+<div class="raceDescription" *ngIf="!condensedVersion">
+    <span *ngIf="index !== undefined && index !== null && index > -1">Race {{ index+1 }} </span>
     <br />
-    <div [ngClass]="{'raceNotAllowed': cannotRace}" class="clickableText" [ngbPopover]="popContent" [disablePopover]="popoverText === ''" triggers="mouseenter:mouseleave"
-        popoverClass="popoverClass">
+    <div [ngClass]="{'raceNotAllowed': cannotRace}" class="clickableText" [ngbPopover]="popContent"
+        [disablePopover]="popoverText === ''" triggers="mouseenter:mouseleave" popoverClass="popoverClass">
         <p *ngFor="let raceLeg of race.raceLegs" [ngClass]="getNoRacerClass(raceLeg)">
             {{ raceLeg.distance | number : '1.2-2' }} Meters of {{ raceLeg.getTerrainName() }}
             <span class="coloredText" [ngClass]="getColorClass(raceLeg)">{{ raceLeg.getCourseTypeName() }}</span>
@@ -14,6 +34,6 @@
 </div>
 
 <ng-template #popContent>
-    <div class="popoverClass" [innerHTML] = 'popoverText'>        
+    <div class="popoverClass" [innerHTML]='popoverText'>
     </div>
 </ng-template>

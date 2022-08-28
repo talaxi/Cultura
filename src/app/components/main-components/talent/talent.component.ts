@@ -14,6 +14,8 @@ export class TalentComponent implements OnInit {
   @Input() selectedAnimal: Animal;
   @Input() row: number;
   @Input() column: number;
+  @Input() isPreview: boolean = false;
+  @Input() previewType: string = "";
   @Output() spentTalent = new EventEmitter<boolean>();
 
   talentTreeType: TalentTreeTypeEnum;
@@ -27,7 +29,7 @@ export class TalentComponent implements OnInit {
   availableTalentPoints: number;
   subscription: any;
 
-  constructor(private lookupService: LookupService, private gameLoopService: GameLoopService, private globalService: GlobalService) { }
+  constructor(public lookupService: LookupService, private gameLoopService: GameLoopService, private globalService: GlobalService) { }
 
   ngOnInit(): void {
     this.talentTreeType = this.selectedAnimal.talentTree.talentTreeType;    
@@ -47,6 +49,11 @@ export class TalentComponent implements OnInit {
           
     this.pointsNeededInColumn = pointsNeededInColumn - this.selectedAnimal.talentTree.getTalentPointsByColumn(this.column);
     this.hasEnoughPointsInColumn = this.pointsNeededInColumn <= 0;
+
+    if (this.isPreview && this.previewType !== "")
+    {      
+      this.talentTreeType = this.lookupService.getTalentTreeByStringName(this.previewType);      
+    }
 
     this.subscription = this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {      
       this.pointsInTalent = this.selectedAnimal.talentTree.getTalentPointsByRowColumn(this.row, this.column);
@@ -84,6 +91,14 @@ export class TalentComponent implements OnInit {
     this.hasTalentPoint = this.availableTalentPoints > 0;
 
     this.globalService.calculateAnimalRacingStats(this.selectedAnimal);
+  }
+
+  ngOnChanges(changes: any) {    
+    if (changes.previewType !== undefined && this.isPreview)
+    {
+      this.previewType = changes.previewType.currentValue;
+      this.talentTreeType = this.lookupService.getTalentTreeByStringName(this.previewType);
+    }
   }
 
   ngOnDestroy() {

@@ -28,6 +28,9 @@ export class TrainingTrackRaceViewComponent implements OnInit {
   showRace = false;
   selectedRace: Race;
   colorConditional: any;
+  isNoviceRaceToggled = false;
+  isIntermediateRaceToggled = false;
+  isMasterRaceToggled = false;
   public trackRaceTypeEnum = TrackRaceTypeEnum;
 
   constructor(private globalService: GlobalService, private lookupService: LookupService, private sanitizer: DomSanitizer,
@@ -41,6 +44,12 @@ export class TrainingTrackRaceViewComponent implements OnInit {
 
     this.intermediateTrackAvailable = this.selectedAnimal.allTrainingTracks.intermediateTrackAvailable;
     this.masterTrackAvailable = this.selectedAnimal.allTrainingTracks.masterTrackAvailable;
+
+    
+    this.isNoviceRaceToggled = this.globalService.globalVar.settings.get("noviceRaceToggled");
+    this.isIntermediateRaceToggled = this.globalService.globalVar.settings.get("intermediateRaceToggled");
+    this.isMasterRaceToggled = this.globalService.globalVar.settings.get("masterRaceToggled");    
+
 
     this.colorConditional = {
       'flatlandColor': this.selectedAnimal.getRaceCourseType() === 'Flatland',
@@ -95,6 +104,19 @@ export class TrainingTrackRaceViewComponent implements OnInit {
   openRewardsModal(content: any) {
     this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'lg' });
   }
+
+  toggleRace(type: string) {
+    var currentStatus = this.globalService.globalVar.settings.get(type);
+    this.globalService.globalVar.settings.set(type, !currentStatus);
+
+    if (type === "noviceRaceToggled")
+      this.isNoviceRaceToggled = !this.isNoviceRaceToggled;
+    if (type === "intermediateRaceToggled")
+      this.isIntermediateRaceToggled = !this.isIntermediateRaceToggled;
+    if (type === "masterRaceToggled")
+      this.isMasterRaceToggled = !this.isMasterRaceToggled;    
+  }
+
 
   goToAnimal() {
     this.componentCommunicationService.setAnimalView(NavigationEnum.animals, this.selectedAnimal);

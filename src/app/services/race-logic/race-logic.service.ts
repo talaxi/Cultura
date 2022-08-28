@@ -11,6 +11,7 @@ import { EquipmentEnum } from 'src/app/models/equipment-enum.model';
 import { EventRaceTypeEnum } from 'src/app/models/event-race-type-enum.model';
 import { LocalRaceTypeEnum } from 'src/app/models/local-race-type-enum.model';
 import { OrbTypeEnum } from 'src/app/models/orb-type-enum.model';
+import { EasyPinnacleConditionsEnum, HardPinnacleConditionsEnum, MediumPinnacleConditionsEnum } from 'src/app/models/pinnacle-conditions-enum.model';
 import { RaceCourseTypeEnum } from 'src/app/models/race-course-type-enum.model';
 import { RaceDesignEnum } from 'src/app/models/race-design-enum.model';
 import { RaceTypeEnum } from 'src/app/models/race-type-enum.model';
@@ -51,7 +52,7 @@ export class RaceLogicService {
 
   runRace(race: Race, isAutoFreeRace?: boolean, expediteRace?: boolean): RaceResult {
     //console.log("Race Info:");
-    //console.log(race);    
+    //console.log(race);
 
     this.currentBurstOpportunity = 0;
     this.currentLostFocusOpportunity = 0;
@@ -110,7 +111,7 @@ export class RaceLogicService {
     race.raceUI.lavaFallPercentByFrame = [];
     race.raceUI.racePositionByFrame = [];
 
-    if (race.timeToComplete <= 180)
+    if (race.timeToComplete <= 300)
       raceResult.addRaceUpdate(framesPassed, Math.round(race.timeToComplete) + " seconds are on the race clock.");
     else {
       var timeLeftToComplete = this.globalService.getRemainingEventRaceTime() + this.globalService.globalVar.eventRaceData.bonusTime;
@@ -154,7 +155,7 @@ export class RaceLogicService {
       else
         racingAnimal = this.racingAnimals.find(animal => animal.raceCourseType === item.courseType);
 
-      if (racingAnimal === null || racingAnimal === undefined) {        
+      if (racingAnimal === null || racingAnimal === undefined) {
         console.log(this.selectedRace);
         alert("You've run into an error! Please try again. If you have the time, please export your data under the Settings tab and send me the data and any relevant info at CulturaIdle@gmail.com. Thank you!");
         return;
@@ -178,7 +179,7 @@ export class RaceLogicService {
       else
         racingAnimal = this.racingAnimals.find(animal => animal.raceCourseType === item.courseType);
 
-      if (racingAnimal === null || racingAnimal === undefined) {        
+      if (racingAnimal === null || racingAnimal === undefined) {
         console.log(this.selectedRace);
         alert("You've run into an error! Please try again. If you have the time, please export your data under the Settings tab and send me the data and any relevant info at CulturaIdle@gmail.com. Thank you!");
         return;
@@ -350,17 +351,20 @@ export class RaceLogicService {
           });
         }
 
-        if (previousEventRaceSegmentData.relayEffects.length > 0) {
+        if (previousEventRaceSegmentData.relayEffects.length > 0) {          
           previousEventRaceSegmentData.relayEffects.forEach(buff => {
             if (racingAnimal !== null && racingAnimal !== undefined) {
               racingAnimal.raceVariables.relayEffects.push(buff);
 
               if (racingAnimal.raceVariables.relayEffects !== null && racingAnimal.raceVariables.relayEffects !== undefined && racingAnimal.raceVariables.relayEffects.length > 0) {
                 racingAnimal.raceVariables.relayEffects.forEach(effect => {
-                  if (effect.isMultiplicative)
-                    racingAnimal!.currentStats.multiplyCurrentRacingStats(effect.relayAffectedStatRatios);
-                  else
-                    racingAnimal!.currentStats.addCurrentRacingStats(effect.relayAffectedStatRatios);
+                  //certain relay effects need to only trigger one time during grand prix
+                  if (effect.effectType !== RelayEffectEnum.supportStaminaRelay && effect.effectType !== RelayEffectEnum.yellowBaton) {
+                    if (effect.isMultiplicative)
+                      racingAnimal!.currentStats.multiplyCurrentRacingStats(effect.relayAffectedStatRatios);
+                    else
+                      racingAnimal!.currentStats.addCurrentRacingStats(effect.relayAffectedStatRatios);
+                  }
                 });
               }
             }
@@ -415,6 +419,11 @@ export class RaceLogicService {
               racingAnimal!.currentStats.stamina += deepBreathingStaminaGain;
           });
         }
+      }
+
+      if (this.selectedRace.pinnacleConditions !== undefined &&
+        this.selectedRace.pinnacleConditions.containsCondition(HardPinnacleConditionsEnum[HardPinnacleConditionsEnum.exhaustionPenaltyIncreased])) {
+        racingAnimal.currentStats.stamina /= 2;
       }
 
       //console.log("Stat Loss Before Race: " + statLossFromExhaustion);
@@ -613,6 +622,11 @@ export class RaceLogicService {
             exhaustionStatLossModifier = 1 - statLoss;
           }
 
+          if (this.selectedRace.pinnacleConditions !== undefined &&
+            this.selectedRace.pinnacleConditions.containsCondition(HardPinnacleConditionsEnum[HardPinnacleConditionsEnum.exhaustionPenaltyIncreased])) {
+            exhaustionStatLossModifier *= 2;
+          }
+
           statLossFromExhaustion = statLossFromExhaustion * exhaustionStatLossModifier;
 
           var exhaustionStatLossMinimumModifier = .3;
@@ -717,6 +731,13 @@ export class RaceLogicService {
           modifiedAccelerationMs *= item.terrain.accelerationModifier;
           modifiedAccelerationMs *= statLossFromExhaustion;
 
+          if (this.selectedRace.pinnacleConditions !== undefined &&
+            this.selectedRace.pinnacleConditions.containsCondition(MediumPinnacleConditionsEnum[MediumPinnacleConditionsEnum.sticky])) {
+            var percentInRace = distanceCovered / this.selectedRace.length;
+            var accelerationLoss = percentInRace * .8;
+            modifiedAccelerationMs *= 1 - accelerationLoss;
+          }
+
           if (racingAnimal.type === AnimalTypeEnum.Horse && racingAnimal.ability.name === "Pacemaker" && racingAnimal.ability.abilityInUse) {
             modifiedAccelerationMs *= 1.5;
           }
@@ -806,6 +827,13 @@ export class RaceLogicService {
         modifiedMaxSpeed *= item.terrain.maxSpeedModifier;
 
         modifiedMaxSpeed *= statLossFromExhaustion;
+        //console.log("Basic Mods: " + modifiedMaxSpeed)
+
+        if (this.selectedRace.pinnacleConditions !== undefined &&
+          this.selectedRace.pinnacleConditions.containsCondition(HardPinnacleConditionsEnum[HardPinnacleConditionsEnum.reduceSpeedOnRelay])) {
+          var currentRacer = this.racingAnimals.indexOf(racingAnimal);
+          modifiedMaxSpeed *= 1 - (currentRacer * .2);
+        }
 
         if (racingAnimal.type === AnimalTypeEnum.Cheetah && racingAnimal.ability.name === "Sprint" && racingAnimal.ability.abilityInUse) {
           modifiedMaxSpeed *= 1.35;
@@ -831,14 +859,7 @@ export class RaceLogicService {
           modifiedMaxSpeed *= feedingFrenzyIncreaseMultiplier;
         }
         if (racingAnimal.ability.name === "Quick Toboggan" && racingAnimal.type === AnimalTypeEnum.Penguin) {
-          if (!(this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix &&
-            this.globalService.globalVar.eventRaceData.eventAbilityData.quickTobogganUseCount >= this.globalService.globalVar.eventRaceData.eventAbilityData.quickTobogganUseCap)) {
-
-            if (this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix)
-              this.globalService.globalVar.eventRaceData.eventAbilityData.quickTobogganUseCount += 1;
-
-            modifiedMaxSpeed *= permanentMaxSpeedIncreaseMultiplierObj.permanentMaxSpeedIncreaseMultiplier;
-          }
+          modifiedMaxSpeed *= permanentMaxSpeedIncreaseMultiplierObj.permanentMaxSpeedIncreaseMultiplier;
         }
         if (racingAnimal.type === AnimalTypeEnum.Gecko && racingAnimal.ability.name === "Night Vision") {
           modifiedMaxSpeed *= permanentMaxSpeedIncreaseMultiplier;
@@ -933,10 +954,41 @@ export class RaceLogicService {
               pathsClearedWithoutLosingFocus = 0;
             }
           }
+
+          //made it through without stumbling
+          if (lastPath !== undefined && lastPath.routeDesign !== undefined
+            && lastPath.routeDesign !== RaceDesignEnum.Regular && !lastPath.didAnimalStumble) {
+            //add to emerald when you make it through a path without stumbling              
+            if (racingAnimal.equippedOrb !== undefined && racingAnimal.equippedOrb !== null &&
+              this.globalService.getOrbTypeFromResource(racingAnimal.equippedOrb) === OrbTypeEnum.emerald) {
+              this.globalService.increaseEmeraldOrbXp(lastPath.length);
+            }
+
+            if (racingAnimal.type === AnimalTypeEnum.Goat && racingAnimal.ability.name === "Sure-footed") {
+              if (!(this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix &&
+                this.globalService.globalVar.eventRaceData.eventAbilityData.sureFootedUseCount >= this.globalService.globalVar.eventRaceData.eventAbilityData.sureFootedUseCap)) {
+
+                if (this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix)
+                  this.globalService.globalVar.eventRaceData.eventAbilityData.sureFootedUseCount += 1;
+
+                permanentAdaptabilityIncreaseMultiplierObj.permanentAdaptabilityIncreaseMultiplier += (this.lookupService.GetAbilityEffectiveAmount(racingAnimal, item.terrain.powerModifier, statLossFromExhaustion) / 100);
+                this.globalService.increaseAbilityXp(racingAnimal);
+                //currentPath.currentStumbleOpportunity += 1; //use this so that you don't trigger multiple times -- can come up with better method
+              }
+            }
+          }
         }
 
         var doesRacerMiniBurst = this.doesRacerMiniBurst(racingAnimal, lastPath);
         var doesRacerBurst = this.doesRacerBurst(racingAnimal, currentPath, this.timeToComplete, race.length, distanceCovered, modifiedAdaptabilityMs, modifiedFocusMs);
+
+        if (this.selectedRace.pinnacleConditions !== undefined &&
+          this.selectedRace.pinnacleConditions.containsCondition(HardPinnacleConditionsEnum[HardPinnacleConditionsEnum.noBurst])) {
+          doesRacerMiniBurst = false;
+          doesRacerBurst = false;
+          herdMentalityBurst = false;
+        }
+
         if (doesRacerBurst || doesRacerMiniBurst || herdMentalityBurst) {
           racingAnimal.raceVariables.isBursting = true;
           if (doesRacerBurst || herdMentalityBurst) {
@@ -1163,7 +1215,7 @@ export class RaceLogicService {
         distanceCovered += distanceCoveredPerFrame > distanceToGo ? distanceToGo : distanceCoveredPerFrame;
         distanceToGo -= distanceCoveredPerFrame;
 
-        this.giveOrbXpBasedOnMeters(distanceCovered, racingAnimal, velocity);
+        this.giveOrbXpBasedOnMeters(distanceCoveredPerFrame, racingAnimal, velocity, modifiedMaxSpeed);
 
         var precisionModifier = 1e5;
         if (this.timeToComplete * this.frameModifier > 20000) //333 seconds
@@ -1238,6 +1290,11 @@ export class RaceLogicService {
               racingAnimal.ability.currentCooldown *= pendantCooldownModifier;
             }
 
+            if (this.selectedRace.pinnacleConditions !== undefined &&
+              this.selectedRace.pinnacleConditions.containsCondition(MediumPinnacleConditionsEnum[MediumPinnacleConditionsEnum.longCooldowns])) {
+              racingAnimal.ability.currentCooldown *= 2;
+            }
+
             if (racingAnimal.raceVariables !== null && racingAnimal.raceVariables !== undefined && racingAnimal.raceVariables.relayEffects !== null &&
               racingAnimal.raceVariables.relayEffects !== undefined && racingAnimal.raceVariables.relayEffects.length > 0) {
 
@@ -1278,12 +1335,18 @@ export class RaceLogicService {
           if (!(racingAnimal.type === AnimalTypeEnum.Warthog && racingAnimal.ability.name === "Graze"))
             raceResult.raceUpdates.push(timingUpdate);
           racingAnimal.ability.currentCooldown = racingAnimal.ability.cooldown;
+
           if (racingAnimal.getEquippedItemName() === this.globalService.getEquipmentName(EquipmentEnum.pendant)) {
             var pendantCooldownModifier = .9;
             var pendantModifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "pendantEquipmentModifier");
             if (pendantModifierPair !== undefined)
               pendantCooldownModifier = pendantModifierPair.value;
             racingAnimal.ability.currentCooldown *= pendantCooldownModifier;
+          }
+
+          if (this.selectedRace.pinnacleConditions !== undefined &&
+            this.selectedRace.pinnacleConditions.containsCondition(MediumPinnacleConditionsEnum[MediumPinnacleConditionsEnum.longCooldowns])) {
+            racingAnimal.ability.currentCooldown *= 2;
           }
 
           if (racingAnimal.type === AnimalTypeEnum.Caribou && racingAnimal.ability.name === "Great Migration") {
@@ -1528,6 +1591,11 @@ export class RaceLogicService {
       staminaModifier *= 1 - coldBloodedIncreaseMultiplier;
     }
 
+    if (this.selectedRace.pinnacleConditions !== undefined &&
+      this.selectedRace.pinnacleConditions.containsCondition(EasyPinnacleConditionsEnum[EasyPinnacleConditionsEnum.steamy])) {
+      staminaModifier *= 2;
+    }
+
     return staminaModifier;
   }
 
@@ -1541,7 +1609,7 @@ export class RaceLogicService {
         racingAnimal.currentStats.stamina -= distanceCoveredPerFrame * staminaModifier;
       }
     }
-
+    
     if (racingAnimal.currentStats.stamina < 0) {
       racingAnimal.currentStats.stamina = 0;
       racingAnimal.raceVariables.ranOutOfStamina = true;
@@ -1978,6 +2046,11 @@ export class RaceLogicService {
       animal.ability.currentCooldown *= pendantCooldownModifier;
     }
 
+    if (this.selectedRace.pinnacleConditions !== undefined &&
+      this.selectedRace.pinnacleConditions.containsCondition(MediumPinnacleConditionsEnum[MediumPinnacleConditionsEnum.longCooldowns])) {
+      animal.ability.currentCooldown *= 2;
+    }
+
     if (animal.raceVariables !== null && animal.raceVariables !== undefined && animal.raceVariables.relayEffects !== null &&
       animal.raceVariables.relayEffects !== undefined && animal.raceVariables.relayEffects.length > 0) {
       var abilityCooldownRelayBonus = 1;
@@ -2307,6 +2380,11 @@ export class RaceLogicService {
     if (nextAnimal === null || currentLeg === undefined)
       return;
 
+    if (this.selectedRace.pinnacleConditions !== undefined &&
+      this.selectedRace.pinnacleConditions.containsCondition(EasyPinnacleConditionsEnum[EasyPinnacleConditionsEnum.noRelayEffects])) {
+      return;
+    }
+
     //should also move navigator here
     //and create an application type situation like relays have but distance is from end of leg
 
@@ -2317,6 +2395,11 @@ export class RaceLogicService {
   }
 
   AddRelayEffect(racingAnimal: Animal, animalGivingRelayEffect: Animal, distance: number, statMultiplers: AnimalStats, isMultiplicative: boolean, type: RelayEffectEnum, affectsAllRacers: boolean, additionalValue?: number, isSecondaryEffect: boolean = false) {
+    if (this.selectedRace.pinnacleConditions !== undefined &&
+      this.selectedRace.pinnacleConditions.containsCondition(EasyPinnacleConditionsEnum[EasyPinnacleConditionsEnum.noRelayEffects])) {
+      return;
+    }
+
     var newRelayEffect = new RelayEffect();
     newRelayEffect.remainingRelayMeters = distance;
     newRelayEffect.relayAffectedStatRatios = statMultiplers;
@@ -2411,8 +2494,14 @@ export class RaceLogicService {
     if (racingAnimal.raceVariables.stumbled)
       return false; //already stumbling
 
-    if (currentPath.frequencyOfStumble === 0)
-      return false;
+    if (currentPath.frequencyOfStumble === 0) {
+      if (this.selectedRace.pinnacleConditions !== undefined &&
+        this.selectedRace.pinnacleConditions.containsCondition(MediumPinnacleConditionsEnum[MediumPinnacleConditionsEnum.brokenFloorboards])) {
+        currentPath.frequencyOfStumble = this.globalService.getAverageStumbleFrequencyForCourseType(racingAnimal.raceCourseType);
+      }
+      else
+        return false;
+    }
 
     if (racingAnimal.type === AnimalTypeEnum.Gecko && racingAnimal.ability.name === "Sticky" && racingAnimal.ability.abilityInUse) {
       return false;
@@ -2427,28 +2516,6 @@ export class RaceLogicService {
     }
 
     var stumbleBreakpoint = currentPath.length / currentPath.stumbleOpportunities;
-
-    //made it through without stumbling
-    if (currentPath.currentStumbleOpportunity === currentPath.stumbleOpportunities && currentPath.routeDesign !== RaceDesignEnum.Regular) {
-      //add to emerald when you make it through a path without stumbling
-    if (racingAnimal.equippedOrb !== undefined && racingAnimal.equippedOrb !== null &&
-      this.globalService.getOrbTypeFromResource(racingAnimal.equippedOrb) === OrbTypeEnum.emerald) {
-      this.globalService.increaseEmeraldOrbXp(currentPath.length);
-    }
-
-      if (racingAnimal.type === AnimalTypeEnum.Goat && racingAnimal.ability.name === "Sure-footed") {
-        if (!(this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix &&
-          this.globalService.globalVar.eventRaceData.eventAbilityData.sureFootedUseCount >= this.globalService.globalVar.eventRaceData.eventAbilityData.sureFootedUseCap)) {
-
-          if (this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix)
-            this.globalService.globalVar.eventRaceData.eventAbilityData.sureFootedUseCount += 1;
-
-          obj.permanentAdaptabilityIncreaseMultiplier += (this.lookupService.GetAbilityEffectiveAmount(racingAnimal, terrain.powerModifier, statLossFromExhaustion) / 100);
-          this.globalService.increaseAbilityXp(racingAnimal);
-          currentPath.currentStumbleOpportunity += 1; //use this so that you don't trigger multiple times -- can come up with better method
-        }
-      }
-    }
 
     if (currentPath.currentStumbleOpportunity * stumbleBreakpoint < currentDistanceInPath) {
       currentPath.currentStumbleOpportunity += 1;
@@ -2537,18 +2604,18 @@ export class RaceLogicService {
       this.globalService.increaseAbilityXp(animal, 3);
   }
 
-  giveOrbXpBasedOnMeters(distanceCovered: number, racingAnimal: Animal, velocity: number) {
+  giveOrbXpBasedOnMeters(distanceCovered: number, racingAnimal: Animal, velocity: number, modifiedMaxSpeed: number) {
     //add to ruby when at or above max speed
     if (racingAnimal.equippedOrb !== undefined && racingAnimal.equippedOrb !== null &&
       this.globalService.getOrbTypeFromResource(racingAnimal.equippedOrb) === OrbTypeEnum.ruby &&
-      velocity >= racingAnimal.currentStats.maxSpeedMs) {
+      velocity >= modifiedMaxSpeed) {
       this.globalService.increaseRubyOrbXp(distanceCovered);
     }
 
     //add to amber when below max speed
     if (racingAnimal.equippedOrb !== undefined && racingAnimal.equippedOrb !== null &&
       this.globalService.getOrbTypeFromResource(racingAnimal.equippedOrb) === OrbTypeEnum.amber &&
-      velocity >= racingAnimal.currentStats.maxSpeedMs) {
+      velocity >= modifiedMaxSpeed) {
       this.globalService.increaseAmberOrbXp(distanceCovered);
     }
 
@@ -3046,11 +3113,17 @@ export class RaceLogicService {
       currentPath.totalTundraYAmount = racingAnimal.raceVariables.icyCurrentYAmount;
 
       if (racingAnimal.ability.name === "Quick Toboggan" && racingAnimal.type === AnimalTypeEnum.Penguin) {
+        if (!(this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix &&
+          this.globalService.globalVar.eventRaceData.eventAbilityData.quickTobogganUseCount >= this.globalService.globalVar.eventRaceData.eventAbilityData.quickTobogganUseCap)) {
 
-        raceResult.addRaceUpdate(framesPassed, animalDisplayName + " slides through without drifting, gaining speed.");
-        this.globalService.increaseAbilityXp(racingAnimal);
-        obj.permanentMaxSpeedIncreaseMultiplier += (this.lookupService.GetAbilityEffectiveAmount(racingAnimal, terrain.powerModifier, statLossFromExhaustion) / 100);
-        racingAnimal.ability.abilityInUse = true;
+          if (this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix)
+            this.globalService.globalVar.eventRaceData.eventAbilityData.quickTobogganUseCount += 1;
+
+          raceResult.addRaceUpdate(framesPassed, animalDisplayName + " slides through without drifting, gaining speed.");
+          this.globalService.increaseAbilityXp(racingAnimal);
+          obj.permanentMaxSpeedIncreaseMultiplier += (this.lookupService.GetAbilityEffectiveAmount(racingAnimal, terrain.powerModifier, statLossFromExhaustion) / 100);
+          racingAnimal.ability.abilityInUse = true;
+        }
       }
     }
 

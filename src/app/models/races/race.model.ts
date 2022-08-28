@@ -5,6 +5,7 @@ import { RaceTypeEnum } from "../race-type-enum.model";
 import { ResourceValue } from "../resources/resource-value.model";
 import { TrackRaceTypeEnum } from "../track-race-type-enum.model";
 import { DrawnRaceObject } from "./drawn-race-objects.model";
+import { PinnacleConditions } from "./pinnacle-conditions.model";
 import { RaceLeg } from "./race-leg.model";
 import { RaceUI } from "./race-ui.model";
 
@@ -28,6 +29,8 @@ export class Race {
     circuitIncreaseReward: [string, string];
     @Type(() => DrawnRaceObject)
     drawnObjects: DrawnRaceObject[];
+    @Type(() => PinnacleConditions)
+    pinnacleConditions: PinnacleConditions;
 
     constructor(raceLegs: RaceLeg[], requiredRank: string, isCircuitRace: boolean, raceId: number, length: number, timeToComplete: number, rewards?: ResourceValue[], localRaceType?: LocalRaceTypeEnum, trackRaceType?: TrackRaceTypeEnum, raceType?: RaceTypeEnum, eventRaceType?: EventRaceTypeEnum, drawnObjects?: DrawnRaceObject[]) {
         this.raceLegs = raceLegs;

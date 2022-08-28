@@ -12,6 +12,6 @@ export class Orb {
         this.level = 1;
         this.maxLevel = 1;
         this.xp = 0;
-        this.xpNeededForLevel = 1000;
+        this.xpNeededForLevel = 10000;
     }
 }

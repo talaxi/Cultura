@@ -3,16 +3,21 @@
     <div class="centered">
         <!--Name, then xp bar, then xp amount, then effect -->
         <span class="s4Heading" [ngClass]="this.colorConditional(orb.type)">{{globalService.getOrbNameFromType(orb.type)}}</span>
+        <p>Level {{orb.level}} / {{orb.maxLevel}}</p>
         <div>
             <br />
-            <p class="progressBarContainer">
-                <span>Lv {{ orb.level }}</span>
+            <span class="progressBarContainer">
+                <span>Level {{ orb.level }}</span>
                 <ngb-progressbar type="success" [value]="this.getProgressBarPercent(orb.type)" class="progressBar">
                 </ngb-progressbar>
-                <span class="customLabel">{{ this.getProgressBarPercent(orb.type) | number : '1.2-2' }}%</span>
-                <span>Lv {{ orb.level + 1 }}</span>
-            </p>
-            <span>XP needed for next level: {{orb.xp}} / {{ orb.xpNeededForLevel }}</span>
+                <span *ngIf="orb.level < orb.maxLevel">Level {{ orb.level + 1 }}</span>
+                <span *ngIf="orb.level >= orb.maxLevel">MAX</span>
+            </span>            
+            <span class="customLabel">{{ this.getProgressBarPercent(orb.type) | number : '1.2-2' }}%</span>
+            <br/>
+            <span *ngIf="orb.level < orb.maxLevel">XP needed for next level: {{orb.xp | number : '1.2-2' }} / {{ orb.xpNeededForLevel }}</span>
+            <span *ngIf="orb.level >= orb.maxLevel">MAX</span>
+            <br/>
             <br/>
             {{ this.globalService.getOrbDescription(orb.type) }}            
         </div>

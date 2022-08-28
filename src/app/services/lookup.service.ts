@@ -182,8 +182,7 @@ export class LookupService {
       modifierAmount = amplifier * Math.log10(horizontalStretch * (totalRenown - renownDiminishingReturnsCap) + horizontalPosition) + verticalPosition;
     }
 
-    if (!displayingPercentage)
-    {      
+    if (!displayingPercentage) {
       modifierAmount /= 100;
       modifierAmount += 1;
     }
@@ -197,7 +196,7 @@ export class LookupService {
       return resource.amount;
     else
       return 0;
-  }  
+  }
 
   getAnimalByType(type: AnimalTypeEnum): Animal | null {
     var globalAnimal = this.globalService.globalVar.animals.find(item => item.type === type);
@@ -413,7 +412,7 @@ export class LookupService {
     if (animal !== undefined && animal.miscStats.bonusBreedXpGainFromCircuitRaces !== undefined && animal.miscStats.bonusBreedXpGainFromCircuitRaces !== null && animal.miscStats.bonusBreedXpGainFromCircuitRaces > 0)
       increaseAmount += animal.miscStats.bonusBreedXpGainFromCircuitRaces;
 
-      if (animal !== undefined && animal.previousBreedLevel > animal.breedLevel)
+    if (animal !== undefined && animal.previousBreedLevel > animal.breedLevel)
       increaseAmount *= 10;
 
     return increaseAmount;
@@ -428,7 +427,7 @@ export class LookupService {
     if (animal !== undefined && animal.miscStats.bonusBreedXpGainFromLocalRaces !== undefined && animal.miscStats.bonusBreedXpGainFromLocalRaces !== null && animal.miscStats.bonusBreedXpGainFromLocalRaces > 0)
       increaseAmount += animal.miscStats.bonusBreedXpGainFromLocalRaces;
 
-      if (animal !== undefined && animal.previousBreedLevel > animal.breedLevel)
+    if (animal !== undefined && animal.previousBreedLevel > animal.breedLevel)
       increaseAmount *= 10;
 
     return increaseAmount;
@@ -619,7 +618,7 @@ export class LookupService {
 
   getGrandPrixTokenRewards() {
     var rewards: string[] = [];
-    var numericRankModifier = this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.eventRaceData.rank);
+    var numericRankModifier =  this.globalService.globalVar.eventRaceData.rankDistanceMultiplier;
     var token1MeterCount = 50000000;
     var token1MeterCountPair = this.globalService.globalVar.modifiers.find(item => item.text === "grandPrixToken1MeterModifier");
     if (token1MeterCountPair !== null && token1MeterCountPair !== undefined)
@@ -640,10 +639,11 @@ export class LookupService {
     if (token4MeterCountPair !== null && token4MeterCountPair !== undefined)
       token4MeterCount = token4MeterCountPair.value;
 
-    var token1Gain = 1 * numericRankModifier;
-    var token2Gain = 2 * numericRankModifier;
-    var token3Gain = 3 * numericRankModifier;
-    var token4Gain = 4 * numericRankModifier;
+    var tokenGainModifier = this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.eventRaceData.rank);
+    var token1Gain = 1 * tokenGainModifier;
+    var token2Gain = 2 * tokenGainModifier;
+    var token3Gain = 3 * tokenGainModifier;
+    var token4Gain = 4 * tokenGainModifier;
 
     rewards.push((token1MeterCount * numericRankModifier).toLocaleString() + " meters - +" + token1Gain + " Token" + (token1Gain > 1 ? "s" : ""));
     rewards.push((token2MeterCount * numericRankModifier).toLocaleString() + " meters - +" + token2Gain + " Tokens");
@@ -754,7 +754,9 @@ export class LookupService {
     if (animal.talentTree !== null && animal.talentTree !== undefined && animal.raceVariables !== null && animal.raceVariables !== undefined &&
       animal.talentTree.talentTreeType === TalentTreeTypeEnum.sprint && !animal.raceVariables.firstAbilityUseEffectApplied) {
       firstUseAbilityModifier *= 1 + (animal.talentTree.column3Row4Points * .05);
-      animal.raceVariables.firstAbilityUseEffectApplied = true;
+
+      if (animal.ability.name !== "Leap") //leap is constantly checking here to see if you pass distance threshold and only activates once so safe to ignore this
+        animal.raceVariables.firstAbilityUseEffectApplied = true;
     }
 
     var abilityEfficiencyRelayBonus = 1;
@@ -1033,12 +1035,12 @@ export class LookupService {
         }
         if (abilityName === "Whalesong") {
           return "Gain 30% to a particular stat for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters based on how many times you have used this ability, as follows:<br/>First Use - Gain 30% Adaptability Distance.<br/>" +
-          "Second Use - Gain 30% Burst Distance.<br/>" +
-          "Third Use - Gain 30% Acceleration Rate.<br/>" +
-          "Fourth Use - Gain 30% Focus Distance.<br/>" +
-          "Fifth Use - Gain 30% Max Speed.<br/>" +
-          "After 5 uses, every subsequent use will give 30% to all of these stats. " +
-          + cooldownDisplay + " second cooldown.";
+            "Second Use - Gain 30% Burst Distance.<br/>" +
+            "Third Use - Gain 30% Acceleration Rate.<br/>" +
+            "Fourth Use - Gain 30% Focus Distance.<br/>" +
+            "Fifth Use - Gain 30% Max Speed.<br/>" +
+            "After 5 uses, every subsequent use will give 30% to all of these stats. " +
+            + cooldownDisplay + " second cooldown.";
         }
         if (abilityName === "Herd Mentality") {
           return "After completing your leg, <span class='keyword'>" + effectiveAmountDisplay + "</span>% of your remaining Stamina is given to the next racer and they start their leg in Burst mode. This does not occur if you run out of Stamina during your leg. Passive.";
@@ -1071,7 +1073,7 @@ export class LookupService {
           return "When active, sacrifice 25% of one random stat for 50% of another random stat. Lasts <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. " + cooldownDisplay + " second cooldown.";
         }
         if (abilityName === "Fleeting Speed") {
-          return "Increase Max Speed by <span class='keyword'>" + effectiveAmountDisplay + "</span>%. Decrease this bonus by 2% for every percent of the leg you complete. Passive.";
+          return "Increase Max Speed by <span class='keyword'>" + effectiveAmountDisplay + "</span>%. Decrease this bonus by 2% for every percent of the leg you complete, down to 0% after you reach the half way point. Passive.";
         }
         if (abilityName === "Nine Tails") {
           return "At the start of each path, increase either Acceleration Rate, Max Speed, Focus Distance, or Adaptability Distance by 15% for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. This effect can stack. Passive.";
@@ -1134,7 +1136,7 @@ export class LookupService {
       coinAmount = 50;
     else {
       coinAmount = 100 * (currentLevel - 9);
-      
+
       if (currentLevel >= 100)
         coinAmount = 100 * (91) + 500 * (currentLevel - 99);
 
@@ -1144,27 +1146,25 @@ export class LookupService {
       if (currentLevel >= 300)
         coinAmount = (100 * 91) + (500 * 100) + (1000 * 100) + (2500 * (currentLevel - 299));
 
-      if (currentLevel >= 400)
-      {
+      if (currentLevel >= 400) {
         var previousLevels = (100 * 91) + (500 * 100) + (1000 * 100) + (2500 * 100);
         var levelsBeyond400 = currentLevel - 399;
         var breakPoints = Math.ceil(levelsBeyond400 / 100);
         var baseBreakPointAmount = 2500;
         coinAmount = previousLevels;
-        for (var i = 1; i <= breakPoints; i++)
-        {          
-          var breakPointLevel = (currentLevel - (400 + (100 * (i-1)) - 1));
+        for (var i = 1; i <= breakPoints; i++) {
+          var breakPointLevel = (currentLevel - (400 + (100 * (i - 1)) - 1));
           if (breakPointLevel > 100)
             breakPointLevel = 100;
 
           //console.log ("(" + baseBreakPointAmount + " * " + (i+1) + ") * (" + currentLevel + " - (400 - (100 * (" + (i-1) + ")) - 1");
           //console.log((baseBreakPointAmount * (i+1)) + " * " + breakPointLevel + " = " + (baseBreakPointAmount * (i+1)) * (currentLevel - (400 + (100 * (i-1)) - 1)));
-          coinAmount += (baseBreakPointAmount * (i+1)) * breakPointLevel;
+          coinAmount += (baseBreakPointAmount * (i + 1)) * breakPointLevel;
         }
       }
     }
 
-    var Coins = new ResourceValue("Coins", coinAmount);    
+    var Coins = new ResourceValue("Coins", coinAmount);
     allResourcesRequired.push(Coins);
     if (currentLevel % 10 === 9) {
       var medalCost = 1;
@@ -1350,7 +1350,11 @@ export class LookupService {
 
   getTrainingTimeReductionFromTrainingFacility(barnUpgrades: BarnUpgrades) {
     if (barnUpgrades.specialization === BarnSpecializationEnum.TrainingFacility) {
-      return barnUpgrades.specializationLevel * .01;
+      var specLevel = barnUpgrades.specializationLevel;
+      if (specLevel > 20)
+        specLevel = 20;
+
+      return specLevel * .01;
     }
 
     return 0;
@@ -1927,7 +1931,7 @@ export class LookupService {
       return 0;
 
     return affectedAnimalData.morale;
-  }  
+  }
 
   slowSegmentWarning(showWarning: boolean) {
     if (!showWarning)
@@ -1961,6 +1965,7 @@ export class LookupService {
     if (!this.globalService.globalVar.settings.get("hideTips")) {
       tipList.push("After upgrading training options, reselect them to gain their benefits!");
       tipList.push("Don't forget to export your save regularly!");
+      tipList.push("Use the arrow keys to quickly navigate between barns or animals.");
       tipList.push("Have to recite the alphabet to figure out what your next circuit rank is? You're not alone, go to the settings to use numbers instead!");
       tipList.push("Small barns allow training for 4 hours, medium for 8 hours, and large for 12 hours. Your animals will train even when the game is not active.");
       tipList.push("Each animal gains more or less racing stats from a base stat than other animals. Hover over each base stat in the Animals tab to see its modifier.");
@@ -2147,6 +2152,30 @@ export class LookupService {
     return talentTrees;
   }
 
+  getTalentTreeByStringName(name: string) {
+    if (name === "Sprint")
+      return TalentTreeTypeEnum.sprint;
+    if (name === "Support")
+      return TalentTreeTypeEnum.support;
+    if (name === "Long Distance")
+      return TalentTreeTypeEnum.longDistance;
+
+    return TalentTreeTypeEnum.none;
+  }
+
+  getNameByTalentTree(type: TalentTreeTypeEnum) {
+    var name = "";
+
+    if (type === TalentTreeTypeEnum.sprint)
+      name = "Sprint";
+    if (type === TalentTreeTypeEnum.support)
+      name = "Support";
+    if (type === TalentTreeTypeEnum.longDistance)
+      name = "Long Distance";
+
+    return name;
+  }
+
   getInDepthTalentTreeDescription(talentTree: string) {
     var description = "";
 
@@ -2235,7 +2264,7 @@ export class LookupService {
         description = "Instead of reducing velocity to 10% when losing focus, reduce to <span class='keyword'>" + (10 + (2 * numberOfPoints)) + "</span>%.";
 
       if (row === 0 && column === 1)
-        description = "Increase Max Speed stat gain from training by <span class='keyword'>" + numberOfPoints + "</span>%.";
+        description = "Increase Speed stat gain from training by <span class='keyword'>" + numberOfPoints + "</span>%.";
       if (row === 1 && column === 1)
         description = "While your velocity is 25% of your Max Speed or below, increase your Acceleration Rate by <span class='keyword'>" + 5 * numberOfPoints + "</span>%.";
       if (row === 2 && column === 1)

@@ -28,6 +28,7 @@ export class EventViewComponent implements OnInit {
   popoverText: string = "";
   cannotRace = false;
   eventRaceReleased = true;
+  raceRank = "";
   eventRaceNotice = "";
   eventRaceTimer = "";
   bonusTime = "";
@@ -63,6 +64,11 @@ export class EventViewComponent implements OnInit {
 
     this.popoverText = this.getForecastPopoverText();
 
+    this.raceRank = this.grandPrixData.rank;
+    if (this.globalService.globalVar.settings.get("useNumbersForCircuitRank")) {
+      this.raceRank = this.utilityService.getNumericValueOfCircuitRank(this.raceRank).toString();
+    }
+
     var racingAnimal = this.globalService.getGrandPrixRacingAnimal();
     if (!this.globalService.globalVar.eventRaceData.animalData.some(item => item.isCurrentlyRacing)) {
       var matchingAnimalData = this.globalService.globalVar.eventRaceData.animalData.find(item => item.associatedAnimalType == racingAnimal.type);
@@ -70,6 +76,8 @@ export class EventViewComponent implements OnInit {
         matchingAnimalData.isCurrentlyRacing = true;
       }
     }
+
+    var numericRankModifier = this.globalService.globalVar.eventRaceData.rankDistanceMultiplier;//this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.eventRaceData.rank);
 
     var coinRewardAmountValuePair = this.globalService.globalVar.modifiers.find(item => item.text === "grandPrixCoinRewardModifier");
     if (coinRewardAmountValuePair !== null && coinRewardAmountValuePair !== undefined)
@@ -81,16 +89,29 @@ export class EventViewComponent implements OnInit {
 
     var metersPerCoinRewardValuePair = this.globalService.globalVar.modifiers.find(item => item.text === "metersPerCoinsGrandPrixModifier");
     if (metersPerCoinRewardValuePair !== null && metersPerCoinRewardValuePair !== undefined)
-      this.coinRewardInterval = metersPerCoinRewardValuePair.value;
+      this.coinRewardInterval = metersPerCoinRewardValuePair.value * numericRankModifier;
 
     var metersPerRenownRewardValuePair = this.globalService.globalVar.modifiers.find(item => item.text === "metersPerRenownGrandPrixModifier");
     if (metersPerRenownRewardValuePair !== null && metersPerRenownRewardValuePair !== undefined)
-      this.renownRewardInterval = metersPerRenownRewardValuePair.value;
+      this.renownRewardInterval = metersPerRenownRewardValuePair.value * numericRankModifier;
 
     this.subscription = this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {
       this.setupEventTime();
       this.grandPrixData = this.globalService.globalVar.eventRaceData;
       this.previousRaceRewardList = this.globalService.globalVar.previousEventRewards;
+      
+      if (metersPerCoinRewardValuePair !== null && metersPerCoinRewardValuePair !== undefined)
+        this.coinRewardInterval = metersPerCoinRewardValuePair.value * this.globalService.globalVar.eventRaceData.rankDistanceMultiplier;
+      if (metersPerRenownRewardValuePair !== null && metersPerRenownRewardValuePair !== undefined)
+        this.renownRewardInterval = metersPerRenownRewardValuePair.value * this.globalService.globalVar.eventRaceData.rankDistanceMultiplier;
+      
+      if (this.grandPrixData !== undefined) {
+        this.raceRank = this.grandPrixData.rank;
+        if (this.globalService.globalVar.settings.get("useNumbersForCircuitRank")) {
+          this.raceRank = this.utilityService.getNumericValueOfCircuitRank(this.raceRank).toString();
+        }      
+      }
+
       if (this.previousRaceRewardList.length > 0)
         this.setupDisplayRewards();
 
@@ -98,7 +119,7 @@ export class EventViewComponent implements OnInit {
 
       if (this.globalService.globalVar.eventRaceData !== undefined && this.globalService.globalVar.eventRaceData !== null &&
         this.globalService.globalVar.eventRaceData.currentRaceSegment !== undefined && this.globalService.globalVar.eventRaceData.currentRaceSegment !== null) {
-        var timeToComplete = this.globalService.globalVar.eventRaceData.currentRaceSegmentResult.totalFramesPassed / 60;
+          var timeToComplete = this.globalService.globalVar.eventRaceData.currentRaceSegmentResult.totalFramesPassed / 60;
 
         if (this.globalService.globalVar.eventRaceData.segmentTimeCounter >= timeToComplete * 2) {
           this.grandPrixData.isCatchingUp = true;
@@ -260,47 +281,47 @@ export class EventViewComponent implements OnInit {
     var baseFoodAmount = 100;
     var firstMangoAmount = 5;
     var secondMangoAmount = 10;
-    
+
     if (this.globalService.globalVar.eventRaceData.distanceCovered >= strawberryRewardDistance)
       text += "<span class='crossed'>" + strawberryRewardDistance.toLocaleString() + " meters - +" + baseFoodAmount + " Strawberries</span><br/>";
     else
       text += strawberryRewardDistance.toLocaleString() + " meters - +" + baseFoodAmount + " Strawberries<br/>";
 
     if (this.globalService.globalVar.eventRaceData.distanceCovered >= appleRewardDistance)
-    text += "<span class='crossed'>" + appleRewardDistance.toLocaleString() + " meters - +" + baseFoodAmount + " Apples</span><br/>";
+      text += "<span class='crossed'>" + appleRewardDistance.toLocaleString() + " meters - +" + baseFoodAmount + " Apples</span><br/>";
     else
       text += appleRewardDistance.toLocaleString() + " meters - +" + baseFoodAmount + " Apples<br/>";
 
     if (this.globalService.globalVar.eventRaceData.distanceCovered >= orangeRewardDistance)
-    text += "<span class='crossed'>" + orangeRewardDistance.toLocaleString() + " meters - +" + baseFoodAmount + " Oranges</span><br/>";
+      text += "<span class='crossed'>" + orangeRewardDistance.toLocaleString() + " meters - +" + baseFoodAmount + " Oranges</span><br/>";
     else
       text += orangeRewardDistance.toLocaleString() + " meters - +" + baseFoodAmount + " Oranges<br/>";
 
     if (this.globalService.globalVar.eventRaceData.distanceCovered >= mangoRewardDistance)
-    text += "<span class='crossed'>" + mangoRewardDistance.toLocaleString() + " meters - +" + firstMangoAmount + " Mangoes</span><br/>";
+      text += "<span class='crossed'>" + mangoRewardDistance.toLocaleString() + " meters - +" + firstMangoAmount + " Mangoes</span><br/>";
     else
       text += mangoRewardDistance.toLocaleString() + " meters - +" + baseFoodAmount + " Mangoes<br/>";
 
     if (this.globalService.globalVar.eventRaceData.distanceCovered >= turnipRewardDistance)
-    text += "<span class='crossed'>" + turnipRewardDistance.toLocaleString() + " meters - +" + baseFoodAmount + " Turnips</span><br/>";
+      text += "<span class='crossed'>" + turnipRewardDistance.toLocaleString() + " meters - +" + baseFoodAmount + " Turnips</span><br/>";
     else
       text += turnipRewardDistance.toLocaleString() + " meters - +" + baseFoodAmount + " Turnips<br/>";
 
     if (this.globalService.globalVar.eventRaceData.distanceCovered >= bananaRewardDistance)
-    text += "<span class='crossed'>" + bananaRewardDistance.toLocaleString() + " meters - +" + baseFoodAmount + " Bananas</span><br/>";
+      text += "<span class='crossed'>" + bananaRewardDistance.toLocaleString() + " meters - +" + baseFoodAmount + " Bananas</span><br/>";
     else
       text += bananaRewardDistance.toLocaleString() + " meters - +" + baseFoodAmount + " Bananas<br/>";
 
     if (this.globalService.globalVar.eventRaceData.distanceCovered >= carrotRewardDistance)
-    text += "<span class='crossed'>" + carrotRewardDistance.toLocaleString() + " meters - +" + baseFoodAmount + " Carrots</span><br/>";
+      text += "<span class='crossed'>" + carrotRewardDistance.toLocaleString() + " meters - +" + baseFoodAmount + " Carrots</span><br/>";
     else
-      text += carrotRewardDistance.toLocaleString() + " meters - +" + baseFoodAmount + " Carrots<br/>";  
+      text += carrotRewardDistance.toLocaleString() + " meters - +" + baseFoodAmount + " Carrots<br/>";
 
-      if (this.globalService.globalVar.eventRaceData.distanceCovered >= mangoReward2Distance)
+    if (this.globalService.globalVar.eventRaceData.distanceCovered >= mangoReward2Distance)
       text += "<span class='crossed'>" + mangoReward2Distance.toLocaleString() + " meters - +" + secondMangoAmount + " Mangoes</span><br/>";
-      else
-        text += mangoReward2Distance.toLocaleString() + " meters - +" + secondMangoAmount + " Mangoes<br/>";
-  
+    else
+      text += mangoReward2Distance.toLocaleString() + " meters - +" + secondMangoAmount + " Mangoes<br/>";
+
 
     return text;
   }
@@ -309,10 +330,10 @@ export class EventViewComponent implements OnInit {
     var text = "";
     var rewardsObtained = 0;
     var totalRewards = 0;
-    var numericRankModifier = this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.eventRaceData.rank);
+    var numericRankModifier = this.globalService.globalVar.eventRaceData.rankDistanceMultiplier;//this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.eventRaceData.rank);
 
-    totalRewards = this.globalService.globalVar.eventRaceData.totalDistance / (this.renownRewardInterval * numericRankModifier);
-    rewardsObtained = Math.floor(this.globalService.globalVar.eventRaceData.distanceCovered / (this.renownRewardInterval * numericRankModifier));
+    totalRewards = this.globalService.globalVar.eventRaceData.totalDistance / this.renownRewardInterval;
+    rewardsObtained = Math.floor(this.globalService.globalVar.eventRaceData.distanceCovered / this.renownRewardInterval);
 
     text = (rewardsObtained * this.renownRewardAmount) + "/" + (totalRewards * this.renownRewardAmount) + " Renown obtained";
 
@@ -323,10 +344,10 @@ export class EventViewComponent implements OnInit {
     var text = "";
     var rewardsObtained = 0;
     var totalRewards = 0;
-    var numericRankModifier = this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.eventRaceData.rank);
+    
 
-    totalRewards = this.globalService.globalVar.eventRaceData.totalDistance / (this.coinRewardInterval * numericRankModifier);
-    rewardsObtained = Math.floor(this.globalService.globalVar.eventRaceData.distanceCovered / (this.coinRewardInterval * numericRankModifier));
+    totalRewards = this.globalService.globalVar.eventRaceData.totalDistance / this.coinRewardInterval;
+    rewardsObtained = Math.floor(this.globalService.globalVar.eventRaceData.distanceCovered / this.coinRewardInterval);
 
     text = (rewardsObtained * this.coinRewardAmount) + "/" + (totalRewards * this.coinRewardAmount) + " Coins obtained";
 
@@ -336,7 +357,7 @@ export class EventViewComponent implements OnInit {
   getGrandPrixTokenRewardsPopover() {
     var popover = "";
     var rewards = this.lookupService.getGrandPrixTokenRewards();
-    var numericRankModifier = this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.eventRaceData.rank);
+    var numericRankModifier = this.globalService.globalVar.eventRaceData.rankDistanceMultiplier;//this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.eventRaceData.rank);
 
     var token1MeterCount = 50000000;
     var token1MeterCountPair = this.globalService.globalVar.modifiers.find(item => item.text === "grandPrixToken1MeterModifier");
@@ -434,7 +455,7 @@ export class EventViewComponent implements OnInit {
     if (this.globalService.globalVar.eventRaceData !== null && this.globalService.globalVar.eventRaceData !== undefined)
       this.globalService.globalVar.relayEnergyFloor = this.relayEnergy;
   }
-  
+
   doNotAutoRelayBelowEnergyFloorToggle = () => {
     this.doNotAutoRelayBelowEnergyFloor = !this.doNotAutoRelayBelowEnergyFloor;
     this.globalService.globalVar.doNotRelayBelowEnergyFloor = this.doNotAutoRelayBelowEnergyFloor;

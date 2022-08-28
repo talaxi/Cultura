@@ -10,7 +10,7 @@
     <div *ngIf="researchLevel > 0">
         <div class="selectAnimalView" *ngIf="!animalSelected">            
             <div>
-                <app-animal-list [availableAnimals]="availableAnimals" (selectedAnimal)="selectedAnimal($event)">
+                <app-animal-list [availableAnimals]="availableAnimals" [isIncubatorDetailView]="true" (selectedAnimal)="selectedAnimal($event)">
                 </app-animal-list>
             </div>
         </div>

@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Animal } from 'src/app/models/animals/animal.model';
 import { LocalRaceTypeEnum } from 'src/app/models/local-race-type-enum.model';
+import { EasyPinnacleConditionsEnum, MediumPinnacleConditionsEnum } from 'src/app/models/pinnacle-conditions-enum.model';
 import { RaceCourseTypeEnum } from 'src/app/models/race-course-type-enum.model';
 import { RaceTypeEnum } from 'src/app/models/race-type-enum.model';
 import { RaceLeg } from 'src/app/models/races/race-leg.model';
@@ -18,6 +19,7 @@ export class RaceDescriptionComponent implements OnInit {
   @Input() race: Race;
   @Input() showStartText: boolean;
   @Input() selectedAnimal: Animal; //used for trainingTrack
+  @Input() condensedVersion: boolean = false;
   cannotRace: boolean;
   popoverText: string;
   missingRacers: RaceCourseTypeEnum[] = [];
@@ -41,7 +43,7 @@ export class RaceDescriptionComponent implements OnInit {
           this.cannotRace = true;
           this.missingRacers.push(leg.courseType);
         }
-        else {          
+        else {
           var selectedAnimal = selectedDeck?.selectedAnimals.find(item => item.raceCourseType === leg.courseType);
           if (this.race.raceType === RaceTypeEnum.trainingTrack)
             selectedAnimal = this.selectedAnimal;
@@ -53,6 +55,22 @@ export class RaceDescriptionComponent implements OnInit {
         }
       }
     });
+
+
+    if (this.race.pinnacleConditions !== undefined && selectedDeck !== undefined) {
+      if (this.race.pinnacleConditions.containsCondition(EasyPinnacleConditionsEnum[EasyPinnacleConditionsEnum.twoRacersOnly])) {
+        if (selectedDeck.selectedAnimals.length < 2)
+          this.cannotRace = true;
+      }
+      if (this.race.pinnacleConditions.containsCondition(EasyPinnacleConditionsEnum[EasyPinnacleConditionsEnum.threeRacersOnly])) {
+        if (selectedDeck.selectedAnimals.length < 3)
+          this.cannotRace = true;
+      }
+      if (this.race.pinnacleConditions.containsCondition(MediumPinnacleConditionsEnum[MediumPinnacleConditionsEnum.fourRacersOnly])) {
+        if (selectedDeck.selectedAnimals.length < 4)
+          this.cannotRace = true;
+      }
+    }
 
     if (!this.cannotRace && this.race.isCompleted)
       this.cannotRace = true;
@@ -120,6 +138,22 @@ export class RaceDescriptionComponent implements OnInit {
 
     if (this.race.localRaceType === LocalRaceTypeEnum.Free && this.lookupService.getRemainingFreeRacesPerPeriod() <= 0)
       popoverText += "-You've met your limit of free races. More will be available soon."
+
+    var selectedDeck = this.lookupService.getPrimaryDeck();
+    if (this.race.pinnacleConditions !== undefined && selectedDeck !== undefined) {
+      if (this.race.pinnacleConditions.containsCondition(EasyPinnacleConditionsEnum[EasyPinnacleConditionsEnum.twoRacersOnly])) {
+        if (selectedDeck.selectedAnimals.length < 2)
+        popoverText += "-You do not meet the Pinnacle conditions.\n";
+      }
+      if (this.race.pinnacleConditions.containsCondition(EasyPinnacleConditionsEnum[EasyPinnacleConditionsEnum.threeRacersOnly])) {
+        if (selectedDeck.selectedAnimals.length < 3)
+        popoverText += "-You do not meet the Pinnacle conditions.\n";
+      }
+      if (this.race.pinnacleConditions.containsCondition(MediumPinnacleConditionsEnum[MediumPinnacleConditionsEnum.fourRacersOnly])) {
+        if (selectedDeck.selectedAnimals.length < 4)
+        popoverText += "-You do not meet the Pinnacle conditions.\n";
+      }
+    }
 
     return popoverText;
   }

@@ -3,12 +3,15 @@
     <app-animal-deck></app-animal-deck>
     <hr />
     <div class="allLocalRaces">
-        <div id="monoRaceSection" *ngIf="areMonoRacesAvailable">
-            <div (click)="selectLocalRace(availableMonoRace)" class="monoRace"
-                *ngIf="availableMonoRace !== undefined && availableMonoRace !== null">
-                <span class="s4Heading">Mono Race <strong>{{ monoRaceRank }}</strong> </span>
-                <br />
-                <app-race-description [race]="availableMonoRace" [showStartText]="true"></app-race-description>
+        <div id="monoRaceSection" *ngIf="areMonoRacesAvailable && !isMonoRaceToggled">
+            <div class="monoRace" *ngIf="availableMonoRace !== undefined && availableMonoRace !== null">
+                <div class="minimizer">
+                    <span class="minimizerSideSpacing"><button (click)="toggleRace('monoRaceToggled')">-</button></span>
+                    <span class="s4Heading">Mono Race <strong>{{ monoRaceRank }}</strong> </span>
+                    <span class="minimizerSideSpacing"></span>
+                </div>
+                <app-race-description (click)="selectLocalRace(availableMonoRace)" [race]="availableMonoRace"
+                    [showStartText]="true"></app-race-description>
             </div>
             <div class="monoRace" *ngIf="availableMonoRace === undefined || availableMonoRace == null">
                 Next Mono Race Available After Circuit Rank Up
@@ -16,12 +19,34 @@
             <hr />
         </div>
 
-        <div id="duoRaceSection" *ngIf="areDuoRacesAvailable">
-            <div (click)="selectLocalRace(availableDuoRace)" class="duoRace"
-                *ngIf="availableDuoRace !== undefined && availableDuoRace !== null">
-                <span class="s4Heading">Duo Race <strong>{{ duoRaceRank }}</strong> </span>
-                <br />
-                <app-race-description [race]="availableDuoRace" [showStartText]="true"></app-race-description>
+        <div id="monoRaceSection" *ngIf="areMonoRacesAvailable && isMonoRaceToggled">
+            <div (click)="selectLocalRace(availableMonoRace)" class="monoRace"
+                *ngIf="availableMonoRace !== undefined && availableMonoRace !== null">
+                <div class="minimizer">
+                    <span class="minimizerSideSpacing"><button (click)="toggleRace('monoRaceToggled')">+</button></span>
+                    <span class="s4Heading raceNameSpacing">Mono Race <strong>{{ monoRaceRank }}</strong> </span>
+                    <div class="inlineDescription">
+                        <app-race-description (click)="selectLocalRace(availableMonoRace)" [race]="availableMonoRace"
+                            [showStartText]="true" [condensedVersion]="true"></app-race-description>
+                    </div>
+                </div>
+                <!--<app-race-description [race]="availableMonoRace" [showStartText]="true"></app-race-description>-->
+            </div>
+            <div class="monoRace" *ngIf="availableMonoRace === undefined || availableMonoRace == null">
+                Next Mono Race Available After Circuit Rank Up
+            </div>
+            <hr />
+        </div>
+
+        <div id="duoRaceSection" *ngIf="areDuoRacesAvailable && !isDuoRaceToggled">
+            <div class="duoRace" *ngIf="availableDuoRace !== undefined && availableDuoRace !== null">
+                <div class="minimizer">
+                    <span class="minimizerSideSpacing"><button (click)="toggleRace('duoRaceToggled')">-</button></span>
+                    <span class="s4Heading">Duo Race <strong>{{ duoRaceRank }}</strong> </span>
+                    <span class="minimizerSideSpacing"></span>
+                </div>
+                <app-race-description (click)="selectLocalRace(availableDuoRace)" [race]="availableDuoRace"
+                    [showStartText]="true"></app-race-description>
             </div>
             <div class="duoRace" *ngIf="availableDuoRace === undefined || availableDuoRace == null">
                 Next Duo Race Available After Circuit Rank Up
@@ -29,25 +54,95 @@
             <hr />
         </div>
 
-        <div id="rainbowRaceSection" *ngIf="areRainbowRacesAvailable">
-            <div (click)="selectLocalRace(availableRainbowRace)" class="rainbowRace"
-                *ngIf="availableRainbowRace !== undefined && availableRainbowRace !== null">
-                <span class="s4Heading">Rainbow Race <strong>{{ rainbowRaceRank }}</strong> </span>
-                <br />
-                <app-race-description [race]="availableRainbowRace" [showStartText]="true"></app-race-description>
+        <div id="duoRaceSection" *ngIf="areDuoRacesAvailable && isDuoRaceToggled">
+            <div class="duoRace" *ngIf="availableDuoRace !== undefined && availableDuoRace !== null">
+                <div class="minimizer">
+                    <span class="minimizerSideSpacing"><button (click)="toggleRace('duoRaceToggled')">+</button></span>
+                    <span class="s4Heading raceNameSpacing">Duo Race <strong>{{ duoRaceRank }}</strong> </span>
+                    <div class="inlineDescription">
+                        <app-race-description (click)="selectLocalRace(availableDuoRace)" [race]="availableDuoRace"
+                            [showStartText]="true" [condensedVersion]="true"></app-race-description>
+                    </div>
+                </div>
+            </div>
+            <div class="duoRace" *ngIf="availableDuoRace === undefined || availableDuoRace == null">
+                Next Duo Race Available After Circuit Rank Up
+            </div>
+            <hr />
+        </div>
+
+        <div id="rainbowRaceSection" *ngIf="areRainbowRacesAvailable && !isRainbowRaceToggled">
+            <div class="rainbowRace" *ngIf="availableRainbowRace !== undefined && availableRainbowRace !== null">
+                <div class="minimizer">
+                    <span class="minimizerSideSpacing"><button
+                            (click)="toggleRace('rainbowRaceToggled')">-</button></span>
+                    <span class="s4Heading">Rainbow Race <strong>{{ rainbowRaceRank }}</strong> </span>
+                    <span class="minimizerSideSpacing"></span>
+                </div>
+                <app-race-description (click)="selectLocalRace(availableRainbowRace)" [race]="availableRainbowRace"
+                    [showStartText]="true"></app-race-description>
             </div>
             <div class="rainbowRace" *ngIf="availableRainbowRace === undefined || availableRainbowRace == null">
                 Next Rainbow Race Available After Circuit Rank Up
             </div>
             <hr />
-        </div>  
-        
-        <div id="pinnacleRaceSection" *ngIf="arePinnacleRacesAvailable">
-            <div (click)="selectLocalRace(availablePinnacleRace)" class="pinnacleRace"
-                *ngIf="availablePinnacleRace !== undefined && availablePinnacleRace !== null">
-                <span class="s4Heading">Pinnacle Floor <strong>{{ pinnacleRaceFloor }}</strong> </span>
+        </div>
+
+        <div id="rainbowRaceSection" *ngIf="areRainbowRacesAvailable && isRainbowRaceToggled">
+            <div class="rainbowRace" *ngIf="availableRainbowRace !== undefined && availableRainbowRace !== null">
+                <div class="minimizer">
+                    <span class="minimizerSideSpacing"><button
+                            (click)="toggleRace('rainbowRaceToggled')">+</button></span>
+                    <span class="s4Heading raceNameSpacing">Rainbow Race <strong>{{ rainbowRaceRank }}</strong> </span>
+                    <div class="inlineDescription">
+                        <app-race-description (click)="selectLocalRace(availableRainbowRace)"
+                            [race]="availableRainbowRace" [showStartText]="true" [condensedVersion]="true">
+                        </app-race-description>
+                    </div>
+                </div>
+            </div>
+            <div class="rainbowRace" *ngIf="availableRainbowRace === undefined || availableRainbowRace == null">
+                Next Rainbow Race Available After Circuit Rank Up
+            </div>
+            <hr />
+        </div>
+
+        <div id="pinnacleRaceSection" *ngIf="arePinnacleRacesAvailable && !isPinnacleRaceToggled">
+            <div class="pinnacleRace" *ngIf="availablePinnacleRace !== undefined && availablePinnacleRace !== null">
+                <div class="minimizer">
+                    <span class="minimizerSideSpacing"><button
+                            (click)="toggleRace('pinnacleRaceToggled')">-</button></span>
+                    <span class="s4Heading">Pinnacle Floor <strong>{{ pinnacleRaceFloor }}</strong> </span>
+                    <span class="minimizerSideSpacing"></span>
+                </div>
+                <span><em>Floor Conditions:</em> {{
+                    this.globalService.getPinnacleFloorConditionDescription(availablePinnacleRace.pinnacleConditions) }}
+                </span>
                 <br />
-                <app-race-description [race]="availablePinnacleRace" [showStartText]="true"></app-race-description>
+                <app-race-description (click)="selectLocalRace(availablePinnacleRace)" [race]="availablePinnacleRace"
+                    [showStartText]="true"></app-race-description>
+            </div>
+            <div class="pinnacleRace" *ngIf="availablePinnacleRace === undefined || availablePinnacleRace == null">
+                Next Pinnacle Floor Available After Circuit Rank Up
+            </div>
+            <hr />
+        </div>
+
+        <div id="pinnacleRaceSection" *ngIf="arePinnacleRacesAvailable && isPinnacleRaceToggled">
+            <div class="pinnacleRace" *ngIf="availablePinnacleRace !== undefined && availablePinnacleRace !== null">
+                <div class="minimizer">
+                    <span class="minimizerSideSpacing"><button
+                            (click)="toggleRace('pinnacleRaceToggled')">+</button></span>
+                    <span class="s4Heading raceNameSpacing">Pinnacle Floor <strong>{{ pinnacleRaceFloor }}</strong> </span>
+                    <div class="inlineDescription">
+                        <app-race-description (click)="selectLocalRace(availablePinnacleRace)"
+                            [race]="availablePinnacleRace" [showStartText]="true" [condensedVersion]="true">
+                        </app-race-description>
+                    </div>
+                </div>
+                <span><em>Floor Conditions:</em> {{
+                    this.globalService.getPinnacleFloorConditionDescription(availablePinnacleRace.pinnacleConditions) }}
+                </span>
             </div>
             <div class="pinnacleRace" *ngIf="availablePinnacleRace === undefined || availablePinnacleRace == null">
                 Next Pinnacle Floor Available After Circuit Rank Up

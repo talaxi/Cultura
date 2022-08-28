@@ -6,11 +6,17 @@
         <div *ngIf="isAnimalDetailView">
             Breed Level {{breedLevel}}
         </div>
+        <div *ngIf="isIncubatorDetailView && trait !== undefined">
+            {{getTraitDetails()}}
+        </div>
     </h6>
     <h6 class="keyword" *ngIf="selectedAnimal.name === selectedAnimal.getAnimalType()">
         <span>{{ selectedAnimal.getAnimalType() }}</span>
         <div *ngIf="isAnimalDetailView">
             Breed Level {{breedLevel}}
+        </div>
+        <div *ngIf="isIncubatorDetailView && trait !== undefined">
+            {{getTraitDetails()}}
         </div>
     </h6>
     <br />

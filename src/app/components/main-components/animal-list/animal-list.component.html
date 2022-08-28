@@ -4,7 +4,7 @@
             <tr *ngFor="let cells of animalRows;">
                 <td *ngFor="let c of cells;">
                     <div (click)="selectAnimal(c)" class="clickableText">
-                        <app-animal [selectedAnimal]="c" [isTrainingTrackView]="isTrainingTrackView" [isAnimalDetailView]="isAnimalDetailView"> </app-animal>
+                        <app-animal [selectedAnimal]="c" [isTrainingTrackView]="isTrainingTrackView" [isIncubatorDetailView]="isIncubatorDetailView" [isAnimalDetailView]="isAnimalDetailView"> </app-animal>
                     </div>
                 </td>
             </tr>

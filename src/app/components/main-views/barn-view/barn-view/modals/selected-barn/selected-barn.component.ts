@@ -226,12 +226,18 @@ export class SelectedBarnComponent implements OnInit {
           modifiedOption.trainingName = "Canal Adventure";
       }
 
-      modifiedOption.affectedStatRatios.topSpeed *= this.barn.barnUpgrades.upgradedStatGain.topSpeed;
-      modifiedOption.affectedStatRatios.acceleration *= this.barn.barnUpgrades.upgradedStatGain.acceleration;
-      modifiedOption.affectedStatRatios.endurance *= this.barn.barnUpgrades.upgradedStatGain.endurance;
-      modifiedOption.affectedStatRatios.power *= this.barn.barnUpgrades.upgradedStatGain.power;
-      modifiedOption.affectedStatRatios.focus *= this.barn.barnUpgrades.upgradedStatGain.focus;
-      modifiedOption.affectedStatRatios.adaptability *= this.barn.barnUpgrades.upgradedStatGain.adaptability;
+      var trainingFacilityAdditive = 0;
+
+      if (this.barn.barnUpgrades.specialization === BarnSpecializationEnum.TrainingFacility) {
+        trainingFacilityAdditive = ((this.barn.barnUpgrades.specializationLevel - 20) / 10);
+      }
+
+      modifiedOption.affectedStatRatios.topSpeed *= this.barn.barnUpgrades.upgradedStatGain.topSpeed + trainingFacilityAdditive;
+      modifiedOption.affectedStatRatios.acceleration *= this.barn.barnUpgrades.upgradedStatGain.acceleration + trainingFacilityAdditive;
+      modifiedOption.affectedStatRatios.endurance *= this.barn.barnUpgrades.upgradedStatGain.endurance + trainingFacilityAdditive;
+      modifiedOption.affectedStatRatios.power *= this.barn.barnUpgrades.upgradedStatGain.power + trainingFacilityAdditive;
+      modifiedOption.affectedStatRatios.focus *= this.barn.barnUpgrades.upgradedStatGain.focus + trainingFacilityAdditive;
+      modifiedOption.affectedStatRatios.adaptability *= this.barn.barnUpgrades.upgradedStatGain.adaptability + trainingFacilityAdditive;
 
       var topSpeedTalentModifier = 1;
       var accelerationTalentModifier = 1;

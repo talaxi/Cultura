@@ -20,3 +20,12 @@
 .raceNotAllowed {
     cursor: not-allowed !important;
 }
+
+.inline {
+    display: inline-block;    
+}
+
+.flex {
+    display: flex;
+    justify-content:  space-between;
+}
