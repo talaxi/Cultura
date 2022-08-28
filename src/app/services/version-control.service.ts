@@ -930,6 +930,11 @@ export class VersionControlService {
           }
         }
         else if (version === 1.14) {
+          if (this.globalService.globalVar.eventRaceData !== undefined && this.globalService.globalVar.eventRaceData !== null)
+          {
+            this.globalService.globalVar.eventRaceData.rankDistanceMultiplier = this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.eventRaceData.rank);
+          }
+
           this.globalService.globalVar.settings.set("monoRaceToggled", false);
           this.globalService.globalVar.settings.set("duoRaceToggled", false);
           this.globalService.globalVar.settings.set("rainbowRaceToggled", false);
