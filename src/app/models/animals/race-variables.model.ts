@@ -38,6 +38,9 @@ export class RaceVariables {
     velocityExceedsMaxSpeedDuringBurst: boolean;
     velocityReachesMaxSpeedCount: number;
 
+    //pinnacle effects
+    forceRelay: boolean;
+
     constructor() {
         this.remainingBurstMeters = 0;
         this.metersSinceLostFocus = 0;
@@ -69,6 +72,8 @@ export class RaceVariables {
         this.firstAbilityUseEffectApplied = false;
         this.velocityExceedsMaxSpeedDuringBurst = false;
         this.velocityReachesMaxSpeedCount = 0;
+
+        this.forceRelay = false;
     }
 
     makeCopy() {
@@ -102,6 +107,8 @@ export class RaceVariables {
         copy.firstAbilityUseEffectApplied = this.firstAbilityUseEffectApplied;
         copy.velocityExceedsMaxSpeedDuringBurst = this.velocityExceedsMaxSpeedDuringBurst;
         copy.velocityReachesMaxSpeedCount = this.velocityReachesMaxSpeedCount;
+
+        copy.forceRelay = this.forceRelay;
 
         this.relayEffects = [];
 

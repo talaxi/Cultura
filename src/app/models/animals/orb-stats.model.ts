@@ -1,7 +1,9 @@
+import { Type } from "class-transformer";
 import { OrbTypeEnum } from "../orb-type-enum.model";
 import { Orb } from "./orb.model";
 
 export class OrbStats {
+    @Type(() => Orb)
     allOrbs: Orb[];
     defaultIncrease = 1.2;
     increasePerLevel = .2;
@@ -28,99 +30,97 @@ export class OrbStats {
         this.allOrbs.push(emeraldOrb);
     }
 
-    getMaxSpeedIncrease() {
+    getMaxSpeedIncrease(holders: number) {
         var increase = 1;
         var increaseLevelModifier = 1.1;
 
-        if (this.allOrbs !== undefined && this.allOrbs.length > 0)
-        {
+        if (this.allOrbs !== undefined && this.allOrbs.length > 0) {
             var rubyOrb = this.allOrbs.find(item => item.type === OrbTypeEnum.ruby);
-            if (rubyOrb !== undefined)
-            {
+            if (rubyOrb !== undefined) {
                 increase = this.defaultIncrease + ((rubyOrb.level - 1) * this.increasePerLevel);
             }
         }
-
-        return increase;
+        
+        return ((increase - 1) / holders) + 1;
     }
 
-    getAccelerationIncrease() {
+    getAccelerationIncrease(holders: number) {
         var increase = 1;
         var increaseLevelModifier = 1.1;
 
-        if (this.allOrbs !== undefined && this.allOrbs.length > 0)
-        {
+        if (this.allOrbs !== undefined && this.allOrbs.length > 0) {
             var amberOrb = this.allOrbs.find(item => item.type === OrbTypeEnum.amber);
-            if (amberOrb !== undefined)
-            {
+            if (amberOrb !== undefined) {
                 increase = this.defaultIncrease + ((amberOrb.level - 1) * this.increasePerLevel);
             }
         }
 
-        return increase;
+        return ((increase - 1) / holders) + 1;
     }
 
-    getEnduranceIncrease() {
+    getEnduranceIncrease(holders: number) {
         var increase = 1;
         var increaseLevelModifier = 1.1;
 
-        if (this.allOrbs !== undefined && this.allOrbs.length > 0)
-        {
+        if (this.allOrbs !== undefined && this.allOrbs.length > 0) {
             var topazOrb = this.allOrbs.find(item => item.type === OrbTypeEnum.topaz);
-            if (topazOrb !== undefined)
-            {
+            if (topazOrb !== undefined) {
                 increase = this.defaultIncrease + ((topazOrb.level - 1) * this.increasePerLevel);
             }
         }
 
-        return increase;
+        return ((increase - 1) / holders) + 1;
     }
 
-    getPowerIncrease() {
+    getPowerIncrease(holders: number) {
         var increase = 1;
         var increaseLevelModifier = 1.1;
 
-        if (this.allOrbs !== undefined && this.allOrbs.length > 0)
-        {
+        if (this.allOrbs !== undefined && this.allOrbs.length > 0) {
             var amethystOrb = this.allOrbs.find(item => item.type === OrbTypeEnum.amethyst);
-            if (amethystOrb !== undefined)
-            {
+            if (amethystOrb !== undefined) {
                 increase = this.defaultIncrease + ((amethystOrb.level - 1) * this.increasePerLevel);
             }
         }
 
-        return increase;
+        return ((increase - 1) / holders) + 1;
     }
 
-    getAdaptabilityIncrease() {
+    getAdaptabilityIncrease(holders: number) {
         var increase = 1;
         var increaseLevelModifier = 1.1;
 
-        if (this.allOrbs !== undefined && this.allOrbs.length > 0)
-        {
+        if (this.allOrbs !== undefined && this.allOrbs.length > 0) {
             var emeraldOrb = this.allOrbs.find(item => item.type === OrbTypeEnum.emerald);
-            if (emeraldOrb !== undefined)
-            {
+            if (emeraldOrb !== undefined) {
                 increase = this.defaultIncrease + ((emeraldOrb.level - 1) * this.increasePerLevel);
             }
         }
 
-        return increase;
+        return ((increase - 1) / holders) + 1;
     }
 
-    getFocusIncrease() {
+    getFocusIncrease(holders: number) {
         var increase = 1;
         var increaseLevelModifier = 1.1;
 
-        if (this.allOrbs !== undefined && this.allOrbs.length > 0)
-        {
+        if (this.allOrbs !== undefined && this.allOrbs.length > 0) {
             var sapphireOrb = this.allOrbs.find(item => item.type === OrbTypeEnum.sapphire);
-            if (sapphireOrb !== undefined)
-            {
+            if (sapphireOrb !== undefined) {
                 increase = this.defaultIncrease + ((sapphireOrb.level - 1) * this.increasePerLevel);
             }
         }
 
-        return increase;
+        return ((increase - 1) / holders) + 1;
+    }
+
+    makeCopy() {
+        var newOrbStats = new OrbStats();
+
+        newOrbStats.allOrbs = [];
+        this.allOrbs.forEach(orb => {
+            newOrbStats.allOrbs.push(orb.makeCopy());
+        });
+        return newOrbStats;
     }
 }

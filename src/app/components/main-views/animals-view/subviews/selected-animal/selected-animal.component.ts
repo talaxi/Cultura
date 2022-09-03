@@ -6,6 +6,7 @@ import { AnimalStats } from 'src/app/models/animals/animal-stats.model';
 import { Animal } from 'src/app/models/animals/animal.model';
 import { IncubatorStatUpgrades } from 'src/app/models/animals/incubator-stat-upgrades.model';
 import { NavigationEnum } from 'src/app/models/navigation-enum.model';
+import { OrbTypeEnum } from 'src/app/models/orb-type-enum.model';
 import { ResourceValue } from 'src/app/models/resources/resource-value.model';
 import { ShopItemTypeEnum } from 'src/app/models/shop-item-type-enum.model';
 import { TalentTreeTypeEnum } from 'src/app/models/talent-tree-type-enum.model';
@@ -66,7 +67,7 @@ export class SelectedAnimalComponent implements OnInit {
   equipmentCells: ResourceValue[]; //for display purposes
   selectedEquipment: ResourceValue | undefined;
 
-  orbFunctionalityReleased = false;
+  orbFunctionalityReleased = true;
   orbList: ResourceValue[];
   orbRows: ResourceValue[][]; //for display purposes
   orbCells: ResourceValue[]; //for display purposes
@@ -387,7 +388,7 @@ export class SelectedAnimalComponent implements OnInit {
 
         this.globalService.calculateAnimalRacingStats(this.selectedAnimal);
       }
-      else if (this.selectedItem.name === "Gingko Leaves") {        
+      else if (this.selectedItem.name === "Gingko Leaves") {
         this.selectedAnimal.previousBreedLevel = this.selectedAnimal.breedLevel;
         this.selectedAnimal.breedLevel = 1;
         this.selectedAnimal.breedGaugeMax = 200;
@@ -638,11 +639,11 @@ export class SelectedAnimalComponent implements OnInit {
 
   handleIntroTutorial() {
     var hare = this.globalService.globalVar.animals.find(item => item.type === AnimalTypeEnum.Hare);
-    
+
     if (!this.globalService.globalVar.tutorials.tutorialCompleted && this.globalService.globalVar.tutorials.currentTutorialId === 3) {
       this.globalService.globalVar.tutorials.showTutorial = true;
-    }    
-    if (!this.globalService.globalVar.tutorials.tutorialCompleted && this.globalService.globalVar.tutorials.currentTutorialId === 9 && 
+    }
+    if (!this.globalService.globalVar.tutorials.tutorialCompleted && this.globalService.globalVar.tutorials.currentTutorialId === 9 &&
       hare?.isAvailable) {
       this.globalService.globalVar.tutorials.currentTutorialId += 1;
       this.globalService.globalVar.tutorials.showTutorial = true;
@@ -657,7 +658,7 @@ export class SelectedAnimalComponent implements OnInit {
 
   filterTalentTree(talentTree: string) {
     this.selectedTalentTree = talentTree;
-    this.inDepthTalentTreeDescription = this.lookupService.getInDepthTalentTreeDescription(talentTree);    
+    this.inDepthTalentTreeDescription = this.lookupService.getInDepthTalentTreeDescription(talentTree);
   }
 
   selectTalentTree() {
@@ -672,7 +673,7 @@ export class SelectedAnimalComponent implements OnInit {
   resetSelectedAnimalInfo(newAnimal: Animal) {
     this.selectedAnimal = newAnimal;
     this.areTalentsAvailable = this.lookupService.isItemUnlocked("rainbowRace");
-    this.orbIsUnlocked = this.lookupService.isItemUnlocked("orbs");
+    this.orbIsUnlocked = this.lookupService.isItemUnlocked("orbs") && this.selectedAnimal.canEquipOrb;
 
     this.maxSpeedModifierAmount = this.lookupService.getMaxSpeedModifierByAnimalType(this.selectedAnimal.type);
     this.accelerationModifierAmount = this.lookupService.getAccelerationModifierByAnimalType(this.selectedAnimal.type);
@@ -838,6 +839,23 @@ export class SelectedAnimalComponent implements OnInit {
 
   spentTalent(spent: boolean) {
     this.availableTalentPoints = this.lookupService.getTalentPointsAvailableToAnimal(this.selectedAnimal);
+  }
+
+  orbColorConditional(orb: ResourceValue) {
+    var type = this.globalService.getOrbTypeFromResource(orb);
+
+    return {
+      'amberColor': type === OrbTypeEnum.amber,
+      'amethystColor': type === OrbTypeEnum.amethyst,
+      'rubyColor': type === OrbTypeEnum.ruby,
+      'sapphireColor': type === OrbTypeEnum.sapphire,
+      'topazColor': type === OrbTypeEnum.topaz,
+      'emeraldColor': type === OrbTypeEnum.emerald,
+    };
+  }
+
+  viewOrbDetails(content: any) {    
+    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
   }
 
   ngOnDestroy() {

@@ -4,6 +4,7 @@ import { AnimalStats } from '../models/animals/animal-stats.model';
 import { Warthog, Whale } from '../models/animals/animal.model';
 import { OrbStats } from '../models/animals/orb-stats.model';
 import { GrandPrixData } from '../models/races/event-race-data.model';
+import { PinnacleConditions } from '../models/races/pinnacle-conditions.model';
 import { ResourceValue } from '../models/resources/resource-value.model';
 import { ShopItemTypeEnum } from '../models/shop-item-type-enum.model';
 import { ShopItem } from '../models/shop/shop-item.model';
@@ -23,7 +24,7 @@ export class VersionControlService {
   constructor(private globalService: GlobalService, private lookupService: LookupService, private utilityService: UtilityService) { }
 
   //add to this in descending order
-  gameVersions = [1.14, 1.13, 1.12, 1.11, 1.10, 1.09, 1.08, 1.07, 1.06, 1.05, 1.04, 1.03, 1.02, 1.01, 1.00];
+  gameVersions = [1.15, 1.14, 1.13, 1.12, 1.11, 1.10, 1.09, 1.08, 1.07, 1.06, 1.05, 1.04, 1.03, 1.02, 1.01, 1.00];
 
   getListAscended() {
     var ascendedList: number[] = [];
@@ -152,9 +153,17 @@ export class VersionControlService {
         "More bug fixes.";
     if (version === 1.14)
       changes = "Added option to minimize special races/training tracks for better visibility.\n\n" +
-      "Added trait % value under the animals when looking at the Incubator to easily see an animal's current status.\n\n" +
-      "You can now preview a talent tree before selecting.\n\n" +        
+        "Added trait % value under the animals when looking at the Incubator to easily see an animal's current status.\n\n" +
+        "You can now preview a talent tree before selecting.\n\n" +
         "More bug fixes. (view Discord Change Log for full info)";
+    if (version === 1.15)
+      changes = "The Pinnacle has been added to the game!" +
+      "<ul><li>After reaching Circuit Rank AAAZ (79), you will have access to a new Special Race called The Pinnacle.</li>" +
+      "<li>Each floor of the Pinnacle has its own special rules. Pay attention to the conditions and plan your team out to maximize your success!</li>" + 
+      "<li>As you race, you will pass ritualistic braziers where you place the orbs you received as you ranked up to increase their max level.</li></ul>" +     
+      "Balance adjustments have been made for Circuit and Special races mostly around the time of being Circuit Rank AA (52) and higher.\n\n" +
+      "Incubator upgrade prices have been increased to be more in line with the coin gain increases that were made.\n\n" +
+      "Minor bug fixes.";
     return changes;
   }
 
@@ -190,6 +199,8 @@ export class VersionControlService {
       date = new Date('2022-08-25 12:00:00');
     if (version === 1.14)
       date = new Date('2022-08-28 12:00:00');
+    if (version === 1.15)
+      date = new Date('2022-09-03 12:00:00');
 
     return date.toDateString().replace(/^\S+\s/, '');
   }
@@ -929,8 +940,7 @@ export class VersionControlService {
           }
         }
         else if (version === 1.14) {
-          if (this.globalService.globalVar.eventRaceData !== undefined && this.globalService.globalVar.eventRaceData !== null)
-          {
+          if (this.globalService.globalVar.eventRaceData !== undefined && this.globalService.globalVar.eventRaceData !== null) {
             this.globalService.globalVar.eventRaceData.rankDistanceMultiplier = this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.eventRaceData.rank);
           }
 
@@ -941,6 +951,43 @@ export class VersionControlService {
           this.globalService.globalVar.settings.set("noviceTrainingTrackToggled", false);
           this.globalService.globalVar.settings.set("intermediateTrainingTrackToggled", false);
           this.globalService.globalVar.settings.set("masterTrainingTrackToggled", false);
+        }
+        else if (version === 1.15) {
+          this.globalService.globalVar.pinnacleHistory = new PinnacleConditions();
+
+          if (this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.circuitRank) >= 79)
+          {            
+            this.globalService.globalVar.unlockables.set("thePinnacle", true);
+            this.globalService.globalVar.notifications.isNewSpecialRaceAvailable = true;
+          }
+
+          this.globalService.globalVar.settings.set("amberOrbToggled", false);
+          this.globalService.globalVar.settings.set("amethystOrbToggled", false);
+          this.globalService.globalVar.settings.set("emeraldOrbToggled", false);
+          this.globalService.globalVar.settings.set("rubyOrbToggled", false);
+          this.globalService.globalVar.settings.set("sapphireOrbToggled", false);
+          this.globalService.globalVar.settings.set("topazOrbToggled", false);
+
+          var specialtyItems = this.globalService.globalVar.shop.find(item => item.name === "Specialty");
+          if (specialtyItems !== undefined) {
+            var incLvl2 = specialtyItems.itemList.find(item => item.name === "Incubator Upgrade Lv2");
+            if (incLvl2 !== undefined) {
+              incLvl2.purchasePrice = [];
+              incLvl2.purchasePrice.push(new ResourceValue("Coins", 25000));
+            }
+
+            var incLvl3 = specialtyItems.itemList.find(item => item.name === "Incubator Upgrade Lv3");
+            if (incLvl3 !== undefined) {
+              incLvl3.purchasePrice = [];
+              incLvl3.purchasePrice.push(new ResourceValue("Coins", 100000));
+            }
+
+            var incLvl4 = specialtyItems.itemList.find(item => item.name === "Incubator Upgrade Lv4");
+            if (incLvl4 !== undefined) {
+              incLvl4.purchasePrice = [];
+              incLvl4.purchasePrice.push(new ResourceValue("Coins", 1000000));
+            }
+          }
         }
 
         this.globalService.globalVar.currentVersion = version;

@@ -67,7 +67,7 @@ export class AppComponent {
 
     if (devMode) {
       this.globalService.globalVar.tutorials.tutorialCompleted = true;
-      this.globalService.devModeInitialize(90, 4);
+      this.globalService.devModeInitialize(79, 4);
     }
 
     this.versionControlService.updatePlayerVersion();
@@ -176,6 +176,7 @@ export class AppComponent {
   }
 
   handleGrandPrix(deltaTime: number) {
+    //console.log(this.globalService.globalVar.eventRaceData.currentEventEndDate + " Timer: " + this.globalService.globalVar.eventRaceData.segmentTimeCounter);
     var raceTimeOver = false;
     if (this.globalService.globalVar.eventRaceData.currentEventEndDate !== null && this.globalService.globalVar.eventRaceData.currentEventEndDate !== undefined &&
       new Date() > this.utilityService.addDaysToDate(this.globalService.globalVar.eventRaceData.currentEventEndDate, 1)) {
@@ -231,7 +232,8 @@ export class AppComponent {
         if (this.globalService.globalVar.eventRaceData.isRunning === false) {
 
           var timeSinceRaceStarted = this.globalService.globalVar.eventRaceData.grandPrixTimeLength - this.globalService.getRemainingEventRaceTime();
-          //retroactively add past time          
+          //retroactively add past time  
+          //console.log("Time Since Race Started: " + timeSinceRaceStarted);        
           this.globalService.globalVar.eventRaceData.segmentTimeCounter = timeSinceRaceStarted;
           this.globalService.globalVar.eventRaceData.overallTimeCounter = timeSinceRaceStarted;
 
@@ -370,7 +372,8 @@ export class AppComponent {
 
     if (this.globalService.globalVar.eventRaceData.exhaustionMoraleUpdateCounter > timerCap) {
       this.globalService.globalVar.eventRaceData.animalData.forEach(item => {
-        if (currentRacer === undefined || item.associatedAnimalType !== currentRacer?.associatedAnimalType) {
+        if (!this.globalService.globalVar.eventRaceData.isRunning || currentRacer === undefined || 
+          item.associatedAnimalType !== currentRacer?.associatedAnimalType) {
 
           item.exhaustionStatReduction += exhaustionGain;
           if (item.exhaustionStatReduction >= 1)

@@ -12,8 +12,11 @@ import { BarnSpecializationEnum } from '../models/barn-specialization-enum.model
 import { BarnUpgrades } from '../models/barns/barn-upgrades.model';
 import { Barn } from '../models/barns/barn.model';
 import { LocalRaceTypeEnum } from '../models/local-race-type-enum.model';
+import { OrbTypeEnum } from '../models/orb-type-enum.model';
+import { HardPinnacleConditionsEnum } from '../models/pinnacle-conditions-enum.model';
 import { RaceCourseTypeEnum } from '../models/race-course-type-enum.model';
 import { GrandPrixData } from '../models/races/event-race-data.model';
+import { PinnacleConditions } from '../models/races/pinnacle-conditions.model';
 import { RaceLeg } from '../models/races/race-leg.model';
 import { Race } from '../models/races/race.model';
 import { RelayEffect } from '../models/races/relay-effect.model';
@@ -515,6 +518,24 @@ export class LookupService {
     else if (name === "Bonus Talents") {
       return "Increase talent point amount for this animal.";
     }
+    else if (name === "Amethyst Orb Level Up") {
+      return "Increase the max level of your Amethyst Orb."
+    }
+    else if (name === "Amber Orb Level Up") {
+      return "Increase the max level of your Amber Orb."
+    }
+    else if (name === "Emerald Orb Level Up") {
+      return "Increase the max level of your Emerald Orb."
+    }
+    else if (name === "Ruby Orb Level Up") {
+      return "Increase the max level of your Ruby Orb."
+    }
+    else if (name === "Sapphire Orb Level Up") {
+      return "Increase the max level of your Sapphire Orb."
+    }
+    else if (name === "Topaz Orb Level Up") {
+      return "Increase the max level of your Topaz Orb."
+    }
     else if (type === ShopItemTypeEnum.Specialty)
       return this.getSpecialtyItemDescription(name);
     else if (type === ShopItemTypeEnum.Equipment)
@@ -720,7 +741,7 @@ export class LookupService {
     return itemList;
   }
 
-  GetAbilityEffectiveAmount(animal: Animal, terrainModifier?: number, statLossFromExhaustion?: number, ability?: Ability, grazeBuffs?: [string, number][]) {
+  GetAbilityEffectiveAmount(animal: Animal, pinnacleConditions?: PinnacleConditions, terrainModifier?: number, statLossFromExhaustion?: number, ability?: Ability, grazeBuffs?: [string, number][]) {
     if (animal.ability === undefined || animal.ability === null ||
       animal.ability.name === undefined || animal.ability.name === null)
       return -1;
@@ -768,8 +789,15 @@ export class LookupService {
       }
     }
 
+    var pinnacleReduction = 1;
+    if (pinnacleConditions !== undefined &&
+      pinnacleConditions.containsCondition(HardPinnacleConditionsEnum[HardPinnacleConditionsEnum.reduceAbilityEfficiency])) {
+      pinnacleReduction = .01;      
+    }
+
     var modifiedPower = (animal.currentStats.powerMs * powerAbilityModifier * terrainModifier * statLossFromExhaustion) / 100;
     var modifiedEfficiency = usedAbility.efficiency * abilityEfficiencyRelayBonus * firstUseAbilityModifier + (usedAbility.efficiency * ((usedAbility.abilityLevel - 1) * .01));
+    modifiedEfficiency *=  pinnacleReduction;
 
     return modifiedEfficiency * (1 + modifiedPower);
   }
@@ -930,7 +958,7 @@ export class LookupService {
       }
 
       if (animal !== undefined && animal !== null) {
-        var effectiveAmountDisplay = this.GetAbilityEffectiveAmount(animal, undefined, undefined, selectedAbility).toLocaleString(undefined, { minimumFractionDigits: 2 });
+        var effectiveAmountDisplay = this.GetAbilityEffectiveAmount(animal, undefined, undefined, undefined, selectedAbility).toLocaleString(undefined, { minimumFractionDigits: 2 });
 
         if (cooldownDisplay === "" && animal.ability.cooldown !== undefined && animal.ability.cooldown !== null)
           cooldownDisplay = animal.ability.cooldown.toString();
@@ -1201,7 +1229,7 @@ export class LookupService {
     var popoverText = "";
 
     if (raceLeg !== undefined)
-      popoverText = "The terrain for the " + raceLeg.getCourseTypeName() + " leg is " + terrain.getTerrainType() + ": <br/>";
+      popoverText = "Terrain for the " + raceLeg.getCourseTypeName() + " leg is " + terrain.getTerrainType() + ": <br/>";
 
     /*if (terrain.staminaModifier !== null && terrain.staminaModifier !== undefined && terrain.staminaModifier !== 0) {
       popoverText += "+" + (terrain.staminaModifier * 100).toFixed(0) + "% stamina cost\n";
@@ -1595,6 +1623,11 @@ export class LookupService {
     if (topSpeedTalentModifier > 1)
       popover += "Long Distance Talents: *" + topSpeedTalentModifier.toFixed(2) + "\n";
 
+    if (animal.equippedOrb !== undefined && animal.equippedOrb !== null &&
+     this.globalService.getOrbTypeFromResource(animal.equippedOrb) === OrbTypeEnum.ruby &&
+     this.globalService.globalVar.orbStats.getMaxSpeedIncrease(1) > 1)
+      popover += "Ruby Orb: *" + this.globalService.globalVar.orbStats.getMaxSpeedIncrease(1).toFixed(1) + "\n";
+
     return popover;
   }
 
@@ -1634,6 +1667,11 @@ export class LookupService {
 
     if (accelerationTalentModifier > 1)
       popover += "Sprint Talents: *" + accelerationTalentModifier.toFixed(2) + "\n";
+
+      if (animal.equippedOrb !== undefined && animal.equippedOrb !== null &&
+        this.globalService.getOrbTypeFromResource(animal.equippedOrb) === OrbTypeEnum.amber &&
+        this.globalService.globalVar.orbStats.getAccelerationIncrease(1) > 1)
+      popover += "Amber Orb: *" + this.globalService.globalVar.orbStats.getAccelerationIncrease(1).toFixed(1) + "\n";
 
     return popover;
   }
@@ -1675,6 +1713,11 @@ export class LookupService {
     if (enduranceTalentModifier > 1)
       popover += "Long Distance Talents: *" + enduranceTalentModifier.toFixed(2) + "\n";
 
+      if (animal.equippedOrb !== undefined && animal.equippedOrb !== null &&
+        this.globalService.getOrbTypeFromResource(animal.equippedOrb) === OrbTypeEnum.topaz &&
+        this.globalService.globalVar.orbStats.getEnduranceIncrease(1) > 1)
+      popover += "Topaz Orb: *" + this.globalService.globalVar.orbStats.getEnduranceIncrease(1).toFixed(1) + "\n";
+
     return popover;
   }
 
@@ -1714,6 +1757,11 @@ export class LookupService {
 
     if (powerTalentModifier > 1)
       popover += "Sprint Talents: *" + powerTalentModifier.toFixed(2) + "\n";
+
+      if (animal.equippedOrb !== undefined && animal.equippedOrb !== null &&
+        this.globalService.getOrbTypeFromResource(animal.equippedOrb) === OrbTypeEnum.amethyst &&
+        this.globalService.globalVar.orbStats.getPowerIncrease(1) > 1)
+      popover += "Amethyst Orb: *" + this.globalService.globalVar.orbStats.getPowerIncrease(1).toFixed(1) + "\n";
 
     return popover;
   }
@@ -1755,6 +1803,11 @@ export class LookupService {
     if (focusTalentModifier > 1)
       popover += "Long Distance Talents: *" + focusTalentModifier.toFixed(2) + "\n";
 
+    if (animal.equippedOrb !== undefined && animal.equippedOrb !== null &&
+      this.globalService.getOrbTypeFromResource(animal.equippedOrb) === OrbTypeEnum.sapphire &&
+      this.globalService.globalVar.orbStats.getFocusIncrease(1) > 1)
+      popover += "Sapphire Orb: *" + this.globalService.globalVar.orbStats.getFocusIncrease(1).toFixed(1) + "\n";
+
     return popover;
   }
 
@@ -1794,6 +1847,11 @@ export class LookupService {
 
     if (adaptabilityTalentModifier > 1)
       popover += "Sprint Talents: *" + adaptabilityTalentModifier.toFixed(2) + "\n";
+
+    if (animal.equippedOrb !== undefined && animal.equippedOrb !== null &&
+      this.globalService.getOrbTypeFromResource(animal.equippedOrb) === OrbTypeEnum.emerald &&
+      this.globalService.globalVar.orbStats.getAdaptabilityIncrease(1) > 1)
+      popover += "Emerald Orb: *" + this.globalService.globalVar.orbStats.getAdaptabilityIncrease(1).toFixed(1) + "\n";
 
     return popover;
   }
@@ -2022,7 +2080,7 @@ export class LookupService {
     if (name === "Hide Tips") {
       description = "Turn on to stop displaying tips in the footer. (Tips never display in Mobile version presently)";
     }
-    if (name === "Use Numbers For Circuit Rank") {
+    if (name === "Use Numbers For Ranks") {
       description = "Turn on to use numbers instead of letters when displaying ranks.";
     }
     if (name === "Auto Start Event Race") {

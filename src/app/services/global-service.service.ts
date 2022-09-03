@@ -75,14 +75,16 @@ export class GlobalService {
     this.globalVar.tutorials = new Tutorials();
     this.globalVar.previousEventRewards = [];
     this.globalVar.eventRaceData = new GrandPrixData();
+    this.globalVar.pinnacleHistory = new PinnacleConditions();
+    this.globalVar.currentPinnacleConditions = undefined;
     this.globalVar.userIsRacing = false;
     this.globalVar.nationalRaceCountdown = 0;
     this.globalVar.autoFreeRaceCounter = 0;
     this.globalVar.freeRaceCounter = 0;
     this.globalVar.freeRaceTimePeriodCounter = 0;
     this.globalVar.lastTimeStamp = Date.now();
-    this.globalVar.currentVersion = 1.14; //TODO: this needs to be automatically increased or something, too easy to forget
-    this.globalVar.startingVersion = 1.14;
+    this.globalVar.currentVersion = 1.15; //TODO: this needs to be automatically increased or something, too easy to forget
+    this.globalVar.startingVersion = 1.15;
     this.globalVar.startDate = new Date();
     this.globalVar.notifications = new Notifications();
     this.globalVar.relayEnergyFloor = 50;
@@ -955,15 +957,6 @@ export class GlobalService {
 
     var incubatorUpgrade = new ShopItem();
     incubatorUpgrade.name = "Incubator Upgrade Lv2";
-    incubatorUpgrade.purchasePrice.push(this.getCoinsResourceValue(10000));
-    incubatorUpgrade.basePurchasePrice.push(this.getCoinsResourceValue(10000));
-    incubatorUpgrade.canHaveMultiples = false;
-    incubatorUpgrade.isAvailable = false;
-    incubatorUpgrade.type = ShopItemTypeEnum.Specialty;
-    specialtyShopItems.push(incubatorUpgrade);
-
-    var incubatorUpgrade = new ShopItem();
-    incubatorUpgrade.name = "Incubator Upgrade Lv3";
     incubatorUpgrade.purchasePrice.push(this.getCoinsResourceValue(25000));
     incubatorUpgrade.basePurchasePrice.push(this.getCoinsResourceValue(25000));
     incubatorUpgrade.canHaveMultiples = false;
@@ -972,9 +965,18 @@ export class GlobalService {
     specialtyShopItems.push(incubatorUpgrade);
 
     var incubatorUpgrade = new ShopItem();
+    incubatorUpgrade.name = "Incubator Upgrade Lv3";
+    incubatorUpgrade.purchasePrice.push(this.getCoinsResourceValue(100000));
+    incubatorUpgrade.basePurchasePrice.push(this.getCoinsResourceValue(100000));
+    incubatorUpgrade.canHaveMultiples = false;
+    incubatorUpgrade.isAvailable = false;
+    incubatorUpgrade.type = ShopItemTypeEnum.Specialty;
+    specialtyShopItems.push(incubatorUpgrade);
+
+    var incubatorUpgrade = new ShopItem();
     incubatorUpgrade.name = "Incubator Upgrade Lv4";
-    incubatorUpgrade.purchasePrice.push(this.getCoinsResourceValue(50000));
-    incubatorUpgrade.basePurchasePrice.push(this.getCoinsResourceValue(50000));
+    incubatorUpgrade.purchasePrice.push(this.getCoinsResourceValue(1000000));
+    incubatorUpgrade.basePurchasePrice.push(this.getCoinsResourceValue(1000000));
     incubatorUpgrade.canHaveMultiples = false;
     incubatorUpgrade.isAvailable = false;
     incubatorUpgrade.type = ShopItemTypeEnum.Specialty;
@@ -1326,7 +1328,7 @@ export class GlobalService {
     }
     if (raceType === LocalRaceTypeEnum.Pinnacle) {
       this.globalVar.pinnacleFloor = nextRank;
-      this.GenerateRainbowRaces(this.globalVar.pinnacleFloor);
+      this.GeneratePinnacleRaces(this.globalVar.pinnacleFloor);
     }
   }
 
@@ -1346,11 +1348,10 @@ export class GlobalService {
 
     this.globalVar.eventRaceData.rank = nextRank;
 
-    if (this.utilityService.getNumericValueOfCircuitRank(this.globalVar.eventRaceData.rank) % 5 === 0)
-    {
+    if (this.utilityService.getNumericValueOfCircuitRank(this.globalVar.eventRaceData.rank) % 5 === 0) {
       this.globalVar.eventRaceData.rankDistanceMultiplier *= 2;
     }
-    else {      
+    else {
       var increase = Math.ceil(this.utilityService.getNumericValueOfCircuitRank(this.globalVar.eventRaceData.rank) / 5);
       this.globalVar.eventRaceData.rankDistanceMultiplier += increase;
     }
@@ -1822,7 +1823,7 @@ export class GlobalService {
       this.globalVar.resources.push(new ResourceValue("Amethyst Orb", 1, ShopItemTypeEnum.Equipment));
       this.globalVar.unlockables.set("orbs", true);
 
-      returnVal = ["Amethyst Orb", "You receive a glowing violet orb. What it does is a mystery."];
+      returnVal = ["Amethyst Orb", "You receive a glowing violet orb. What it is for is a mystery, but you feel faster while you hold it."];
 
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(58) + "Barn Row 5";
     }
@@ -1837,7 +1838,7 @@ export class GlobalService {
     else if (numericValue === 60) {
       this.globalVar.resources.push(new ResourceValue("Sapphire Orb", 1, ShopItemTypeEnum.Equipment));
 
-      returnVal = ["Sapphire Orb", "You receive a glowing blue orb. What it does is a mystery."];
+      returnVal = ["Sapphire Orb", "You receive a glowing blue orb. What it is for is a mystery, but you feel faster while you hold it.."];
 
       var amount = 100;
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(62) + amount + " Mangoes";
@@ -1857,7 +1858,7 @@ export class GlobalService {
     else if (numericValue === 65) {
       this.globalVar.resources.push(new ResourceValue("Amber Orb", 1, ShopItemTypeEnum.Equipment));
 
-      returnVal = ["Amber Orb", "You receive a glowing orange orb. What it does is a mystery."];
+      returnVal = ["Amber Orb", "You receive a glowing orange orb. What it is for is a mystery, but you feel faster while you hold it.."];
 
       var amount = 25;
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(67) + amount + " Renown";
@@ -1877,7 +1878,7 @@ export class GlobalService {
     else if (numericValue === 70) {
       this.globalVar.resources.push(new ResourceValue("Topaz Orb", 1, ShopItemTypeEnum.Equipment));
 
-      returnVal = ["Topaz Orb", "You receive a glowing yellow orb. What it does is a mystery."];
+      returnVal = ["Topaz Orb", "You receive a glowing yellow orb. What it is for is a mystery, but you feel faster while you hold it.."];
 
       var amount = 500;
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(73) + amount + " Stat Increasing Food Items";
@@ -1893,25 +1894,25 @@ export class GlobalService {
     else if (numericValue === 75) {
       this.globalVar.resources.push(new ResourceValue("Emerald Orb", 1, ShopItemTypeEnum.Equipment));
 
-      returnVal = ["Emerald Orb", "You receive a glowing green orb. What it does is a mystery."];
+      returnVal = ["Emerald Orb", "You receive a glowing green orb. What it is for is a mystery, but you feel faster while you hold it.."];
 
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(78) + "Ruby Orb";
     }
     else if (numericValue === 78) {
       this.globalVar.resources.push(new ResourceValue("Ruby Orb", 1, ShopItemTypeEnum.Equipment));
 
-      returnVal = ["Ruby Orb", "You receive a glowing red orb. What it does is a mystery."];
+      returnVal = ["Ruby Orb", "You receive a glowing red orb. What it is for is a mystery, but you feel faster while you hold it.."];
 
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(79) + "The Pinnacle";
     }
     else if (numericValue === 79) {
-      this.globalVar.unlockables.set("thePinnacle", false); //TODO: set this to true when launching pinnacle, turn on in version control
+      this.globalVar.unlockables.set("thePinnacle", true);
       this.globalVar.notifications.isNewSpecialRaceAvailable = true;
 
       returnVal = ["The Pinnacle", this.utilityService.getSanitizedHtml("A new race type has been unlocked!" +
         " The Pinnacle is an old and mysterious fortress. Researchers have struggled to map out its interior due to the ever changing terrain and constantly shifting weather. Your team has been contracted out to help map the area out. <br/>" +
         " As you race through each floor, you notice that you can insert the Orbs you have received into braziers to activate them. This increases your Orb level, allowing you to further power them up. <br/> <br/>" +
-        "<em>Select this race and others like it by choosing the 'Special Race' option from the 'Races' menu. <b>This race is not implemented yet but will be soon!</b></em>")];
+        "<em>Select this race and others like it by choosing the 'Special Race' option from the 'Races' menu. </em>")];
 
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(80) + "More Coming Soon!";
     }
@@ -1973,6 +1974,13 @@ export class GlobalService {
 
     var legMinimumDistance = 20; //as a percentage of 100
     var legMaximumDistance = 80; //as a percentage of 100
+
+    if (this.utilityService.getNumericValueOfCircuitRank(circuitRank) >= 53) //traits unlocked
+      baseMeters = 110;
+    if (this.utilityService.getNumericValueOfCircuitRank(circuitRank) >= 53) //talents unlocked
+      baseMeters = 125;
+    if (this.utilityService.getNumericValueOfCircuitRank(circuitRank) >= 79) //orbs unlocked
+      baseMeters = 150;
 
     var circuitRaces = 3;
     if (circuitRank === "Z")
@@ -2177,8 +2185,24 @@ export class GlobalService {
     return randomizedList;
   }
 
-  getRandomTerrain(raceCourseType: RaceCourseTypeEnum, seed?: string) {
+  getRandomTerrain(raceCourseType: RaceCourseTypeEnum, seed?: string, pinnacleConditions?: PinnacleConditions) {
     var availableTerrainsList: TerrainTypeEnum[] = [];
+
+    if (pinnacleConditions !== undefined &&
+      pinnacleConditions.containsCondition(MediumPinnacleConditionsEnum[MediumPinnacleConditionsEnum.harshTerrain])) {      
+      if (raceCourseType === RaceCourseTypeEnum.Flatland || raceCourseType === RaceCourseTypeEnum.Mountain) {
+        return new Terrain(TerrainTypeEnum.Snowfall);
+      }
+      if (raceCourseType === RaceCourseTypeEnum.Volcanic) {
+        return new Terrain(TerrainTypeEnum.Ashfall);
+      }
+      if (raceCourseType === RaceCourseTypeEnum.Tundra) {
+        return new Terrain(TerrainTypeEnum.Hailstorm);
+      }
+      if (raceCourseType === RaceCourseTypeEnum.Ocean) {
+        return new Terrain(TerrainTypeEnum.Maelstrom);
+      }
+    }
 
     if (raceCourseType === RaceCourseTypeEnum.Flatland) {
       availableTerrainsList.push(TerrainTypeEnum.Sunny);
@@ -2685,7 +2709,7 @@ export class GlobalService {
     var timeToComplete = 80;
 
     var baseMeters = 6500;
-    var factor = 1.1;
+    var factor = 1.16;
 
     var maxRandomFactor = 1.2;
     var minRandomFactor = 0.8;
@@ -2747,8 +2771,8 @@ export class GlobalService {
     var raceIndex = 1;
     var timeToComplete = 120;
 
-    var baseMeters = 100000;
-    var factor = 1.135;
+    var baseMeters = 125000;
+    var factor = 1.17;
 
     var maxRandomFactor = 1.2;
     var minRandomFactor = 0.8;
@@ -2815,15 +2839,15 @@ export class GlobalService {
     var raceIndex = 1;
     var timeToComplete = 180;
 
-    var baseMeters = 1250000;
-    var factor = 1.115;
+    var baseMeters = 2500000;
+    var factor = 1.17;
     var legLengthModifier = 1; //depending on condition, leg may need to shift in size
 
     //get condition
     var pinnacleCondition = this.getRandomPinnacleCondition(i, 'pinnaclel1' + pinnacleFloor + i);
 
     if (pinnacleCondition.containsCondition(EasyPinnacleConditionsEnum[EasyPinnacleConditionsEnum.threeHundredSecondRace])) {
-      legLengthModifier = 1.6667;
+      legLengthModifier = 1.75;
     }
 
     if (pinnacleCondition.containsCondition(MediumPinnacleConditionsEnum[MediumPinnacleConditionsEnum.thirtySecondRace])) {
@@ -2857,7 +2881,7 @@ export class GlobalService {
       var leg = new RaceLeg();
       leg.courseType = first4Animals[j].raceCourseType;
       leg.distance = percentOfRace * totalDistance;
-      leg.terrain = this.getRandomTerrain(leg.courseType, 'pinnaclel' + pinnacleFloor + i + j);
+      leg.terrain = this.getRandomTerrain(leg.courseType, 'pinnaclel' + pinnacleFloor + i + j, pinnacleCondition);
       raceLegs.push(leg);
     }
 
@@ -2877,9 +2901,8 @@ export class GlobalService {
     var brazierDistanceCounter = 0;
     var objectList: DrawnRaceObject[] = [];
     randomizedList.forEach(item => {
-      brazierDistanceCounter += 1;
-      //console.log(totalDistance + " * (" + brazierDistanceCounter + " / " + randomizedList.length + " + 1) = " + totalDistance * (brazierDistanceCounter / (randomizedList.length + 1)));
-      var drawnObject = new DrawnRaceObject(this.getBrazierFromOrbType(item), totalDistance * (brazierDistanceCounter / (randomizedList.length + 1)));
+      brazierDistanceCounter += 1;      
+      var drawnObject = new DrawnRaceObject(this.getBrazierFromOrbType(item), totalDistance * (brazierDistanceCounter / (randomizedList.length + 1)));      
       objectList.push(drawnObject);
     });
 
@@ -2901,13 +2924,45 @@ export class GlobalService {
     raceIndex += 1;
   }
 
+  addToPinnacleHistory(newConditions: PinnacleConditions) {
+    if (newConditions.easyConditions.length > 0) {
+      newConditions.easyConditions.forEach(condition => {
+        this.globalVar.pinnacleHistory.easyConditions.push(condition);
+        if (this.globalVar.pinnacleHistory.easyConditions.length > 3) {
+          this.globalVar.pinnacleHistory.easyConditions = this.globalVar.pinnacleHistory.easyConditions.filter(item => item !== this.globalVar.pinnacleHistory.easyConditions[0]);
+        }
+      });
+    }
+
+    if (newConditions.mediumConditions.length > 0) {
+      newConditions.mediumConditions.forEach(condition => {
+        this.globalVar.pinnacleHistory.mediumConditions.push(condition);
+        if (this.globalVar.pinnacleHistory.mediumConditions.length > 3) {
+          this.globalVar.pinnacleHistory.mediumConditions = this.globalVar.pinnacleHistory.mediumConditions.filter(item => item !== this.globalVar.pinnacleHistory.mediumConditions[0]);
+        }
+      });
+    }
+
+    if (newConditions.hardConditions.length > 0) {
+      newConditions.hardConditions.forEach(condition => {
+        this.globalVar.pinnacleHistory.hardConditions.push(condition);
+        if (this.globalVar.pinnacleHistory.hardConditions.length > 3) {
+          this.globalVar.pinnacleHistory.hardConditions = this.globalVar.pinnacleHistory.hardConditions.filter(item => item !== this.globalVar.pinnacleHistory.hardConditions[0]);
+        }
+      });
+    }
+  }
+
   getRandomPinnacleCondition(floor: number, seedValue: string = "seeded") {
     var pinnacleConditions = new PinnacleConditions();
 
-    if (floor < 10)
-    {
+    if (this.globalVar.currentPinnacleConditions !== undefined)
+      return this.globalVar.currentPinnacleConditions;
+
+    //console.log(floor);
+    if (floor <= 10) {
       if (floor === 1)
-        pinnacleConditions.easyConditions.push(EasyPinnacleConditionsEnum.threeRacersOnly);
+        pinnacleConditions.easyConditions.push(EasyPinnacleConditionsEnum.threeRacersOnly);        
       if (floor === 2)
         pinnacleConditions.easyConditions.push(EasyPinnacleConditionsEnum.threeHundredSecondRace);
       if (floor === 3)
@@ -2927,12 +2982,13 @@ export class GlobalService {
       if (floor === 10)
         pinnacleConditions.hardConditions.push(HardPinnacleConditionsEnum.exhaustionPenaltyIncreased);
 
+      this.globalVar.currentPinnacleConditions = pinnacleConditions;
+      this.addToPinnacleHistory(pinnacleConditions);      
       return pinnacleConditions;
     }
 
     var mod5 = floor % 5;
 
-    var conditionEnumValues: number[] = [];
     if (mod5 === 1 || mod5 === 2) //easy floor
     {
       var allEasyConditions = this.getAllEasyPinnacleConditions();
@@ -2952,41 +3008,138 @@ export class GlobalService {
       pinnacleConditions.hardConditions.push(allHardConditions[rng]);
     }
 
+    //start having 2 easy conditions at once
+    if (floor >= 15) {
+      if (mod5 === 1 || mod5 === 2) {
+        var allEasyConditions = this.getAllEasyPinnacleConditions(pinnacleConditions);
+        var rng = this.utilityService.getRandomSeededInteger(1, allEasyConditions.length - 1, seedValue);
+        pinnacleConditions.easyConditions.push(allEasyConditions[rng]);
+      }
+    }
+
+    //add easy condition to medium floors
+    if (floor >= 20) {
+      if (mod5 === 3 || mod5 === 4) {
+        var allEasyConditions = this.getAllEasyPinnacleConditions(pinnacleConditions);
+        var rng = this.utilityService.getRandomSeededInteger(1, allEasyConditions.length - 1, seedValue);
+        pinnacleConditions.easyConditions.push(allEasyConditions[rng]);
+      }
+    }
+
+    //add easy condition to hard floors
+    if (floor >= 24) {
+      if (mod5 === 0) {
+        var allEasyConditions = this.getAllEasyPinnacleConditions(pinnacleConditions);
+        var rng = this.utilityService.getRandomSeededInteger(1, allEasyConditions.length - 1, seedValue);
+        pinnacleConditions.easyConditions.push(allEasyConditions[rng]);
+      }
+    }
+
+    //add medium condition to hard floors
+    if (floor >= 53) {
+      if (mod5 === 0) {
+        var allMediumConditions = this.getAllMediumPinnacleConditions(pinnacleConditions);
+        var rng = this.utilityService.getRandomSeededInteger(1, allMediumConditions.length - 1, seedValue);
+        pinnacleConditions.mediumConditions.push(allMediumConditions[rng]);
+      }
+    }
+
+    this.globalVar.currentPinnacleConditions = pinnacleConditions;
+    this.addToPinnacleHistory(pinnacleConditions);
     return pinnacleConditions;
   }
 
-  getAllEasyPinnacleConditions() {
-    var list = [];
+  getAllEasyPinnacleConditions(existingList?: PinnacleConditions) {
+    var list: EasyPinnacleConditionsEnum[] = [];
 
     list.push(EasyPinnacleConditionsEnum.noRelayEffects);
     list.push(EasyPinnacleConditionsEnum.steamy);
     list.push(EasyPinnacleConditionsEnum.threeHundredSecondRace);
     list.push(EasyPinnacleConditionsEnum.threeRacersOnly);
     list.push(EasyPinnacleConditionsEnum.twoRacersOnly);
+    list.push(EasyPinnacleConditionsEnum.burstIncreaseStaminaLoss);
+    list.push(EasyPinnacleConditionsEnum.cold);
+    list.push(EasyPinnacleConditionsEnum.hot);
+    list.push(EasyPinnacleConditionsEnum.slick);
+    list.push(EasyPinnacleConditionsEnum.strongWinds);
+
+    this.globalVar.pinnacleHistory.easyConditions.forEach(condition => {
+      list = list.filter(item => item !== condition);
+    });
+
+    if (existingList !== undefined) {
+      existingList.easyConditions.forEach(condition => {
+        list = list.filter(item => item !== condition);
+      });
+
+      if (existingList.easyConditions.some(condition => condition === EasyPinnacleConditionsEnum.twoRacersOnly))
+        list = list.filter(item => item !== EasyPinnacleConditionsEnum.threeRacersOnly);
+
+      if (existingList.easyConditions.some(condition => condition === EasyPinnacleConditionsEnum.threeRacersOnly))
+        list = list.filter(item => item !== EasyPinnacleConditionsEnum.twoRacersOnly);
+
+      if (existingList.mediumConditions.some(condition => condition === MediumPinnacleConditionsEnum.fourRacersOnly))
+        list = list.filter(item => item !== EasyPinnacleConditionsEnum.threeRacersOnly && item !== EasyPinnacleConditionsEnum.twoRacersOnly);
+
+        if (existingList.mediumConditions.some(condition => condition === MediumPinnacleConditionsEnum.thirtySecondRace))
+        list = list.filter(item => item !== EasyPinnacleConditionsEnum.threeHundredSecondRace);
+
+        if (existingList.hardConditions.some(condition => condition === HardPinnacleConditionsEnum.noBurst))
+        list = list.filter(item => item !== EasyPinnacleConditionsEnum.burstIncreaseStaminaLoss);
+    }
 
     return list;
   }
 
-  getAllMediumPinnacleConditions() {
-    var list = [];
+  getAllMediumPinnacleConditions(existingList?: PinnacleConditions) {
+    var list: MediumPinnacleConditionsEnum[] = [];
 
     list.push(MediumPinnacleConditionsEnum.brokenFloorboards);
     list.push(MediumPinnacleConditionsEnum.fourRacersOnly);
     list.push(MediumPinnacleConditionsEnum.longCooldowns);
     list.push(MediumPinnacleConditionsEnum.sticky);
     list.push(MediumPinnacleConditionsEnum.thirtySecondRace);
+    list.push(MediumPinnacleConditionsEnum.harshTerrain);
+    list.push(MediumPinnacleConditionsEnum.highSpeedLowAcceleration);
+    list.push(MediumPinnacleConditionsEnum.unfocused);
+
+    this.globalVar.pinnacleHistory.mediumConditions.forEach(condition => {
+      list = list.filter(item => item !== condition);
+    });
+
+    if (existingList !== undefined) {
+      existingList.mediumConditions.forEach(condition => {
+        list = list.filter(item => item !== condition);
+      });
+
+      if (existingList.easyConditions.some(condition => condition === EasyPinnacleConditionsEnum.twoRacersOnly || condition === EasyPinnacleConditionsEnum.threeRacersOnly))
+      list = list.filter(item => item !== MediumPinnacleConditionsEnum.fourRacersOnly);
+
+      if (existingList.easyConditions.some(condition => condition === EasyPinnacleConditionsEnum.threeHundredSecondRace))
+      list = list.filter(item => item !== MediumPinnacleConditionsEnum.thirtySecondRace);
+    }
 
     return list;
   }
 
-  getAllHardPinnacleConditions() {
-    var list = [];
+  getAllHardPinnacleConditions(existingList?: PinnacleConditions) {
+    var list: HardPinnacleConditionsEnum[] = [];
 
     list.push(HardPinnacleConditionsEnum.exhaustionPenaltyIncreased);
     list.push(HardPinnacleConditionsEnum.lowStaminaRelay);
     list.push(HardPinnacleConditionsEnum.noBurst);
     list.push(HardPinnacleConditionsEnum.reduceSpeedOnRelay);
-    list.push(HardPinnacleConditionsEnum.unfocusedRelay);
+    list.push(HardPinnacleConditionsEnum.reduceAbilityEfficiency);
+
+    this.globalVar.pinnacleHistory.hardConditions.forEach(condition => {
+      list = list.filter(item => item !== condition);
+    });
+
+    if (existingList !== undefined) {
+      existingList.hardConditions.forEach(condition => {
+        list = list.filter(item => item !== condition);
+      });
+    }
 
     return list;
   }
@@ -2996,45 +3149,63 @@ export class GlobalService {
     if (conditionList.easyConditions.length > 0) {
       conditionList.easyConditions.forEach(item => {
         if (item === EasyPinnacleConditionsEnum.noRelayEffects)
-          description = "No Relay Effects";
+          description += "<strong>Dark</strong> - No relay effects <br/>";
         if (item === EasyPinnacleConditionsEnum.steamy)
-          description = "Steamy";
+          description += "<strong>Steamy</strong> - Stamina Loss increased by 100%<br/>";
         if (item === EasyPinnacleConditionsEnum.threeHundredSecondRace)
-          description = "300 seconds";
+          description += "<strong>Maze</strong> - Race timer increased to 300 seconds<br/>";
         if (item === EasyPinnacleConditionsEnum.threeRacersOnly)
-          description = "3 Racers";
+          description += "<strong>Trios</strong> - 3 racers only<br/>";
         if (item === EasyPinnacleConditionsEnum.twoRacersOnly)
-          description = "2 Racers";
+          description += "<strong>Duos</strong> - 2 racers only<br/>";
+        //if (item === EasyPinnacleConditionsEnum.pathStatLoss)
+        //description = "When entering a new path, reduce a random stat by 25% during that path";
+        if (item === EasyPinnacleConditionsEnum.slick)
+          description += "<strong>Slick</strong> - Flatland, Mountain, and Volcanic Adaptability Distance reduced by 50%<br/>";
+        if (item === EasyPinnacleConditionsEnum.strongWinds)
+          description += "<strong>Strong Winds</strong> - Ocean and Tundra Acceleration Rate reduced by 50%<br/>";
+        if (item === EasyPinnacleConditionsEnum.cold)
+          description += "<strong>Cold</strong> - Volcanic lava falls 25% slower, Tundra max drift is 30%<br/>";
+        if (item === EasyPinnacleConditionsEnum.hot)
+          description += "<strong>Hot</strong> - Volcanic lava falls 25% faster, Tundra max drift is 10%<br/>";
+        if (item === EasyPinnacleConditionsEnum.burstIncreaseStaminaLoss)
+          description += "<strong>Humid</strong> - Lose three times as much stamina while bursting<br/>";
       });
     }
 
     if (conditionList.mediumConditions.length > 0) {
       conditionList.mediumConditions.forEach(item => {
         if (item === MediumPinnacleConditionsEnum.fourRacersOnly)
-          description = "4 Racers";
+          description += "<strong>Quartet</strong> - 4 racers only";
         if (item === MediumPinnacleConditionsEnum.brokenFloorboards)
-          description = "Broken Floorboards";
+          description += "<strong>Broken Floorboards</strong> - Every path has an adaptability check";
         if (item === MediumPinnacleConditionsEnum.longCooldowns)
-          description = "Long Cooldowns";
+          description += "<strong>Unusual Aroma</strong> - Ability cooldowns are twice as long";
         if (item === MediumPinnacleConditionsEnum.sticky)
-          description = "Sticky";
+          description += "<strong>Sticky</strong> - Acceleration reduces as you go further in the race";
         if (item === MediumPinnacleConditionsEnum.thirtySecondRace)
-          description = "30 seconds";
+          description += "<strong>Lockdown</strong> - Race timer reduced to 30 seconds";
+        if (item === MediumPinnacleConditionsEnum.harshTerrain)
+          description += "<strong>Harsh Terrain</strong> - Terrain is always Maelstrom, Snowfall, Hailstorm, or Ashfall";
+        if (item === MediumPinnacleConditionsEnum.highSpeedLowAcceleration)
+          description += "<strong>Straight Shot</strong> - Acceleration Rate reduced to 10%, Max Speed increased to 500%";
+        if (item === MediumPinnacleConditionsEnum.unfocused)
+          description += "<strong>Distracting</strong> - After losing focus, reduce Focus Distance by 25% for the rest of the race";
       });
     }
 
     if (conditionList.hardConditions.length > 0) {
       conditionList.hardConditions.forEach(item => {
         if (item === HardPinnacleConditionsEnum.exhaustionPenaltyIncreased)
-          description = "Exhaustion Penalty";
+          description += "<strong>Low Energy</strong> - Stamina starts at 50%, stat loss from running out of stamina doubled";
         if (item === HardPinnacleConditionsEnum.lowStaminaRelay)
-          description = "Low Stamina Relay";
+          description += "<strong>Trudging</strong> - When your racer reaches 50% stamina, immediately relay or end the race if there are no animals remaining";
         if (item === HardPinnacleConditionsEnum.noBurst)
-          description = "No Burst";
+          description += "<strong>Shifting Corridors</strong> - No bursts";
         if (item === HardPinnacleConditionsEnum.reduceSpeedOnRelay)
-          description = "Reduce Speed On Relay";
-        if (item === HardPinnacleConditionsEnum.unfocusedRelay)
-          description = "Unfocused Relay";
+          description += "<strong>Quicksand</strong> - On Relay, reduce your next racer's max speed by 20%. Every subsequent Relay reduces by an additional 20%.";
+        if (item === HardPinnacleConditionsEnum.reduceAbilityEfficiency)
+          description += "<strong>Tight Quarters</strong> - Ability efficiency reduced by 99%";
       });
     }
 
@@ -3076,8 +3247,10 @@ export class GlobalService {
   }
 
   getOrbTypeFromResource(resource: ResourceValue) {
-    var orbType = OrbTypeEnum.amber;
+    var orbType = OrbTypeEnum.none;
 
+    if (resource.name === "Amber Orb")
+      orbType = OrbTypeEnum.amber;
     if (resource.name === "Amethyst Orb")
       orbType = OrbTypeEnum.amethyst;
     if (resource.name === "Emerald Orb")
@@ -3104,25 +3277,23 @@ export class GlobalService {
     var description = "";
 
     if (orbType === OrbTypeEnum.amber) {
-      description = "Increase the Acceleration Rate of the user by " + ((this.globalVar.orbStats.getAccelerationIncrease() - 1) * 100).toFixed(0) + "%. Gain orb experience for every meter covered while below your max speed.";
+      description = "Increase the Acceleration Rate of the user by " + ((this.globalVar.orbStats.getAccelerationIncrease(1) - 1) * 100).toFixed(0) + "%. Gain orb experience for every meter covered while below your max speed.";
     }
     if (orbType === OrbTypeEnum.amethyst) {
-      description = "Increase the Power Efficiency of the user by " + ((this.globalVar.orbStats.getPowerIncrease() - 1) * 100).toFixed(0) + "%. Gain orb experience for every ability use.";
+      description = "Increase the Power Efficiency of the user by " + ((this.globalVar.orbStats.getPowerIncrease(1) - 1) * 100).toFixed(0) + "%. Gain orb experience for every ability use.";
     }
     if (orbType === OrbTypeEnum.emerald) {
-      description = "Increase the Adaptability Distance of the user by " + ((this.globalVar.orbStats.getAdaptabilityIncrease() - 1) * 100).toFixed(0) + "%. Gain orb experience for every meter covered during a special path without stumbling.";
+      description = "Increase the Adaptability Distance of the user by " + ((this.globalVar.orbStats.getAdaptabilityIncrease(1) - 1) * 100).toFixed(0) + "%. Gain orb experience for every meter covered during a special path without stumbling.";
     }
     if (orbType === OrbTypeEnum.ruby) {
-      description = "Increase the Max Speed of the user by " + ((this.globalVar.orbStats.getMaxSpeedIncrease() - 1) * 100).toFixed(0) + "%.  Gain orb experience for every meter covered while at or above your max speed.";
+      description = "Increase the Max Speed of the user by " + ((this.globalVar.orbStats.getMaxSpeedIncrease(1) - 1) * 100).toFixed(0) + "%.  Gain orb experience for every meter covered while at or above your max speed.";
     }
     if (orbType === OrbTypeEnum.sapphire) {
-      description = "Increase the Focus Distance of the user by " + ((this.globalVar.orbStats.getFocusIncrease() - 1) * 100).toFixed(0) + "%.  Gain orb experience for every meter covered prior to losing focus.";
+      description = "Increase the Focus Distance of the user by " + ((this.globalVar.orbStats.getFocusIncrease(1) - 1) * 100).toFixed(0) + "%.  Gain orb experience for every meter covered prior to losing focus.";
     }
     if (orbType === OrbTypeEnum.topaz) {
-      description = "Increase the Stamina of the user by " + ((this.globalVar.orbStats.getEnduranceIncrease() - 1) * 100).toFixed(0) + "%.  Gain orb experience for every meter covered prior to running out of stamina.";
+      description = "Increase the Stamina of the user by " + ((this.globalVar.orbStats.getEnduranceIncrease(1) - 1) * 100).toFixed(0) + "%.  Gain orb experience for every meter covered prior to running out of stamina.";
     }
-
-    description += " This increase is reduced proportionally for however many racers use the same orb during a single race.";
 
     return description;
   }
@@ -3148,12 +3319,18 @@ export class GlobalService {
 
   increaseOrbLevel(orb: Orb) {
     orb.level += 1;
-    orb.xpNeededForLevel -= orb.xp;
+    orb.xp -= orb.xpNeededForLevel;
+
+    var baseXp = 10000;
+    var factor = 1.09;
+    var additive = 1500;
+
+    orb.xpNeededForLevel = baseXp * (factor ** orb.level) + (additive * (orb.level - 1));
   }
 
   //pass in meters spent not at max speed
   increaseAmberOrbXp(meters: number) {
-    var factor = .0001;
+    var factor = .00005;
     var exp = meters * factor;
 
     var orb = this.getOrbDetailsFromType(OrbTypeEnum.amber);
@@ -3171,8 +3348,9 @@ export class GlobalService {
 
   //call after every ability use
   increaseAmethystOrbXp() {
-    var factor = 3;
+    var factor = 2;
     var exp = factor;
+    //console.log("Amethyst XP Gain: " + exp);
 
     var orb = this.getOrbDetailsFromType(OrbTypeEnum.amethyst);
     if (orb !== undefined) {
@@ -3189,9 +3367,9 @@ export class GlobalService {
 
   //pass in meters through a special path before stumbling
   increaseEmeraldOrbXp(meters: number) {
-    var factor = .00075;
+    var factor = .00008;
     var exp = meters * factor;
-    console.log("Emerald Meters: " + meters + " XP Gain: " + exp);
+    //console.log("Emerald Meters: " + meters + " XP Gain: " + exp);
 
     var orb = this.getOrbDetailsFromType(OrbTypeEnum.emerald);
     if (orb !== undefined) {
@@ -3208,8 +3386,9 @@ export class GlobalService {
 
   //pass in meters spent at max speed
   increaseRubyOrbXp(meters: number) {
-    var factor = .0001;
+    var factor = .0003;
     var exp = meters * factor;
+    //console.log("Ruby Meters: " + meters + " XP Gain: " + exp);
 
     var orb = this.getOrbDetailsFromType(OrbTypeEnum.ruby);
     if (orb !== undefined) {
@@ -3227,8 +3406,9 @@ export class GlobalService {
 
   //pass in meters spent before losing focus
   increaseSapphireOrbXp(meters: number) {
-    var factor = .00025;
-    var exp = meters * factor;    
+    var factor = .000025;
+    var exp = meters * factor;
+    //console.log("Sapphire Meters: " + meters + " XP Gain: " + exp);
 
     var orb = this.getOrbDetailsFromType(OrbTypeEnum.sapphire);
     if (orb !== undefined) {
@@ -3246,8 +3426,9 @@ export class GlobalService {
 
   //pass in meters before stamina reaches 0
   increaseTopazOrbXp(meters: number) {
-    var factor = .00005;
+    var factor = .000025;
     var exp = meters * factor;
+    //console.log("Topaz Meters: " + meters + " XP Gain: " + exp);
 
     var orb = this.getOrbDetailsFromType(OrbTypeEnum.topaz);
     if (orb !== undefined) {
@@ -3265,25 +3446,42 @@ export class GlobalService {
   getAverageStumbleFrequencyForCourseType(courseType: RaceCourseTypeEnum) {
     var stumbleFrequency = 0;
 
-    if (courseType === RaceCourseTypeEnum.Flatland)
-    {
+    if (courseType === RaceCourseTypeEnum.Flatland) {
       stumbleFrequency = (new RacePath(RaceDesignEnum.Bumps).frequencyOfStumble + new RacePath(RaceDesignEnum.S).frequencyOfStumble) / 2;
     }
-    if (courseType === RaceCourseTypeEnum.Mountain)
-    {
+    if (courseType === RaceCourseTypeEnum.Mountain) {
       stumbleFrequency = (new RacePath(RaceDesignEnum.Gaps).frequencyOfStumble + new RacePath(RaceDesignEnum.Crevasse).frequencyOfStumble) / 2;
     }
-    if (courseType === RaceCourseTypeEnum.Ocean)
-    {
+    if (courseType === RaceCourseTypeEnum.Ocean) {
       stumbleFrequency = (new RacePath(RaceDesignEnum.Dive).frequencyOfStumble + new RacePath(RaceDesignEnum.Waves).frequencyOfStumble) / 2;
     }
-    if (courseType === RaceCourseTypeEnum.Tundra)
-    {
+    if (courseType === RaceCourseTypeEnum.Tundra) {
       stumbleFrequency = (new RacePath(RaceDesignEnum.Cavern).frequencyOfStumble + new RacePath(RaceDesignEnum.Hills).frequencyOfStumble) / 2;
     }
-    if (courseType === RaceCourseTypeEnum.Volcanic)
-    {
+    if (courseType === RaceCourseTypeEnum.Volcanic) {
       stumbleFrequency = (new RacePath(RaceDesignEnum.FirstRegular).frequencyOfStumble + new RacePath(RaceDesignEnum.SteppingStones).frequencyOfStumble) / 2;
+    }
+
+    return stumbleFrequency;
+  }
+
+  getAverageStumbleOpportunitiesForCourseType(courseType: RaceCourseTypeEnum) {
+    var stumbleFrequency = 0;
+
+    if (courseType === RaceCourseTypeEnum.Flatland) {
+      stumbleFrequency = (new RacePath(RaceDesignEnum.Bumps).stumbleOpportunities + new RacePath(RaceDesignEnum.S).stumbleOpportunities) / 2;
+    }
+    if (courseType === RaceCourseTypeEnum.Mountain) {
+      stumbleFrequency = (new RacePath(RaceDesignEnum.Gaps).stumbleOpportunities + new RacePath(RaceDesignEnum.Crevasse).stumbleOpportunities) / 2;
+    }
+    if (courseType === RaceCourseTypeEnum.Ocean) {
+      stumbleFrequency = (new RacePath(RaceDesignEnum.Dive).stumbleOpportunities + new RacePath(RaceDesignEnum.Waves).stumbleOpportunities) / 2;
+    }
+    if (courseType === RaceCourseTypeEnum.Tundra) {
+      stumbleFrequency = (new RacePath(RaceDesignEnum.Cavern).stumbleOpportunities + new RacePath(RaceDesignEnum.Hills).stumbleOpportunities) / 2;
+    }
+    if (courseType === RaceCourseTypeEnum.Volcanic) {
+      stumbleFrequency = (new RacePath(RaceDesignEnum.FirstRegular).stumbleOpportunities + new RacePath(RaceDesignEnum.SteppingStones).stumbleOpportunities) / 2;
     }
 
     return stumbleFrequency;
@@ -4083,7 +4281,7 @@ export class GlobalService {
     return specialRoute;
   }
 
-  calculateAnimalRacingStats(animal: Animal): void {
+  calculateAnimalRacingStats(animal: Animal, racingAnimals?: Animal[]): void {
     //intialize variables    
     var totalMaxSpeedModifier = animal.currentStats.defaultMaxSpeedModifier;
     var totalAccelerationModifier = animal.currentStats.defaultAccelerationModifier;
@@ -4124,12 +4322,19 @@ export class GlobalService {
     var traitAdaptabilityModifier = this.getTraitModifier(animal, AnimalStatEnum.adaptability);
 
     //orb modifier
-    var animalMaxSpeedOrbModifier = animal.equippedOrb !== null && animal.equippedOrb.name === "Ruby Orb" ? this.globalVar.orbStats.getMaxSpeedIncrease() : 1;
-    var animalAccelerationOrbModifier = animal.equippedOrb !== null && animal.equippedOrb.name === "Amber Orb" ? this.globalVar.orbStats.getAccelerationIncrease() : 1;
-    var animalStaminaOrbModifier = animal.equippedOrb !== null && animal.equippedOrb.name === "Topaz Orb" ? this.globalVar.orbStats.getEnduranceIncrease() : 1;
-    var animalPowerOrbModifier = animal.equippedOrb !== null && animal.equippedOrb.name === "Amethyst Orb" ? this.globalVar.orbStats.getPowerIncrease() : 1;
-    var animalFocusOrbModifier = animal.equippedOrb !== null && animal.equippedOrb.name === "Sapphire Orb" ? this.globalVar.orbStats.getFocusIncrease() : 1;
-    var animalAdaptabilityOrbModifier = animal.equippedOrb !== null && animal.equippedOrb.name === "Emerald Orb" ? this.globalVar.orbStats.getAdaptabilityIncrease() : 1;
+    var numberOfRubyOrbHolders = racingAnimals === undefined ? 1 : racingAnimals?.filter(item => item.equippedOrb !== null && this.getOrbTypeFromResource(item.equippedOrb) === OrbTypeEnum.ruby).length;
+    var numberOfAmberOrbHolders = racingAnimals === undefined ? 1 : racingAnimals?.filter(item => item.equippedOrb !== null && this.getOrbTypeFromResource(item.equippedOrb) === OrbTypeEnum.amber).length;
+    var numberOfTopazOrbHolders = racingAnimals === undefined ? 1 : racingAnimals?.filter(item => item.equippedOrb !== null && this.getOrbTypeFromResource(item.equippedOrb) === OrbTypeEnum.topaz).length;
+    var numberOfAmethystOrbHolders = racingAnimals === undefined ? 1 : racingAnimals?.filter(item => item.equippedOrb !== null && this.getOrbTypeFromResource(item.equippedOrb) === OrbTypeEnum.amethyst).length;
+    var numberOfSapphireOrbHolders = racingAnimals === undefined ? 1 : racingAnimals?.filter(item => item.equippedOrb !== null && this.getOrbTypeFromResource(item.equippedOrb) === OrbTypeEnum.sapphire).length;
+    var numberOfEmeraldOrbHolders = racingAnimals === undefined ? 1 : racingAnimals?.filter(item => item.equippedOrb !== null && this.getOrbTypeFromResource(item.equippedOrb) === OrbTypeEnum.emerald).length;
+
+    var animalMaxSpeedOrbModifier = animal.equippedOrb !== null && animal.equippedOrb.name === "Ruby Orb" ? this.globalVar.orbStats.getMaxSpeedIncrease(numberOfRubyOrbHolders) : 1;
+    var animalAccelerationOrbModifier = animal.equippedOrb !== null && animal.equippedOrb.name === "Amber Orb" ? this.globalVar.orbStats.getAccelerationIncrease(numberOfAmberOrbHolders) : 1;
+    var animalStaminaOrbModifier = animal.equippedOrb !== null && animal.equippedOrb.name === "Topaz Orb" ? this.globalVar.orbStats.getEnduranceIncrease(numberOfTopazOrbHolders) : 1;
+    var animalPowerOrbModifier = animal.equippedOrb !== null && animal.equippedOrb.name === "Amethyst Orb" ? this.globalVar.orbStats.getPowerIncrease(numberOfAmethystOrbHolders) : 1;
+    var animalFocusOrbModifier = animal.equippedOrb !== null && animal.equippedOrb.name === "Sapphire Orb" ? this.globalVar.orbStats.getFocusIncrease(numberOfSapphireOrbHolders) : 1;
+    var animalAdaptabilityOrbModifier = animal.equippedOrb !== null && animal.equippedOrb.name === "Emerald Orb" ? this.globalVar.orbStats.getAdaptabilityIncrease(numberOfEmeraldOrbHolders) : 1;
 
     //leave space to adjust modifiers with other items or anything
     var breedLevelStatModifier = this.globalVar.modifiers.find(item => item.text === "breedLevelStatModifier");
@@ -4309,9 +4514,9 @@ export class GlobalService {
     this.globalVar.trackedStats.totalBreeds += 1;
   }
 
-  increaseAbilityXp(animal: Animal, xpAmount?: number) {
+  increaseAbilityXp(animal: Animal, xpAmount?: number, isTrainingTrack?: boolean) {
     //also increase power orb xp if in use
-    if (animal.equippedOrb !== undefined && animal.equippedOrb !== null && this.getOrbTypeFromResource(animal.equippedOrb) === OrbTypeEnum.amethyst) {
+    if (animal.equippedOrb !== undefined && animal.equippedOrb !== null && !isTrainingTrack && this.getOrbTypeFromResource(animal.equippedOrb) === OrbTypeEnum.amethyst) {
       this.increaseAmethystOrbXp();
     }
 
@@ -4366,6 +4571,12 @@ export class GlobalService {
     this.globalVar.settings.set("noviceTrainingTrackToggled", false);
     this.globalVar.settings.set("intermediateTrainingTrackToggled", false);
     this.globalVar.settings.set("masterTrainingTrackToggled", false);
+    this.globalVar.settings.set("amberOrbToggled", false);
+    this.globalVar.settings.set("amethystOrbToggled", false);
+    this.globalVar.settings.set("emeraldOrbToggled", false);
+    this.globalVar.settings.set("rubyOrbToggled", false);
+    this.globalVar.settings.set("sapphireOrbToggled", false);
+    this.globalVar.settings.set("topazOrbToggled", false);
   }
 
   InitializeUnlockables() {
@@ -4532,17 +4743,17 @@ export class GlobalService {
     if (name === "Yellow Baton")
       returnVal = "Increase next racer's Endurance by 10% on Relay";
     if (name === "Amethyst Orb")
-      returnVal = "Increase your Power Efficiency by " + ((this.globalVar.orbStats.getPowerIncrease() - 1) * 100).toFixed(0) + "%.";
+      returnVal = "Increase your Power Efficiency by " + ((this.globalVar.orbStats.getPowerIncrease(1) - 1) * 100).toFixed(0) + "%.";
     if (name === "Sapphire Orb")
-      returnVal = "Increase your Focus Distance by " + ((this.globalVar.orbStats.getFocusIncrease() - 1) * 100).toFixed(0) + "%.";
+      returnVal = "Increase your Focus Distance by " + ((this.globalVar.orbStats.getFocusIncrease(1) - 1) * 100).toFixed(0) + "%.";
     if (name === "Amber Orb")
-      returnVal = "Increase your Acceleration Rate by " + ((this.globalVar.orbStats.getAccelerationIncrease() - 1) * 100).toFixed(0) + "%.";
+      returnVal = "Increase your Acceleration Rate by " + ((this.globalVar.orbStats.getAccelerationIncrease(1) - 1) * 100).toFixed(0) + "%.";
     if (name === "Topaz Orb")
-      returnVal = "Increase your Stamina by " + ((this.globalVar.orbStats.getEnduranceIncrease() - 1) * 100).toFixed(0) + "%.";
+      returnVal = "Increase your Stamina by " + ((this.globalVar.orbStats.getEnduranceIncrease(1) - 1) * 100).toFixed(0) + "%.";
     if (name === "Emerald Orb")
-      returnVal = "Increase your Adaptability Distance by " + ((this.globalVar.orbStats.getAdaptabilityIncrease() - 1) * 100).toFixed(0) + "%.";
+      returnVal = "Increase your Adaptability Distance by " + ((this.globalVar.orbStats.getAdaptabilityIncrease(1) - 1) * 100).toFixed(0) + "%.";
     if (name === "Ruby Orb")
-      returnVal = "Increase your Max Speed by " + ((this.globalVar.orbStats.getMaxSpeedIncrease() - 1) * 100).toFixed(0) + "%.";
+      returnVal = "Increase your Max Speed by " + ((this.globalVar.orbStats.getMaxSpeedIncrease(1) - 1) * 100).toFixed(0) + "%.";
     if (name === "Scary Mask")
       returnVal = "Cause a distraction the first time you lose focus while ahead of competition, slowing competitors by 2 seconds.";
     if (name === "Running Shoes")
@@ -4729,6 +4940,9 @@ export class GlobalService {
     this.globalVar.resources.push(this.initializeService.initializeResource("Facility Level", 1000, ShopItemTypeEnum.Progression));
     this.globalVar.resources.push(this.initializeService.initializeResource("Research Level", circuitRankNumeric, ShopItemTypeEnum.Progression));
 
+    this.globalVar.monoRank = "AAZ";
+    this.globalVar.duoRank = "AZ";
+
     for (var i = 1; i <= circuitRankNumeric; i++) {
       var rank = this.utilityService.getCircuitRankFromNumericValue(i);
       this.globalVar.circuitRank = rank;
@@ -4736,7 +4950,7 @@ export class GlobalService {
       this.GenerateCircuitRacesForRank(this.globalVar.circuitRank);
     }
 
-    //this.globalVar.animalDecks.find(item => item.deckNumber === 2)?.selectedAnimals.push(this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Monkey)!);
+    //this.globalVar.animalDecks.find(item => item.deckNumber === 2)?.selectedAnimals.push(this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Salamander)!);
     //this.globalVar.animalDecks.find(item => item.deckNumber === 2)!.isPrimaryDeck = true;
     //this.globalVar.animalDecks.find(item => item.deckNumber === 1)!.isPrimaryDeck = false;
 
@@ -4756,16 +4970,16 @@ export class GlobalService {
       incubatorUpgradeValue = 3;
     }
     else if (progressionSetting === 3) {
-      trainingStatValue = 500;
-      breedLevel = 500;
+      trainingStatValue = 750;
+      breedLevel = 750;
       incubatorUpgradeValue = 7;
       talentCount = 10;
     }
     else if (progressionSetting === 4) {
-      trainingStatValue = 10000;
-      breedLevel = 10000;
-      incubatorUpgradeValue = 12;
-      talentCount = 40;
+      trainingStatValue = 1000;
+      breedLevel = 12500;
+      incubatorUpgradeValue = 12.5;
+      talentCount = 60;
     }
 
     this.globalVar.animals.forEach(animal => {
@@ -4790,7 +5004,34 @@ export class GlobalService {
         ability.abilityLevel = animal.breedLevel + 25;
       });
 
-      /*if (progressionSetting >= 3) {
+      if (progressionSetting >= 4) {
+        var randomTalentTree = this.utilityService.getRandomInteger(1, 3);
+        if (randomTalentTree === 1)
+          animal.talentTree.talentTreeType = TalentTreeTypeEnum.sprint;
+        if (randomTalentTree === 2)
+          animal.talentTree.talentTreeType = TalentTreeTypeEnum.support;
+        if (randomTalentTree === 3)
+          animal.talentTree.talentTreeType = TalentTreeTypeEnum.longDistance;
+
+        animal.talentTree.column1Row1Points = 10;
+        animal.talentTree.column1Row2Points = 10;
+        animal.talentTree.column1Row3Points = 10;
+        animal.talentTree.column1Row4Points = 10;
+
+        animal.talentTree.column2Row1Points = 10;
+        animal.talentTree.column2Row2Points = 10;
+        animal.talentTree.column2Row3Points = 10;
+        animal.talentTree.column2Row4Points = 10;
+
+        animal.talentTree.column3Row1Points = 10;
+        animal.talentTree.column3Row2Points = 10;
+        animal.talentTree.column3Row3Points = 10;
+        animal.talentTree.column3Row4Points = 10;
+      }
+
+      if (progressionSetting >= 3 && circuitRankNumeric >= 79) {
+        animal.canEquipOrb = true;
+
         if (animal.type === AnimalTypeEnum.Horse)
           animal.equippedOrb = this.globalVar.resources.find(item => item.name === "Sapphire Orb")!;
         if (animal.type === AnimalTypeEnum.Monkey)
@@ -4801,7 +5042,7 @@ export class GlobalService {
           animal.equippedOrb = this.globalVar.resources.find(item => item.name === "Emerald Orb")!;
         if (animal.type === AnimalTypeEnum.Salamander)
           animal.equippedOrb = this.globalVar.resources.find(item => item.name === "Amber Orb")!;
-      }*/
+      }
       this.calculateAnimalRacingStats(animal);
     });
   }

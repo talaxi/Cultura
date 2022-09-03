@@ -1,24 +1,32 @@
 
 export enum EasyPinnacleConditionsEnum {
   threeHundredSecondRace, //TESTED
-  twoRacersOnly, //IMPLEMENTED
+  twoRacersOnly, //TESTED
   threeRacersOnly, //TESTED
-  noRelayEffects, //IMPLEMENTED
-  steamy, //+100% stamina cost //IMPLEMENTED
+  noRelayEffects, //TESTED
+  steamy,  //TESTED //+100% stamina cost
+  burstIncreaseStaminaLoss, //TESTED //*3 stamina loss when bursting 
+  slick, //TESTED //flatland, mountain, volcanic adaptability reduction
+  strongWinds, //TESTED //ocean and tundra acceleration reduction
+  hot, //TESTED //lava falls slower, tundra drift higher
+  cold //TESTED //lava falls faster, tundra drift lower
 }
 
 export enum MediumPinnacleConditionsEnum {
   thirtySecondRace, //TESTED
-  fourRacersOnly, //IMPLEMENTED
-  brokenFloorboards, //all paths have adaptability check //IMPLEMENTED
-  sticky, //acceleration drops proportional to how far into the race you are //IMPLEMENTED
+  fourRacersOnly, //TESTED
+  brokenFloorboards,  //TESTED //all paths have adaptability check
+  sticky, //TESTED //acceleration drops proportional to how far into the race you are 
   longCooldowns, //TESTED
+  unfocused, //TESTED //reduce Focus Distance when losing focus
+  harshTerrain, //TESTED
+  highSpeedLowAcceleration, //TESTED
 }
 
 export enum HardPinnacleConditionsEnum {
   noBurst, //TESTED
-  lowStaminaRelay, //forced to relay when stamina reaches certain %
-  exhaustionPenaltyIncreased, //stamina starts at 50%, increased costs from exhaustion //IMPLEMENTED
-  unfocusedRelay, //forced to relay when losing focus
-  reduceSpeedOnRelay //every relay reduces max speed of next racer //IMPLEMENTED
+  lowStaminaRelay, //TESTED //forced to relay when stamina reaches certain %
+  exhaustionPenaltyIncreased, //TESTED   //stamina starts at 50%, increased costs from exhaustion
+  reduceSpeedOnRelay, //TESTED //every relay reduces max speed of next racer
+  reduceAbilityEfficiency //TESTED
 }

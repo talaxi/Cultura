@@ -115,10 +115,9 @@
                     <span class="s4Heading">Pinnacle Floor <strong>{{ pinnacleRaceFloor }}</strong> </span>
                     <span class="minimizerSideSpacing"></span>
                 </div>
-                <span><em>Floor Conditions:</em> {{
-                    this.globalService.getPinnacleFloorConditionDescription(availablePinnacleRace.pinnacleConditions) }}
+                <span>
+                    <span [innerHTML]="this.globalService.getPinnacleFloorConditionDescription(availablePinnacleRace.pinnacleConditions)"></span>
                 </span>
-                <br />
                 <app-race-description (click)="selectLocalRace(availablePinnacleRace)" [race]="availablePinnacleRace"
                     [showStartText]="true"></app-race-description>
             </div>
@@ -140,8 +139,9 @@
                         </app-race-description>
                     </div>
                 </div>
-                <span><em>Floor Conditions:</em> {{
-                    this.globalService.getPinnacleFloorConditionDescription(availablePinnacleRace.pinnacleConditions) }}
+                <span>
+                    <span [innerHTML]="this.globalService.getPinnacleFloorConditionDescription(availablePinnacleRace.pinnacleConditions)"></span>
+                    
                 </span>
             </div>
             <div class="pinnacleRace" *ngIf="availablePinnacleRace === undefined || availablePinnacleRace == null">

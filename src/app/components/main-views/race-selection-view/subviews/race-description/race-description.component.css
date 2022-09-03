@@ -29,3 +29,7 @@
     display: flex;
     justify-content:  space-between;
 }
+
+.defaultColor {
+    color: var(--foreground-default);
+}

@@ -12,7 +12,39 @@
     width: 50%;
 }
 
+.progressBarMinimized {
+    width: 30% !important;
+}
+
 .progressBarContainer {
     display: flex;
     justify-content: space-evenly;
 }
+
+.xpWidth {
+  width: 20%;
+  text-align: center;
+}
+
+.minimizer {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .minimizerSideSpacing {
+    width: 3rem;
+  }
+
+  .minimizedDisplay {
+    display: flex;
+    justify-content: space-around;
+  }
+
+  .setVerticalAlign {
+    margin-top: auto;
+    margin-bottom: auto;
+  }
+
+  .orbNameWidth {
+    width: 8rem;
+  }

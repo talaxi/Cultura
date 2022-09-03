@@ -45,7 +45,7 @@ export class SettingsViewComponent implements OnInit {
     private utilityService: UtilityService) { }
 
   ngOnInit(): void {    
-    //console.log(JSON.stringify(this.globalService.globalVar.resources));     
+    //console.log(this.globalService.globalVar);     
     this.componentCommunicationService.setNewView(NavigationEnum.settings);
 
     if (this.deploymentService.codeCreationMode)
@@ -147,7 +147,7 @@ export class SettingsViewComponent implements OnInit {
         var loadDataJson = <GlobalVariables>JSON.parse(decompressedData);
         if (loadDataJson !== null && loadDataJson !== undefined) {
           this.globalService.globalVar = plainToInstance(GlobalVariables, loadDataJson);          
-          this.versionControlService.updatePlayerVersion();
+          this.versionControlService.updatePlayerVersion();          
         }
       }
       fileReader.readAsText(this.file);

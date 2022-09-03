@@ -150,6 +150,8 @@ export class EventViewComponent implements OnInit {
           this.globalService.globalVar.eventRaceData.currentRaceSegment = this.globalService.generateGrandPrixSegment(racingAnimal);
           this.globalService.globalVar.eventRaceData.currentRaceSegmentResult = this.raceLogicService.runRace(this.globalService.globalVar.eventRaceData.currentRaceSegment);
           this.globalService.globalVar.eventRaceData.nextRaceSegment = this.globalService.generateGrandPrixSegment(racingAnimal);
+          //console.log("Current Segment");
+          //console.log(this.globalService.globalVar.eventRaceData.currentRaceSegment);
 
           if (this.globalService.globalVar.eventRaceData.currentRaceSegmentCount === 0) {
             this.globalService.globalVar.eventRaceData.currentRaceSegmentCount += 1;

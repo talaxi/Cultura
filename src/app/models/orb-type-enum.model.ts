@@ -4,5 +4,6 @@ export enum OrbTypeEnum {
     topaz, //endurance
     amethyst, //power
     sapphire, //focus
-    emerald //adaptability    
+    emerald, //adaptability    
+    none
   }

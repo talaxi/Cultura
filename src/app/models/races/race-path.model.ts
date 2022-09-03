@@ -22,6 +22,7 @@ export class RacePath {
 
     constructor(routeDesign?: RaceDesignEnum) {
         if (routeDesign !== undefined && routeDesign !== null) {
+            this.routeDesign = routeDesign;
             this.setStumbleFields();
         }
 
@@ -76,6 +77,7 @@ export class RacePath {
         }
         if (this.routeDesign === RaceDesignEnum.Cavern) {
             this.isSpecialPath = true;
+            this.stumbleSeverity = StumbleSeverityEnum.None;
             this.frequencyOfStumble = 0;
             this.stumbleOpportunities = 0;
             this.frequencyOfDrift = 400;
@@ -99,5 +101,7 @@ export class RacePath {
             this.frequencyOfStumble = 60;
             this.stumbleOpportunities = 10;
         }
+
+        return this;
     }
 }

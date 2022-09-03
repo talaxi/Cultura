@@ -311,7 +311,7 @@ export class DrawRaceComponent implements OnInit {
         if (object.objectType === DrawnRaceObjectEnum.amberBrazier || object.objectType === DrawnRaceObjectEnum.rubyBrazier ||
           object.objectType === DrawnRaceObjectEnum.topazBrazier || object.objectType === DrawnRaceObjectEnum.sapphireBrazier ||
           object.objectType === DrawnRaceObjectEnum.amethystBrazier || object.objectType === DrawnRaceObjectEnum.emeraldBrazier) {
-          this.drawBrazier(object, RaceCourseTypeEnum.Flatland, object.xDistance, context, 5, 1, 1, this.race.raceUI.distanceCoveredByFrame.length);
+          this.drawBrazier(true, object, RaceCourseTypeEnum.Flatland, 0, object.xDistance, context, 5, 1, 1, this.race.raceUI.distanceCoveredByFrame.length);
         }
       });
 
@@ -476,13 +476,11 @@ export class DrawRaceComponent implements OnInit {
 
       var goingUpTotal = goingUpCalculatedTotal + offsetPathDistance;
 
-      if (currentDistanceInLeg < goingUpTotal)
-      {
+      if (currentDistanceInLeg < goingUpTotal) {
         currentYDistanceTraveled = currentDistanceInLeg + currentCrevasseDistance;
         isCurrentlyGoingUp = true;
       }
-      else
-      {
+      else {
         currentYDistanceTraveled = goingUpTotal - (currentDistanceInLeg - goingUpTotal) + currentCrevasseDistance;
         isCurrentlyGoingUp = false;
       }
@@ -561,7 +559,9 @@ export class DrawRaceComponent implements OnInit {
     this.visibleDistanceXRight = xDistanceOffset + (this.canvasWidth);
     //console.log("Visible X Distance: " + this.visibleDistanceXLeft + " , " + this.visibleDistanceXRight);    
 
-    if (this.currentLeg.courseType === RaceCourseTypeEnum.Ocean) {
+    this.setDrawnObjectGoingUpStatus(); //calculate it out
+
+    /*if (this.currentLeg.courseType === RaceCourseTypeEnum.Ocean) {
       var foundCurrentPath = false;
       var totalDistance = 0;
       var pathCounter = 0;
@@ -581,7 +581,7 @@ export class DrawRaceComponent implements OnInit {
         isCurrentlyGoingUp = true;
       else
         isCurrentlyGoingUp = false;
-    }
+    }*/
 
     context.globalCompositeOperation = "source-over";
 
@@ -721,7 +721,7 @@ export class DrawRaceComponent implements OnInit {
         if (object.objectType === DrawnRaceObjectEnum.amberBrazier || object.objectType === DrawnRaceObjectEnum.rubyBrazier ||
           object.objectType === DrawnRaceObjectEnum.topazBrazier || object.objectType === DrawnRaceObjectEnum.sapphireBrazier ||
           object.objectType === DrawnRaceObjectEnum.amethystBrazier || object.objectType === DrawnRaceObjectEnum.emeraldBrazier) {
-          this.drawBrazier(object, this.currentLeg.courseType, object.xDistance, context, xRaceModeModifier, xRaceModeModifier, yRaceModeModifier, currentFrame, xDistanceOffset, yDistanceOffset, isCurrentlyGoingUp);
+          this.drawBrazier(false, object, this.currentLeg.courseType, currentDistanceTraveled, object.xDistance, context, xRaceModeModifier, xRaceModeModifier, yRaceModeModifier, currentFrame, xDistanceOffset, yDistanceOffset, isCurrentlyGoingUp);
         }
       });
 
@@ -1752,6 +1752,8 @@ export class DrawRaceComponent implements OnInit {
     var radiusOfOvalX = (horizontalLength * numberOfPaths) / this.volcanoRadiusXModifier;
 
     var radiusOfOvalY = ((horizontalLength * numberOfPaths) / 2) - xRegularOffset;
+    //console.log("Radius of Oval X: " + radiusOfOvalX + " Radius of Oval Y: " + radiusOfOvalY);
+    //console.log("Radius of Oval Y: (((" + path.length + " / " + this.race.length +") * " + this.canvasWidth + " * " + xRaceModeModifier + ")" + " * " + numberOfPaths + ") / 2) - " + xRegularOffset + " = " + radiusOfOvalY);
     var rotationOfOval = Math.PI / 2;
     var baselineStartingAngle = 90; //go from 90 to 270
     var baselineEndingAngle = 270;
@@ -2084,7 +2086,7 @@ export class DrawRaceComponent implements OnInit {
     context.fillStyle = originalFillColor;
   }
 
-  drawBrazier(object: DrawnRaceObject, courseType: RaceCourseTypeEnum, objectXDistance: number, context: any, sizeModifier: number, xRaceModeModifier: number, yRaceModeModifier: number, currentFrame: number, xDistanceOffset?: number, yDistanceOffset?: number, goingUp?: boolean) {    
+  drawBrazier(isOverview: boolean, object: DrawnRaceObject, courseType: RaceCourseTypeEnum, currentDistanceInRace: number, objectXDistance: number, context: any, sizeModifier: number, xRaceModeModifier: number, yRaceModeModifier: number, currentFrame: number, xDistanceOffset?: number, yDistanceOffset?: number, goingUp?: boolean) {
     var horizontalLength = (this.race.length * .01) * this.canvasXDistanceScale * sizeModifier;
 
     if (xDistanceOffset === undefined || xDistanceOffset === null)
@@ -2105,59 +2107,148 @@ export class DrawRaceComponent implements OnInit {
     var frontPanelXDistance = horizontalLength * .333333;
     var panelYDistance = horizontalLength * .666667;
 
-    if (courseType === RaceCourseTypeEnum.Flatland) {
-      startingYPoint -= panelYDistance;
-    }
-    else if (courseType === RaceCourseTypeEnum.Ocean)
-    {
-      if (goingUp)
+    if (isOverview)
+      startingYPoint = this.canvasHeight;//panelYDistance * 2.5;
+    else {
+      var currentLeg: RaceLeg | undefined;
+      var foundLeg = false;
+      var legPinpointDistance = 0;
+      var previousLegDistance = 0;
+      var offsetPathDistance = 0;
+
+      //find leg that object is in
+      this.race.raceLegs.forEach(leg => {
+        if (!foundLeg) {
+          if (object.xDistance >= legPinpointDistance && object.xDistance < legPinpointDistance + leg.distance) {
+            //we are in this leg
+            foundLeg = true;
+            currentLeg = leg;
+          }
+
+          if (!foundLeg) {
+            previousLegDistance += leg.distance;
+          }
+        }
+
+        legPinpointDistance += leg.distance;
+      });
+
+      if (currentLeg === undefined)
+        return;
+
+
+      if (object.courseType === RaceCourseTypeEnum.Flatland) {
         startingYPoint -= panelYDistance;
-      else
-        startingYPoint += panelYDistance;
-    }
-    else if (courseType === RaceCourseTypeEnum.Tundra) {
-      startingYPoint -= this.canvasHeight / 15;
-    }
-    else if (courseType === RaceCourseTypeEnum.Mountain) {
-      //startingYPoint -= yDistanceOffset;
-      startingYPoint = -startingYPoint; //make sure it's invisible in most situations
-      //if (startingXPoint > this.visibleDistanceXLeft && startingXPoint < this.visibleDistanceXRight)
-      if (startingXPoint > -horizontalLength && startingXPoint < this.canvasWidth)
-      {
-        //console.log("Should be visible: " + object.objectType)
-        //console.log("Right: " + this.visibleDistanceXRight + " Left: " + this.visibleDistanceXLeft + " XPos: " + startingXPoint);
-        var totalVisibleDistance = this.visibleDistanceXRight - this.visibleDistanceXLeft;
-        var amountOfVisibleDistance = startingXPoint - this.visibleDistanceXLeft;
-        var percentOfVisibleDistance = (this.canvasWidth - startingXPoint) / this.canvasWidth;
-  
-        startingYPoint = percentOfVisibleDistance * this.canvasHeight;
-        console.log(startingXPoint);
-        if (goingUp)
-        {
-          startingXPoint = (this.canvasWidth * .5) - ((this.canvasHeight / this.canvasWidth) * (this.canvasWidth - startingXPoint)); 
-          startingYPoint = percentOfVisibleDistance * this.canvasHeight;
-        }
-        else
-        {
-          startingXPoint = (this.canvasWidth * .5) + ((this.canvasHeight / this.canvasWidth) * startingXPoint); 
-          startingYPoint = (1 - percentOfVisibleDistance) * this.canvasHeight;
-        }
       }
+      else if (object.courseType === RaceCourseTypeEnum.Ocean) {
+        if (object.isGoingUp)
+          startingYPoint -= panelYDistance;
+        else
+          startingYPoint += (panelYDistance * 2);
+      }
+      else if (object.courseType === RaceCourseTypeEnum.Tundra) {
+        startingYPoint -= this.canvasHeight / 15;
+      }
+      else if (object.courseType === RaceCourseTypeEnum.Mountain) {
+        if (object.isGoingUp)
+          startingXPoint -= this.canvasWidth / 4;
+        else
+          startingXPoint += this.canvasWidth / 4;
 
-      //give it some space off to the side so it doesn't conflict with path
-      //startingXPoint -= this.canvasWidth * .75;
+        var goingUpCalculatedTotal = currentLeg.distance * this.mountainClimbPercent;
+        var currentPath: RacePath;
+        var foundPath = false;
+        var pathPinpointDistance = previousLegDistance;
+        var previousPathDistance = 0;
+        var pathCounter = 0;
+        var currentCrevasseDistance = 0;
+        var pathDistanceCovered = 0;
 
-      //startingXPoint -= this.canvasWidth / 10;
-      //startingXPoint =
-      
-      /*if (object.objectType === DrawnRaceObjectEnum.amethystBrazier)
-      {
-        //console.log("yDistanceOffset: " + yDistanceOffset + " MountainEndingY: " + this.mountainEndingY);
-        console.log(object.objectType + " " + object.xDistance + " :" + startingXPoint + ", " + startingYPoint);
-      }*/
-    }
-    else if (courseType === RaceCourseTypeEnum.Volcanic) {
-      startingYPoint -= yDistanceOffset;
+        //set offsetpathdistance
+        offsetPathDistance = 0;
+        var foundCurrentPath = false;
+        var totalDistance = 0;
+        this.currentLeg.pathData.forEach(path => {
+          if (!foundCurrentPath) {
+            if (goingUpCalculatedTotal >= totalDistance && goingUpCalculatedTotal < totalDistance + path.length) {
+              foundCurrentPath = true;
+              offsetPathDistance = totalDistance + path.length - goingUpCalculatedTotal;
+            }
+
+            totalDistance += path.length;
+          }
+        });
+
+        //find path that object is in
+        currentLeg.pathData.forEach(path => {
+          if (!foundPath) {
+            if (object.xDistance >= pathPinpointDistance && object.xDistance < pathPinpointDistance + path.length) {
+              //we are in this path
+              foundPath = true;
+              currentPath = path;
+              //offsetPathDistance = pathPinpointDistance + path.length - goingUpCalculatedTotal;              
+              pathDistanceCovered = (object.xDistance - previousLegDistance);// - previousPathDistance;
+              //if (object.objectType === DrawnRaceObjectEnum.amethystBrazier)    
+              //console.log("Path Distance Covered: (" + object.xDistance + " - " + previousLegDistance +") = " + pathDistanceCovered);
+
+              if (path.routeDesign === RaceDesignEnum.Crevasse) {
+                var scaledHalfPath = (path.length / 2) * 3;
+                var scaledPathCovered = pathDistanceCovered * 3;
+                if (pathDistanceCovered < path.length / 2)
+                  currentCrevasseDistance -= scaledPathCovered;
+                else
+                  currentCrevasseDistance -= scaledHalfPath - (scaledPathCovered - scaledHalfPath);
+              }
+            }
+
+            if (!foundPath) {
+              previousPathDistance += path.length;
+              pathCounter += 1;
+            }
+          }
+
+          pathPinpointDistance += path.length;
+        });
+
+        var goingUpTotal = goingUpCalculatedTotal + offsetPathDistance;
+
+        if (object.isGoingUp) {
+          startingYPoint = pathDistanceCovered + currentCrevasseDistance;
+          startingYPoint = (startingYPoint) * this.canvasXDistanceScale * yRaceModeModifier - yDistanceOffset;
+          //invert so it comes from top instead of bottom
+          startingYPoint = (this.canvasHeight - startingYPoint) - this.canvasHeight / 2;
+
+          //if (object.objectType === DrawnRaceObjectEnum.amethystBrazier)      
+          //console.log("Up Starting Y: (" + pathDistanceCovered + " + " + currentCrevasseDistance + ") * " + this.canvasXDistanceScale + " * " + yRaceModeModifier + " - " + yDistanceOffset + " = " + startingYPoint);
+        }
+        else {
+          startingYPoint = goingUpTotal - (pathDistanceCovered - goingUpTotal) + currentCrevasseDistance;
+          startingYPoint = (startingYPoint) * this.canvasXDistanceScale * yRaceModeModifier - yDistanceOffset;
+          startingYPoint = (this.canvasHeight - startingYPoint) - this.canvasHeight / 2;
+
+          //if (object.objectType === DrawnRaceObjectEnum.amberBrazier)
+          //console.log("Down Starting Y: (" + (goingUpCalculatedTotal + " + " + offsetPathDistance) + " - (" + pathDistanceCovered + " - " + goingUpTotal + ") + " + currentCrevasseDistance + ") * " + this.canvasXDistanceScale + " * " + yRaceModeModifier + " - " + yDistanceOffset + " - " + this.canvasHeight / 2 + " = " + startingYPoint);
+        }
+
+        /*if (startingXPoint > this.visibleDistanceXLeft && startingXPoint < this.visibleDistanceXRight)
+        if (object.objectType === DrawnRaceObjectEnum.amberBrazier) {
+          console.log("Should be visible: " + object.objectType + " XPos: " + startingXPoint);
+        } */
+      }
+      else if (courseType === RaceCourseTypeEnum.Volcanic) {
+        var numberOfPaths = 20;
+        var regularXOffset = ((this.race.length / numberOfPaths) / this.race.length) * this.canvasWidth;        
+        var xRadius = ((((this.race.length / numberOfPaths) / this.race.length) * this.canvasWidth * xRaceModeModifier) * numberOfPaths) / 2 - regularXOffset;
+        var yRadius = ((((this.race.length / numberOfPaths) / this.race.length) * this.canvasWidth * xRaceModeModifier) * numberOfPaths) / this.volcanoRadiusXModifier;
+        var adjustedObjectDistance = object.xDistance * this.canvasXDistanceScale * xRaceModeModifier - (2 * regularXOffset); //radius is in terms of canvas width so need to match that
+        var adjustedRacerDistance = currentDistanceInRace * this.canvasXDistanceScale * xRaceModeModifier - (2 * regularXOffset);//xDistanceOffset + (this.canvasWidth / 2); //reset this back to canvas width terms
+        var canvasHeightScale = this.canvasHeight / yRadius;
+        var objectYDistance = -yRadius * Math.sqrt(1 - (Math.pow((adjustedObjectDistance - xRadius), 2) / Math.pow(xRadius, 2)));
+
+        //do the same thing to get y position based on your current X and then use that instead of ydistanceoffset maybe        
+        var racerYDistance = -yRadius * Math.sqrt(1 - (Math.pow((adjustedRacerDistance - xRadius), 2) / Math.pow(xRadius, 2)));
+        startingYPoint = this.canvasHeight - ((objectYDistance - racerYDistance) * canvasHeightScale);                
+      }
     }
 
     context.fillStyle = 'brown';
@@ -2242,18 +2333,35 @@ export class DrawRaceComponent implements OnInit {
       var startingFlameYPoint = startingYPoint - panelYDistance - 1.15 * stoneHeight;
       var xOverlap = flameHorizontalLength / 3;
 
-      if (object.objectType === DrawnRaceObjectEnum.amberBrazier)
-        context.fillStyle = '#ed8207';
-      if (object.objectType === DrawnRaceObjectEnum.sapphireBrazier)
-        context.fillStyle = '#2554C7';
-      if (object.objectType === DrawnRaceObjectEnum.topazBrazier)
-        context.fillStyle = '#f5e342';
-      if (object.objectType === DrawnRaceObjectEnum.amethystBrazier)
-        context.fillStyle = '#7b2bcc';
-      if (object.objectType === DrawnRaceObjectEnum.emeraldBrazier)
-        context.fillStyle = '#50C878';
-      if (object.objectType === DrawnRaceObjectEnum.rubyBrazier)
-        context.fillStyle = '#9b111e';
+      if (this.themeService.getActiveThemeName() === "night") {
+        if (object.objectType === DrawnRaceObjectEnum.amberBrazier)
+          context.fillStyle = '#F67612';
+        if (object.objectType === DrawnRaceObjectEnum.sapphireBrazier)
+          context.fillStyle = '#799EFB';
+        if (object.objectType === DrawnRaceObjectEnum.topazBrazier)
+          context.fillStyle = '#ffe600';
+        if (object.objectType === DrawnRaceObjectEnum.amethystBrazier)
+          context.fillStyle = '#E65DD8';
+        if (object.objectType === DrawnRaceObjectEnum.emeraldBrazier)
+          context.fillStyle = '#50C878';
+        if (object.objectType === DrawnRaceObjectEnum.rubyBrazier)
+          context.fillStyle = '#f2021a';
+      }
+
+      if (this.themeService.getActiveThemeName() === "light") {
+        if (object.objectType === DrawnRaceObjectEnum.amberBrazier)
+          context.fillStyle = '#C25E0E';
+        if (object.objectType === DrawnRaceObjectEnum.sapphireBrazier)
+          context.fillStyle = '#2554C7';
+        if (object.objectType === DrawnRaceObjectEnum.topazBrazier)
+          context.fillStyle = '#ffe600';
+        if (object.objectType === DrawnRaceObjectEnum.amethystBrazier)
+          context.fillStyle = '#7b2bcc';
+        if (object.objectType === DrawnRaceObjectEnum.emeraldBrazier)
+          context.fillStyle = '#28643C';
+        if (object.objectType === DrawnRaceObjectEnum.rubyBrazier)
+          context.fillStyle = '#9b111e';
+      }
 
       //handle animation stuff
       var flame1Height = defaultFlameHeight * .5;
@@ -2371,6 +2479,87 @@ export class DrawRaceComponent implements OnInit {
     context.quadraticCurveTo(x, y, x + radius, y);
     context.stroke();
     context.fill();
+  }
+
+  setDrawnObjectGoingUpStatus() {
+    //iterate through drawn objects
+    //take xdistance and figure out where it is then figure out status
+    if (this.race.drawnObjects === undefined || this.race.drawnObjects === null ||
+      this.race.drawnObjects.length === 0)
+      return;
+
+    this.race.drawnObjects.forEach(object => {
+      var currentLeg: RaceLeg | undefined;
+      var foundLeg = false;
+      var legPinpointDistance = 0;
+      var previousLegDistance = 0;
+      var legCounter = 0;
+
+      //find leg that object is in
+      this.race.raceLegs.forEach(leg => {
+        if (!foundLeg) {
+          if (object.xDistance >= legPinpointDistance && object.xDistance < legPinpointDistance + leg.distance) {
+            //we are in this leg
+            foundLeg = true;
+            currentLeg = leg;
+          }
+
+          if (!foundLeg) {
+            previousLegDistance += leg.distance;
+            legCounter += 1;
+          }
+        }
+
+        legPinpointDistance += leg.distance;
+      });
+
+      if (currentLeg === undefined)
+        return;
+
+      var currentPath: RacePath;
+      var foundPath = false;
+      var pathPinpointDistance = previousLegDistance;
+      var previousPathDistance = 0;
+      var pathCounter = 0;
+      //find path that object is in
+      currentLeg.pathData.forEach(path => {
+        if (!foundPath) {
+          if (object.xDistance >= pathPinpointDistance && object.xDistance < pathPinpointDistance + path.length) {
+            //we are in this path
+            foundPath = true;
+            currentPath = path;
+          }
+
+          if (!foundPath) {
+            previousPathDistance += path.length;
+            pathCounter += 1;
+          }
+        }
+
+        pathPinpointDistance += path.length;
+      });
+
+      object.courseType = currentLeg.courseType;
+
+      if (currentLeg.courseType === RaceCourseTypeEnum.Mountain) {
+        if ((object.xDistance - previousLegDistance) / (currentLeg.distance) < this.mountainClimbPercent)
+          object.isGoingUp = true;
+        else
+          object.isGoingUp = false;
+      }
+      if (currentLeg.courseType === RaceCourseTypeEnum.Ocean) {
+        if (pathCounter % 2 === 0)
+          object.isGoingUp = true;
+        else
+          object.isGoingUp = false;
+      }
+      if (currentLeg.courseType === RaceCourseTypeEnum.Tundra) {
+
+      }
+      if (currentLeg.courseType === RaceCourseTypeEnum.Volcanic) {
+
+      }
+    });
   }
 
   ngOnDestroy() {

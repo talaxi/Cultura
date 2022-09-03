@@ -6,6 +6,7 @@ import { Barn } from "../barns/barn.model";
 import { Incubator } from "../incubator.model";
 import { RaceCourseTypeEnum } from "../race-course-type-enum.model";
 import { GrandPrixData } from "../races/event-race-data.model";
+import { PinnacleConditions } from "../races/pinnacle-conditions.model";
 import { Pinnacle } from "../races/pinnacle.model";
 import { Race } from "../races/race.model";
 import { RedeemableCode } from "../redeemable-code.model";
@@ -70,6 +71,10 @@ export class GlobalVariables {
     previousEventRewards: ResourceValue[];
     @Type(() => Notifications)
     notifications: Notifications;
+    @Type(() => PinnacleConditions)
+    pinnacleHistory: PinnacleConditions;
+    @Type(() => PinnacleConditions)
+    currentPinnacleConditions: PinnacleConditions | undefined;
     circuitRankUpRewardDescription: string;
     nationalRaceCountdown: number;
     userIsRacing = false;   

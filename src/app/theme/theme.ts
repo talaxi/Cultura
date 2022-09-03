@@ -37,6 +37,13 @@ export interface Theme {
       "--progressionKeywordColor": "#8105fc",
       "--specialityKeywordColor": "#050efc",
       "--equipmentKeywordColor": "#1B7F02",
+
+      "--amberColor" : "#C25E0E",
+      "--amethystColor" : "#7b2bcc",
+      "--emeraldColor" : "#28643C",
+      "--rubyColor" : "#9b111e",
+      "--sapphireColor" : "#2554C7",
+      "--topazColor" : "#ffe600",
   
       "--background-tertiary-shadow": "0 1px 3px 0 rgba(92, 125, 153, 0.5)"
     }
@@ -76,6 +83,13 @@ export interface Theme {
       "--progressionKeywordColor": "#501da8",
       "--specialityKeywordColor": "#064064",
       "--equipmentKeywordColor": "#2C6854",
+
+      "--amberColor" : "#C25E0E",
+      "--amethystColor" : "#7b2bcc",
+      "--emeraldColor" : "#28643C",
+      "--rubyColor" : "#9b111e",
+      "--sapphireColor" : "#2554C7",
+      "--topazColor" : "#ffe600",
   
       "--background-tertiary-shadow": "0 1px 3px 0 rgba(92, 125, 153, 0.5)"
     }
@@ -116,6 +130,13 @@ export interface Theme {
       "--specialityKeywordColor": "#000000",
       "--equipmentKeywordColor": "#2C6854",
 
+      "--amberColor" : "#C25E0E",
+      "--amethystColor" : "#7b2bcc",
+      "--emeraldColor" : "#28643C",
+      "--rubyColor" : "#9b111e",
+      "--sapphireColor" : "#2554C7",
+      "--topazColor" : "#ffe600",
+
       "--background-tertiary-shadow": "0 1px 3px 0 rgba(92, 125, 153, 0.5)"
     }
   };
@@ -154,6 +175,13 @@ export interface Theme {
       "--progressionKeywordColor": "#ABB5DC",
       "--specialityKeywordColor": "#5DBDF6",
       "--equipmentKeywordColor": "#83C2A6",
+
+      "--amberColor" : "#F67612",
+      "--amethystColor" : "#E65DD8",
+      "--emeraldColor" : "#50C878",
+      "--rubyColor" : "#f2021a",
+      "--sapphireColor" : "#799EFB",
+      "--topazColor" : "#ffe600",
   
       "--background-tertiary-shadow": "0 1px 3px 0 rgba(8, 9, 10, 0.5)"
     }
