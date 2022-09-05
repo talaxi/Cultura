@@ -24,7 +24,7 @@ export class VersionControlService {
   constructor(private globalService: GlobalService, private lookupService: LookupService, private utilityService: UtilityService) { }
 
   //add to this in descending order
-  gameVersions = [1.15, 1.14, 1.13, 1.12, 1.11, 1.10, 1.09, 1.08, 1.07, 1.06, 1.05, 1.04, 1.03, 1.02, 1.01, 1.00];
+  gameVersions = [1.16, 1.15, 1.14, 1.13, 1.12, 1.11, 1.10, 1.09, 1.08, 1.07, 1.06, 1.05, 1.04, 1.03, 1.02, 1.01, 1.00];
 
   getListAscended() {
     var ascendedList: number[] = [];
@@ -158,12 +158,16 @@ export class VersionControlService {
         "More bug fixes. (view Discord Change Log for full info)";
     if (version === 1.15)
       changes = "The Pinnacle has been added to the game!" +
-      "<ul><li>After reaching Circuit Rank AAAZ (79), you will have access to a new Special Race called The Pinnacle.</li>" +
-      "<li>Each floor of the Pinnacle has its own special rules. Pay attention to the conditions and plan your team out to maximize your success!</li>" + 
-      "<li>As you race, you will pass ritualistic braziers where you place the orbs you received as you ranked up to increase their max level.</li></ul>" +     
-      "Balance adjustments have been made for Circuit and Special races mostly around the time of being Circuit Rank AA (52) and higher.\n\n" +
-      "Incubator upgrade prices have been increased to be more in line with the coin gain increases that were made.\n\n" +
-      "Minor bug fixes.";
+        "<ul><li>After reaching Circuit Rank AAAZ (79), you will have access to a new Special Race called The Pinnacle.</li>" +
+        "<li>Each floor of the Pinnacle has its own special rules. Pay attention to the conditions and plan your team out to maximize your success!</li>" +
+        "<li>As you race, you will pass ritualistic braziers where you place the orbs you received as you ranked up to increase their max level.</li></ul>" +
+        "Balance adjustments have been made for Circuit and Special races mostly around the time of being Circuit Rank AA (52) and higher.\n\n" +
+        "Incubator upgrade prices have been increased to be more in line with the coin gain increases that were made.\n\n" +
+        "Minor bug fixes.";
+        if (version === 1.16)
+        changes = "Adjustments have been made to the following abilities to be additive instead of multiplicative: On The Hunt (Cheetah), Deep Breathing (Goat), Night Vision (Gecko), Big Brain (Octopus), Quick Toboggan (Penguin), Special Delivery (Caribou)\n\n" +
+          "Second Wind (Horse) was nerfed slightly so that you cannot prevent stamina reduction from happening at all. \n\n" +          
+          "Minor bug fixes.";
     return changes;
   }
 
@@ -201,6 +205,8 @@ export class VersionControlService {
       date = new Date('2022-08-28 12:00:00');
     if (version === 1.15)
       date = new Date('2022-09-03 12:00:00');
+    if (version === 1.16)
+      date = new Date('2022-09-05 12:00:00');
 
     return date.toDateString().replace(/^\S+\s/, '');
   }
@@ -955,8 +961,7 @@ export class VersionControlService {
         else if (version === 1.15) {
           this.globalService.globalVar.pinnacleHistory = new PinnacleConditions();
 
-          if (this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.circuitRank) >= 79)
-          {            
+          if (this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.circuitRank) >= 79) {
             this.globalService.globalVar.unlockables.set("thePinnacle", true);
             this.globalService.globalVar.notifications.isNewSpecialRaceAvailable = true;
           }
@@ -988,6 +993,63 @@ export class VersionControlService {
               incLvl4.purchasePrice.push(new ResourceValue("Coins", 1000000));
             }
           }
+        }
+        if (version === 1.16) {
+          this.globalService.globalVar.animals.forEach(item => {
+            if (item.type === AnimalTypeEnum.Octopus) {
+              var bigBrain = item.availableAbilities.find(ability => ability.name === "Big Brain");
+              if (bigBrain !== undefined)
+                bigBrain.efficiency = 4;
+
+              if (item.ability.name === "Big Brain")
+                item.ability.efficiency = 4;
+            }
+
+            if (item.type === AnimalTypeEnum.Cheetah) {
+              var bigBrain = item.availableAbilities.find(ability => ability.name === "On The Hunt");
+              if (bigBrain !== undefined)
+                bigBrain.efficiency = .5;
+
+              if (item.ability.name === "On The Hunt")
+                item.ability.efficiency = .5;
+            }
+
+            if (item.type === AnimalTypeEnum.Gecko) {
+              var bigBrain = item.availableAbilities.find(ability => ability.name === "Night Vision");
+              if (bigBrain !== undefined)
+                bigBrain.efficiency = .75;
+
+              if (item.ability.name === "Night Vision")
+                item.ability.efficiency = .75;
+            }
+
+            if (item.type === AnimalTypeEnum.Penguin) {
+              var bigBrain = item.availableAbilities.find(ability => ability.name === "Quick Toboggan");
+              if (bigBrain !== undefined)
+                bigBrain.efficiency = .5;
+
+              if (item.ability.name === "Quick Toboggan")
+                item.ability.efficiency = .5;
+            }
+
+            if (item.type === AnimalTypeEnum.Goat) {
+              var bigBrain = item.availableAbilities.find(ability => ability.name === "Deep Breathing");
+              if (bigBrain !== undefined)
+                bigBrain.efficiency = 8;
+
+              if (item.ability.name === "Deep Breathing")
+                item.ability.efficiency = 8;
+            }
+
+            if (item.type === AnimalTypeEnum.Caribou) {
+              var bigBrain = item.availableAbilities.find(ability => ability.name === "Special Delivery");
+              if (bigBrain !== undefined)
+                bigBrain.efficiency = 5;
+
+              if (item.ability.name === "Special Delivery")
+                item.ability.efficiency = 5;
+            }
+          })
         }
 
         this.globalService.globalVar.currentVersion = version;

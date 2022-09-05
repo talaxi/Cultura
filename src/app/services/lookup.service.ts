@@ -799,13 +799,14 @@ export class LookupService {
     var modifiedEfficiency = usedAbility.efficiency * abilityEfficiencyRelayBonus * firstUseAbilityModifier + (usedAbility.efficiency * ((usedAbility.abilityLevel - 1) * .01));
     modifiedEfficiency *=  pinnacleReduction;
 
+    //console.log(usedAbility.name + ": " + modifiedEfficiency + " * (1 + " + modifiedPower + ")");
     return modifiedEfficiency * (1 + modifiedPower);
   }
 
   getAnimalAbilityDescription(shortDescription: boolean, abilityName: string, animal?: Animal) {
     if (shortDescription) {
       if (abilityName === "Second Wind") {
-        return "Stamina does not go down for a short period";
+        return "Reduce stamina loss for a short period";
       }
       if (abilityName === "Inspiration") {
         return "Increase next racer's max speed on relay";
@@ -910,7 +911,7 @@ export class LookupService {
         return "Sacrifice stamina for acceleration for a short period";
       }
       if (abilityName === "Special Delivery") {
-        return "Increase other racers' burst max speed bonus based on stamina";
+        return "Increase other racers' burst velocity bonus based on stamina";
       }
       if (abilityName === "Careful Toboggan") {
         return "Increase adaptability for a short period";
@@ -966,7 +967,7 @@ export class LookupService {
         var abilityDescription: string | null = "";
         var sanitizedDescription = "";
         if (abilityName === "Second Wind") {
-          return "Stamina does not decrease for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. " + cooldownDisplay + " second cooldown.";
+          return "Reduce stamina loss by 90% for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. " + cooldownDisplay + " second cooldown.";
         }
         if (abilityName === "Inspiration") {
           return "When the next racer starts, they gain 25% of your Max Speed for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. Passive.";
@@ -981,7 +982,7 @@ export class LookupService {
           return "While you are behind the average pace, increase Acceleration Rate by <span class='keyword'>" + effectiveAmountDisplay + "</span>%. Passive.";
         }
         if (abilityName === "On The Hunt") {
-          return "Every time you Burst, increase your Max Speed by <span class='keyword'>" + effectiveAmountDisplay + "</span>%. Passive.<br/><em>During Event Races:</em> Can trigger up to 25 times. Bonus lost after relaying.";
+          return "Every time you Burst, increase your Max Speed by <span class='keyword'>" + effectiveAmountDisplay + "</span> m/s for the rest of the race. Passive.<br/><em>During Event Races:</em> Can trigger up to 25 times. Bonus lost after relaying.";
         }
         if (abilityName === "Awareness") {
           return "Boosts Focus Distance and Adaptability Distance by 40% for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. " + cooldownDisplay + " second cooldown.";
@@ -1014,7 +1015,7 @@ export class LookupService {
           return "When you make it through a special path without stumbling, increase your Adaptability Distance by <span class='keyword'>" + effectiveAmountDisplay + "</span>%. Passive.<br/><em>During Event Races:</em> Can trigger up to 25 times. Bonus lost after relaying.";
         }
         if (abilityName === "Deep Breathing") {
-          return "Every time you Burst, regain <span class='keyword'>" + effectiveAmountDisplay + "</span>% of your stamina, up to 100%. If this amount exceeds 100% of your stamina, increase all other racers' stamina by the amount exceeded. Passive.<br/><em>During Event Races:</em> Relay effectiveness reduced to 25%. Can trigger up to 25 times. Effects remain for the duration of the race.";
+          return "Every time you Burst, regain <span class='keyword'>" + effectiveAmountDisplay + "</span> stamina, up to 100% of your total stamina. If this amount exceeds 100% of your stamina, increase all other racers' stamina by the amount exceeded up to 200% of your total stamina. Passive.<br/><em>During Event Races:</em> Relay effectiveness reduced to 25%. Can trigger up to 25 times. Effects remain for the duration of the race.";
         }
         if (abilityName === "In The Rhythm") {
           return "Increase your max speed bonus while Bursting by <span class='keyword'>" + effectiveAmountDisplay + "</span>%. Passive.";
@@ -1023,7 +1024,7 @@ export class LookupService {
           return "Cannot stumble for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. " + cooldownDisplay + " second cooldown.";
         }
         if (abilityName === "Night Vision") {
-          return "Increase Max Speed by <span class='keyword'>" + effectiveAmountDisplay + "</span>% for every path you complete without losing focus. If you lose focus, reset this bonus back to 0%. Passive.<br/><em>During Event Races:</em> Can trigger up to 25 times. Bonus lost after relaying.";
+          return "Every time you clear a path without losing focus, increase your Max Speed by <span class='keyword'>" + effectiveAmountDisplay + "</span> m/s for the rest of the race. Reset this bonus back to 0 whenever you lose focus. Passive.<br/><em>During Event Races:</em> Can trigger up to 25 times. Bonus lost after relaying.";
         }
         if (abilityName === "Camouflage") {
           return "The velocity you finish your leg at is given to your following racer on Relay. Decrease this amount to 0 evenly over <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. The following racer can break their max speed by up to 50% while this is active. Passive.";
@@ -1053,7 +1054,7 @@ export class LookupService {
           return "Delay your start to search for treasure until the competition has traveled a distance equal to <span class='keyword'>" + effectiveAmountDisplay + "</span> meters from the end of your leg. If you still win the race, increase your Coin reward by 25%. Passive.";
         }
         if (abilityName === "Big Brain") {
-          return "After Bursting through one third of your race paths, increase Power Efficiency of all remaining racers by <span class='keyword'>" + effectiveAmountDisplay + "</span>%. Passive.<br/><em>During Event Races:</em> Can trigger up to 5 times. Effects remain for the duration of the race.";
+          return "After Bursting through one third of your race paths, add <span class='keyword'>" + effectiveAmountDisplay + "</span>% to the Power Efficiency of all remaining racers. Passive.<br/><em>During Event Races:</em> Can trigger up to 5 times. Effects remain for the duration of the race.";
         }
         if (abilityName === "Storing Power") {
           return "On use, reduce Max Speed by 10% for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. If you burst while this is active, regain double the amount of Max Speed lost for the rest of the race. " + cooldownDisplay + " second cooldown.";
@@ -1077,7 +1078,7 @@ export class LookupService {
           return "Reduce stamina by 10%. For <span class='keyword'>" + effectiveAmountDisplay + "</span> meters, Acceleration Rate is increased by 25% of the amount of stamina lost. " + cooldownDisplay + " second cooldown.";
         }
         if (abilityName === "Special Delivery") {
-          return "Increase all remaining racers' Burst Max Speed Bonus by <span class='keyword'>" + effectiveAmountDisplay + "</span>% of your remaining Stamina percentage, up to 100%, after completing your leg. This does not occur if you run out of Stamina during your leg. Passive.<br/><em>During Event Races:</em> Relay effectiveness reduced to 25%. Can trigger up to 25 times. This does not occur if your energy is below 100% at the end of the segment. Effects remain for the duration of the race.";
+          return "After completing your leg, increase Stamina by <span class='keyword'>" + effectiveAmountDisplay + "</span>, up to 125% of your total stamina. Increase all remaining racers' Burst Velocity Bonus by your remaining stamina percentage. This does not occur if you run out of Stamina during your leg. Passive.<br/><em>During Event Races:</em> Relay effectiveness reduced to 10%. Can trigger up to 25 times. This does not occur if your energy is below 100% at the end of the segment. Effects remain for the duration of the race.";
         }
         if (abilityName === "Careful Toboggan") {
           return "Increase Adaptability Distance by 60% for <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. " + cooldownDisplay + " second cooldown.";
@@ -1086,7 +1087,7 @@ export class LookupService {
           return "Double the maximum amount of drift per path. Increase Acceleration Rate by up to <span class='keyword'>" + effectiveAmountDisplay + "</span>% based on how much you drift. Passive.";
         }
         if (abilityName === "Quick Toboggan") {
-          return "Every time you make it through a path without drifting, gain <span class='keyword'>" + effectiveAmountDisplay + "</span>% Max Speed. Passive.<br/><em>During Event Races:</em> Can trigger up to 25 times. Bonus lost after relaying.";
+          return "Every time you clear a path without drifting, increase your Max Speed by <span class='keyword'>" + effectiveAmountDisplay + "</span> m/s for the rest of the race. Passive.<br/><em>During Event Races:</em> Can trigger up to 25 times. Bonus lost after relaying.";
         }
         if (abilityName === "Cold Blooded") {
           return "Increase Focus Distance and reduce Stamina loss by up to 50% depending on how close to the center of the volcano you are. These bonuses last <span class='keyword'>" + effectiveAmountDisplay + "</span> meters. " + cooldownDisplay + " second cooldown.";
@@ -2315,7 +2316,7 @@ export class LookupService {
       if (row === 0 && column === 0)
         description = "Increase Focus stat gain from training by <span class='keyword'>" + numberOfPoints + "</span>%.";
       if (row === 1 && column === 0)
-        description = "Every burst increases Burst Velocity Bonus by <span class='keyword'>" + .5 * numberOfPoints + "</span>%.";
+        description = "Every burst increases Burst Velocity Bonus by <span class='keyword'>" + .5 * numberOfPoints + "</span>% up to <span class='keyword'>" + 10 * numberOfPoints + "</span>%.";
       if (row === 2 && column === 0)
         description = "Increase Focus Distance gain from Focus stat by <span class='keyword'>" + numberOfPoints + "</span>%.";
       if (row === 3 && column === 0)

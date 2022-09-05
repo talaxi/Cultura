@@ -83,8 +83,8 @@ export class GlobalService {
     this.globalVar.freeRaceCounter = 0;
     this.globalVar.freeRaceTimePeriodCounter = 0;
     this.globalVar.lastTimeStamp = Date.now();
-    this.globalVar.currentVersion = 1.15; //TODO: this needs to be automatically increased or something, too easy to forget
-    this.globalVar.startingVersion = 1.15;
+    this.globalVar.currentVersion = 1.16; //TODO: this needs to be automatically increased or something, too easy to forget
+    this.globalVar.startingVersion = 1.16;
     this.globalVar.startDate = new Date();
     this.globalVar.notifications = new Notifications();
     this.globalVar.relayEnergyFloor = 50;
@@ -2394,6 +2394,7 @@ export class GlobalService {
     if (this.globalVar.eventRaceData !== null && this.globalVar.eventRaceData !== undefined) {
       this.globalVar.eventRaceData.animalData.forEach(item => {
         item.isCurrentlyRacing = false;
+        item.isSetToRelay = false;
       });
 
       this.globalVar.eventRaceData.isLoading = false;
@@ -2642,7 +2643,7 @@ export class GlobalService {
     var timeToComplete = 90;
 
     var baseMeters = 155;
-    var factor = 1.155;
+    var factor = 1.145;
     var additiveValue = 100 * i;
 
     var maxRandomFactor = 1.1;
@@ -2709,7 +2710,7 @@ export class GlobalService {
     var timeToComplete = 80;
 
     var baseMeters = 6500;
-    var factor = 1.16;
+    var factor = 1.14;
 
     var maxRandomFactor = 1.2;
     var minRandomFactor = 0.8;
@@ -2839,7 +2840,7 @@ export class GlobalService {
     var raceIndex = 1;
     var timeToComplete = 180;
 
-    var baseMeters = 2500000;
+    var baseMeters = 2750000;
     var factor = 1.17;
     var legLengthModifier = 1; //depending on condition, leg may need to shift in size
 
@@ -4940,8 +4941,9 @@ export class GlobalService {
     this.globalVar.resources.push(this.initializeService.initializeResource("Facility Level", 1000, ShopItemTypeEnum.Progression));
     this.globalVar.resources.push(this.initializeService.initializeResource("Research Level", circuitRankNumeric, ShopItemTypeEnum.Progression));
 
-    this.globalVar.monoRank = "AAZ";
-    this.globalVar.duoRank = "AZ";
+    this.globalVar.monoRank = "AAAZ";
+    this.globalVar.duoRank = "AAZ";
+    this.globalVar.rainbowRank = "AZ";
 
     for (var i = 1; i <= circuitRankNumeric; i++) {
       var rank = this.utilityService.getCircuitRankFromNumericValue(i);
@@ -4950,9 +4952,15 @@ export class GlobalService {
       this.GenerateCircuitRacesForRank(this.globalVar.circuitRank);
     }
 
-    //this.globalVar.animalDecks.find(item => item.deckNumber === 2)?.selectedAnimals.push(this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Salamander)!);
-    //this.globalVar.animalDecks.find(item => item.deckNumber === 2)!.isPrimaryDeck = true;
-    //this.globalVar.animalDecks.find(item => item.deckNumber === 1)!.isPrimaryDeck = false;
+    this.globalVar.animalDecks.find(item => item.deckNumber === 2)?.selectedAnimals.push(this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Horse)!);
+    this.globalVar.animalDecks.find(item => item.deckNumber === 2)?.selectedAnimals.push(this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Goat)!);
+    this.globalVar.animalDecks.find(item => item.deckNumber === 2)?.selectedAnimals.push(this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Octopus)!);
+    this.globalVar.animalDecks.find(item => item.deckNumber === 2)?.selectedAnimals.push(this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Caribou)!);
+    this.globalVar.animalDecks.find(item => item.deckNumber === 2)?.selectedAnimals.push(this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Salamander)!);
+    this.globalVar.animalDecks.find(item => item.deckNumber === 2)!.isPrimaryDeck = true;
+    this.globalVar.animalDecks.find(item => item.deckNumber === 2)!.isEventDeck = true;
+    this.globalVar.animalDecks.find(item => item.deckNumber === 1)!.isPrimaryDeck = false;
+    this.globalVar.animalDecks.find(item => item.deckNumber === 1)!.isEventDeck = false;
 
     var trainingStatValue = 5;
     var breedLevel = 1;
@@ -4983,12 +4991,24 @@ export class GlobalService {
     }
 
     this.globalVar.animals.forEach(animal => {
+      if (animal.type === AnimalTypeEnum.Goat || animal.type === AnimalTypeEnum.Caribou ||
+        animal.type === AnimalTypeEnum.Octopus)
+        {
+          animal.isAvailable = true;
+          animal.availableAbilities.forEach(item => {
+            item.isAbilityPurchased = true;
+
+            if (item.name === "Deep Breathing" || item.name === "Special Delivery" || item.name === "Big Brain")
+            animal.ability = item;
+          })
+        }
+
       animal.currentStats.topSpeed = trainingStatValue;
       animal.currentStats.acceleration = trainingStatValue;
       animal.currentStats.endurance = trainingStatValue;
       animal.currentStats.power = trainingStatValue;
       animal.currentStats.focus = trainingStatValue;
-      animal.currentStats.adaptability = trainingStatValue;
+      animal.currentStats.adaptability = trainingStatValue * 1000;
 
       animal.breedLevel = breedLevel;
 

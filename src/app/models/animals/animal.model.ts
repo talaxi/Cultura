@@ -251,7 +251,7 @@ export class Cheetah extends Animal {
         this.availableAbilities.push(ability2);
 
         var ability3 = new Ability();
-        ability3.efficiency = .1;
+        ability3.efficiency = .5;
         ability3.oneTimeEffect = false;
         ability3.name = "On The Hunt";
         ability3.description = "On The Hunt";
@@ -395,7 +395,7 @@ export class Goat extends Animal {
         this.availableAbilities.push(this.ability);
 
         var ability2 = new Ability();
-        ability2.efficiency = .25;
+        ability2.efficiency = 8;
         ability2.oneTimeEffect = false;
         ability2.name = "Deep Breathing";
         ability2.isAbilityPurchased = false;
@@ -432,7 +432,7 @@ export class Gecko extends Animal {
         this.availableAbilities.push(this.ability);
 
         var ability2 = new Ability();
-        ability2.efficiency = .2;
+        ability2.efficiency = .75;
         ability2.oneTimeEffect = false;
         ability2.name = "Night Vision";
         ability2.isAbilityPurchased = false;
@@ -548,7 +548,7 @@ export class Octopus extends Animal {
         this.availableAbilities.push(ability2);
 
         var ability3 = new Ability();
-        ability3.efficiency = 2;
+        ability3.efficiency = 4;
         ability3.oneTimeEffect = true;
         ability3.name = "Big Brain";
         ability3.isAbilityPurchased = false;
@@ -624,7 +624,7 @@ export class Penguin extends Animal {
         this.availableAbilities.push(ability2);
 
         var ability3 = new Ability();
-        ability3.efficiency = .1;
+        ability3.efficiency = .5;
         ability3.oneTimeEffect = false;
         ability3.name = "Quick Toboggan";
         ability3.isAbilityPurchased = false;
@@ -660,7 +660,7 @@ export class Caribou extends Animal {
         this.availableAbilities.push(ability2);
 
         var ability3 = new Ability();
-        ability3.efficiency = .05;
+        ability3.efficiency = 5;
         ability3.oneTimeEffect = true;
         ability3.name = "Special Delivery";
         ability3.isAbilityPurchased = false;
