@@ -16,15 +16,10 @@
                     <span [ngbPopover]="getEnergyPopover(animal)" triggers="mouseenter:mouseleave"
                         popoverClass="popoverClass"><span class="keyword">Energy:</span> {{ getExhaustion(animal) |
                         number : '1.2-2' }}%</span>
-                    <br />
-                    <div *ngIf="getUseCountInformation(animal) === ''">
-                        <br />
-                    </div>
+                    <br />                    
                     <div [innerHTML]="getUseCountInformation(animal)">
-
                     </div>
                 </div>
-                <br />
                 <br />
                 <div *ngIf="canEnterGrandPrix(animal)">
                     <div *ngIf="!enteredEvent()">

@@ -164,10 +164,16 @@ export class VersionControlService {
         "Balance adjustments have been made for Circuit and Special races mostly around the time of being Circuit Rank AA (52) and higher.\n\n" +
         "Incubator upgrade prices have been increased to be more in line with the coin gain increases that were made.\n\n" +
         "Minor bug fixes.";
-        if (version === 1.16)
-        changes = "Adjustments have been made to the following abilities to be additive instead of multiplicative: On The Hunt (Cheetah), Deep Breathing (Goat), Night Vision (Gecko), Big Brain (Octopus), Quick Toboggan (Penguin), Special Delivery (Caribou)\n\n" +
-          "Second Wind (Horse) was nerfed slightly so that you cannot prevent stamina reduction from happening at all. \n\n" +          
-          "Minor bug fixes.";
+    if (version === 1.16)
+      changes = "Adjustments have been made to the following abilities to be additive instead of multiplicative: On The Hunt (Cheetah), Deep Breathing (Goat), Night Vision (Gecko), Big Brain (Octopus), Quick Toboggan (Penguin), Special Delivery (Caribou)\n\n" +
+        "Second Wind (Horse) was nerfed slightly so that you cannot prevent stamina reduction from happening at all. \n\n" +
+        "Minor bug fixes.";
+    if (version === 1.17)
+      changes = "Adjustments have been made to the following abilities: Giving Chase (Cheetah), Sure-footed (Goat), In The Rhythm (Goat), Blood In The Water (Shark), Wild Toboggan (Penguin), Herd Mentality (Caribou), and Fleeting Speed (Fox). Same as the previous round of changes, the intention is to make sure abilities can't become game breaking with scaling multiplicative percents.\n\n" +
+        "Endurance and Acceleration coaching are now easier and should take roughly the same amount of time as the others. \n\n" +
+        "New setting added so that you can condense your barn view. \n\n" +
+        "Code redemption now gives an alert with what your code has given you.\n\n" +
+        "Minor bug fixes.";
     return changes;
   }
 
@@ -207,6 +213,8 @@ export class VersionControlService {
       date = new Date('2022-09-03 12:00:00');
     if (version === 1.16)
       date = new Date('2022-09-05 12:00:00');
+    if (version === 1.17)
+      date = new Date('2022-09-07 12:00:00');
 
     return date.toDateString().replace(/^\S+\s/, '');
   }
@@ -1051,10 +1059,13 @@ export class VersionControlService {
             }
           })
         }
-        if (version === 1.17)
-        {
+        if (version === 1.17) {
           this.globalService.globalVar.settings.set("quickViewBarnMode", false);
-          
+          if (this.globalService.globalVar.eventRaceData !== undefined && this.globalService.globalVar.eventRaceData !== null) {
+            this.globalService.globalVar.eventRaceData.eventAbilityData.storingPowerUseCap = 25;
+            this.globalService.globalVar.eventRaceData.eventAbilityData.storingPowerUseCount = 0;
+          }
+
           this.globalService.globalVar.animals.forEach(item => {
             if (item.type === AnimalTypeEnum.Cheetah) {
               var bigBrain = item.availableAbilities.find(ability => ability.name === "Giving Chase");
@@ -1075,7 +1086,7 @@ export class VersionControlService {
 
               var inTheRhythm = item.availableAbilities.find(ability => ability.name === "In The Rhythm");
               if (inTheRhythm !== undefined)
-              inTheRhythm.efficiency = .2;
+                inTheRhythm.efficiency = .2;
 
               if (item.ability.name === "In The Rhythm")
                 item.ability.efficiency = .2;

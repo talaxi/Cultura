@@ -235,7 +235,7 @@ export class EventAnimalDeckComponent implements OnInit {
   }
 
   getUseCountInformation(animal: Animal) {
-    var useCountInfo = "";
+    var useCountInfo = "<br/><br/>";
     var data = this.globalService.globalVar.eventRaceData.eventAbilityData;
     var globalAnimal = this.globalService.globalVar.animals.find(item => item.type === animal.type);
     if (globalAnimal === undefined || globalAnimal === null)
@@ -243,50 +243,53 @@ export class EventAnimalDeckComponent implements OnInit {
 
     if (globalAnimal.type === AnimalTypeEnum.Horse) {
       if (globalAnimal.ability.name === "Inspiration")
-        useCountInfo += "Inspiration Relay Count: " + data.inspirationUseCount;
+        useCountInfo = "Inspiration Relay Count: " + data.inspirationUseCount + "<br/><br/>";
     }
 
     if (globalAnimal.type === AnimalTypeEnum.Cheetah) {
       if (globalAnimal.ability.name === "On The Hunt")
-        useCountInfo += "On The Hunt Use Count: " + data.onTheHuntUseCount + " / " + data.onTheHuntUseCap;
+        useCountInfo = "On The Hunt Use Count: " + data.onTheHuntUseCount + " / " + data.onTheHuntUseCap + "<br/><br/>";
     }
 
-    if (globalAnimal.type === AnimalTypeEnum.Goat) {
-      if (globalAnimal.ability.name === "Sure-footed")
-        useCountInfo += "Sure-footed Use Count: " + data.sureFootedUseCount + " / " + data.sureFootedUseCap;
+    if (globalAnimal.type === AnimalTypeEnum.Goat) {            
+      useCountInfo = "Deep Breathing Relay Count: " + data.deepBreathingUseCount + " / " + data.deepBreathingUseCap + "<br/>";
 
-      if (globalAnimal.ability.name === "Deep Breathing")
-        useCountInfo += "Deep Breathing Relay Count: " + data.deepBreathingUseCount + " / " + data.deepBreathingUseCap;
+      if (globalAnimal.ability.name === "Sure-footed")
+        useCountInfo += "Sure-footed Use Count: " + data.sureFootedUseCount + " / " + data.sureFootedUseCap + "<br/>";
+      else
+      useCountInfo += "<br/>";
     }
 
     if (globalAnimal.type === AnimalTypeEnum.Gecko) {
       if (globalAnimal.ability.name === "Night Vision")
-        useCountInfo += "Night Vision Use Count: " + data.nightVisionUseCount + " / " + data.nightVisionUseCap;
+        useCountInfo = "Night Vision Use Count: " + data.nightVisionUseCount + " / " + data.nightVisionUseCap + "<br/><br/>";
     }
 
     if (globalAnimal.type === AnimalTypeEnum.Dolphin) {
       if (globalAnimal.ability.name === "Flowing Current")
-        useCountInfo += "Flowing Current Relay Count: " + data.flowingCurrentUseCount;
+        useCountInfo = "Flowing Current Relay Count: " + data.flowingCurrentUseCount  + "<br/><br/>";
 
       if (globalAnimal.ability.name === "Navigator")
-        useCountInfo += "Navigator Relay Count: " + data.navigatorUseCount;
+        useCountInfo = "Navigator Relay Count: " + data.navigatorUseCount + "<br/><br/>";
     }
 
     if (globalAnimal.type === AnimalTypeEnum.Octopus) {
-      if (globalAnimal.ability.name === "Big Brain")
-        useCountInfo += "Big Brain Relay Count: " + data.bigBrainUseCount + " / " + data.bigBrainUseCap;
+      //if (globalAnimal.ability.name === "Big Brain")
+        useCountInfo = "Big Brain Relay Count: " + data.bigBrainUseCount + " / " + data.bigBrainUseCap + "<br/><br/>";
+    }
+
+    if (globalAnimal.type === AnimalTypeEnum.Whale) {
+      if (globalAnimal.ability.name === "Storing Power")
+        useCountInfo = "Storing Power Use Count: " + data.storingPowerUseCount + " / " + data.storingPowerUseCap + "<br/><br/>";
     }
 
     if (globalAnimal.type === AnimalTypeEnum.Penguin) {
       if (globalAnimal.ability.name === "Quick Toboggan")
-        useCountInfo += "Quick Toboggan Use Count: " + data.quickTobogganUseCount + " / " + data.quickTobogganUseCap;
+        useCountInfo = "Quick Toboggan Use Count: " + data.quickTobogganUseCount + " / " + data.quickTobogganUseCap + "<br/><br/>";
     }
 
-    if (globalAnimal.type === AnimalTypeEnum.Caribou) {
-      if (globalAnimal.ability.name === "Herd Mentality")
-        useCountInfo += "Herd Mentality Relay Count: " + data.herdMentalityUseCount + " / " + data.herdMentalityUseCap;
-
-      if (globalAnimal.ability.name === "Special Delivery")
+    if (globalAnimal.type === AnimalTypeEnum.Caribou) {      
+        useCountInfo = "Herd Mentality Relay Count: " + data.herdMentalityUseCount + " / " + data.herdMentalityUseCap + "<br/>";      
         useCountInfo += "Special Delivery Relay Count: " + data.specialDeliveryUseCount + " / " + data.specialDeliveryUseCap;
     }
 
