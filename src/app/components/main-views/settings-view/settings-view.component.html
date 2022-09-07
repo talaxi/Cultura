@@ -50,6 +50,15 @@
                     </label>
                 </span>
                 <br />
+                <span [ngbPopover]="quickViewBarnModePopoverText" class="checkboxOption"
+                    triggers="mouseenter:mouseleave">
+                    <label>
+                        <input type="checkbox" class="rightSpaced" id="quickViewBarn"
+                            [(ngModel)]="quickViewBarnMode" (input)="quickViewBarnToggle()">
+                        <span>Quick View Barn</span>
+                    </label>
+                </span>
+                <br />
             </div>
             <div [ngbPopover]="raceDisplayInfoPopoverText" triggers="mouseenter:mouseleave" ngbDropdown
                 class="d-inline-block">

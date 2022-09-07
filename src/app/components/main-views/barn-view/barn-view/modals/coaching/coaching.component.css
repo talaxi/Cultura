@@ -73,3 +73,29 @@
 .drawingDiv {
     height: 76.5%;
 }
+
+@media (max-width: 800px) {
+    .updates {
+      grid-template-columns: auto;
+      grid-template-rows: 50% 50%;
+      grid-template-areas:
+        "drawCoaching"
+        "coachingUpdates";
+    }
+  
+    .headerInfo {
+      width: 100%;
+    }
+  
+    .coachingUpdates {
+      text-align: center;
+    }
+  
+    .mobileVersion {
+      display: inline-block;
+    }
+  
+    .webVersion {
+      display: none;
+    }
+  }

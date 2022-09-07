@@ -83,8 +83,8 @@ export class GlobalService {
     this.globalVar.freeRaceCounter = 0;
     this.globalVar.freeRaceTimePeriodCounter = 0;
     this.globalVar.lastTimeStamp = Date.now();
-    this.globalVar.currentVersion = 1.16; //TODO: this needs to be automatically increased or something, too easy to forget
-    this.globalVar.startingVersion = 1.16;
+    this.globalVar.currentVersion = 1.17; //TODO: this needs to be automatically increased or something, too easy to forget
+    this.globalVar.startingVersion = 1.17;
     this.globalVar.startDate = new Date();
     this.globalVar.notifications = new Notifications();
     this.globalVar.relayEnergyFloor = 50;
@@ -4564,6 +4564,7 @@ export class GlobalService {
     this.globalVar.settings.set("useNumbersForCircuitRank", false);
     this.globalVar.settings.set("raceDisplayInfo", RaceDisplayInfoEnum.both);
     this.globalVar.settings.set("autoStartEventRace", false);
+    this.globalVar.settings.set("quickViewBarnMode", false);
 
     this.globalVar.settings.set("monoRaceToggled", false);
     this.globalVar.settings.set("duoRaceToggled", false);
@@ -4954,7 +4955,7 @@ export class GlobalService {
 
     this.globalVar.animalDecks.find(item => item.deckNumber === 2)?.selectedAnimals.push(this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Horse)!);
     this.globalVar.animalDecks.find(item => item.deckNumber === 2)?.selectedAnimals.push(this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Goat)!);
-    this.globalVar.animalDecks.find(item => item.deckNumber === 2)?.selectedAnimals.push(this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Octopus)!);
+    this.globalVar.animalDecks.find(item => item.deckNumber === 2)?.selectedAnimals.push(this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Whale)!);
     this.globalVar.animalDecks.find(item => item.deckNumber === 2)?.selectedAnimals.push(this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Caribou)!);
     this.globalVar.animalDecks.find(item => item.deckNumber === 2)?.selectedAnimals.push(this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Salamander)!);
     this.globalVar.animalDecks.find(item => item.deckNumber === 2)!.isPrimaryDeck = true;
@@ -5008,7 +5009,7 @@ export class GlobalService {
       animal.currentStats.endurance = trainingStatValue;
       animal.currentStats.power = trainingStatValue;
       animal.currentStats.focus = trainingStatValue;
-      animal.currentStats.adaptability = trainingStatValue * 1000;
+      animal.currentStats.adaptability = trainingStatValue;
 
       animal.breedLevel = breedLevel;
 

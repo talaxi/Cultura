@@ -17,6 +17,53 @@
   top: -2em;
 }
 
+.inlineBlock {
+  display: inline-block;
+}
+
+.condensedFlex {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+}
+
+.condensedProgressBar {
+  width: 30%;
+}
+
+.condensedBarn {
+  text-align: center;  
+  margin: .5rem auto .5rem auto;
+
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  flex-direction: column;
+  height: 100%;
+}
+
+.condensedMargin {
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.nameWidth {
+  width:40%;
+}
+
+.barnNameWidth {
+  width: 30%;
+}
+
+.floatingWidth {
+  width: 10%;
+  text-align: left;
+}
+
+.breedWidth {
+  width: 10%;
+}
+
 .floatingProgressTextAnimation {
   animation-name: floatingProgressTextAnimation;
   animation-duration: 3s;

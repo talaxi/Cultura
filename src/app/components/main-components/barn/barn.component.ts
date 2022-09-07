@@ -16,6 +16,7 @@ import { UtilityService } from 'src/app/services/utility/utility.service';
 })
 export class BarnComponent implements OnInit {
   @Input() barnNumber: number;
+  @Input() condensedView: boolean = false;
   barn: Barn;
   barnName: string;
   associatedAnimalName: string;
@@ -39,6 +40,9 @@ export class BarnComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.barnNumber > 0 && this.barnNumber <= this.globalService.globalVar.barns.length + 1) {
+      if (this.globalService.globalVar.settings.get("quickViewBarnMode"))
+        this.condensedView = true;
+
       var globalBarn = this.globalService.globalVar.barns.find(item => item.barnNumber === this.barnNumber);
 
       if (globalBarn !== undefined) {
@@ -78,7 +82,10 @@ export class BarnComponent implements OnInit {
           //any game loop logic needed for an empty barn
         }
         else {
-          //UI updates          
+          //UI updates     
+          this.readyToBreed = associatedAnimal.breedGaugeXp >= associatedAnimal.breedGaugeMax && this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.circuitRank) >= 10;          
+          this.autoBreedActive = associatedAnimal.autoBreedActive;
+          
           if (associatedAnimal.currentTraining === undefined || associatedAnimal.currentTraining === null)
           {
             this.trainingProgressBarPercent = 0;
@@ -93,10 +100,6 @@ export class BarnComponent implements OnInit {
               this.trainingCompleteText = "";
             }, 3000);
           }
-
-          this.readyToBreed = associatedAnimal.breedGaugeXp >= associatedAnimal.breedGaugeMax && this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.circuitRank) >= 10;          
-          this.autoBreedActive = associatedAnimal.autoBreedActive;
-
           this.previousTrainedAmount = associatedAnimal.currentTraining.timeTrained;
           this.trainingProgressBarPercent = ((associatedAnimal.currentTraining.timeTrained / associatedAnimal.currentTraining.timeToComplete) * 100);
         }

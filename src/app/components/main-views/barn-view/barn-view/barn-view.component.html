@@ -1,4 +1,4 @@
-<div class="gridContainer" id="barnViewDiv" *ngIf="selectedBarn === 0">
+<div class="gridContainer" id="barnViewDiv" *ngIf="selectedBarn === 0 && !isCondensedView">
     <div class="barnRow">
         <div class="barn1 barnDefault" [ngClass]='tutorialActive ? "tutorialActive" : ""'>
             <app-barn [barnNumber]="1" (selectedBarn)="goToBarn($event)"></app-barn>
@@ -63,6 +63,70 @@
         <div class="barn15 barnDefault" *ngIf="barnRow5IsUnlocked">
             <app-barn [barnNumber]="15" (selectedBarn)="goToBarn($event)"></app-barn>
         </div>
+    </div>
+</div>
+
+<div id="barnViewDiv" *ngIf="selectedBarn === 0 && isCondensedView">  
+    <div class="column">  
+        <div class="barn1 condensedBarnDefault" [ngClass]='tutorialActive ? "tutorialActive" : ""'>
+            <app-barn [barnNumber]="1" (selectedBarn)="goToBarn($event)"></app-barn>
+        </div>
+        <br/>
+        <div class="barn2 condensedBarnDefault">
+            <app-barn [barnNumber]="2" (selectedBarn)="goToBarn($event)"></app-barn>
+        </div>
+        <br/>
+        <div class="barn3 condensedBarnDefault">
+            <app-barn [barnNumber]="3" (selectedBarn)="goToBarn($event)"></app-barn>
+        </div>   
+        <br/>     
+        <div class="barn4 condensedBarnDefault" *ngIf="barnRow2IsUnlocked">
+            <app-barn [barnNumber]="4" (selectedBarn)="goToBarn($event)"></app-barn>
+        </div>
+        <br/>
+        <div class="barn5 condensedBarnDefault" *ngIf="barnRow2IsUnlocked">
+            <app-barn [barnNumber]="5" (selectedBarn)="goToBarn($event)"></app-barn>
+        </div>
+        <br/>
+        <div class="barn6 condensedBarnDefault" *ngIf="barnRow2IsUnlocked">
+            <app-barn [barnNumber]="6" (selectedBarn)="goToBarn($event)"></app-barn>
+        </div>    
+        <br/>
+        <div class="barn7 condensedBarnDefault" *ngIf="barnRow3IsUnlocked">
+            <app-barn [barnNumber]="7" (selectedBarn)="goToBarn($event)"></app-barn>
+        </div>
+        <br/>
+        <div class="barn8 condensedBarnDefault" *ngIf="barnRow3IsUnlocked">
+            <app-barn [barnNumber]="8" (selectedBarn)="goToBarn($event)"></app-barn>
+        </div>
+        <br/>
+        <div class="barn9 condensedBarnDefault" *ngIf="barnRow3IsUnlocked">
+            <app-barn [barnNumber]="9" (selectedBarn)="goToBarn($event)"></app-barn>
+        </div>
+        <br/>
+        <div class="barn10 condensedBarnDefault" *ngIf="barnRow4IsUnlocked">
+            <app-barn [barnNumber]="10" (selectedBarn)="goToBarn($event)"></app-barn>
+        </div>
+        <br/>
+        <div class="barn11 condensedBarnDefault" *ngIf="barnRow4IsUnlocked">
+            <app-barn [barnNumber]="11" (selectedBarn)="goToBarn($event)"></app-barn>
+        </div>
+        <br/>
+        <div class="barn12 condensedBarnDefault" *ngIf="barnRow4IsUnlocked">
+            <app-barn [barnNumber]="12" (selectedBarn)="goToBarn($event)"></app-barn>
+        </div>
+        <br/>
+        <div class="barn13 condensedBarnDefault" *ngIf="barnRow5IsUnlocked">
+            <app-barn [barnNumber]="13" (selectedBarn)="goToBarn($event)"></app-barn>
+        </div>
+        <br/>
+        <div class="barn14 condensedBarnDefault" *ngIf="barnRow5IsUnlocked">
+            <app-barn [barnNumber]="14" (selectedBarn)="goToBarn($event)"></app-barn>
+        </div>
+        <br/>
+        <div class="barn15 condensedBarnDefault" *ngIf="barnRow5IsUnlocked">
+            <app-barn [barnNumber]="15" (selectedBarn)="goToBarn($event)"></app-barn>
+        </div>    
     </div>
 </div>
 

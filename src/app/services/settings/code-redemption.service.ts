@@ -14,20 +14,47 @@ export class CodeRedemptionService {
 
   constructor(private globalService: GlobalService) { }
 
+  getCodeItems(encryptedVal: string) {
+    var key = environment.CODEREDEMPTIONSECRET;
+    var decrypted = CryptoJS.AES.decrypt(encryptedVal, key);
+    if (decrypted.toString(CryptoJS.enc.Utf8).length === 0) {
+      return;
+    }
+
+    var list: ResourceValue[] = [];
+    var parsedRewards = <RedeemableCode>JSON.parse(decrypted.toString(CryptoJS.enc.Utf8));
+
+    if (parsedRewards !== null && parsedRewards !== undefined && parsedRewards.rewards.length > 0) {
+
+      parsedRewards.rewards.forEach(reward => {
+        list.push(new ResourceValue(reward.name, reward.amount));        
+      });
+    }
+
+    return list;
+  }
+
   redeemCode(encryptedVal: string) {
     var key = environment.CODEREDEMPTIONSECRET;
     var decrypted = CryptoJS.AES.decrypt(encryptedVal, key);
     if (decrypted.toString(CryptoJS.enc.Utf8).length === 0) {
       alert("Invalid code entered.");
+      return false;
     }
     try {
       var parsedRewards = <RedeemableCode>JSON.parse(decrypted.toString(CryptoJS.enc.Utf8));
 
-      if (parsedRewards !== null && parsedRewards !== undefined && parsedRewards.rewards.length > 0) {        
+      if (parsedRewards !== null && parsedRewards !== undefined && parsedRewards.rewards.length > 0) {
         if (new Date().getTime() > new Date(parsedRewards.expirationDate).getTime())
+        {
           alert("This code has expired.");
+          return false;
+        }
         else if (this.globalService.globalVar.redeemedCodes.some(item => item.codeValue === decrypted.toString(CryptoJS.enc.Utf8)))
+        {
           alert("This code has already been redeemed.");
+          return false;
+        }
         else {
           parsedRewards.rewards.forEach(reward => {
             var existingResource = this.globalService.globalVar.resources.find(item => item.name === reward.name);
@@ -42,8 +69,11 @@ export class CodeRedemptionService {
         }
       }
     }
-    catch (error) {      
+    catch (error) {
       alert("You've run into an error! Please try again. If you have the time, please export your data under the Settings tab and send me the data and any relevant info at CulturaIdle@gmail.com. Thank you!");
+      return false;
     }
+
+    return true;
   }
 }

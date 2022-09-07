@@ -27,6 +27,7 @@ export class SettingsViewComponent implements OnInit {
   hideTips: boolean;
   useNumbersForCircuitRank: boolean;
   autoStartEventRace: boolean;
+  quickViewBarnMode: boolean;
   raceDisplayInfo: string;
   finishTrainingBeforeSwitchingPopoverText: string;
   skipDrawRacePopoverText: string;
@@ -34,6 +35,7 @@ export class SettingsViewComponent implements OnInit {
   useNumbersForCircuitRankPopoverText: string;
   raceDisplayInfoPopoverText: string;
   autoStartEventRacePopoverText: string;
+  quickViewBarnModePopoverText: string;
   enteredRedemptionCode: string;
   currentTheme: string;
   public raceDisplayInfoEnum = RaceDisplayInfoEnum;
@@ -44,8 +46,7 @@ export class SettingsViewComponent implements OnInit {
     private componentCommunicationService: ComponentCommunicationService, private versionControlService: VersionControlService,
     private utilityService: UtilityService) { }
 
-  ngOnInit(): void {    
-    //console.log(this.globalService.globalVar);     
+  ngOnInit(): void {
     this.componentCommunicationService.setNewView(NavigationEnum.settings);
 
     if (this.deploymentService.codeCreationMode)
@@ -96,6 +97,13 @@ export class SettingsViewComponent implements OnInit {
       this.autoStartEventRace = autoStartEventRace;
     this.autoStartEventRacePopoverText = this.lookupService.getSettingDescriptions("Auto Start Event Race");
 
+    var quickViewBarnMode = this.globalService.globalVar.settings.get("quickViewBarnMode");
+    if (quickViewBarnMode === undefined)
+      this.quickViewBarnMode = false;
+    else
+      this.quickViewBarnMode = quickViewBarnMode;
+    this.quickViewBarnModePopoverText = this.lookupService.getSettingDescriptions("Quick View Barn");
+
   }
 
   public SaveGame() {
@@ -108,7 +116,7 @@ export class SettingsViewComponent implements OnInit {
     this.file = e.target.files[0];
   }
 
-  public LoadGame() {    
+  public LoadGame() {
     if (confirm("This will overwrite your existing game data. Continue?")) {
       var decompressedData = LZString.decompressFromBase64(this.importExportValue);
       var loadDataJson = <GlobalVariables>JSON.parse(decompressedData);
@@ -143,11 +151,11 @@ export class SettingsViewComponent implements OnInit {
     if (confirm("This will overwrite your existing game data. Continue?")) {
       let fileReader = new FileReader();
       fileReader.onload = (e) => {
-        var decompressedData = LZString.decompressFromBase64(fileReader.result);        
+        var decompressedData = LZString.decompressFromBase64(fileReader.result);
         var loadDataJson = <GlobalVariables>JSON.parse(decompressedData);
         if (loadDataJson !== null && loadDataJson !== undefined) {
-          this.globalService.globalVar = plainToInstance(GlobalVariables, loadDataJson);          
-          this.versionControlService.updatePlayerVersion();          
+          this.globalService.globalVar = plainToInstance(GlobalVariables, loadDataJson);
+          this.versionControlService.updatePlayerVersion();
         }
       }
       fileReader.readAsText(this.file);
@@ -180,6 +188,10 @@ export class SettingsViewComponent implements OnInit {
     this.globalService.globalVar.settings.set("autoStartEventRace", this.autoStartEventRace);
   }
 
+  quickViewBarnToggle = () => {
+    this.quickViewBarnMode = !this.quickViewBarnMode;
+    this.globalService.globalVar.settings.set("quickViewBarnMode", this.quickViewBarnMode);
+  }
 
   saveRaceDisplayInfo() {
     this.globalService.globalVar.settings.set("raceDisplayInfo", this.raceDisplayInfo);
@@ -223,6 +235,16 @@ export class SettingsViewComponent implements OnInit {
   }
 
   enterRedemptionCode() {
-    this.codeRedemptionService.redeemCode(this.enteredRedemptionCode);
+    var wasSuccessful = this.codeRedemptionService.redeemCode(this.enteredRedemptionCode);
+
+    if (wasSuccessful) {
+      var items = this.codeRedemptionService.getCodeItems(this.enteredRedemptionCode);
+      if (items !== undefined) {
+        var itemList = "";
+        items.forEach(item => itemList += item.amount + " " + item.name + ", ");
+        itemList = itemList.replace(/,\s*$/, "")
+        alert("You received: " + itemList);        
+      }
+    }
   }
 }

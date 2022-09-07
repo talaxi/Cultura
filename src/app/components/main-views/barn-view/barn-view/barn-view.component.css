@@ -23,6 +23,23 @@
   height: 100%;
 }
 
+.condensedBarnDefault {
+  background-color: var(--background-secondary);
+  border-color: var(--background-tertiary);
+  color: var(--foreground-default);
+
+  border: 1px solid rgba(0, 0, 0, .1);
+  border-right: none;
+  border-top: none;
+  display: inline-block;
+  vertical-align: middle;  
+  width: 100%;
+}
+
+.column {
+  width: 100%;
+}
+
 .barnRow {
   height: 25%;
   width: 100%;
@@ -33,80 +50,6 @@
   border: none !important;
 }
 
-/*
-  .gridContainer {    
-    display: grid;
-    grid-template-columns: 33.333%;
-    grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
-    justify-content: stretch;
-    grid-template-areas: 
-      "barn1 barn2 barn3"
-      "barn4 barn5 barn6"
-      "barn7 barn8 barn9"
-      "barn10 barn11 barn12"
-      "barn13 barn14 barn15";
-  }
-
-
-  .barn1 {
-    grid-area: barn1;
-  }
-
-  .barn2 {
-    grid-area: barn2;
-  }
-
-  .barn3 {
-    grid-area: barn3;
-  }
-
-  .barn4 {
-    grid-area: barn4;
-  }
-
-  .barn5 {
-    grid-area: barn5;
-  }
-
-  .barn6 {
-    grid-area: barn6;
-  }
-
-  .barn7 {
-    grid-area: barn7;
-  }
-
-  .barn8 {
-    grid-area: barn8;
-  }
-
-  .barn9 {
-    grid-area: barn9;
-  }
-
-  .barn10 {
-    grid-area: barn10;
-  }
-
-  .barn11 {
-    grid-area: barn11;
-  }
-
-  .barn12 {
-    grid-area: barn12;
-  }
-
-  .barn13 {
-    grid-area: barn13;
-  }
-
-  .barn14 {
-    grid-area: barn14;
-  }
-
-  .barn15 {
-    grid-area: barn15;
-  }*/
 
 .tutorialActive {
   border: 1px solid rgba(0, 0, 0, .1);

@@ -12,6 +12,7 @@ export class EventAbilityData {
     flowingCurrentUseCount: number;
     navigatorUseCount: number;
     camouflageUseCount: number;
+    storingPowerUseCount: number;
 
     onTheHuntUseCap: number;
     sureFootedUseCap: number;
@@ -21,6 +22,7 @@ export class EventAbilityData {
     quickTobogganUseCap: number;
     herdMentalityUseCap: number;
     specialDeliveryUseCap: number;
+    storingPowerUseCap: number;
 
     constructor() {
         this.onTheHuntUseCount = 0;
@@ -36,6 +38,7 @@ export class EventAbilityData {
         this.flowingCurrentUseCount = 0;
         this.navigatorUseCount = 0;
         this.camouflageUseCount = 0;
+        this.storingPowerUseCount = 0;
 
         this.onTheHuntUseCap = 25;
         this.sureFootedUseCap = 25;
@@ -45,6 +48,7 @@ export class EventAbilityData {
         this.quickTobogganUseCap = 25;
         this.herdMentalityUseCap = 1;
         this.specialDeliveryUseCap = 25;
+        this.storingPowerUseCap = 25;
     }   
     
     resetUseCounts() {
@@ -58,5 +62,6 @@ export class EventAbilityData {
         this.flowingCurrentUseCount = 0;
         this.navigatorUseCount = 0;
         this.camouflageUseCount = 0;
+        this.storingPowerUseCount = 0;
     }
 }

@@ -19,12 +19,15 @@ export class BarnViewComponent implements OnInit {
   barnRow4IsUnlocked = false;
   barnRow5IsUnlocked = false;
   subscription: any;
+  isCondensedView = false;
 
   constructor(private lookupService: LookupService, private componentCommunicationService: ComponentCommunicationService,
     private globalService: GlobalService) { }
 
   ngOnInit(): void {
     this.componentCommunicationService.setNewView(NavigationEnum.barn);
+    if (this.globalService.globalVar.settings.get("quickViewBarnMode"))
+        this.isCondensedView = true;
     
     this.barnRow2IsUnlocked = this.lookupService.isItemUnlocked("barnRow2");
     this.barnRow3IsUnlocked = this.lookupService.isItemUnlocked("barnRow3");

@@ -37,6 +37,7 @@ export class RaceVariables {
     firstAbilityUseEffectApplied: boolean;
     velocityExceedsMaxSpeedDuringBurst: boolean;
     velocityReachesMaxSpeedCount: number;
+    velocityExceedsMaxSpeedFloorRequirement: boolean;
 
     //pinnacle effects
     forceRelay: boolean;
@@ -72,6 +73,7 @@ export class RaceVariables {
         this.firstAbilityUseEffectApplied = false;
         this.velocityExceedsMaxSpeedDuringBurst = false;
         this.velocityReachesMaxSpeedCount = 0;
+        this.velocityExceedsMaxSpeedFloorRequirement = false;
 
         this.forceRelay = false;
     }
@@ -107,6 +109,7 @@ export class RaceVariables {
         copy.firstAbilityUseEffectApplied = this.firstAbilityUseEffectApplied;
         copy.velocityExceedsMaxSpeedDuringBurst = this.velocityExceedsMaxSpeedDuringBurst;
         copy.velocityReachesMaxSpeedCount = this.velocityReachesMaxSpeedCount;
+        copy.velocityExceedsMaxSpeedFloorRequirement = this.velocityExceedsMaxSpeedFloorRequirement;
 
         copy.forceRelay = this.forceRelay;
 

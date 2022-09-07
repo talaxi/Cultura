@@ -1,4 +1,4 @@
-<div class="barn clickableText">
+<div class="barn clickableText" *ngIf="!condensedView">
     <div class="unlocked" *ngIf="this.isOccupied">
         <span>{{ barnName }}</span>
         <h6 [ngClass]="colorConditional" class="keyword" *ngIf="associatedAnimal.name !== associatedAnimal.getAnimalType()">
@@ -22,7 +22,7 @@
             <em>Auto Breed <strong>ON</strong></em>
         </div>
         <div *ngIf="!autoBreedActive && readyToBreed">
-            <em>Ready to Breed</em>
+            <em>At Max Breed XP</em>
         </div>
     </div>
     <h6 class="unassigned" *ngIf="!this.isOccupied && !this.isLocked">
@@ -33,6 +33,44 @@
     <h6 class="locked" *ngIf="this.isLocked">
         <span>Locked</span>
         <br/>
+        <em>Click to view status</em>
+    </h6>
+</div>
+
+<div class="condensedBarn clickableText" *ngIf="condensedView">
+    <div class="condensedFlex unlocked" *ngIf="this.isOccupied">
+        <span class="barnNameWidth">{{ barnName }}</span>
+        <h6 [ngClass]="colorConditional" class="keyword inlineBlock condensedMargin nameWidth" *ngIf="associatedAnimal.name !== associatedAnimal.getAnimalType()">
+            <span>{{ this.associatedAnimalName }} </span>
+            
+            <span>({{ this.associatedAnimalType }})</span>
+        </h6>
+        <h6 [ngClass]="colorConditional" class="keyword inlineBlock condensedMargin nameWidth" *ngIf="associatedAnimal.name === associatedAnimal.getAnimalType()">            
+            <span>{{ this.associatedAnimalType }}</span>
+        </h6>
+        <ngb-progressbar type="success" class="condensedProgressBar condensedMargin" [value]="this.trainingProgressBarPercent"></ngb-progressbar>        
+        <div [ngClass]="{'floatingProgressTextAnimation': showTrainingAnimation}"
+            class="progressBar floatingProgressText progressBarColor keyword floatingWidth">
+            {{ trainingCompleteText }}
+        </div>
+        <div *ngIf="autoBreedActive" class="condensedMargin breedWidth">
+            <em>Auto Breed <strong>ON</strong></em>
+        </div>
+        <div *ngIf="!autoBreedActive && readyToBreed" class="condensedMargin breedWidth">
+            <em>At Max Breed XP</em>
+        </div>
+        <div *ngIf="!autoBreedActive && !readyToBreed" class="condensedMargin breedWidth">
+            <em></em>
+        </div>
+    </div>
+    <h6 class="condensedFlex unassigned" *ngIf="!this.isOccupied && !this.isLocked">
+        <span>Unassigned</span>      
+        <span class="nameWidth"></span>  
+        <em>Click to assign animal</em>
+    </h6>
+    <h6 class="condensedFlex locked" *ngIf="this.isLocked">
+        <span>Locked</span> 
+        <span class="nameWidth"></span>       
         <em>Click to view status</em>
     </h6>
 </div>

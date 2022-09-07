@@ -24,7 +24,7 @@ export class VersionControlService {
   constructor(private globalService: GlobalService, private lookupService: LookupService, private utilityService: UtilityService) { }
 
   //add to this in descending order
-  gameVersions = [1.16, 1.15, 1.14, 1.13, 1.12, 1.11, 1.10, 1.09, 1.08, 1.07, 1.06, 1.05, 1.04, 1.03, 1.02, 1.01, 1.00];
+  gameVersions = [1.17, 1.16, 1.15, 1.14, 1.13, 1.12, 1.11, 1.10, 1.09, 1.08, 1.07, 1.06, 1.05, 1.04, 1.03, 1.02, 1.01, 1.00];
 
   getListAscended() {
     var ascendedList: number[] = [];
@@ -1050,6 +1050,73 @@ export class VersionControlService {
                 item.ability.efficiency = 5;
             }
           })
+        }
+        if (version === 1.17)
+        {
+          this.globalService.globalVar.settings.set("quickViewBarnMode", false);
+          
+          this.globalService.globalVar.animals.forEach(item => {
+            if (item.type === AnimalTypeEnum.Cheetah) {
+              var bigBrain = item.availableAbilities.find(ability => ability.name === "Giving Chase");
+              if (bigBrain !== undefined)
+                bigBrain.efficiency = 1;
+
+              if (item.ability.name === "Giving Chase")
+                item.ability.efficiency = 1;
+            }
+
+            if (item.type === AnimalTypeEnum.Goat) {
+              var bigBrain = item.availableAbilities.find(ability => ability.name === "Sure-footed");
+              if (bigBrain !== undefined)
+                bigBrain.efficiency = 50;
+
+              if (item.ability.name === "Sure-footed")
+                item.ability.efficiency = 50;
+
+              var inTheRhythm = item.availableAbilities.find(ability => ability.name === "In The Rhythm");
+              if (inTheRhythm !== undefined)
+              inTheRhythm.efficiency = .2;
+
+              if (item.ability.name === "In The Rhythm")
+                item.ability.efficiency = .2;
+            }
+
+            if (item.type === AnimalTypeEnum.Shark) {
+              var bigBrain = item.availableAbilities.find(ability => ability.name === "Blood In The Water");
+              if (bigBrain !== undefined)
+                bigBrain.efficiency = 2;
+
+              if (item.ability.name === "Blood In The Water")
+                item.ability.efficiency = 2;
+            }
+
+            if (item.type === AnimalTypeEnum.Penguin) {
+              var bigBrain = item.availableAbilities.find(ability => ability.name === "Wild Toboggan");
+              if (bigBrain !== undefined)
+                bigBrain.efficiency = 1.5;
+
+              if (item.ability.name === "Wild Toboggan")
+                item.ability.efficiency = 1.5;
+            }
+
+            if (item.type === AnimalTypeEnum.Fox) {
+              var bigBrain = item.availableAbilities.find(ability => ability.name === "Fleeting Speed");
+              if (bigBrain !== undefined)
+                bigBrain.efficiency = 4;
+
+              if (item.ability.name === "Fleeting Speed")
+                item.ability.efficiency = 4;
+            }
+
+            if (item.type === AnimalTypeEnum.Caribou) {
+              var bigBrain = item.availableAbilities.find(ability => ability.name === "Herd Mentality");
+              if (bigBrain !== undefined)
+                bigBrain.efficiency = 3;
+
+              if (item.ability.name === "Herd Mentality")
+                item.ability.efficiency = 3;
+            }
+          });
         }
 
         this.globalService.globalVar.currentVersion = version;
