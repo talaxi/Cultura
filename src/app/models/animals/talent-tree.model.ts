@@ -145,4 +145,23 @@ export class TalentTree {
         if (row === 3 && column === 2)
             this.column3Row4Points += 1;
     }
+
+    reset() {
+        this.talentTreeType = TalentTreeTypeEnum.none;
+
+        this.column1Row1Points = 0;
+        this.column1Row2Points = 0;
+        this.column1Row3Points = 0;
+        this.column1Row4Points = 0;
+
+        this.column2Row1Points = 0;
+        this.column2Row2Points = 0;
+        this.column2Row3Points = 0;
+        this.column2Row4Points = 0;
+
+        this.column3Row1Points = 0;
+        this.column3Row2Points = 0;
+        this.column3Row3Points = 0;
+        this.column3Row4Points = 0;
+    }
 }

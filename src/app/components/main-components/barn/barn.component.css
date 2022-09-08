@@ -27,10 +27,6 @@
   width: 100%;
 }
 
-.condensedProgressBar {
-  width: 30%;
-}
-
 .condensedBarn {
   text-align: center;  
   margin: .5rem auto .5rem auto;
@@ -48,20 +44,19 @@
 }
 
 .nameWidth {
-  width:40%;
+  width: 32.5%;
 }
 
 .barnNameWidth {
-  width: 30%;
+  width: 28.5%;
 }
 
-.floatingWidth {
-  width: 10%;
-  text-align: left;
+.condensedProgressBar {
+  width: 20%;
 }
 
 .breedWidth {
-  width: 10%;
+  width: 15%;
 }
 
 .floatingProgressTextAnimation {

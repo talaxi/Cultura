@@ -175,12 +175,6 @@ export class AppComponent {
 
     this.handleFreeRaceTimer(deltaTime);
     this.grandPrixLogicService.handleGrandPrix(deltaTime);
-    //this.handleGrandPrix(deltaTime); //TODO: REMOVE IF WORKER WORKS
-    /*(async () => {
-      console.log("pre await");      
-      console.log("post await");
-    })();
-    console.log("after async");*/
   }
   
   handleFreeRaceTimer(deltaTime: number) {

@@ -49,6 +49,7 @@ export class SelectedAnimalComponent implements OnInit {
   orbIsUnlocked = false;
   assignedBarnName: string;
   talentTreeTypeEnum = TalentTreeTypeEnum;
+  talentResetCost: string;
   canBreed = true;
   subscription: any;
 
@@ -719,6 +720,9 @@ export class SelectedAnimalComponent implements OnInit {
     this.selectedTalentTree = "";
     this.inDepthTalentTreeDescription = "";
 
+    //var talentResetCost = this.lookupService.getTalentResetCost(this.selectedAnimal.type);
+    //this.talentResetCost = talentResetCost + " Coins";
+
     this.componentCommunicationService.setAnimalView(NavigationEnum.animals, newAnimal);
 
     var assignedBarn = this.globalService.globalVar.barns.find(item => item.barnNumber === this.selectedAnimal.associatedBarnNumber);
@@ -741,6 +745,16 @@ export class SelectedAnimalComponent implements OnInit {
     var talentLevel = this.selectedAnimal.talentTree.getTotalSpentPoints();
 
     return this.lookupService.getTalentTreeNameByEnum(this.selectedAnimal.talentTree.talentTreeType) + " Level " + talentLevel;
+  }
+
+  resetTalents() {
+    //todo: make sure they actually can pay the fee
+    if (confirm("Sure you wanna reset?"))
+    {
+      //todo: pay the fee
+      this.selectedAnimal.talentTree.reset();
+      this.selectedAnimal.talentResetCount += 1;
+    }
   }
 
   getBorderConditional(row: number, column: number) {

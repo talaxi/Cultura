@@ -58,6 +58,8 @@ export class Animal {
     canTrain: boolean;
     canEquipOrb: boolean;
     mangoesUsed = 0;
+    talentResetCount = 0;
+    freeTalentResetCount = 0;
     totalRacesRun: number; //for tracked stats
 
     constructor() {

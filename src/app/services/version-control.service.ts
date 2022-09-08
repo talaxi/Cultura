@@ -1002,7 +1002,7 @@ export class VersionControlService {
             }
           }
         }
-        if (version === 1.16) {
+        else if (version === 1.16) {
           this.globalService.globalVar.animals.forEach(item => {
             if (item.type === AnimalTypeEnum.Octopus) {
               var bigBrain = item.availableAbilities.find(ability => ability.name === "Big Brain");
@@ -1059,7 +1059,7 @@ export class VersionControlService {
             }
           })
         }
-        if (version === 1.17) {
+        else if (version === 1.17) {
           this.globalService.globalVar.settings.set("quickViewBarnMode", false);
           if (this.globalService.globalVar.eventRaceData !== undefined && this.globalService.globalVar.eventRaceData !== null) {
             this.globalService.globalVar.eventRaceData.eventAbilityData.storingPowerUseCap = 25;
@@ -1127,6 +1127,12 @@ export class VersionControlService {
               if (item.ability.name === "Herd Mentality")
                 item.ability.efficiency = 3;
             }
+          });
+        }
+        else if (version === 1.18) {
+          this.globalService.globalVar.animals.forEach(animal => {
+            animal.talentResetCount = 0;
+            animal.freeTalentResetCount = 1;
           });
         }
 

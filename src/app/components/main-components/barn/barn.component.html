@@ -48,11 +48,7 @@
         <h6 [ngClass]="colorConditional" class="keyword inlineBlock condensedMargin nameWidth" *ngIf="associatedAnimal.name === associatedAnimal.getAnimalType()">            
             <span>{{ this.associatedAnimalType }}</span>
         </h6>
-        <ngb-progressbar type="success" class="condensedProgressBar condensedMargin" [value]="this.trainingProgressBarPercent"></ngb-progressbar>        
-        <div [ngClass]="{'floatingProgressTextAnimation': showTrainingAnimation}"
-            class="progressBar floatingProgressText progressBarColor keyword floatingWidth">
-            {{ trainingCompleteText }}
-        </div>
+        <ngb-progressbar type="success" class="condensedProgressBar condensedMargin" [value]="this.trainingProgressBarPercent"></ngb-progressbar>                
         <div *ngIf="autoBreedActive" class="condensedMargin breedWidth">
             <em>Auto Breed <strong>ON</strong></em>
         </div>

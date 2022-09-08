@@ -1207,6 +1207,20 @@ export class LookupService {
     return allResourcesRequired;
   }
 
+  getTalentResetCost(animalType: AnimalTypeEnum) {
+    /*var cost = 5000;
+    var animal = this.globalService.globalVar.animals.find(item => item.type === animalType);
+    if (animal === undefined)
+      return cost;
+
+    if (animal.talentResetCount === 0)
+      return cost;
+
+    cost *= animal.talentResetCount * 10;
+
+    return cost;*/
+  }
+
   getBarnName(barn: Barn) {
     var barnName = "";
     var barnSize = barn.getSize();
