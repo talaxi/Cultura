@@ -1649,7 +1649,7 @@ export class GlobalService {
       returnVal = [coinsAmount + " Coins", ""];
 
       var amount = 20;
-      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(32) + amount + " Mangoes";
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(32) + "1 Blue Baton";
     }
     else if (numericValue === 32) {
       var amount = 1;

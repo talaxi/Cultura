@@ -603,15 +603,11 @@
             <div class="modal-body" *ngIf="selectedAnimal.talentTree.talentTreeType !== talentTreeTypeEnum.none">
                 <div class="talentInfo">Available Talent Points: {{ availableTalentPoints }}</div>
                 <br />
-                <p>
-                    <em>
-                        Note that this functionality is new and subject to change. I have plans to add more talents and
-                        certain talents will likely still need rebalancing/redesigning. Bear with me as I work that out.
-                        Once I feel like talents are in a final state, everyone will have the option to reset their
-                        talent choices if they choose to. Feel free to experiment with the options as they are now and
-                        let me know if you have any feedback. Thanks!
-                    </em>
-                </p>
+                <!--<p>
+                    <span>Cost to reset talent specialization: {{talentResetCost}}</span>
+                    <button (click)="resetTalents()" class="spaced">Reset Talents</button>
+                    
+                </p>-->
                 <br />
                 <div class="talentRow" *ngFor="let _ of [].constructor(talentRows); let rowIndex = index">
                     <div class="rowFlex">

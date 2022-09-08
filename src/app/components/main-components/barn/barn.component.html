@@ -1,6 +1,6 @@
 <div class="barn clickableText" *ngIf="!condensedView">
     <div class="unlocked" *ngIf="this.isOccupied">
-        <span>{{ barnName }}</span>
+        <span>{{ barnName }} <strong *ngIf="barn.barnUpgrades.barnLevel > 0">Lv {{barn.barnUpgrades.barnLevel}}</strong></span>
         <h6 [ngClass]="colorConditional" class="keyword" *ngIf="associatedAnimal.name !== associatedAnimal.getAnimalType()">
             <span>{{ this.associatedAnimalName }}</span>
             <br />
@@ -26,11 +26,19 @@
         </div>
     </div>
     <h6 class="unassigned" *ngIf="!this.isOccupied && !this.isLocked">
+        <span>{{ barnName }} <strong *ngIf="barn.barnUpgrades.barnLevel > 0">Lv {{barn.barnUpgrades.barnLevel}}</strong></span>
+        <br/>
+        <br/>
+        <br/>
         <span>Unassigned</span>
         <br/>
         <em>Click to assign animal</em>
     </h6>
     <h6 class="locked" *ngIf="this.isLocked">
+        <span>{{ barnName }} <strong *ngIf="barn.barnUpgrades.barnLevel > 0">Lv {{barn.barnUpgrades.barnLevel}}</strong></span>
+        <br/>
+        <br/>
+        <br/>
         <span>Locked</span>
         <br/>
         <em>Click to view status</em>
@@ -39,7 +47,7 @@
 
 <div class="condensedBarn clickableText" *ngIf="condensedView">
     <div class="condensedFlex unlocked" *ngIf="this.isOccupied">
-        <span class="barnNameWidth">{{ barnName }}</span>
+        <span class="barnNameWidth">{{ barnName }} <strong *ngIf="barn.barnUpgrades.barnLevel > 0">Lv {{barn.barnUpgrades.barnLevel}}</strong></span>
         <h6 [ngClass]="colorConditional" class="keyword inlineBlock condensedMargin nameWidth" *ngIf="associatedAnimal.name !== associatedAnimal.getAnimalType()">
             <span>{{ this.associatedAnimalName }} </span>
             
@@ -60,13 +68,15 @@
         </div>
     </div>
     <h6 class="condensedFlex unassigned" *ngIf="!this.isOccupied && !this.isLocked">
-        <span>Unassigned</span>      
-        <span class="nameWidth"></span>  
-        <em>Click to assign animal</em>
+        <span class="barnNameWidth"> {{ barnName }} <strong *ngIf="barn.barnUpgrades.barnLevel > 0">Lv {{barn.barnUpgrades.barnLevel}}</strong></span>
+        <span class="nameWidth">Unassigned</span>      
+        <em class="condensedProgressBar">Click to assign animal</em>  
+        <span class="breedWidth"></span>
     </h6>
     <h6 class="condensedFlex locked" *ngIf="this.isLocked">
-        <span>Locked</span> 
-        <span class="nameWidth"></span>       
-        <em>Click to view status</em>
+        <span class="barnNameWidth">{{ barnName }} <strong *ngIf="barn.barnUpgrades.barnLevel > 0">Lv {{barn.barnUpgrades.barnLevel}}</strong></span>
+        <span class="nameWidth">Locked</span>            
+        <em class="condensedProgressBar">Click to view status</em>
+        <span class="breedWidth"></span>    
     </h6>
 </div>

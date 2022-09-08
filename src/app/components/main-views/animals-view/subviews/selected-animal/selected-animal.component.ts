@@ -720,6 +720,7 @@ export class SelectedAnimalComponent implements OnInit {
     this.selectedTalentTree = "";
     this.inDepthTalentTreeDescription = "";
 
+    //TODO: this needs to be called when pulling up talent tree, not when you first open page
     //var talentResetCost = this.lookupService.getTalentResetCost(this.selectedAnimal.type);
     //this.talentResetCost = talentResetCost + " Coins";
 
@@ -754,6 +755,7 @@ export class SelectedAnimalComponent implements OnInit {
       //todo: pay the fee
       this.selectedAnimal.talentTree.reset();
       this.selectedAnimal.talentResetCount += 1;
+      this.availableTalentPoints = this.lookupService.getTalentPointsAvailableToAnimal(this.selectedAnimal);
     }
   }
 
