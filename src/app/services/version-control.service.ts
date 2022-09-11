@@ -24,7 +24,7 @@ export class VersionControlService {
   constructor(private globalService: GlobalService, private lookupService: LookupService, private utilityService: UtilityService) { }
 
   //add to this in descending order
-  gameVersions = [1.17, 1.16, 1.15, 1.14, 1.13, 1.12, 1.11, 1.10, 1.09, 1.08, 1.07, 1.06, 1.05, 1.04, 1.03, 1.02, 1.01, 1.00];
+  gameVersions = [1.18, 1.17, 1.16, 1.15, 1.14, 1.13, 1.12, 1.11, 1.10, 1.09, 1.08, 1.07, 1.06, 1.05, 1.04, 1.03, 1.02, 1.01, 1.00];
 
   getListAscended() {
     var ascendedList: number[] = [];
@@ -174,6 +174,9 @@ export class VersionControlService {
         "New setting added so that you can condense your barn view. \n\n" +
         "Code redemption now gives an alert with what your code has given you.\n\n" +
         "Minor bug fixes.";
+    if (version === 1.18)
+      changes = "You can now reset your talents for a fee when viewing a talent tree. All existing players will be given 1 free talent reset per animal to be used whenever they want.\n\n" +        
+        "Minor bug fixes, mostly around grand prix.";
     return changes;
   }
 
@@ -215,6 +218,8 @@ export class VersionControlService {
       date = new Date('2022-09-05 12:00:00');
     if (version === 1.17)
       date = new Date('2022-09-07 12:00:00');
+    if (version === 1.18)
+      date = new Date('2022-09-11 12:00:00');
 
     return date.toDateString().replace(/^\S+\s/, '');
   }

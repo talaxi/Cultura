@@ -136,12 +136,18 @@ export class EventViewComponent implements OnInit {
     if (this.globalService.globalVar.eventRaceData.isRunning === false) {
       //do set up
       var racingAnimal = this.globalService.getGrandPrixRacingAnimal();
-
+      
       if (racingAnimal.type === undefined || racingAnimal.type === null) {
         alert("None of the animals in your event deck are capable of entering the Grand Prix. Swap to new animals or make adjustments to your existing animals to meet the criteria.");
         return;
       }
       else {
+        var associatedAnimalData = this.globalService.globalVar.eventRaceData.animalData.find(item => item.associatedAnimalType === racingAnimal.type);
+        if (associatedAnimalData !== undefined)
+        {
+          associatedAnimalData.isCurrentlyRacing = true;
+        }
+
         var showSlowSegmentWarning = this.globalService.shouldShowSlowSegmentWarning(racingAnimal);
 
         if (this.lookupService.slowSegmentWarning(showSlowSegmentWarning)) {

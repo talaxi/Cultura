@@ -83,8 +83,8 @@ export class GlobalService {
     this.globalVar.freeRaceCounter = 0;
     this.globalVar.freeRaceTimePeriodCounter = 0;
     this.globalVar.lastTimeStamp = Date.now();
-    this.globalVar.currentVersion = 1.17; //TODO: this needs to be automatically increased or something, too easy to forget
-    this.globalVar.startingVersion = 1.17;
+    this.globalVar.currentVersion = 1.18; //TODO: this needs to be automatically increased or something, too easy to forget
+    this.globalVar.startingVersion = 1.18;
     this.globalVar.startDate = new Date();
     this.globalVar.notifications = new Notifications();
     this.globalVar.relayEnergyFloor = 50;
@@ -2189,7 +2189,7 @@ export class GlobalService {
     var availableTerrainsList: TerrainTypeEnum[] = [];
 
     if (pinnacleConditions !== undefined &&
-      pinnacleConditions.containsCondition(MediumPinnacleConditionsEnum[MediumPinnacleConditionsEnum.harshTerrain])) {      
+      pinnacleConditions.containsCondition(MediumPinnacleConditionsEnum[MediumPinnacleConditionsEnum.harshTerrain])) {
       if (raceCourseType === RaceCourseTypeEnum.Flatland || raceCourseType === RaceCourseTypeEnum.Mountain) {
         return new Terrain(TerrainTypeEnum.Snowfall);
       }
@@ -2902,8 +2902,8 @@ export class GlobalService {
     var brazierDistanceCounter = 0;
     var objectList: DrawnRaceObject[] = [];
     randomizedList.forEach(item => {
-      brazierDistanceCounter += 1;      
-      var drawnObject = new DrawnRaceObject(this.getBrazierFromOrbType(item), totalDistance * (brazierDistanceCounter / (randomizedList.length + 1)));      
+      brazierDistanceCounter += 1;
+      var drawnObject = new DrawnRaceObject(this.getBrazierFromOrbType(item), totalDistance * (brazierDistanceCounter / (randomizedList.length + 1)));
       objectList.push(drawnObject);
     });
 
@@ -2963,7 +2963,7 @@ export class GlobalService {
     //console.log(floor);
     if (floor <= 10) {
       if (floor === 1)
-        pinnacleConditions.easyConditions.push(EasyPinnacleConditionsEnum.threeRacersOnly);        
+        pinnacleConditions.easyConditions.push(EasyPinnacleConditionsEnum.threeRacersOnly);
       if (floor === 2)
         pinnacleConditions.easyConditions.push(EasyPinnacleConditionsEnum.threeHundredSecondRace);
       if (floor === 3)
@@ -2984,7 +2984,7 @@ export class GlobalService {
         pinnacleConditions.hardConditions.push(HardPinnacleConditionsEnum.exhaustionPenaltyIncreased);
 
       this.globalVar.currentPinnacleConditions = pinnacleConditions;
-      this.addToPinnacleHistory(pinnacleConditions);      
+      this.addToPinnacleHistory(pinnacleConditions);
       return pinnacleConditions;
     }
 
@@ -3082,10 +3082,10 @@ export class GlobalService {
       if (existingList.mediumConditions.some(condition => condition === MediumPinnacleConditionsEnum.fourRacersOnly))
         list = list.filter(item => item !== EasyPinnacleConditionsEnum.threeRacersOnly && item !== EasyPinnacleConditionsEnum.twoRacersOnly);
 
-        if (existingList.mediumConditions.some(condition => condition === MediumPinnacleConditionsEnum.thirtySecondRace))
+      if (existingList.mediumConditions.some(condition => condition === MediumPinnacleConditionsEnum.thirtySecondRace))
         list = list.filter(item => item !== EasyPinnacleConditionsEnum.threeHundredSecondRace);
 
-        if (existingList.hardConditions.some(condition => condition === HardPinnacleConditionsEnum.noBurst))
+      if (existingList.hardConditions.some(condition => condition === HardPinnacleConditionsEnum.noBurst))
         list = list.filter(item => item !== EasyPinnacleConditionsEnum.burstIncreaseStaminaLoss);
     }
 
@@ -3114,10 +3114,10 @@ export class GlobalService {
       });
 
       if (existingList.easyConditions.some(condition => condition === EasyPinnacleConditionsEnum.twoRacersOnly || condition === EasyPinnacleConditionsEnum.threeRacersOnly))
-      list = list.filter(item => item !== MediumPinnacleConditionsEnum.fourRacersOnly);
+        list = list.filter(item => item !== MediumPinnacleConditionsEnum.fourRacersOnly);
 
       if (existingList.easyConditions.some(condition => condition === EasyPinnacleConditionsEnum.threeHundredSecondRace))
-      list = list.filter(item => item !== MediumPinnacleConditionsEnum.thirtySecondRace);
+        list = list.filter(item => item !== MediumPinnacleConditionsEnum.thirtySecondRace);
     }
 
     return list;
@@ -3729,20 +3729,29 @@ export class GlobalService {
           if (eventDeck.courseTypeOrder.length > i) {
             var type = eventDeck.courseTypeOrder[i];
             var matchingAnimal = eventDeck.selectedAnimals.find(animal => animal.raceCourseType === type);
-            if (matchingAnimal !== undefined)
-              availableOptions.push(matchingAnimal);
+            if (matchingAnimal !== undefined) {
+              var globalAnimal = this.globalVar.animals.find(item => item.type === matchingAnimal!.type);
+              if (globalAnimal !== undefined) {
+                var copyAnimal = globalAnimal.makeCopy(globalAnimal);
+                availableOptions.push(copyAnimal);
+              }
+            }
           }
         }
       }
       else {
         eventDeck.selectedAnimals.forEach(item => {
-          availableOptions.push(item);
+          var globalAnimal = this.globalVar.animals.find(globalItem => globalItem.type === item.type);
+          if (globalAnimal !== undefined) {
+            var copyAnimal = globalAnimal.makeCopy(globalAnimal);
+            availableOptions.push(copyAnimal);
+          }
         });
       }
 
       availableOptions = availableOptions.filter(item => this.animalCanRaceGrandPrix(item));
-      if (this.globalVar.eventRaceData.isCatchingUp)
-        availableOptions = availableOptions.filter(item => !this.shouldShowSlowSegmentWarning(item));
+      //if (this.globalVar.eventRaceData.isCatchingUp)
+      availableOptions = availableOptions.filter(item => !this.shouldShowSlowSegmentWarning(item));
 
       if (availableOptions.length > 0) {
         racingAnimal = availableOptions[0];
@@ -4893,7 +4902,7 @@ export class GlobalService {
     if (animal.currentStats.acceleration <= 10 || animal.currentStats.topSpeed <= 10 ||
       animal.currentStats.endurance <= 10 || animal.currentStats.power <= 10 ||
       animal.currentStats.focus <= 10 || animal.currentStats.adaptability <= 10) {
-      console.log("Stats too low: " + animal.currentStats.acceleration + " " + animal.currentStats.topSpeed + " " +
+      console.log("Stats too low for " + animal.name + ": " + animal.currentStats.acceleration + " " + animal.currentStats.topSpeed + " " +
         animal.currentStats.endurance + " " + animal.currentStats.power + " " + animal.currentStats.focus + " " +
         animal.currentStats.adaptability);
       tooSlow = true;
@@ -4904,11 +4913,11 @@ export class GlobalService {
       var expectedRaceMperS = segmentMeters / this.globalVar.eventRaceData.segmentTime;
 
       if (expectedRaceMperS > animal.currentStats.maxSpeedMs * 3) {
-        console.log("Max Speed Too Low: " + expectedRaceMperS + " > " + animal.currentStats.maxSpeedMs * 3);
+        console.log("Max Speed Too Low for " + animal.name + ": " + expectedRaceMperS + " > " + animal.currentStats.maxSpeedMs * 3);
         tooSlow = true;
       }
       if (animal.currentStats.focusMs < expectedRaceMperS / 5) {
-        console.log("Not Focused Enough: " + animal.currentStats.focusMs + " < " + expectedRaceMperS / 30);
+        console.log("Not Focused Enough for " + animal.name + ": " + animal.currentStats.focusMs + " < " + expectedRaceMperS / 30);
         tooSlow = true;
       }
     }
@@ -4993,16 +5002,15 @@ export class GlobalService {
 
     this.globalVar.animals.forEach(animal => {
       if (animal.type === AnimalTypeEnum.Goat || animal.type === AnimalTypeEnum.Caribou ||
-        animal.type === AnimalTypeEnum.Octopus)
-        {
-          animal.isAvailable = true;
-          animal.availableAbilities.forEach(item => {
-            item.isAbilityPurchased = true;
+        animal.type === AnimalTypeEnum.Octopus) {
+        animal.isAvailable = true;
+        animal.availableAbilities.forEach(item => {
+          item.isAbilityPurchased = true;
 
-            if (item.name === "Deep Breathing" || item.name === "Special Delivery" || item.name === "Big Brain")
+          if (item.name === "Deep Breathing" || item.name === "Special Delivery" || item.name === "Big Brain")
             animal.ability = item;
-          })
-        }
+        })
+      }
 
       animal.currentStats.topSpeed = trainingStatValue;
       animal.currentStats.acceleration = trainingStatValue;

@@ -69,7 +69,7 @@ export class AppComponent {
 
     if (devMode) {
       this.globalService.globalVar.tutorials.tutorialCompleted = true;
-      this.globalService.devModeInitialize(1, 3);
+      this.globalService.devModeInitialize(75, 3);
     }
 
     this.versionControlService.updatePlayerVersion();

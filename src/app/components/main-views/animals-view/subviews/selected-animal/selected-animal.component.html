@@ -603,11 +603,12 @@
             <div class="modal-body" *ngIf="selectedAnimal.talentTree.talentTreeType !== talentTreeTypeEnum.none">
                 <div class="talentInfo">Available Talent Points: {{ availableTalentPoints }}</div>
                 <br />
-                <!--<p>
+                <p class="talentInfo">
                     <span>Cost to reset talent specialization: {{talentResetCost}}</span>
-                    <button (click)="resetTalents()" class="spaced">Reset Talents</button>
-                    
-                </p>-->
+                    <button (click)="resetTalents()" class="spaced" [disabled]="this.lookupService.getCoins() < this.lookupService.getTalentResetCost(this.selectedAnimal.type)">Reset Talents</button>
+                    <br/>
+                    <em *ngIf="freeTalentResets > 0">Free talent resets for this animal remaining: {{freeTalentResets}}</em>
+                </p>
                 <br />
                 <div class="talentRow" *ngFor="let _ of [].constructor(talentRows); let rowIndex = index">
                     <div class="rowFlex">

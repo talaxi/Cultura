@@ -639,7 +639,7 @@ export class LookupService {
 
   getGrandPrixTokenRewards() {
     var rewards: string[] = [];
-    var numericRankModifier =  this.globalService.globalVar.eventRaceData.rankDistanceMultiplier;
+    var numericRankModifier = this.globalService.globalVar.eventRaceData.rankDistanceMultiplier;
     var token1MeterCount = 50000000;
     var token1MeterCountPair = this.globalService.globalVar.modifiers.find(item => item.text === "grandPrixToken1MeterModifier");
     if (token1MeterCountPair !== null && token1MeterCountPair !== undefined)
@@ -792,12 +792,12 @@ export class LookupService {
     var pinnacleReduction = 1;
     if (pinnacleConditions !== undefined &&
       pinnacleConditions.containsCondition(HardPinnacleConditionsEnum[HardPinnacleConditionsEnum.reduceAbilityEfficiency])) {
-      pinnacleReduction = .01;      
+      pinnacleReduction = .01;
     }
 
     var modifiedPower = (animal.currentStats.powerMs * powerAbilityModifier * terrainModifier * statLossFromExhaustion) / 100;
     var modifiedEfficiency = usedAbility.efficiency * abilityEfficiencyRelayBonus * firstUseAbilityModifier + (usedAbility.efficiency * ((usedAbility.abilityLevel - 1) * .01));
-    modifiedEfficiency *=  pinnacleReduction;
+    modifiedEfficiency *= pinnacleReduction;
 
     //console.log(usedAbility.name + ": " + modifiedEfficiency + " * (1 + " + modifiedPower + ")");
     return modifiedEfficiency * (1 + modifiedPower);
@@ -1208,16 +1208,20 @@ export class LookupService {
   }
 
   getTalentResetCost(animalType: AnimalTypeEnum) {
-    var cost = 5000;
+    var cost = 250000;
     var animal = this.globalService.globalVar.animals.find(item => item.type === animalType);
     if (animal === undefined)
       return cost;
 
-      console.log("Count: " + animal.talentResetCount);
+    if (animal.freeTalentResetCount > 0) {
+      cost = 0;
+      return cost;
+    }
+    
     if (animal.talentResetCount === 0)
       return cost;
 
-    cost *= animal.talentResetCount * 10;
+    cost *= (animal.talentResetCount + 1);
 
     return cost;
   }
@@ -1640,8 +1644,8 @@ export class LookupService {
       popover += "Long Distance Talents: *" + topSpeedTalentModifier.toFixed(2) + "\n";
 
     if (animal.equippedOrb !== undefined && animal.equippedOrb !== null &&
-     this.globalService.getOrbTypeFromResource(animal.equippedOrb) === OrbTypeEnum.ruby &&
-     this.globalService.globalVar.orbStats.getMaxSpeedIncrease(1) > 1)
+      this.globalService.getOrbTypeFromResource(animal.equippedOrb) === OrbTypeEnum.ruby &&
+      this.globalService.globalVar.orbStats.getMaxSpeedIncrease(1) > 1)
       popover += "Ruby Orb: *" + this.globalService.globalVar.orbStats.getMaxSpeedIncrease(1).toFixed(1) + "\n";
 
     return popover;
@@ -1684,9 +1688,9 @@ export class LookupService {
     if (accelerationTalentModifier > 1)
       popover += "Sprint Talents: *" + accelerationTalentModifier.toFixed(2) + "\n";
 
-      if (animal.equippedOrb !== undefined && animal.equippedOrb !== null &&
-        this.globalService.getOrbTypeFromResource(animal.equippedOrb) === OrbTypeEnum.amber &&
-        this.globalService.globalVar.orbStats.getAccelerationIncrease(1) > 1)
+    if (animal.equippedOrb !== undefined && animal.equippedOrb !== null &&
+      this.globalService.getOrbTypeFromResource(animal.equippedOrb) === OrbTypeEnum.amber &&
+      this.globalService.globalVar.orbStats.getAccelerationIncrease(1) > 1)
       popover += "Amber Orb: *" + this.globalService.globalVar.orbStats.getAccelerationIncrease(1).toFixed(1) + "\n";
 
     return popover;
@@ -1729,9 +1733,9 @@ export class LookupService {
     if (enduranceTalentModifier > 1)
       popover += "Long Distance Talents: *" + enduranceTalentModifier.toFixed(2) + "\n";
 
-      if (animal.equippedOrb !== undefined && animal.equippedOrb !== null &&
-        this.globalService.getOrbTypeFromResource(animal.equippedOrb) === OrbTypeEnum.topaz &&
-        this.globalService.globalVar.orbStats.getEnduranceIncrease(1) > 1)
+    if (animal.equippedOrb !== undefined && animal.equippedOrb !== null &&
+      this.globalService.getOrbTypeFromResource(animal.equippedOrb) === OrbTypeEnum.topaz &&
+      this.globalService.globalVar.orbStats.getEnduranceIncrease(1) > 1)
       popover += "Topaz Orb: *" + this.globalService.globalVar.orbStats.getEnduranceIncrease(1).toFixed(1) + "\n";
 
     return popover;
@@ -1774,9 +1778,9 @@ export class LookupService {
     if (powerTalentModifier > 1)
       popover += "Sprint Talents: *" + powerTalentModifier.toFixed(2) + "\n";
 
-      if (animal.equippedOrb !== undefined && animal.equippedOrb !== null &&
-        this.globalService.getOrbTypeFromResource(animal.equippedOrb) === OrbTypeEnum.amethyst &&
-        this.globalService.globalVar.orbStats.getPowerIncrease(1) > 1)
+    if (animal.equippedOrb !== undefined && animal.equippedOrb !== null &&
+      this.globalService.getOrbTypeFromResource(animal.equippedOrb) === OrbTypeEnum.amethyst &&
+      this.globalService.globalVar.orbStats.getPowerIncrease(1) > 1)
       popover += "Amethyst Orb: *" + this.globalService.globalVar.orbStats.getPowerIncrease(1).toFixed(1) + "\n";
 
     return popover;

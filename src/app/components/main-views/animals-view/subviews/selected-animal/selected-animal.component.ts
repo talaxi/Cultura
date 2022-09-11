@@ -50,6 +50,7 @@ export class SelectedAnimalComponent implements OnInit {
   assignedBarnName: string;
   talentTreeTypeEnum = TalentTreeTypeEnum;
   talentResetCost: string;
+  freeTalentResets: number;
   canBreed = true;
   subscription: any;
 
@@ -110,7 +111,7 @@ export class SelectedAnimalComponent implements OnInit {
     }
   }
 
-  constructor(private lookupService: LookupService, private modalService: NgbModal, private globalService: GlobalService,
+  constructor(public lookupService: LookupService, private modalService: NgbModal, private globalService: GlobalService,
     private componentCommunicationService: ComponentCommunicationService, private utilityService: UtilityService,
     private gameLoopService: GameLoopService) { }
 
@@ -288,8 +289,11 @@ export class SelectedAnimalComponent implements OnInit {
       this.orbRows.push(this.orbCells);
   }
 
-  openTalentsModal(content: any) {
-    //this.setupDisplayItems();
+  openTalentsModal(content: any) {           
+    this.freeTalentResets = this.selectedAnimal.freeTalentResetCount; 
+    var talentResetCost = this.lookupService.getTalentResetCost(this.selectedAnimal.type);
+    this.talentResetCost = talentResetCost.toLocaleString() + " Coins";
+
     this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
   }
 
@@ -720,10 +724,6 @@ export class SelectedAnimalComponent implements OnInit {
     this.selectedTalentTree = "";
     this.inDepthTalentTreeDescription = "";
 
-    //TODO: this needs to be called when pulling up talent tree, not when you first open page
-    //var talentResetCost = this.lookupService.getTalentResetCost(this.selectedAnimal.type);
-    //this.talentResetCost = talentResetCost + " Coins";
-
     this.componentCommunicationService.setAnimalView(NavigationEnum.animals, newAnimal);
 
     var assignedBarn = this.globalService.globalVar.barns.find(item => item.barnNumber === this.selectedAnimal.associatedBarnNumber);
@@ -749,13 +749,30 @@ export class SelectedAnimalComponent implements OnInit {
   }
 
   resetTalents() {
-    //todo: make sure they actually can pay the fee
-    if (confirm("Sure you wanna reset?"))
+    var talentResetCost = this.lookupService.getTalentResetCost(this.selectedAnimal.type);
+    var paidTalentResetNotice = 'Future resets for this animal will be more expensive.';
+    if (talentResetCost === 0)
+      paidTalentResetNotice = "";
+    if (this.lookupService.getCoins() >= talentResetCost && 
+    confirm("This will refund all talent points and allow you to reselect your specialization. " + paidTalentResetNotice + "  Continue?"))
     {
-      //todo: pay the fee
+      this.lookupService.spendCoins(this.lookupService.getTalentResetCost(this.selectedAnimal.type));      
       this.selectedAnimal.talentTree.reset();
-      this.selectedAnimal.talentResetCount += 1;
       this.availableTalentPoints = this.lookupService.getTalentPointsAvailableToAnimal(this.selectedAnimal);
+      if (this.selectedAnimal.freeTalentResetCount > 0)
+      {
+        this.selectedAnimal.freeTalentResetCount -= 1;
+        if (this.selectedAnimal.freeTalentResetCount < 0)
+          this.selectedAnimal.freeTalentResetCount = 0;
+      }
+      else
+      {
+        this.selectedAnimal.talentResetCount += 1;
+      }
+
+      this.freeTalentResets = this.selectedAnimal.freeTalentResetCount;
+      var talentResetCost = this.lookupService.getTalentResetCost(this.selectedAnimal.type);          
+      this.talentResetCost = talentResetCost.toLocaleString() + " Coins";
     }
   }
 

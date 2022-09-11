@@ -92,10 +92,10 @@ export class TrainingTrackRaceViewComponent implements OnInit {
         rewardsObtained = this.selectedAnimal.allTrainingTracks.masterTrack.rewardsObtained;
 
       if (i < rewardsObtained) {
-        popover += "<span class='crossed'>(" + (i * trackPaceModifierValue * 100) + "% average pace) " + reward + "</span>\n";
+        popover += "<span class='crossed'>(" + (i * trackPaceModifierValue * 100) + "% faster than average pace) " + reward + "</span>\n";
       }
       else
-        popover += "<span>(" + (i * trackPaceModifierValue * 100) + "% average pace) " + reward + "</span>\n";
+        popover += "<span>(" + (i * trackPaceModifierValue * 100) + "% faster than average pace) " + reward + "</span>\n";
     }
 
     return this.sanitizer.sanitize(SecurityContext.HTML, this.sanitizer.bypassSecurityTrustHtml(popover));
