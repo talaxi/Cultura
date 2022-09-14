@@ -1,0 +1,87 @@
+<div id="coachingInfo">
+    <div>
+        <div class="info">
+            <em class="description">
+                Help your partner race as fast as possible. Successfully making it through will reward
+                your partner with a permanent boost to their default base stat value after Breeding.
+            </em>
+        </div>
+    </div>
+</div>
+<br/>
+<div class="drawingDiv">
+    <div class="updates">
+        <div class="drawCoaching" id="drawCoaching" #drawCoaching>
+            <div class="drawCoachingDiv">
+                <div class="scrimmageHeaderInfo">
+                    <div><span>Scrimmage Energy:</span> {{remainingEnergy | number : '1.0-0'}} / {{maxEnergy}}</div>
+                    <div><button (click)="pauseRaceAnimation()">Pause</button></div>
+                </div>
+                <canvas id="coachingCanvas" class="coachingCanvas" #coachingCanvas>
+
+                </canvas>
+                <div class="buttonSpread">
+                    <span>Chain Modifier: <span class="keyword" [innerHTML]="chainModifier"></span></span>
+                    <span>Current Status: <span class="keyword"
+                            [ngClass]="{'emphasizeWhistleText': emphasizeWhistle, 'emphasizeFoodText' : emphasizeFood, 'emphasizeEncouragementText': emphasizeEncouragement }"
+                            [innerHTML]="currentStatus"></span></span>
+                </div>
+                <div class="buttonSpread">
+                    <button (click)="showFood()" [disabled]="currentButtonCooldown > 0"
+                        [ngClass]="{'emphasizeFood': emphasizeFood}">Show <span class="underline">F</span>ood</button>
+                    <button (click)="shoutEncouragement()" [disabled]="currentButtonCooldown > 0"
+                        [ngClass]="{'emphasizeEncouragement': emphasizeEncouragement}">Shout <span
+                            class="underline">E</span>ncouragement</button>
+                    <button (click)="blowWhistle()" [disabled]="currentButtonCooldown > 0"
+                        [ngClass]="{'emphasizeWhistle': emphasizeWhistle}">Blow <span
+                            class="underline">W</span>histle</button>
+                </div>
+
+                <div class="progressBarHeight" *ngIf="currentButtonCooldown === 0"></div>
+                <ngb-progressbar *ngIf="currentButtonCooldown > 0"
+                    [value]="(currentButtonCooldown / buttonCooldown)*100" height=".5rem"></ngb-progressbar>
+            </div>
+        </div>
+        <div class="coachingUpdates" #scrollMe [scrollTop]="scrollMe.scrollHeight"
+            [innerHTML]="incrementalCoachingUpdates.trim()">
+        </div>
+    </div>
+</div>
+
+<ng-template #scrimmageContent let-modal>
+    <div class="modalClass">
+        <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">Scrimmage Info</h4>
+            <button type="button" aria-label="Close" (click)="closeModals()">X</button>
+        </div>
+        <div class="modal-body">
+            During a scrimmage, your racer will race against the clock to complete paths in a certain amount of time.
+            The faster they go, the better the rewards. At the end of each scrimmage run, your racer will be rewarded
+            with
+            permanent stat boosts that increase the base value of a stat after Breeding. Complete scrimmages so that
+            your animal can get back in the race faster after Breeding!
+            <br />
+            <br />
+            As your racer runs, they will need the extra motivation only a coach can provide to succeed. Select the
+            right option under the race drawing to help your animal stay on track. Choosing the right option fast enough
+            may trigger your animal to Burst.
+            <br />
+            <br />
+            If you complete your scrimmage in {{timeToBeat}} seconds or less, your stat boost will be increased
+            significantly and you will increase your Chain Modifier by an amount proportional to how fast you completed
+            the scrimmage.
+            Your Chain Modifier is a multiplier for each subsequent stat gain during this set of scrimmages. Increasing
+            your Chain Modifier quickly is key to getting big stat boosts!
+            <br />
+            <br />
+            Each animal can only scrimmage a certain amount at a time. The maximum limit is its Breed Level or 100,
+            whichever is lower. After starting a round of scrimmage races, a {{energyResetMinutes}} minute timer starts.
+            Until that timer ends, a new round of scrimmages cannot be started for that animal.
+        </div>
+        <div class="modal-footer spaceBetween">
+            <span>
+                <button type="button" class="spaced" (click)="closeModals()">Continue</button>
+            </span>
+        </div>
+    </div>
+</ng-template>

@@ -15,49 +15,15 @@
     height: 100%;
 }
 
-.availableIcon {
-    color: var(--foreground-quaternary);
-    border-radius: 25px;
-    background: var(--background-five);
-    padding: 0 .5rem;
-    margin-right: .25rem;
-  }
-
-.flex {
-    display: flex;
-    justify-content: space-between;
-}
-
-.coachingGridContainer {
-    width: 50%;
-    display: flex;
-    justify-content: space-around;
-}
-
 .coachingCanvas {
     border: 1px solid black;
     touch-action: none;
     -ms-touch-action: none;
 }
 
-.filterActive {
-    font-weight: bold;
-    color: var(--foreground-secondary);
-    text-decoration: underline solid Currentcolor;
-  }
-
-  .rightSpaced {
-    margin-left: .5rem;
-}
-
-
-  .smallText {
-    font-size: 1rem;
-  }
-
 .updates {
     white-space: pre;
-    height: 95%;
+    height: 80%;
     width: 100%;
     display: grid;
     grid-template-columns: 70% 29%;
@@ -105,16 +71,82 @@
 }
 
 .drawingDiv {
-    height: 76.5%;
+    height: 60%;
+}
+
+.underline {
+    text-decoration: underline;
+}
+
+.progressBarHeight {
+    height: .5rem;
+}
+
+.buttonSpread {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.emphasizeFood {
+    border: 2px solid green;
+    color: green;
+    font-weight: bold;
+}
+
+.emphasizeWhistle {
+    border: 2px solid blue;
+    color: blue;
+    font-weight: bold;
+}
+
+.emphasizeEncouragement {
+    border: 2px solid red;
+    color: red;
+    font-weight: bold;
+}
+
+.emphasizeFoodText {
+    color: green;
+}
+
+.emphasizeWhistleText {
+    color: blue;
+}
+
+.emphasizeEncouragementText {
+    color: red;
+}
+
+.scrimmageHeaderInfo {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.modalClass {
+    white-space: pre-line;
+
+    background-color: var(--background-secondary);
+    border-color: var(--background-tertiary);
+    color: var(--foreground-default);
+  }
+
+.mobileVersion {
+    display: none;
 }
 
 @media (max-width: 800px) {
     .updates {
-      grid-template-columns: auto;
-      grid-template-rows: 50% 50%;
-      grid-template-areas:
-        "drawCoaching"
-        "coachingUpdates";
+        white-space: initial;
+        height: initial;
+        width: initial;
+        display: initial;
+        grid-template-columns: initial;
+        grid-template-rows: initial;
+        justify-content: initial;
+        gap: initial;
+        grid-template-areas:
+        initial;
     }
   
     .headerInfo {
@@ -122,11 +154,12 @@
     }
   
     .coachingUpdates {
+        height: 50%;
       text-align: center;
     }
   
     .mobileVersion {
-      display: inline-block;
+      display: block;
     }
   
     .webVersion {

@@ -24,7 +24,7 @@ export class VersionControlService {
   constructor(private globalService: GlobalService, private lookupService: LookupService, private utilityService: UtilityService) { }
 
   //add to this in descending order
-  gameVersions = [1.18, 1.17, 1.16, 1.15, 1.14, 1.13, 1.12, 1.11, 1.10, 1.09, 1.08, 1.07, 1.06, 1.05, 1.04, 1.03, 1.02, 1.01, 1.00];
+  gameVersions = [1.19, 1.18, 1.17, 1.16, 1.15, 1.14, 1.13, 1.12, 1.11, 1.10, 1.09, 1.08, 1.07, 1.06, 1.05, 1.04, 1.03, 1.02, 1.01, 1.00];
 
   getListAscended() {
     var ascendedList: number[] = [];
@@ -177,6 +177,11 @@ export class VersionControlService {
     if (version === 1.18)
       changes = "You can now reset your talents for a fee when viewing a talent tree. All existing players will be given 1 free talent reset per animal to be used whenever they want.\n\n" +        
         "Minor bug fixes, mostly around grand prix.";
+    if (version === 1.19)
+      changes = "Scrimmages have been added to the game!" +
+      "<ul><li>Scrimmages are a new option under Coaching. As opposed to gaining racing stats, Scrimmages allow you to permanently increase the base stats your animals revert to after Breeding.</li>" +
+      "<li>Help your animal race through two paths. The faster they go, the better the rewards.</li></ul>" +
+      "Minor UI improvements.";
     return changes;
   }
 
@@ -220,6 +225,8 @@ export class VersionControlService {
       date = new Date('2022-09-07 12:00:00');
     if (version === 1.18)
       date = new Date('2022-09-11 12:00:00');
+    if (version === 1.19)
+      date = new Date('2022-09-13 12:00:00');
 
     return date.toDateString().replace(/^\S+\s/, '');
   }
@@ -1139,6 +1146,14 @@ export class VersionControlService {
             animal.talentResetCount = 0;
             animal.freeTalentResetCount = 1;
           });
+        }
+        else if (version === 1.19) {
+          this.globalService.globalVar.animals.forEach(item => {
+            item.increasedDefaultStats = new AnimalStats(0, 0, 0, 0, 0, 0);
+            item.scrimmageEnergyTimer = 0;
+          });          
+
+          this.globalService.globalVar.tutorials.showScrimmageTutorial = true;
         }
 
         this.globalService.globalVar.currentVersion = version;

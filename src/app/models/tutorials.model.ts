@@ -4,6 +4,7 @@ export class Tutorials {
     showTutorial: boolean;
     showTrainingTrackTutorial: boolean;
     showCoachingTutorial: boolean;
+    showScrimmageTutorial: boolean;
 
     constructor() {
         this.tutorialCompleted = false;
@@ -12,5 +13,6 @@ export class Tutorials {
 
         this.showTrainingTrackTutorial = true;
         this.showCoachingTutorial = true;
+        this.showScrimmageTutorial = true;
     }
 }

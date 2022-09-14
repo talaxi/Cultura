@@ -104,6 +104,37 @@ export class UtilityService {
     return hoursDisplay + ":" + minutesDisplay + ":" + secondsDisplay;
   }
 
+  convertSecondsToMMSS(secondsRemaining: number) {
+    var hours = Math.floor(secondsRemaining / 3600);
+    var minutes = Math.floor((secondsRemaining / 60) - (hours * 60));
+    var seconds = (secondsRemaining - (hours * 60 * 60) - (minutes * 60));
+
+    var hoursDisplay = hours.toString();
+    var minutesDisplay = minutes.toString();
+    var secondsDisplay = Math.floor(seconds).toString();
+    if (hours < 10) {
+      if (hours < 1 || hours > 59)
+        hoursDisplay = "00";
+      else
+        hoursDisplay = String(hoursDisplay).padStart(2, '0');
+    }
+    if (minutes < 10) {
+      if (minutes < 1 || minutes > 59)
+        minutesDisplay = "00";
+      else
+        minutesDisplay = String(minutesDisplay).padStart(2, '0');
+    }
+
+    if (seconds < 10) {
+      if (seconds < 1 || seconds > 59)
+        secondsDisplay = "00";
+      else
+        secondsDisplay = String(secondsDisplay).padStart(2, '0');
+    }
+
+    return minutesDisplay + ":" + secondsDisplay;
+  }
+
   getClosestWholeNumber(adjustedCircuitRaceDistance: number, totalDistance: number) {
     var resultingSegments = totalDistance / adjustedCircuitRaceDistance;
     var floorValue = Math.floor(resultingSegments);
@@ -176,6 +207,7 @@ export class UtilityService {
     return noun.charAt(0).toUpperCase() + noun.slice(1);
   }
 
+  //if list contains string and number, all instances of the same string will be added together and additional instances will be removed
   condenseList(list: ResourceValue[]) {
     var newList: ResourceValue[] = [];
 

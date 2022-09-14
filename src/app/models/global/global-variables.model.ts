@@ -85,7 +85,7 @@ export class GlobalVariables {
     currentVersion: number;
     startingVersion: number;
     startDate: Date;
-    showBreedWarning = true;
+    showBreedWarning = true;    
     relayEnergyFloor: number;
     doNotRelayBelowEnergyFloor: boolean;
 

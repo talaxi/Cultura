@@ -69,7 +69,7 @@ export class AppComponent {
 
     if (devMode) {
       this.globalService.globalVar.tutorials.tutorialCompleted = true;
-      this.globalService.devModeInitialize(75, 3);
+      this.globalService.devModeInitialize(75, 1);
     }
 
     this.versionControlService.updatePlayerVersion();
@@ -173,8 +173,16 @@ export class AppComponent {
       }
     }
 
+    this.handleScrimmageTimer(deltaTime);
     this.handleFreeRaceTimer(deltaTime);
     this.grandPrixLogicService.handleGrandPrix(deltaTime);
+  }
+
+  handleScrimmageTimer(deltaTime: number) {
+    this.globalService.globalVar.animals.forEach(animal => {
+      if (animal.scrimmageEnergyTimer > 0)
+        animal.scrimmageEnergyTimer -= deltaTime;
+    });
   }
   
   handleFreeRaceTimer(deltaTime: number) {

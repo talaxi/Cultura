@@ -212,7 +212,7 @@ export class AnimalStats {
         return powerTotal * (1 + breedLevelStatModifier / 4) * animalDefaultModifier;
     }
 
-    topSpeedPopover(modifierAmount: number): string {
+    /*topSpeedPopover(modifierAmount: number): string {
         return "Every stat point increases top speed by " + modifierAmount.toFixed(3) + "m/s up to diminishing returns.";
         //include base and all modifiers underneath
     }
@@ -235,7 +235,7 @@ export class AnimalStats {
 
     adaptabilityPopover(modifierAmount: number): string {
         return "Every stat point increases top speed by " + modifierAmount.toFixed(3) + "m/s up to diminishing returns.";
-    }
+    }*/
 
     maxSpeedMsPopover(): string {
         return "This is the max speed this animal can go during a race.";

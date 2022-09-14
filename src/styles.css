@@ -158,23 +158,6 @@ body {
   }
 }
 
-/*html {
-  overflow: hidden;
-}
-
-body {
-  height: 100%;
-  position: fixed;
-  overflow-y: scroll;
-  -webkit-overflow-scrolling: touch;
-}*/
-
-/*@media (max-width: 800px) {
-  html, body {
-    font-size: 3vmin;
-  }
-}*/
-
 h1 {
   font-size: var(--h1-size);
 }

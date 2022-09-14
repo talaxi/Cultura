@@ -83,8 +83,8 @@ export class GlobalService {
     this.globalVar.freeRaceCounter = 0;
     this.globalVar.freeRaceTimePeriodCounter = 0;
     this.globalVar.lastTimeStamp = Date.now();
-    this.globalVar.currentVersion = 1.18; //TODO: this needs to be automatically increased or something, too easy to forget
-    this.globalVar.startingVersion = 1.18;
+    this.globalVar.currentVersion = 1.19; //TODO: this needs to be automatically increased or something, too easy to forget
+    this.globalVar.startingVersion = 1.19;
     this.globalVar.startDate = new Date();
     this.globalVar.notifications = new Notifications();
     this.globalVar.relayEnergyFloor = 50;
@@ -4500,25 +4500,32 @@ export class GlobalService {
         animal.incubatorStatUpgrades.adaptabilityModifier += increasedAmount;
     }
 
+    var baseSpeed = animal.baseStats.topSpeed + animal.increasedDefaultStats.topSpeed;
+    var baseAcceleration = animal.baseStats.acceleration + animal.increasedDefaultStats.acceleration;
+    var baseEndurance = animal.baseStats.endurance + animal.increasedDefaultStats.endurance;
+    var basePower = animal.baseStats.power + animal.increasedDefaultStats.power;
+    var baseFocus = animal.baseStats.focus + animal.increasedDefaultStats.focus;
+    var baseAdaptability = animal.baseStats.adaptability + animal.increasedDefaultStats.adaptability;
+
     var handlers = this.globalVar.resources.find(item => item.name === "Animal Handler");
     var handlerModifier = this.globalVar.modifiers.find(item => item.text === "animalHandlerModifier");
     if (handlers !== null && handlers !== undefined && handlerModifier !== undefined && handlerModifier != null && handlers.amount > 0) {
       var statRetainPercent = handlers.amount * handlerModifier.value;
-      var retainedTopSpeed = Math.round((animal.currentStats.topSpeed - animal.baseStats.topSpeed) * statRetainPercent);
-      var retainedAcceleration = Math.round((animal.currentStats.acceleration - animal.baseStats.acceleration) * statRetainPercent);
-      var retainedEndurance = Math.round((animal.currentStats.endurance - animal.baseStats.endurance) * statRetainPercent);
-      var retainedPower = Math.round((animal.currentStats.power - animal.baseStats.power) * statRetainPercent);
-      var retainedFocus = Math.round((animal.currentStats.focus - animal.baseStats.focus) * statRetainPercent);
-      var retainedAdaptability = Math.round((animal.currentStats.adaptability - animal.baseStats.adaptability) * statRetainPercent);
+      var retainedTopSpeed = Math.round((animal.currentStats.topSpeed - baseSpeed) * statRetainPercent);
+      var retainedAcceleration = Math.round((animal.currentStats.acceleration - baseAcceleration) * statRetainPercent);
+      var retainedEndurance = Math.round((animal.currentStats.endurance - baseEndurance) * statRetainPercent);
+      var retainedPower = Math.round((animal.currentStats.power - basePower) * statRetainPercent);
+      var retainedFocus = Math.round((animal.currentStats.focus - baseFocus) * statRetainPercent);
+      var retainedAdaptability = Math.round((animal.currentStats.adaptability - baseAdaptability) * statRetainPercent);
 
-      animal.currentStats = new AnimalStats(animal.baseStats.topSpeed + retainedTopSpeed,
-        animal.baseStats.acceleration + retainedAcceleration, animal.baseStats.endurance + retainedEndurance,
-        animal.baseStats.power + retainedPower, animal.baseStats.focus + retainedFocus,
-        animal.baseStats.adaptability + retainedAdaptability);
+      animal.currentStats = new AnimalStats(baseSpeed + retainedTopSpeed,
+        baseAcceleration + retainedAcceleration, baseEndurance + retainedEndurance,
+        basePower + retainedPower, baseFocus + retainedFocus,
+        baseAdaptability + retainedAdaptability);
     }
     else {
-      animal.currentStats = new AnimalStats(animal.baseStats.topSpeed, animal.baseStats.acceleration, animal.baseStats.endurance,
-        animal.baseStats.power, animal.baseStats.focus, animal.baseStats.adaptability);
+      animal.currentStats = new AnimalStats(baseSpeed, baseAcceleration, baseEndurance,
+        basePower, baseFocus, baseAdaptability);
     }
     this.calculateAnimalRacingStats(animal);
     this.globalVar.trackedStats.totalBreeds += 1;

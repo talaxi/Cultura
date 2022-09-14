@@ -1606,6 +1606,25 @@ export class LookupService {
     return text;
   }
 
+  getStatNameFromEnum(statEnum: AnimalStatEnum) {
+    var name = "";
+
+    if (statEnum === AnimalStatEnum.topSpeed)
+      name = "Speed";
+      if (statEnum === AnimalStatEnum.acceleration)
+      name = "Acceleration";
+      if (statEnum === AnimalStatEnum.endurance)
+      name = "Endurance";
+      if (statEnum === AnimalStatEnum.power)
+      name = "Power";
+      if (statEnum === AnimalStatEnum.focus)
+      name = "Focus";
+      if (statEnum === AnimalStatEnum.adaptability)
+      name = "Adaptability";
+
+    return name;
+  }
+
   topSpeedPopover(animal: Animal): string {
     var baseMaxSpeedModifier = animal.currentStats.defaultMaxSpeedModifier;
     var animalTypeName = animal.getAnimalType().toLowerCase();
@@ -1648,6 +1667,8 @@ export class LookupService {
       this.globalService.globalVar.orbStats.getMaxSpeedIncrease(1) > 1)
       popover += "Ruby Orb: *" + this.globalService.globalVar.orbStats.getMaxSpeedIncrease(1).toFixed(1) + "\n";
 
+
+    popover += "\n Default Speed value after Breed is " + (animal.increasedDefaultStats.topSpeed + animal.baseStats.topSpeed).toFixed(3) + ".";
     return popover;
   }
 
@@ -1693,6 +1714,7 @@ export class LookupService {
       this.globalService.globalVar.orbStats.getAccelerationIncrease(1) > 1)
       popover += "Amber Orb: *" + this.globalService.globalVar.orbStats.getAccelerationIncrease(1).toFixed(1) + "\n";
 
+      popover += "\n Default Acceleration value after Breed is " + (animal.increasedDefaultStats.acceleration + animal.baseStats.acceleration).toFixed(3) + ".";
     return popover;
   }
 
@@ -1738,6 +1760,7 @@ export class LookupService {
       this.globalService.globalVar.orbStats.getEnduranceIncrease(1) > 1)
       popover += "Topaz Orb: *" + this.globalService.globalVar.orbStats.getEnduranceIncrease(1).toFixed(1) + "\n";
 
+    popover += "\n Default Endurance value after Breed is " + (animal.increasedDefaultStats.endurance + animal.baseStats.endurance).toFixed(3) + ".";
     return popover;
   }
 
@@ -1782,6 +1805,8 @@ export class LookupService {
       this.globalService.getOrbTypeFromResource(animal.equippedOrb) === OrbTypeEnum.amethyst &&
       this.globalService.globalVar.orbStats.getPowerIncrease(1) > 1)
       popover += "Amethyst Orb: *" + this.globalService.globalVar.orbStats.getPowerIncrease(1).toFixed(1) + "\n";
+
+      popover += "\n Default Power value after Breed is " + (animal.increasedDefaultStats.power + animal.baseStats.power).toFixed(3) + ".";
 
     return popover;
   }
@@ -1828,6 +1853,8 @@ export class LookupService {
       this.globalService.globalVar.orbStats.getFocusIncrease(1) > 1)
       popover += "Sapphire Orb: *" + this.globalService.globalVar.orbStats.getFocusIncrease(1).toFixed(1) + "\n";
 
+
+      popover += "\n Default Focus value after Breed is " + (animal.increasedDefaultStats.focus + animal.baseStats.focus).toFixed(3) + ".";
     return popover;
   }
 
@@ -1873,6 +1900,7 @@ export class LookupService {
       this.globalService.globalVar.orbStats.getAdaptabilityIncrease(1) > 1)
       popover += "Emerald Orb: *" + this.globalService.globalVar.orbStats.getAdaptabilityIncrease(1).toFixed(1) + "\n";
 
+      popover += "\n Default Adaptability value after Breed is " + (animal.increasedDefaultStats.adaptability + animal.baseStats.adaptability).toFixed(3) + ".";
     return popover;
   }
 

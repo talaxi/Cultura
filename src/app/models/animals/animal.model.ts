@@ -22,6 +22,8 @@ export class Animal {
     currentStats: AnimalStats;
     @Type(() => AnimalStats)
     baseStats: AnimalStats;  //used for breeding calculations
+    @Type(() => AnimalStats)
+    increasedDefaultStats: AnimalStats;
     isAvailable: boolean;
     @Type(() => TrainingOption)
     currentTraining: TrainingOption | null;
@@ -60,11 +62,13 @@ export class Animal {
     mangoesUsed = 0;
     talentResetCount = 0;
     freeTalentResetCount = 0;
+    scrimmageEnergyTimer = 0;
     totalRacesRun: number; //for tracked stats
 
     constructor() {
         this.incubatorStatUpgrades = new IncubatorStatUpgrades();
         this.allTrainingTracks = new AllTrainingTracks();
+        this.increasedDefaultStats = new AnimalStats(0, 0, 0, 0, 0, 0);
         this.miscStats = new MiscStats();
         this.trackedAnimalStats = new TrackedAnimalStats();
         this.talentTree = new TalentTree();

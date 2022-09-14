@@ -24,7 +24,7 @@ export class BarnViewComponent implements OnInit {
   constructor(private lookupService: LookupService, private componentCommunicationService: ComponentCommunicationService,
     private globalService: GlobalService) { }
 
-  ngOnInit(): void {
+  ngOnInit(): void {    
     this.componentCommunicationService.setNewView(NavigationEnum.barn);
     if (this.globalService.globalVar.settings.get("quickViewBarnMode"))
         this.isCondensedView = true;

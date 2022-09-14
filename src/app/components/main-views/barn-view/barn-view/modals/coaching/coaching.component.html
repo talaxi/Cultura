@@ -1,35 +1,28 @@
 <div class="coachingView">
     <div class="marginDiv">
-        <div id="coachingInfo">
-            <div class="infoGridContainer">
-                <div class="info">
-                    <h2>Coaching</h2>
-                    <div class="description">
-                        Show your animals the way by tracing each path. Successfully making it through will reward your
-                        partner with a stat point.
-                    </div>
-                </div>
-                <div class="back">
-                    <button (click)="returnToSelectedBarnView()">Back</button>
+        <div class="info">
+            <div class="flex">
+            <div></div> <!--for flex spacing-->
+            <div class="coachingGridContainer">
+                <button class="buttonAsText coaching s5Heading clickableText"
+                    (click)="changeDisplayCoachingView(coachingTypeEnum.coaching)"
+                    [ngClass]='displayCoachingView === coachingTypeEnum.coaching ? "filterActive" : ""'>Coaching</button>
+                <div>
+                    <button class="buttonAsText scrimmage s5Heading clickableText" [disabled]="restingForScrimmage"
+                    (click)="changeDisplayCoachingView(coachingTypeEnum.scrimmage)"
+                    [ngClass]='displayCoachingView === coachingTypeEnum.scrimmage ? "filterActive" : ""'><span *ngIf="showScrimmageIcon" class="availableIcon">!</span>Scrimmage</button><em *ngIf="restingForScrimmage" class="smallText rightSpaced">(Retry in {{scrimmageRestingTimeRemaining}})</em>
                 </div>
             </div>
+            <div class="back">
+                <button (click)="returnToSelectedBarnView()">Back</button>
+            </div>
+        </div>
+
             <hr />
         </div>
-
-        <div class="drawingDiv">
-            <div class="updates">
-                <div class="drawCoaching" id="drawCoaching" #drawCoaching>
-                    <div class="drawCoachingDiv">
-                        <canvas id="coachingCanvas" class="coachingCanvas" #coachingCanvas
-                            (pointermove)="pointerMove($event)" (pointerdown)="pointerDown()" (pointerup)="pointerUp()">
-
-                        </canvas>
-                    </div>
-                </div>
-                <div class="coachingUpdates" #scrollMe [scrollTop]="scrollMe.scrollHeight"
-                    [innerHTML]="incrementalCoachingUpdates.trim()">
-                </div>
-            </div>
-        </div>
+        <app-run-coaching *ngIf="displayCoachingView === coachingTypeEnum.coaching"
+            [selectedBarnNumber]="selectedBarnNumber"></app-run-coaching>
+        <app-scrimmage *ngIf="displayCoachingView === coachingTypeEnum.scrimmage"
+            [selectedBarnNumber]="selectedBarnNumber"></app-scrimmage>
     </div>
 </div>

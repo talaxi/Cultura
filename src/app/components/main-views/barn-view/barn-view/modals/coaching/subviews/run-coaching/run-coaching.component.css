@@ -15,45 +15,11 @@
     height: 100%;
 }
 
-.availableIcon {
-    color: var(--foreground-quaternary);
-    border-radius: 25px;
-    background: var(--background-five);
-    padding: 0 .5rem;
-    margin-right: .25rem;
-  }
-
-.flex {
-    display: flex;
-    justify-content: space-between;
-}
-
-.coachingGridContainer {
-    width: 50%;
-    display: flex;
-    justify-content: space-around;
-}
-
 .coachingCanvas {
     border: 1px solid black;
     touch-action: none;
     -ms-touch-action: none;
 }
-
-.filterActive {
-    font-weight: bold;
-    color: var(--foreground-secondary);
-    text-decoration: underline solid Currentcolor;
-  }
-
-  .rightSpaced {
-    margin-left: .5rem;
-}
-
-
-  .smallText {
-    font-size: 1rem;
-  }
 
 .updates {
     white-space: pre;
