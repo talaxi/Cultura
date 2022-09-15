@@ -229,8 +229,8 @@ export class SelectedBarnComponent implements OnInit {
       var trainingFacilityAdditive = 0;
 
       if (this.barn.barnUpgrades.specialization === BarnSpecializationEnum.TrainingFacility) {
-        if (this.barn.barnUpgrades.specializationLevel > 20)
-          trainingFacilityAdditive = ((this.barn.barnUpgrades.specializationLevel - 20) / 10);
+        if (this.barn.barnUpgrades.specializationLevel > 10)
+          trainingFacilityAdditive = ((this.barn.barnUpgrades.specializationLevel - 10) / 10);
       }
 
       modifiedOption.affectedStatRatios.topSpeed *= this.barn.barnUpgrades.upgradedStatGain.topSpeed + trainingFacilityAdditive;

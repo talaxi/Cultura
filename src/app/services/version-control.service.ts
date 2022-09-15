@@ -186,7 +186,7 @@ export class VersionControlService {
       changes = "Added Barn Improvements to the Shop after reaching rank AZ (27), giving each barn specialization a unique upgrade.\n\n" +
       "Training Facilities have been adjusted so that they give 20% Training Time Reduction by level 100 instead of 200.\n\n" +
       "Research Centers have been adjusted so that the training animal receives 75% of stat gain at level 10 instead of 50%.\n\n" +
-      "Scrimmage totals have been reduced to 30 instead of 100, but the stat gain amount should roughly remain the same. This should cut down on how long it takes to complete a Scrimmage session.\n\n" +  
+      "Scrimmage total energy has been reduced to 30 instead of 100, but the stat gain amount should roughly remain the same. This should cut down on how long it takes to complete a Scrimmage session.\n\n" +  
       "Grand Prix reward amounts have been altered." +
         "<ul><li>Token rewards increase every five Grand Prixes during an event period instead of after every Grand Prix during an event period. This should smooth out token gain a bit more instead of hitting a point where you go from getting barely any tokens to a massive amount all at once.</li>" +
         "<li>Base coin rewards per interval have been increased from 250 to 100. This amount increases after every successful Grand Prix during an event period.</li></ul>" +
