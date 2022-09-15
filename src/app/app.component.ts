@@ -69,7 +69,7 @@ export class AppComponent {
 
     if (devMode) {
       this.globalService.globalVar.tutorials.tutorialCompleted = true;
-      this.globalService.devModeInitialize(75, 1);
+      this.globalService.devModeInitialize(75, 4);
     }
 
     this.versionControlService.updatePlayerVersion();
@@ -120,6 +120,7 @@ export class AppComponent {
         if (animal.currentTraining !== null && animal.currentTraining !== undefined && animal.canTrain) {
           animal.currentTraining.timeTrained += deltaTime;
           this.specializationService.handleAttractionRevenue(deltaTime, animal);
+          this.specializationService.handleTrainingFacilityImprovementsIncreases(deltaTime, animal);
 
           while (animal.currentTraining !== null && animal.currentTraining.timeTrained >= animal.currentTraining.timeToComplete) {
             var associatedBarn = this.globalService.globalVar.barns.find(item => item.barnNumber === animal.associatedBarnNumber);

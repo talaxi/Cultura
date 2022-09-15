@@ -15,20 +15,42 @@ export class SpecializationService {
 
   constructor(private globalService: GlobalService, private utilityService: UtilityService, private lookupService: LookupService) { }
 
-  getSpecializationPopoverText(specialization: BarnSpecializationEnum, specializationLevel: number) {
+  getSpecializationPopoverText(specialization: BarnSpecializationEnum, specializationLevel: number, showImprovementValue: boolean = false) {
     var specializationText = "";
 
     if (specialization === BarnSpecializationEnum.TrainingFacility) {
-      if (specializationLevel <= 20)
-      specializationText = "Training Time Reduction: " + specializationLevel + "%<br/>";
-    else
-      specializationText = "Training Time Reduction: 20%<br/> All Stat Multiplier: " + ((specializationLevel - 20) / 10) + "<br/>";
+      if (specializationLevel <= 10)
+        specializationText = "Training Time Reduction: " + (specializationLevel * 2) + "%<br/>";
+      else
+        specializationText = "Training Time Reduction: 20%<br/> All Stat Multiplier: " + ((specializationLevel - 10) / 10) + "<br/>";
+
+      var abilityXpGain = 0;
+      if (this.globalService.globalVar.resources.find(item => item.name === "Training Facility Improvements") || showImprovementValue) {
+        var trainingFacilityAbilityXpAmountModifier = this.globalService.globalVar.modifiers.find(item => item.text === "trainingFacilityAbilityXpAmountModifier");
+        if (trainingFacilityAbilityXpAmountModifier !== undefined) {
+          abilityXpGain = trainingFacilityAbilityXpAmountModifier.value;
+          var timeToCollect = 60;
+          var timeToCollectPair = this.globalService.globalVar.modifiers.find(item => item.text === "attractionTimeToCollectModifier");
+
+          if (timeToCollectPair !== undefined && timeToCollectPair !== null)
+            timeToCollect = timeToCollectPair.value;
+
+          specializationText += "Ability XP: " + (abilityXpGain * specializationLevel) + " / " + timeToCollect + " seconds <br/>";
+        }
+      }
     }
 
     if (specialization === BarnSpecializationEnum.BreedingGrounds) {
+      var breedingGroundsImprovementAmount = 0;
+      if (this.globalService.globalVar.resources.find(item => item.name === "Breeding Grounds Improvements") || showImprovementValue) {
+        var breedingGroundsAdditionalAmountModifier = this.globalService.globalVar.modifiers.find(item => item.text === "breedingGroundsAdditionalAmountModifier");
+        if (breedingGroundsAdditionalAmountModifier !== undefined)
+          breedingGroundsImprovementAmount = breedingGroundsAdditionalAmountModifier.value;
+      }
+
       var breedingGroundsModifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "breedingGroundsSpecializationModifier");
       if (breedingGroundsModifierPair !== null && breedingGroundsModifierPair !== undefined) {
-        specializationText = "Training Breed XP Multipler: " + (specializationLevel * (breedingGroundsModifierPair.value * 100)) + "%<br/>";
+        specializationText = "Training Breed XP Multipler: " + (specializationLevel * ((breedingGroundsModifierPair.value + breedingGroundsImprovementAmount) * 100)).toFixed(0) + "%<br/>";
       }
     }
 
@@ -48,7 +70,17 @@ export class SpecializationService {
         }
       }
 
-      specializationText = "Amount Earned: " + amountEarned + " Coins / " + timeToCollect + " seconds<br/>";
+      specializationText = "Amount Earned: " + amountEarned.toFixed(0) + " Coins / " + timeToCollect + " seconds<br/>";
+      
+      var renownAmountEarned = 0;
+      if (this.globalService.globalVar.resources.find(item => item.name === "Attraction Improvements") || showImprovementValue) {
+        var renownAmountEarnedPair = this.globalService.globalVar.modifiers.find(item => item.text === "attractionRenownAmountModifier");
+
+        if (renownAmountEarnedPair !== undefined && renownAmountEarnedPair !== null) {
+          renownAmountEarned = renownAmountEarnedPair.value * specializationLevel;
+          specializationText += "Amount Earned: " + renownAmountEarned.toFixed(3) + " Renown / " + timeToCollect + " seconds<br/>";
+        }
+      }
     }
     else if (specialization === BarnSpecializationEnum.ResearchCenter) {
       //this needs to mirror the logic on how it actually calculates
@@ -88,6 +120,16 @@ export class SpecializationService {
       }
       else {
         text += "Additional Studying Animal Stat Gain: " + (studyingAnimalDefault.value * 100).toFixed(0) + "%<br />";
+      }
+
+      var scrimmageValueIncrease = 0;
+      if (this.globalService.globalVar.resources.find(item => item.name === "Research Center Improvements") || showImprovementValue) {
+        var researchCenterRewardBonusAmountModifier = this.globalService.globalVar.modifiers.find(item => item.text === "researchCenterRewardBonusAmountModifier");
+
+        if (researchCenterRewardBonusAmountModifier !== undefined && researchCenterRewardBonusAmountModifier !== null) {
+          scrimmageValueIncrease = researchCenterRewardBonusAmountModifier.value * specializationLevel;
+          text += "Scrimmage & Coaching Reward Increase: " + (scrimmageValueIncrease * 100).toFixed(0) + "%<br />";
+        }
       }
 
       specializationText = text;
@@ -195,6 +237,42 @@ export class SpecializationService {
     return randomizedList;
   }
 
+  handleTrainingFacilityImprovementsIncreases(deltaTime: number, trainingAnimal: Animal) {
+    var assignedBarn = this.globalService.globalVar.barns.find(item => item.barnNumber === trainingAnimal.associatedBarnNumber);
+    var improvementItem = this.globalService.globalVar.resources.find(item => item.name === "Training Facility Improvements");
+    if (assignedBarn === undefined || assignedBarn === null ||
+      assignedBarn.barnUpgrades.specialization !== BarnSpecializationEnum.TrainingFacility ||
+      improvementItem === undefined || improvementItem.amount <= 0)
+      return;
+
+
+    var timeToCollect = 60;
+    var timeToCollectPair = this.globalService.globalVar.modifiers.find(item => item.text === "attractionTimeToCollectModifier");
+
+    if (timeToCollectPair !== undefined && timeToCollectPair !== null)
+      timeToCollect = timeToCollectPair.value;
+
+    var xpAmount = 0;
+
+    var trainingFacilityAbilityXpAmountModifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "trainingFacilityAbilityXpAmountModifier");
+
+    if (trainingFacilityAbilityXpAmountModifierPair !== undefined && trainingFacilityAbilityXpAmountModifierPair !== null) {
+      xpAmount = trainingFacilityAbilityXpAmountModifierPair.value * assignedBarn.barnUpgrades.specializationLevel;
+    }
+
+    assignedBarn.barnUpgrades.trainingFacilityDeltaTime += deltaTime;
+
+    if (trainingAnimal.currentTraining !== null &&
+      assignedBarn.barnUpgrades.trainingFacilityDeltaTime >= trainingAnimal.currentTraining.trainingTimeRemaining) {
+      assignedBarn.barnUpgrades.trainingFacilityDeltaTime = trainingAnimal.currentTraining.trainingTimeRemaining;
+    }
+    
+    while (assignedBarn.barnUpgrades.trainingFacilityDeltaTime >= timeToCollect) {
+      assignedBarn.barnUpgrades.trainingFacilityDeltaTime -= timeToCollect;      
+      this.globalService.increaseAbilityXp(trainingAnimal, xpAmount, false);
+    }
+  }
+
   handleAttractionRevenue(deltaTime: number, trainingAnimal: Animal) {
     var assignedBarn = this.globalService.globalVar.barns.find(item => item.barnNumber === trainingAnimal.associatedBarnNumber);
     if (assignedBarn === undefined || assignedBarn === null ||
@@ -216,6 +294,15 @@ export class SpecializationService {
       }
     }
 
+    var renownAmountEarned = 0;
+    if (this.globalService.globalVar.resources.find(item => item.name === "Attraction Improvements")) {
+      var renownAmountEarnedPair = this.globalService.globalVar.modifiers.find(item => item.text === "attractionRenownAmountModifier");
+
+      if (renownAmountEarnedPair !== undefined && renownAmountEarnedPair !== null) {
+        renownAmountEarned = renownAmountEarnedPair.value * assignedBarn.barnUpgrades.specializationLevel;
+      }
+    }
+
     assignedBarn.barnUpgrades.currentDeltaTime += deltaTime;
     var collectedAmount = 0;
 
@@ -230,6 +317,12 @@ export class SpecializationService {
       var resource = this.globalService.globalVar.resources.find(item => item.name === "Coins");
       if (resource !== undefined)
         resource.amount += amountEarned;
+
+      if (renownAmountEarned > 0) {        
+        var resource = this.globalService.globalVar.resources.find(item => item.name === "Renown");
+        if (resource !== undefined)
+          resource.amount += renownAmountEarned;
+      }
 
       collectedAmount += amountEarned;
     }

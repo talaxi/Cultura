@@ -269,8 +269,7 @@ export class RaceLogicService {
         }
 
         this.prepareRacingLeg(item, racingAnimal);
-
-        //console.log("Start Leg of Race Relay Length Check: " + racingAnimal.raceVariables.relayEffects.length);
+        
         if (!(this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix))
           raceResult.addRaceUpdate(framesPassed, animalDisplayName + " starts their leg of the race.");
       }
@@ -383,8 +382,7 @@ export class RaceLogicService {
         }
         longDistanceTalentIncreaseAccelerationWithLowVelocity = previousEventRaceSegmentData.longDistanceTalentIncreaseAccelerationWithLowVelocity;
         maxSpeedFloor = previousEventRaceSegmentData.maxSpeedFloor;
-        statLossFromExhaustion = previousEventRaceSegmentData.statLossFromExhaustion;
-        //console.log("Previous Segment Stat Loss: " + statLossFromExhaustion);
+        statLossFromExhaustion = previousEventRaceSegmentData.statLossFromExhaustion;        
       }
 
       //get values from relay effects      
@@ -436,8 +434,7 @@ export class RaceLogicService {
         this.selectedRace.pinnacleConditions.containsCondition(HardPinnacleConditionsEnum[HardPinnacleConditionsEnum.exhaustionPenaltyIncreased])) {
         racingAnimal.currentStats.stamina /= 2;
       }
-
-      //console.log("Stat Loss Before Race: " + statLossFromExhaustion);
+      
       for (var i = framesPassed; i <= this.timeToComplete * this.frameModifier; i++) {
         //Race logic here
         framesInCurrentLeg += 1;
@@ -639,8 +636,7 @@ export class RaceLogicService {
 
           if (statLossFromExhaustion < exhaustionStatLossMinimumModifier)
             statLossFromExhaustion = exhaustionStatLossMinimumModifier;
-
-          //console.log("Exhaustion: " + statLossFromExhaustion);
+          
           if (this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix) {
             this.setStaminaLossForEventAnimal(statLossFromExhaustion, racingAnimal.type);
           }
@@ -675,8 +671,7 @@ export class RaceLogicService {
 
             var lostVelocity = velocityBeforeEffect * velocityLoss;
 
-            var floorModifier = 1 - (maxSpeedFloor / racingAnimal.currentStats.maxSpeedMs);
-            //console.log("lost focus max speed floor: " + maxSpeedFloor + " Floor Mod: " + floorModifier);
+            var floorModifier = 1 - (maxSpeedFloor / racingAnimal.currentStats.maxSpeedMs);            
             //the reason for the issue is you aren't calculating with max speed floor as 0 therefore once velocity drops below the 5% threshold you no longer add a floor
             if (velocity > maxSpeedFloor)
               velocity -= (lostVelocity * floorModifier) / racingAnimal.raceVariables.defaultLostFocusLength;
@@ -701,8 +696,7 @@ export class RaceLogicService {
             currentRacerEffect = RacerEffectEnum.Stumble;
             var lostVelocity = velocityBeforeEffect - (velocityBeforeEffect * currentPath.stumbleSeverity);
 
-            var floorModifier = 1 - (maxSpeedFloor / racingAnimal.currentStats.maxSpeedMs);
-            //console.log("stumble max speed floor: " + maxSpeedFloor + " Floor Mod: " + floorModifier);
+            var floorModifier = 1 - (maxSpeedFloor / racingAnimal.currentStats.maxSpeedMs);            
             if (velocity > maxSpeedFloor)
               velocity -= (lostVelocity * floorModifier) / racingAnimal.raceVariables.defaultStumbledLength;
             racingAnimal.raceVariables.currentStumbledLength -= 1;
@@ -841,8 +835,7 @@ export class RaceLogicService {
         var modifiedMaxSpeed = racingAnimal.currentStats.maxSpeedMs;
         modifiedMaxSpeed *= item.terrain.maxSpeedModifier;
 
-        modifiedMaxSpeed *= statLossFromExhaustion;
-        //console.log("Basic Mods: " + modifiedMaxSpeed)
+        modifiedMaxSpeed *= statLossFromExhaustion;        
 
         if (this.selectedRace.pinnacleConditions !== undefined &&
           this.selectedRace.pinnacleConditions.containsCondition(HardPinnacleConditionsEnum[HardPinnacleConditionsEnum.reduceSpeedOnRelay])) {
@@ -922,7 +915,6 @@ export class RaceLogicService {
           this.selectedRace.pinnacleConditions.containsCondition(MediumPinnacleConditionsEnum[MediumPinnacleConditionsEnum.highSpeedLowAcceleration])) {
           modifiedMaxSpeed *= 5;
         }
-
         //all max speed modifiers need to be above here
 
         //set max speed floor from long distance talent

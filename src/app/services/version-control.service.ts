@@ -24,7 +24,7 @@ export class VersionControlService {
   constructor(private globalService: GlobalService, private lookupService: LookupService, private utilityService: UtilityService) { }
 
   //add to this in descending order
-  gameVersions = [1.19, 1.18, 1.17, 1.16, 1.15, 1.14, 1.13, 1.12, 1.11, 1.10, 1.09, 1.08, 1.07, 1.06, 1.05, 1.04, 1.03, 1.02, 1.01, 1.00];
+  gameVersions = [1.20, 1.19, 1.18, 1.17, 1.16, 1.15, 1.14, 1.13, 1.12, 1.11, 1.10, 1.09, 1.08, 1.07, 1.06, 1.05, 1.04, 1.03, 1.02, 1.01, 1.00];
 
   getListAscended() {
     var ascendedList: number[] = [];
@@ -175,13 +175,20 @@ export class VersionControlService {
         "Code redemption now gives an alert with what your code has given you.\n\n" +
         "Minor bug fixes.";
     if (version === 1.18)
-      changes = "You can now reset your talents for a fee when viewing a talent tree. All existing players will be given 1 free talent reset per animal to be used whenever they want.\n\n" +        
+      changes = "You can now reset your talents for a fee when viewing a talent tree. All existing players will be given 1 free talent reset per animal to be used whenever they want.\n\n" +
         "Minor bug fixes, mostly around grand prix.";
     if (version === 1.19)
       changes = "Scrimmages have been added to the game!" +
-      "<ul><li>Scrimmages are a new option under Coaching. As opposed to gaining racing stats, Scrimmages allow you to permanently increase the base stats your animals revert to after Breeding.</li>" +
-      "<li>Help your animal race through two paths. The faster they go, the better the rewards.</li></ul>" +
-      "Minor UI improvements.";
+        "<ul><li>Scrimmages are a new option under Coaching. As opposed to gaining racing stats, Scrimmages allow you to permanently increase the base stats your animals revert to after Breeding.</li>" +
+        "<li>Help your animal race through two paths. The faster they go, the better the rewards.</li></ul>" +
+        "Minor UI improvements.";
+    if (version === 1.20)
+      changes = "Added Barn Improvements to the Shop after reaching rank AZ (27), giving each barn specialization a unique upgrade.\n\n" +
+      "Scrimmage totals have been reduced to 30 instead of 100, but the stat gain amount should roughly remain the same. This should cut down on how long it takes to complete a Scrimmage session.\n\n" +  
+      "Grand Prix reward amounts have been altered." +
+        "<ul><li>Token rewards increase every five Grand Prixes during an event period instead of after every Grand Prix during an event period. This should smooth out token gain a bit more instead of hitting a point where you go from getting barely any tokens to a massive amount all at once.</li>" +
+        "<li>Base coin rewards per interval have been increased from 250 to 100. This amount increases after every successful Grand Prix during an event period.</li></ul>" +
+        "Bug fixes.";
     return changes;
   }
 
@@ -227,6 +234,8 @@ export class VersionControlService {
       date = new Date('2022-09-11 12:00:00');
     if (version === 1.19)
       date = new Date('2022-09-13 12:00:00');
+    if (version === 1.20)
+      date = new Date('2022-09-15 12:00:00');
 
     return date.toDateString().replace(/^\S+\s/, '');
   }
@@ -1151,9 +1160,82 @@ export class VersionControlService {
           this.globalService.globalVar.animals.forEach(item => {
             item.increasedDefaultStats = new AnimalStats(0, 0, 0, 0, 0, 0);
             item.scrimmageEnergyTimer = 0;
-          });          
+          });
 
           this.globalService.globalVar.tutorials.showScrimmageTutorial = true;
+        }
+        else if (version === 1.20) {
+          var grandPrixCoinRewardModifierModifier = this.globalService.globalVar.modifiers.find(item => item.text === "grandPrixCoinRewardModifier");
+          if (grandPrixCoinRewardModifierModifier !== undefined)
+            grandPrixCoinRewardModifierModifier.value = 250;
+
+          var researchCenterTrainingAnimalModifier = this.globalService.globalVar.modifiers.find(item => item.text === "researchCenterTrainingAnimalModifier");
+          if (researchCenterTrainingAnimalModifier !== undefined)
+          researchCenterTrainingAnimalModifier.value = .70;
+
+          this.globalService.globalVar.modifiers.push(new StringNumberPair(.001, "attractionRenownAmountModifier"));
+          this.globalService.globalVar.modifiers.push(new StringNumberPair(1, "trainingFacilityAbilityXpAmountModifier"));
+          this.globalService.globalVar.modifiers.push(new StringNumberPair(.1, "researchCenterRewardBonusAmountModifier"));
+          this.globalService.globalVar.modifiers.push(new StringNumberPair(.05, "breedingGroundsAdditionalAmountModifier"));
+
+          this.globalService.globalVar.barns.forEach(barn => {
+            barn.barnUpgrades.trainingFacilityDeltaTime = 0;
+          });
+
+          var specialtyShop = this.globalService.globalVar.shop.find(item => item.name === "Specialty");
+          if (specialtyShop !== null && specialtyShop !== undefined) {
+            var trainingFacilityUpgrade = new ShopItem();
+            trainingFacilityUpgrade.name = "Training Facility Improvements";
+            trainingFacilityUpgrade.purchasePrice.push(this.globalService.getCoinsResourceValue(250000));
+            trainingFacilityUpgrade.basePurchasePrice.push(this.globalService.getCoinsResourceValue(250000));
+            trainingFacilityUpgrade.totalShopQuantity = 1;
+            trainingFacilityUpgrade.canHaveMultiples = false;
+            trainingFacilityUpgrade.isAvailable = false;
+            trainingFacilityUpgrade.type = ShopItemTypeEnum.Specialty;
+            specialtyShop.itemList.push(trainingFacilityUpgrade);
+
+            if (this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.circuitRank) >= 26)
+              trainingFacilityUpgrade.isAvailable = true;
+
+            var breedingGroundsUpgrade = new ShopItem();
+            breedingGroundsUpgrade.name = "Breeding Grounds Improvements";
+            breedingGroundsUpgrade.purchasePrice.push(this.globalService.getCoinsResourceValue(250000));
+            breedingGroundsUpgrade.basePurchasePrice.push(this.globalService.getCoinsResourceValue(250000));
+            breedingGroundsUpgrade.totalShopQuantity = 1;
+            breedingGroundsUpgrade.canHaveMultiples = false;
+            breedingGroundsUpgrade.isAvailable = false;
+            breedingGroundsUpgrade.type = ShopItemTypeEnum.Specialty;
+            specialtyShop.itemList.push(breedingGroundsUpgrade);
+
+            if (this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.circuitRank) >= 26)
+              breedingGroundsUpgrade.isAvailable = true;
+
+            var attractionUpgrade = new ShopItem();
+            attractionUpgrade.name = "Attraction Improvements";
+            attractionUpgrade.purchasePrice.push(this.globalService.getCoinsResourceValue(250000));
+            attractionUpgrade.basePurchasePrice.push(this.globalService.getCoinsResourceValue(250000));
+            attractionUpgrade.totalShopQuantity = 1;
+            attractionUpgrade.canHaveMultiples = false;
+            attractionUpgrade.isAvailable = false;
+            attractionUpgrade.type = ShopItemTypeEnum.Specialty;
+            specialtyShop.itemList.push(attractionUpgrade);
+
+            if (this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.circuitRank) >= 26)
+              attractionUpgrade.isAvailable = true;
+
+            var researchCenterUpgrade = new ShopItem();
+            researchCenterUpgrade.name = "Research Center Improvements";
+            researchCenterUpgrade.purchasePrice.push(this.globalService.getCoinsResourceValue(250000));
+            researchCenterUpgrade.basePurchasePrice.push(this.globalService.getCoinsResourceValue(250000));
+            researchCenterUpgrade.totalShopQuantity = 1;
+            researchCenterUpgrade.canHaveMultiples = false;
+            researchCenterUpgrade.isAvailable = false;
+            researchCenterUpgrade.type = ShopItemTypeEnum.Specialty;
+            specialtyShop.itemList.push(researchCenterUpgrade);
+
+            if (this.globalService.globalVar.unlockables.get("researchCenterSpecialization"))
+            researchCenterUpgrade.isAvailable = true;
+          }
         }
 
         this.globalService.globalVar.currentVersion = version;

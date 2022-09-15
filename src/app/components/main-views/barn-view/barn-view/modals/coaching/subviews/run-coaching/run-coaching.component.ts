@@ -1,5 +1,6 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { Animal } from 'src/app/models/animals/animal.model';
+import { BarnSpecializationEnum } from 'src/app/models/barn-specialization-enum.model';
 import { CoachingCourseTypeEnum } from 'src/app/models/coaching-course-type-enum.model';
 import { CoachingTypeEnum } from 'src/app/models/coaching-type-enum.model';
 import { RaceCourseTypeEnum } from 'src/app/models/race-course-type-enum.model';
@@ -669,6 +670,20 @@ export class RunCoachingComponent implements OnInit {
       if (goldenWhistleStatGainModifier !== undefined && goldenWhistleStatGainModifier !== null)
         statGainAmount = goldenWhistleStatGainModifier.value;
     }
+
+    var scrimmageValueIncrease = 1;
+    if (this.globalService.globalVar.resources.find(item => item.name === "Research Center Improvements")) {
+      var researchCenterRewardBonusAmountModifier = this.globalService.globalVar.modifiers.find(item => item.text === "researchCenterRewardBonusAmountModifier");
+
+      if (researchCenterRewardBonusAmountModifier !== undefined && researchCenterRewardBonusAmountModifier !== null) {
+        var globalBarn = this.globalService.globalVar.barns.find(item => item.barnNumber === this.selectedBarnNumber);
+
+        if (globalBarn !== undefined && globalBarn.barnUpgrades.specialization === BarnSpecializationEnum.ResearchCenter)
+          scrimmageValueIncrease = 1 + (researchCenterRewardBonusAmountModifier.value * globalBarn.barnUpgrades.specializationLevel);
+      }
+    }
+
+    statGainAmount *= scrimmageValueIncrease;
 
     if (pathType === CoachingCourseTypeEnum.speed) {
       this.associatedAnimal.currentStats.topSpeed += statGainAmount;

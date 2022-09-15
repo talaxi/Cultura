@@ -12,6 +12,7 @@ import { GameLoopService } from 'src/app/services/game-loop/game-loop.service';
 import { GlobalService } from 'src/app/services/global-service.service';
 import { LookupService } from 'src/app/services/lookup.service';
 import { SpecializationService } from 'src/app/services/specialization.service';
+import { UtilityService } from 'src/app/services/utility/utility.service';
 
 @Component({
   selector: 'app-faq-view',
@@ -26,6 +27,7 @@ export class FaqViewComponent implements OnInit {
   seeOceanCourseTypeSpoiler: boolean = false;
   seeTundraCourseTypeSpoiler: boolean = false;
   seeVolcanicCourseTypeSpoiler: boolean = false;
+  seeItemSet2Spoiler: boolean = false;
   currentSection: FaqSectionsEnum = FaqSectionsEnum.basics;
   public faqSectionsEnum = FaqSectionsEnum;
   sunnyTerrainInfo = "";
@@ -48,6 +50,7 @@ export class FaqViewComponent implements OnInit {
   selectedSpecialization = 1;
   barnUpgradeLevel = 0;
   barnSpecializationLevel = 0;
+  hasBarnImprovements = false;
 
   renownCoinGain = 0;
   incubatorModifierAmount = 0;
@@ -55,10 +58,14 @@ export class FaqViewComponent implements OnInit {
   barnSpecializationLevelAmount = "";
 
   constructor(private componentCommunicationService: ComponentCommunicationService, public lookupService: LookupService,
-    private gameLoopService: GameLoopService, public globalService: GlobalService, private specializationService: SpecializationService) { }
+    private gameLoopService: GameLoopService, public globalService: GlobalService, private specializationService: SpecializationService,
+    private utilityService: UtilityService) { }
 
   ngOnInit(): void {
     this.componentCommunicationService.setNewView(NavigationEnum.faqs);
+
+    if (this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.circuitRank) >= 27)
+      this.seeItemSet2Spoiler = true;
 
     if (this.lookupService.isItemUnlocked("attractionSpecialization"))
       this.seeAttractionSpoiler = true;
@@ -196,20 +203,42 @@ export class FaqViewComponent implements OnInit {
   handleBarnSpecializationLevelAmountCalculation() {    
     if (+this.selectedSpecialization === 1)
     {
-      this.barnSpecializationLevelAmount = this.specializationService.getSpecializationPopoverText(BarnSpecializationEnum.BreedingGrounds, this.barnSpecializationLevel);
+      this.barnSpecializationLevelAmount = this.specializationService.getSpecializationPopoverText(BarnSpecializationEnum.BreedingGrounds, this.barnSpecializationLevel, this.hasBarnImprovements);
     }
     else if (+this.selectedSpecialization === 2)
     {
-      this.barnSpecializationLevelAmount = this.specializationService.getSpecializationPopoverText(BarnSpecializationEnum.TrainingFacility, this.barnSpecializationLevel);
+      this.barnSpecializationLevelAmount = this.specializationService.getSpecializationPopoverText(BarnSpecializationEnum.TrainingFacility, this.barnSpecializationLevel, this.hasBarnImprovements);
     }
     else if (+this.selectedSpecialization === 3)
     {
-      this.barnSpecializationLevelAmount = this.specializationService.getSpecializationPopoverText(BarnSpecializationEnum.Attraction, this.barnSpecializationLevel);
+      this.barnSpecializationLevelAmount = this.specializationService.getSpecializationPopoverText(BarnSpecializationEnum.Attraction, this.barnSpecializationLevel, this.hasBarnImprovements);
     }
     else if (+this.selectedSpecialization === 4)
     {
-      this.barnSpecializationLevelAmount = this.specializationService.getSpecializationPopoverText(BarnSpecializationEnum.ResearchCenter, this.barnSpecializationLevel);
+      this.barnSpecializationLevelAmount = this.specializationService.getSpecializationPopoverText(BarnSpecializationEnum.ResearchCenter, this.barnSpecializationLevel, this.hasBarnImprovements);
     }
+  }
+
+  checkForImprovements() {
+    var hasImprovements = false;
+    if (+this.selectedSpecialization === 1)
+    {
+      hasImprovements = this.globalService.globalVar.resources.some(item => item.name === "Breeding Grounds Improvements");
+    }
+    else if (+this.selectedSpecialization === 2)
+    {
+      hasImprovements = this.globalService.globalVar.resources.some(item => item.name === "Training Facility Improvements");
+    }
+    else if (+this.selectedSpecialization === 3)
+    {
+      hasImprovements = this.globalService.globalVar.resources.some(item => item.name === "Attraction Improvements");
+    }
+    else if (+this.selectedSpecialization === 4)
+    {
+      hasImprovements = this.globalService.globalVar.resources.some(item => item.name === "Research Center Improvements");
+    }
+    
+    this.hasBarnImprovements = hasImprovements;
   }
 
   changeBarnUpgradeLevel() {
@@ -231,6 +260,8 @@ export class FaqViewComponent implements OnInit {
       this.seeTundraCourseTypeSpoiler = true;
     if (name === "Volcanic Course Type")
       this.seeVolcanicCourseTypeSpoiler = true;
+    if (name === "Item Set 2")
+      this.seeItemSet2Spoiler = true;
   }
 
   expandAnswer(id: string) {
@@ -238,6 +269,10 @@ export class FaqViewComponent implements OnInit {
     if (element !== null && element !== undefined) {
       element.classList.toggle("hide");
     }
+  }
+
+  toggleHasImprovements() {
+    this.hasBarnImprovements = !this.hasBarnImprovements;
   }
 
   changeSection(newSection: FaqSectionsEnum) {

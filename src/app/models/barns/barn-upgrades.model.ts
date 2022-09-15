@@ -9,6 +9,7 @@ export class BarnUpgrades {
     upgradePrice: ResourceValue[];
     upgradedStatGain: AnimalStats;
     currentDeltaTime: number; //for attraction timer or any other future timers
+    trainingFacilityDeltaTime: number;
 
     constructor() {    
         this.upgradePrice = [];
@@ -16,5 +17,6 @@ export class BarnUpgrades {
         this.barnLevel = 0;
         this.specializationLevel = 0;
         this.currentDeltaTime = 0;
+        this.trainingFacilityDeltaTime = 0;
     }
 }

@@ -2,6 +2,7 @@ import { Component, ElementRef, HostListener, Input, OnInit, ViewChild } from '@
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AnimalStatEnum } from 'src/app/models/animal-stat-enum.model';
 import { Animal } from 'src/app/models/animals/animal.model';
+import { BarnSpecializationEnum } from 'src/app/models/barn-specialization-enum.model';
 import { RaceCourseTypeEnum } from 'src/app/models/race-course-type-enum.model';
 import { ScrimmageEventEnum } from 'src/app/models/scrimmage-event-enum.model';
 import { GameLoopService } from 'src/app/services/game-loop/game-loop.service';
@@ -33,7 +34,7 @@ export class ScrimmageComponent implements OnInit {
   xDistanceOffset: number;
   yDistanceOffset: number;
 
-  timeToBeat: number;
+  timeToBeat: number = 4;
   timeToFinishScrimmage: number;
   currentDistance: number;
   maxSpeed: number;
@@ -100,9 +101,9 @@ export class ScrimmageComponent implements OnInit {
         if (associatedAnimal !== undefined && associatedAnimal !== null) {
           this.associatedAnimal = associatedAnimal;
 
-          this.maxEnergy = this.associatedAnimal.breedLevel;
-          if (this.maxEnergy > 100)
-            this.maxEnergy = 100;
+          this.maxEnergy = Math.ceil(this.associatedAnimal.breedLevel / 5);
+          if (this.maxEnergy > 30)
+            this.maxEnergy = 30;
           this.remainingEnergy = this.maxEnergy - 1;
           this.associatedAnimal.scrimmageEnergyTimer = this.energyResetMinutes * 60;
           var courseClass = "coloredText " + this.associatedAnimal.getCourseTypeClass();
@@ -367,17 +368,31 @@ export class ScrimmageComponent implements OnInit {
   scrimmageComplete() {
     //handle rewards
     var randomStat = this.getRandomStatType();
-    var value = (6 - this.timeToFinishScrimmage) / 100;
+    var value = (7 - this.timeToFinishScrimmage) / 100;
     if (value < .005)
       value = .005;
 
     value *= this.chainModifier;
 
     if (this.timeToFinishScrimmage <= this.timeToBeat) {
-      value *= 3;
-      this.chainModifier += (this.timeToBeat - this.timeToFinishScrimmage) / 20;
+      value *= 4;
+      this.chainModifier += (this.timeToBeat - this.timeToFinishScrimmage) / 5;
       this.chainModifier = Math.round((this.chainModifier + Number.EPSILON) * 10000) / 10000;
     }
+
+    var scrimmageValueIncrease = 1;
+    if (this.globalService.globalVar.resources.find(item => item.name === "Research Center Improvements")) {
+      var researchCenterRewardBonusAmountModifier = this.globalService.globalVar.modifiers.find(item => item.text === "researchCenterRewardBonusAmountModifier");
+
+      if (researchCenterRewardBonusAmountModifier !== undefined && researchCenterRewardBonusAmountModifier !== null) {
+        var globalBarn = this.globalService.globalVar.barns.find(item => item.barnNumber === this.selectedBarnNumber);
+
+        if (globalBarn !== undefined && globalBarn.barnUpgrades.specialization === BarnSpecializationEnum.ResearchCenter)
+          scrimmageValueIncrease = 1 + (researchCenterRewardBonusAmountModifier.value * globalBarn.barnUpgrades.specializationLevel);
+      }
+    }
+
+    value *= scrimmageValueIncrease;
 
     //go through and add to each corresponding stat. also display this under the stat popover
     if (randomStat === AnimalStatEnum.topSpeed)
@@ -400,6 +415,7 @@ export class ScrimmageComponent implements OnInit {
 
     if (this.remainingEnergy <= 0) {      
       this.remainingEnergy = 0;
+      this.currentButtonCooldown = 0;
       this.currentStatus = "Tired";
       this.reachedExhaustion = true;
       this.incrementalCoachingUpdates += this.animalDisplayName + " needs to stop and take a breather before they can continue. Revisit this page to continue another time. Final chain modifier: <b>" + this.chainModifier + "</b>\n";

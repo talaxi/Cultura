@@ -83,8 +83,8 @@ export class GlobalService {
     this.globalVar.freeRaceCounter = 0;
     this.globalVar.freeRaceTimePeriodCounter = 0;
     this.globalVar.lastTimeStamp = Date.now();
-    this.globalVar.currentVersion = 1.19; //TODO: this needs to be automatically increased or something, too easy to forget
-    this.globalVar.startingVersion = 1.19;
+    this.globalVar.currentVersion = 1.20; //TODO: this needs to be automatically increased or something, too easy to forget
+    this.globalVar.startingVersion = 1.20;
     this.globalVar.startDate = new Date();
     this.globalVar.notifications = new Notifications();
     this.globalVar.relayEnergyFloor = 50;
@@ -163,9 +163,14 @@ export class GlobalService {
     this.globalVar.modifiers.push(new StringNumberPair((5 * 60), "attractionTimeToCollectModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(20, "attractionAmountModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(.05, "researchCenterIncrementsModifier"));
-    this.globalVar.modifiers.push(new StringNumberPair(.45, "researchCenterTrainingAnimalModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(.70, "researchCenterTrainingAnimalModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(.25, "researchCenterStudyingAnimalModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(.75, "researchCenterMaxStatGainModifier"));
+
+    this.globalVar.modifiers.push(new StringNumberPair(.001, "attractionRenownAmountModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(1, "trainingFacilityAbilityXpAmountModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(.1, "researchCenterRewardBonusAmountModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(.05, "breedingGroundsAdditionalAmountModifier"));
 
     this.globalVar.modifiers.push(new StringNumberPair(3, "headbandEquipmentModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(1, "quickSnackEquipmentModifier"));
@@ -193,7 +198,7 @@ export class GlobalService {
 
     this.globalVar.modifiers.push(new StringNumberPair(2500000, "metersPerCoinsGrandPrixModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(20000000, "metersPerRenownGrandPrixModifier"));
-    this.globalVar.modifiers.push(new StringNumberPair(100, "grandPrixCoinRewardModifier"));
+    this.globalVar.modifiers.push(new StringNumberPair(250, "grandPrixCoinRewardModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(3, "grandPrixRenownRewardModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(50000000, "grandPrixToken1MeterModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(100000000, "grandPrixToken2MeterModifier"));
@@ -1013,6 +1018,46 @@ export class GlobalService {
     talentPoints.type = ShopItemTypeEnum.Specialty;
     specialtyShopItems.push(talentPoints);
 
+    var trainingFacilityUpgrade = new ShopItem();
+    trainingFacilityUpgrade.name = "Training Facility Improvements";
+    trainingFacilityUpgrade.purchasePrice.push(this.getCoinsResourceValue(250000));
+    trainingFacilityUpgrade.basePurchasePrice.push(this.getCoinsResourceValue(250000));
+    trainingFacilityUpgrade.totalShopQuantity = 1;
+    trainingFacilityUpgrade.canHaveMultiples = false;
+    trainingFacilityUpgrade.isAvailable = false;
+    trainingFacilityUpgrade.type = ShopItemTypeEnum.Specialty;
+    specialtyShopItems.push(trainingFacilityUpgrade);
+
+    var breedingGroundsUpgrade = new ShopItem();
+    breedingGroundsUpgrade.name = "Breeding Grounds Improvements";
+    breedingGroundsUpgrade.purchasePrice.push(this.getCoinsResourceValue(250000));
+    breedingGroundsUpgrade.basePurchasePrice.push(this.getCoinsResourceValue(250000));
+    breedingGroundsUpgrade.totalShopQuantity = 1;
+    breedingGroundsUpgrade.canHaveMultiples = false;
+    breedingGroundsUpgrade.isAvailable = false;
+    breedingGroundsUpgrade.type = ShopItemTypeEnum.Specialty;
+    specialtyShopItems.push(breedingGroundsUpgrade);
+
+    var attractionUpgrade = new ShopItem();
+    attractionUpgrade.name = "Attraction Improvements";
+    attractionUpgrade.purchasePrice.push(this.getCoinsResourceValue(250000));
+    attractionUpgrade.basePurchasePrice.push(this.getCoinsResourceValue(250000));
+    attractionUpgrade.totalShopQuantity = 1;
+    attractionUpgrade.canHaveMultiples = false;
+    attractionUpgrade.isAvailable = false;
+    attractionUpgrade.type = ShopItemTypeEnum.Specialty;
+    specialtyShopItems.push(attractionUpgrade);
+
+    var researchCenterUpgrade = new ShopItem();
+    researchCenterUpgrade.name = "Research Center Improvements";
+    researchCenterUpgrade.purchasePrice.push(this.getCoinsResourceValue(250000));
+    researchCenterUpgrade.basePurchasePrice.push(this.getCoinsResourceValue(250000));
+    researchCenterUpgrade.totalShopQuantity = 1;
+    researchCenterUpgrade.canHaveMultiples = false;
+    researchCenterUpgrade.isAvailable = false;
+    researchCenterUpgrade.type = ShopItemTypeEnum.Specialty;
+    specialtyShopItems.push(researchCenterUpgrade);
+
     specialtyShopSection.name = "Specialty";
     specialtyShopSection.itemList = specialtyShopItems;
     this.globalVar.shop.push(specialtyShopSection);
@@ -1738,6 +1783,13 @@ export class GlobalService {
     else if (numericValue === 41) {
       this.globalVar.unlockables.set("researchCenterSpecialization", true);
 
+      var specialtyShop = this.globalVar.shop.find(item => item.name === "Specialty");
+      if (specialtyShop !== null && specialtyShop !== undefined) {
+        var researchCenterImprovements = specialtyShop.itemList.find(item => item.name === "Research Center Improvements");
+        if (researchCenterImprovements !== null && researchCenterImprovements !== undefined)
+          researchCenterImprovements.isAvailable = true;
+      }
+
       returnVal = ["Research Center Specialization", this.getSpecializationDescription("Research Center")];
 
       var amount = 250;
@@ -2427,6 +2479,18 @@ export class GlobalService {
       var courseMaps = specialtyShop.itemList.find(item => item.name === "Course Maps");
       if (courseMaps !== null && courseMaps !== undefined)
         courseMaps.isAvailable = true;
+
+      var trainingFacilityImprovements = specialtyShop.itemList.find(item => item.name === "Training Facility Improvements");
+      if (trainingFacilityImprovements !== null && trainingFacilityImprovements !== undefined)
+        trainingFacilityImprovements.isAvailable = true;
+
+      var breedingGroundsImprovements = specialtyShop.itemList.find(item => item.name === "Breeding Grounds Improvements");
+      if (breedingGroundsImprovements !== null && breedingGroundsImprovements !== undefined)
+        breedingGroundsImprovements.isAvailable = true;
+
+      var attractionImprovements = specialtyShop.itemList.find(item => item.name === "Attraction Improvements");
+      if (attractionImprovements !== null && attractionImprovements !== undefined)
+        attractionImprovements.isAvailable = true;
     }
 
     var equipmentShop = this.globalVar.shop.find(item => item.name === "Equipment");
@@ -3698,6 +3762,14 @@ export class GlobalService {
     this.globalVar.animals.forEach(animal => {
       this.globalVar.eventRaceData.animalData.push(new AnimalEventRaceData(animal.type));
     });
+
+    var startDate = this.getCurrentEventStartEndDateTime(false);
+    if (startDate instanceof Date)
+      this.globalVar.eventRaceData.currentEventStartDate = startDate;
+
+    var endDate = this.getCurrentEventStartEndDateTime(true);
+    if (endDate instanceof Date)
+      this.globalVar.eventRaceData.currentEventEndDate = endDate;
 
     this.globalVar.eventRaceData.weatherCluster = this.getRandomGrandPrixWeatherCluster();
     this.globalVar.previousEventRewards = [];
@@ -5001,8 +5073,8 @@ export class GlobalService {
       talentCount = 10;
     }
     else if (progressionSetting === 4) {
-      trainingStatValue = 1000;
-      breedLevel = 12500;
+      trainingStatValue = 5000;
+      breedLevel = 1500;
       incubatorUpgradeValue = 12.5;
       talentCount = 60;
     }
@@ -5026,7 +5098,7 @@ export class GlobalService {
       animal.currentStats.focus = trainingStatValue;
       animal.currentStats.adaptability = trainingStatValue;
 
-      animal.breedLevel = breedLevel;
+      animal.breedLevel = breedLevel;    
 
       animal.incubatorStatUpgrades.maxSpeedModifier = incubatorUpgradeValue;
       animal.incubatorStatUpgrades.accelerationModifier = incubatorUpgradeValue;
@@ -5037,7 +5109,7 @@ export class GlobalService {
 
       animal.ability.abilityLevel = animal.breedLevel + 25;
       animal.availableAbilities.forEach(ability => {
-        ability.abilityLevel = animal.breedLevel + 25;
+        ability.abilityLevel = animal.breedLevel;// + 25;
       });
 
       if (progressionSetting >= 4) {

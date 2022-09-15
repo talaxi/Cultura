@@ -390,13 +390,21 @@ export class LookupService {
     if (modifierPair !== null && modifierPair !== undefined)
       increaseAmount = modifierPair.value;
 
+
     if (animal !== undefined && animal.miscStats.bonusBreedXpGainFromTraining !== undefined && animal.miscStats.bonusBreedXpGainFromTraining !== null && animal.miscStats.bonusBreedXpGainFromTraining > 0)
       increaseAmount += animal.miscStats.bonusBreedXpGainFromTraining;
 
     if (breedingGroundsSpecializationLevel > 0) {
+      var breedingGroundsImprovementAmount = 0;
+      if (this.globalService.globalVar.resources.find(item => item.name === "Breeding Grounds Improvements")) {
+        var breedingGroundsAdditionalAmountModifier = this.globalService.globalVar.modifiers.find(item => item.text === "breedingGroundsAdditionalAmountModifier");
+        if (breedingGroundsAdditionalAmountModifier !== undefined)
+          breedingGroundsImprovementAmount = breedingGroundsAdditionalAmountModifier.value;
+      }
+
       var breedingGroundsModifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "breedingGroundsSpecializationModifier");
       if (breedingGroundsModifierPair !== null && breedingGroundsModifierPair !== undefined) {
-        increaseAmount *= 1 + (breedingGroundsSpecializationLevel * breedingGroundsModifierPair.value);
+        increaseAmount *= 1 + (breedingGroundsSpecializationLevel * (breedingGroundsModifierPair.value + breedingGroundsImprovementAmount));
       }
     }
 
@@ -660,7 +668,7 @@ export class LookupService {
     if (token4MeterCountPair !== null && token4MeterCountPair !== undefined)
       token4MeterCount = token4MeterCountPair.value;
 
-    var tokenGainModifier = this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.eventRaceData.rank);
+    var tokenGainModifier = this.getTokenModifier();
     var token1Gain = 1 * tokenGainModifier;
     var token2Gain = 2 * tokenGainModifier;
     var token3Gain = 3 * tokenGainModifier;
@@ -1217,7 +1225,7 @@ export class LookupService {
       cost = 0;
       return cost;
     }
-    
+
     if (animal.talentResetCount === 0)
       return cost;
 
@@ -1315,7 +1323,7 @@ export class LookupService {
       description = "For every 10 levels, gain " + (increaseAmount * 100) + "% additional breed XP when completing a training.";
     }
     else if (specializationName === "Training Facility") {
-      description = "For every 10 levels up to level 200, gain 1% training time reduction. For every 10 levels after level 200, gain a .1 stat multiplier for every stat.";
+      description = "For every 10 levels up to level 100, gain 2% training time reduction. For every 10 levels after level 100, gain a .1 stat multiplier for every stat.";
     }
     else if (specializationName === "Attraction") {
       var timeToCollect = 60;
@@ -1352,7 +1360,7 @@ export class LookupService {
       if (maxStatGainModifier !== undefined && maxStatGainModifier !== null)
         maxStatGain = maxStatGainModifier.value;
 
-      description = "To start, the animal training at the Research Center only gains " + ((trainingAnimalDefault + statGainIncrements) * 100) + "% of the stat values from their training. Another animal at random will gain " + (studyingAnimalDefault * 100) + "% of the stat values from training, prioritizing animals of the same course type. For every 10 levels, " + (statGainIncrements * 100) + "% additional stat gain will be distributed up to " + (maxStatGain * 100) + "% starting with the training animal and then the other animal. Additional animals will gain stats after maxing out the previous.";
+      description = "To start, the animal training at the Research Center only gains " + ((trainingAnimalDefault + statGainIncrements) * 100) + "% of the stat values from their training. Another animal at random will gain " + (studyingAnimalDefault * 100) + "% of the stat values from training, prioritizing animals of the same course type. For every 10 levels, " + (statGainIncrements * 100) + "% additional stat gain will be distributed up to " + (maxStatGain * 100) + "% to the other animal. Additional animals will gain stats after maxing out the previous.";
     }
 
     return description;
@@ -1399,10 +1407,10 @@ export class LookupService {
   getTrainingTimeReductionFromTrainingFacility(barnUpgrades: BarnUpgrades) {
     if (barnUpgrades.specialization === BarnSpecializationEnum.TrainingFacility) {
       var specLevel = barnUpgrades.specializationLevel;
-      if (specLevel > 20)
-        specLevel = 20;
+      if (specLevel > 10)
+        specLevel = 10;
 
-      return specLevel * .01;
+      return specLevel * .02;
     }
 
     return 0;
@@ -1540,6 +1548,26 @@ export class LookupService {
     if (goldenWhistleStatGainModifier !== undefined && goldenWhistleStatGainModifier !== null)
       goldenWhistleStatGain = goldenWhistleStatGainModifier.value;
 
+    var timeToCollect = 60;
+    var timeToCollectPair = this.globalService.globalVar.modifiers.find(item => item.text === "attractionTimeToCollectModifier");
+
+    if (timeToCollectPair !== undefined && timeToCollectPair !== null)
+      timeToCollect = timeToCollectPair.value;
+
+    var renownAmountEarned = 0;
+    var renownAmountEarnedPair = this.globalService.globalVar.modifiers.find(item => item.text === "attractionRenownAmountModifier");
+
+    if (renownAmountEarnedPair !== undefined && renownAmountEarnedPair !== null) {
+      renownAmountEarned = renownAmountEarnedPair.value;
+    }
+
+
+    var researchCenterRewardBonusAmountModifier = 0;
+    var researchCenterRewardBonusAmountModifierPair = this.globalService.globalVar.modifiers.find(item => item.text === "researchCenterRewardBonusAmountModifier");
+
+    if (researchCenterRewardBonusAmountModifierPair !== undefined && researchCenterRewardBonusAmountModifierPair !== null) {
+      researchCenterRewardBonusAmountModifier = researchCenterRewardBonusAmountModifierPair.value;
+    }
 
     if (itemName === "Stopwatch")
       description = "Reduce training time by 5%";
@@ -1573,6 +1601,14 @@ export class LookupService {
       description = "Gain +" + goldenWhistleStatGain + " to a stat instead of +" + whistleStatGain + " after a successful coaching attempt";
     else if (itemName === "Talent Point Voucher")
       description = "Increase Talent Points by 1";
+    else if (itemName === "Training Facility Improvements")
+      description = "Increase ability XP by 1 for every 10 barn levels every " + timeToCollect + " seconds while an animal trains at a Training Facility.";
+    else if (itemName === "Breeding Grounds Improvements")
+      description = "Further increase Breed XP gain from Breeding Grounds by 5% for every 10 barn levels.";
+    else if (itemName === "Attraction Improvements")
+      description = "Increase Renown by " + renownAmountEarned + " for every 10 barn levels every " + timeToCollect + " seconds while an animal trains at an Attraction.";
+    else if (itemName === "Research Center Improvements")
+      description = "Increase stat gain from Coaching and Scrimmages by " + (researchCenterRewardBonusAmountModifier * 100) + "% for every 10 barn levels of a Research Center.";
 
     var sanitized = this.sanitizer.sanitize(SecurityContext.HTML, this.sanitizer.bypassSecurityTrustHtml(description));
     if (sanitized !== null)
@@ -1611,15 +1647,15 @@ export class LookupService {
 
     if (statEnum === AnimalStatEnum.topSpeed)
       name = "Speed";
-      if (statEnum === AnimalStatEnum.acceleration)
+    if (statEnum === AnimalStatEnum.acceleration)
       name = "Acceleration";
-      if (statEnum === AnimalStatEnum.endurance)
+    if (statEnum === AnimalStatEnum.endurance)
       name = "Endurance";
-      if (statEnum === AnimalStatEnum.power)
+    if (statEnum === AnimalStatEnum.power)
       name = "Power";
-      if (statEnum === AnimalStatEnum.focus)
+    if (statEnum === AnimalStatEnum.focus)
       name = "Focus";
-      if (statEnum === AnimalStatEnum.adaptability)
+    if (statEnum === AnimalStatEnum.adaptability)
       name = "Adaptability";
 
     return name;
@@ -1714,7 +1750,7 @@ export class LookupService {
       this.globalService.globalVar.orbStats.getAccelerationIncrease(1) > 1)
       popover += "Amber Orb: *" + this.globalService.globalVar.orbStats.getAccelerationIncrease(1).toFixed(1) + "\n";
 
-      popover += "\n Default Acceleration value after Breed is " + (animal.increasedDefaultStats.acceleration + animal.baseStats.acceleration).toFixed(3) + ".";
+    popover += "\n Default Acceleration value after Breed is " + (animal.increasedDefaultStats.acceleration + animal.baseStats.acceleration).toFixed(3) + ".";
     return popover;
   }
 
@@ -1806,7 +1842,7 @@ export class LookupService {
       this.globalService.globalVar.orbStats.getPowerIncrease(1) > 1)
       popover += "Amethyst Orb: *" + this.globalService.globalVar.orbStats.getPowerIncrease(1).toFixed(1) + "\n";
 
-      popover += "\n Default Power value after Breed is " + (animal.increasedDefaultStats.power + animal.baseStats.power).toFixed(3) + ".";
+    popover += "\n Default Power value after Breed is " + (animal.increasedDefaultStats.power + animal.baseStats.power).toFixed(3) + ".";
 
     return popover;
   }
@@ -1854,7 +1890,7 @@ export class LookupService {
       popover += "Sapphire Orb: *" + this.globalService.globalVar.orbStats.getFocusIncrease(1).toFixed(1) + "\n";
 
 
-      popover += "\n Default Focus value after Breed is " + (animal.increasedDefaultStats.focus + animal.baseStats.focus).toFixed(3) + ".";
+    popover += "\n Default Focus value after Breed is " + (animal.increasedDefaultStats.focus + animal.baseStats.focus).toFixed(3) + ".";
     return popover;
   }
 
@@ -1900,7 +1936,7 @@ export class LookupService {
       this.globalService.globalVar.orbStats.getAdaptabilityIncrease(1) > 1)
       popover += "Emerald Orb: *" + this.globalService.globalVar.orbStats.getAdaptabilityIncrease(1).toFixed(1) + "\n";
 
-      popover += "\n Default Adaptability value after Breed is " + (animal.increasedDefaultStats.adaptability + animal.baseStats.adaptability).toFixed(3) + ".";
+    popover += "\n Default Adaptability value after Breed is " + (animal.increasedDefaultStats.adaptability + animal.baseStats.adaptability).toFixed(3) + ".";
     return popover;
   }
 
@@ -2142,6 +2178,11 @@ export class LookupService {
     }
 
     return description;
+  }
+
+  getTokenModifier() {
+    var currentEventRank = this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.eventRaceData.rank);
+    return Math.ceil((currentEventRank + 1) / 5);
   }
 
   getTotalFreeRacesPerPeriod() {

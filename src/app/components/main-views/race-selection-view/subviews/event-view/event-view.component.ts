@@ -81,7 +81,7 @@ export class EventViewComponent implements OnInit {
 
     var coinRewardAmountValuePair = this.globalService.globalVar.modifiers.find(item => item.text === "grandPrixCoinRewardModifier");
     if (coinRewardAmountValuePair !== null && coinRewardAmountValuePair !== undefined)
-      this.coinRewardAmount = coinRewardAmountValuePair.value;
+      this.coinRewardAmount = coinRewardAmountValuePair.value * numericRankModifier;
 
     var renownRewardAmountValuePair = this.globalService.globalVar.modifiers.find(item => item.text === "grandPrixRenownRewardModifier");
     if (renownRewardAmountValuePair !== null && renownRewardAmountValuePair !== undefined)
@@ -357,7 +357,7 @@ export class EventViewComponent implements OnInit {
     totalRewards = this.globalService.globalVar.eventRaceData.totalDistance / this.coinRewardInterval;
     rewardsObtained = Math.floor(this.globalService.globalVar.eventRaceData.distanceCovered / this.coinRewardInterval);
 
-    text = (rewardsObtained * this.coinRewardAmount) + "/" + (totalRewards * this.coinRewardAmount) + " Coins obtained";
+    text = (rewardsObtained * this.coinRewardAmount).toLocaleString() + "/" + (totalRewards * this.coinRewardAmount).toLocaleString() + " Coins obtained";
 
     return text;
   }
@@ -365,7 +365,7 @@ export class EventViewComponent implements OnInit {
   getGrandPrixTokenRewardsPopover() {
     var popover = "";
     var rewards = this.lookupService.getGrandPrixTokenRewards();
-    var numericRankModifier = this.globalService.globalVar.eventRaceData.rankDistanceMultiplier;//this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.eventRaceData.rank);
+    var numericRankModifier = this.globalService.globalVar.eventRaceData.rankDistanceMultiplier;
 
     var token1MeterCount = 50000000;
     var token1MeterCountPair = this.globalService.globalVar.modifiers.find(item => item.text === "grandPrixToken1MeterModifier");

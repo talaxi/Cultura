@@ -405,7 +405,7 @@ export class GrandPrixLogicService {
     var coinRewardAmount = 100;
     var coinRewardAmountValuePair = this.globalService.globalVar.modifiers.find(item => item.text === "grandPrixCoinRewardModifier");
     if (coinRewardAmountValuePair !== null && coinRewardAmountValuePair !== undefined)
-      coinRewardAmount = coinRewardAmountValuePair.value;
+      coinRewardAmount = coinRewardAmountValuePair.value * numericRankValue;
 
     var renownRewardAmount = 5;
     var renownRewardAmountValuePair = this.globalService.globalVar.modifiers.find(item => item.text === "grandPrixRenownRewardModifier");
@@ -442,7 +442,7 @@ export class GrandPrixLogicService {
     if (token4MeterCountPair !== null && token4MeterCountPair !== undefined)
       token4MeterCount = token4MeterCountPair.value;
 
-    var tokenGainModifier = this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.eventRaceData.rank);
+    var tokenGainModifier = this.lookupService.getTokenModifier();
     var totalCoinRewards = this.globalService.globalVar.eventRaceData.totalDistance / (metersPerCoinRewardValue * numericRankValue);
     var totalRenownRewards = this.globalService.globalVar.eventRaceData.totalDistance / (metersPerRenownRewardValue * numericRankValue);
 

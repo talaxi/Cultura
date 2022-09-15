@@ -125,22 +125,22 @@
                                 <span [ngClass]='seeOceanCourseTypeSpoiler ? "viewSpoiler" : "spoilerText"'
                                     (click)="viewSpoiler('Ocean Course Type')"><span class="hidden">View
                                         Spoiler</span><span class="keyword">Dolphin</span> - {{
-                                            globalService.getAnimalDescription("Dolphin") }}</span>
+                                    globalService.getAnimalDescription("Dolphin") }}</span>
                                 <br />
                                 <span [ngClass]='seeOceanCourseTypeSpoiler ? "viewSpoiler" : "spoilerText"'
                                     (click)="viewSpoiler('Ocean Course Type')"><span class="hidden">View
                                         Spoiler</span><span class="keyword">Shark</span> - {{
-                                            globalService.getAnimalDescription("Shark") }}</span>
+                                    globalService.getAnimalDescription("Shark") }}</span>
                                 <br />
                                 <span [ngClass]='seeOceanCourseTypeSpoiler ? "viewSpoiler" : "spoilerText"'
                                     (click)="viewSpoiler('Ocean Course Type')"><span class="hidden">View
                                         Spoiler</span><span class="keyword">Octopus</span> - {{
-                                            globalService.getAnimalDescription("Octopus") }}</span>
+                                    globalService.getAnimalDescription("Octopus") }}</span>
                                 <br />
                                 <span [ngClass]='seeOceanCourseTypeSpoiler ? "viewSpoiler" : "spoilerText"'
                                     (click)="viewSpoiler('Ocean Course Type')"><span class="hidden">View
                                         Spoiler</span><span class="keyword">Whale</span> - {{
-                                            globalService.getAnimalDescription("Whale") }}</span>
+                                    globalService.getAnimalDescription("Whale") }}</span>
                                 <br />
                                 <br />
                             </div>
@@ -161,14 +161,14 @@
                                     [ngClass]='seeTundraCourseTypeSpoiler ? "viewSpoiler" : "spoilerText"'><span
                                         class="hidden">View
                                         Spoiler</span><span class='keyword'>Penguin</span> - {{
-                                            globalService.getAnimalDescription("Penguin")
+                                    globalService.getAnimalDescription("Penguin")
                                     }}</span>
                                 <br />
                                 <span (click)="viewSpoiler('Tundra Course Type')"
                                     [ngClass]='seeTundraCourseTypeSpoiler ? "viewSpoiler" : "spoilerText"'><span
                                         class="hidden">View
                                         Spoiler</span><span class='keyword'>Caribou</span> - {{
-                                            globalService.getAnimalDescription("Caribou")
+                                    globalService.getAnimalDescription("Caribou")
                                     }}</span>
                                 <br />
                                 <br />
@@ -191,13 +191,13 @@
                                     [ngClass]='seeVolcanicCourseTypeSpoiler ? "viewSpoiler" : "spoilerText"'><span
                                         class="hidden">View
                                         Spoiler</span><span class='keyword'>Salamander</span> - {{
-                                            globalService.getAnimalDescription("Salamander") }}</span>
+                                    globalService.getAnimalDescription("Salamander") }}</span>
                                 <br />
                                 <span (click)="viewSpoiler('Volcanic Course Type')"
                                     [ngClass]='seeVolcanicCourseTypeSpoiler ? "viewSpoiler" : "spoilerText"'><span
                                         class="hidden">View
                                         Spoiler</span><span class='keyword'>Fox</span> - {{
-                                            globalService.getAnimalDescription("Fox") }}</span>
+                                    globalService.getAnimalDescription("Fox") }}</span>
                             </div>
                         </div>
                     </div>
@@ -314,7 +314,8 @@
                             Info") }}
                             <br />
                             <br />
-                            <strong>Quick View Barn</strong> - {{ lookupService.getSettingDescriptions("Quick View Barn") }}
+                            <strong>Quick View Barn</strong> - {{ lookupService.getSettingDescriptions("Quick View
+                            Barn") }}
                         </p>
                     </div>
                 </div>
@@ -500,8 +501,20 @@
                             <strong>Training Facility - {{ lookupService.getInDepthSpecializationDescription("Training
                                 Facility") }}</strong>
                             <br />
+                            <strong (click)="viewSpoiler('Item Set 2')"
+                                [ngClass]='seeItemSet2Spoiler ? "viewSpoiler" : "spoilerText"'><span class="hidden">View
+                                    Spoiler</span> Training Facility Improvements - {{
+                                lookupService.getSpecialtyItemDescription("Training Facility Improvements") }}</strong>
+                            <br />
+                            <br />
                             <strong>Breeding Grounds - {{ lookupService.getInDepthSpecializationDescription("Breeding
                                 Grounds") }}</strong>
+                            <br />
+                            <strong (click)="viewSpoiler('Item Set 2')"
+                                [ngClass]='seeItemSet2Spoiler ? "viewSpoiler" : "spoilerText"'><span class="hidden">View
+                                    Spoiler</span> Breeding Grounds Improvements - {{
+                                lookupService.getSpecialtyItemDescription("Breeding Grounds Improvements") }}</strong>
+                            <br />
                             <br />
                             <strong (click)="viewSpoiler('Attraction Specialization')"
                                 [ngClass]='seeAttractionSpoiler ? "viewSpoiler" : "spoilerText"'><span
@@ -509,10 +522,22 @@
                                     Spoiler</span> Attraction - {{
                                 lookupService.getInDepthSpecializationDescription("Attraction") }}</strong>
                             <br />
+                            <strong (click)="viewSpoiler('Item Set 2')"
+                                [ngClass]='seeItemSet2Spoiler ? "viewSpoiler" : "spoilerText"'><span class="hidden">View
+                                    Spoiler</span> Attraction Improvements - {{
+                                lookupService.getSpecialtyItemDescription("Attraction Improvements") }}</strong>
+                            <br />
+                            <br />
                             <strong (click)="viewSpoiler('Research Center Specialization')"
                                 [ngClass]='seeResearchCenterSpoiler ? "viewSpoiler" : "spoilerText"'><span
                                     class="hidden">View Spoiler</span>Research Center - {{
                                 lookupService.getInDepthSpecializationDescription("Research Center") }}</strong>
+                            <br />
+                            <strong (click)="viewSpoiler('Research Center Specialization')"
+                                [ngClass]='seeResearchCenterSpoiler ? "viewSpoiler" : "spoilerText"'><span
+                                    class="hidden">View
+                                    Spoiler</span> Research Center Improvements - {{
+                                lookupService.getSpecialtyItemDescription("Research Center Improvements") }}</strong>
                         </p>
                     </div>
                 </div>
@@ -693,12 +718,19 @@
                                 <div class="inputs">
                                     <label for="specialization-options" class="keyword">Specialization:</label>
                                     <select name="specialization-options" class="spaced" id="specialization-options"
-                                        [(ngModel)]="selectedSpecialization">
+                                        [(ngModel)]="selectedSpecialization" (change)="checkForImprovements()">
                                         <option [value]="1">Breeding Grounds</option>
                                         <option [value]="2">Training Facility</option>
                                         <option *ngIf="seeAttractionSpoiler" [value]="3">Attraction</option>
                                         <option *ngIf="seeResearchCenterSpoiler" [value]="4">Research Center</option>
                                     </select>
+                                    <div *ngIf="seeItemSet2Spoiler">
+                                        <br />
+                                        <label for="hasImprovements" class="labelMargin keyword">Barn improvements
+                                            unlocked?</label>
+                                        <input type="checkbox" class="spaced" id="hasImprovements"
+                                            [checked]="hasBarnImprovements" (input)="toggleHasImprovements()">
+                                    </div>
                                     <br />
                                     <br />
                                     <div>
