@@ -4278,7 +4278,7 @@ export class GlobalService {
     leg.courseType = animal.raceCourseType;
 
     timeToComplete = 100;
-    leg.distance = 5000000 * Math.pow(2, animal.legacyRaceCount);
+    leg.distance = 2000000 * Math.pow(2, animal.legacyRaceCount);
     leg.terrain = new Terrain(TerrainTypeEnum.Stormy);
 
     raceLegs.push(leg);

@@ -196,7 +196,7 @@ export class VersionControlService {
       "<ul><li>A new training trace race, the Legacy Track, has been added. Complete for new bonuses as well as the unique item Nectar of the Gods.</li>" + 
       "<li>Using Nectar of the Gods resets your Breed Level, Ability Levels, and Incubator Upgrades back to 1 for the animal using it. Your Breed Modifier is increased by an amount based on your Breed Level when using the Nectar.</li>" + 
       "<li>A new item, Orb Infuser, has been added to the shop. After purchasing, any time you use Nectar of the Gods, you will also permanently increase the stat gain per orb level of the orb that animal has equipped.</li>" + 
-      "<ul><li>After using Nectar of the Gods, the Legacy Track is reset so that you can regain the bonuses from that track race. The track gets progressively harder the more times you complete it.</li></ul>" + 
+      "<li>After using Nectar of the Gods, the Legacy Track is reset so that you can regain the bonuses from that track race. The track gets progressively harder the more times you complete it.</li></ul>" + 
       "UI improvements.";
     return changes;
   }
