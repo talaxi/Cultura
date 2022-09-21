@@ -704,7 +704,7 @@ export class SelectedAnimalComponent implements OnInit {
 
   resetSelectedAnimalInfo(newAnimal: Animal) {
     this.selectedAnimal = newAnimal;
-    console.log("Abi: " + this.selectedAnimal.miscStats.bonusAbilityEfficiency);
+    
     this.areTalentsAvailable = this.lookupService.isItemUnlocked("rainbowRace");
     this.orbIsUnlocked = this.lookupService.isItemUnlocked("orbs") && this.selectedAnimal.canEquipOrb;
 

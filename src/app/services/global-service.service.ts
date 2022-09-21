@@ -84,8 +84,8 @@ export class GlobalService {
     this.globalVar.freeRaceCounter = 0;
     this.globalVar.freeRaceTimePeriodCounter = 0;
     this.globalVar.lastTimeStamp = Date.now();
-    this.globalVar.currentVersion = 1.21; //TODO: this needs to be automatically increased or something, too easy to forget
-    this.globalVar.startingVersion = 1.21;
+    this.globalVar.currentVersion = 1.22; //TODO: this needs to be automatically increased or something, too easy to forget
+    this.globalVar.startingVersion = 1.22;
     this.globalVar.startDate = new Date();
     this.globalVar.notifications = new Notifications();
     this.globalVar.relayEnergyFloor = 50;

@@ -2102,7 +2102,7 @@ export class RaceLogicService {
     if (trackPaceModifierValuePair !== undefined)
       trackPaceModifierValue = trackPaceModifierValuePair.value;
 
-    if (this.selectedRace.trackRaceType === TrackRaceTypeEnum.master)
+    if (this.selectedRace.trackRaceType === TrackRaceTypeEnum.legacy)
       trackPaceModifierValue = 1;
 
     for (var i = 0; i < track.totalRewards; i++) {
