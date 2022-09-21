@@ -19,17 +19,32 @@ export class ResourcesViewComponent implements OnInit {
   specialtyItems: ResourceValue[] = [];
   progressionResources: ResourceValue[] = [];
 
-  constructor(private globalService: GlobalService, private lookupService: LookupService, 
+  constructor(private globalService: GlobalService, private lookupService: LookupService,
     private componentCommunicationService: ComponentCommunicationService, private utilityService: UtilityService,
     private modalService: NgbModal) { }
 
   ngOnInit(): void {
     this.componentCommunicationService.setNewView(NavigationEnum.resources);
-    
+
     this.resources = this.globalService.globalVar.resources.filter(item => item.amount > 0 && item.itemType === ShopItemTypeEnum.Food || item.itemType === ShopItemTypeEnum.Resources).sort();
     this.equipment = this.globalService.globalVar.resources.filter(item => item.amount > 0 && item.itemType === ShopItemTypeEnum.Equipment).sort();
     this.specialtyItems = this.globalService.globalVar.resources.filter(item => item.amount > 0 && item.itemType === ShopItemTypeEnum.Specialty).sort();
     this.progressionResources = this.globalService.globalVar.resources.filter(item => item.amount > 0 && item.itemType === ShopItemTypeEnum.Progression).sort();
+
+    if (this.specialtyItems.find(item => item.name === "Incubator Upgrade Lv2"))
+      this.specialtyItems = this.specialtyItems.filter(item => item.name !== "Incubator Upgrade Lv1");
+
+    if (this.specialtyItems.find(item => item.name === "Incubator Upgrade Lv3"))
+      this.specialtyItems = this.specialtyItems.filter(item => item.name !== "Incubator Upgrade Lv2");
+
+    if (this.specialtyItems.find(item => item.name === "Incubator Upgrade Lv4"))
+      this.specialtyItems = this.specialtyItems.filter(item => item.name !== "Incubator Upgrade Lv3");
+
+    if (this.specialtyItems.find(item => item.name === "International Races"))
+      this.specialtyItems = this.specialtyItems.filter(item => item.name !== "National Races");
+
+    if (this.specialtyItems.find(item => item.name === "Golden Whistle"))
+      this.specialtyItems = this.specialtyItems.filter(item => item.name !== "Whistle");
   }
 
   getPopover(name: string, itemType: ShopItemTypeEnum) {
@@ -39,7 +54,7 @@ export class ResourcesViewComponent implements OnInit {
   //check if it's an orb, if it is then open a modal with the orb view displaying
   isResourceAnOrb(resource: ResourceValue) {
     if (resource.itemType === ShopItemTypeEnum.Equipment && (resource.name === "Sapphire Orb" || resource.name === "Amethyst Orb" ||
-    resource.name === "Topaz Orb" || resource.name === "Amber Orb" || resource.name === "Emerald Orb" || resource.name === "Ruby Orb"))
+      resource.name === "Topaz Orb" || resource.name === "Amber Orb" || resource.name === "Emerald Orb" || resource.name === "Ruby Orb"))
       return true;
 
     return false;

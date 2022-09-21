@@ -5,10 +5,14 @@ export class Orb {
     level: number;
     maxLevel: number;
     xp: number;
-    xpNeededForLevel: number;
+    xpNeededForLevel: number;    
+    defaultIncrease: number;
+    increasePerLevel: number;
 
     constructor(type: OrbTypeEnum) {
         this.type = type;
+        this.defaultIncrease = 1.2;
+        this.increasePerLevel = .2;
         this.level = 1;
         this.maxLevel = 1;
         this.xp = 0;
@@ -22,6 +26,8 @@ export class Orb {
         newOrb.maxLevel = this.maxLevel;
         newOrb.xp = this.xp;
         newOrb.xpNeededForLevel = this.xpNeededForLevel;
+        newOrb.defaultIncrease = this.defaultIncrease;
+        newOrb.increasePerLevel = this.increasePerLevel;
 
         return newOrb;
     }

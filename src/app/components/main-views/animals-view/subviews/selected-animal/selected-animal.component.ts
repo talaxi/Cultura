@@ -190,6 +190,10 @@ export class SelectedAnimalComponent implements OnInit {
       }
     });
 
+    if (this.selectedAnimal.nectarAvailable) {
+      this.usableItemsList.push(new ResourceValue("Nectar of the Gods", 1, ShopItemTypeEnum.Consumable));
+    }
+
     this.setupDisplayItems();
   }
 
@@ -289,8 +293,8 @@ export class SelectedAnimalComponent implements OnInit {
       this.orbRows.push(this.orbCells);
   }
 
-  openTalentsModal(content: any) {           
-    this.freeTalentResets = this.selectedAnimal.freeTalentResetCount; 
+  openTalentsModal(content: any) {
+    this.freeTalentResets = this.selectedAnimal.freeTalentResetCount;
     var talentResetCost = this.lookupService.getTalentResetCost(this.selectedAnimal.type);
     this.talentResetCost = talentResetCost.toLocaleString() + " Coins";
 
@@ -360,8 +364,10 @@ export class SelectedAnimalComponent implements OnInit {
     if (this.selectedItem === undefined)
       return;
 
+    var isNectarOfTheGods = this.selectedItem.name === "Nectar of the Gods";
+
     var globalResource = this.globalService.globalVar.resources.find(item => item.name === this.selectedItem!.name && item.itemType === this.selectedItem!.itemType);
-    if (globalResource === undefined) {
+    if (globalResource === undefined && !isNectarOfTheGods) {
       alert("You've run into an error! Please try again. If you have the time, please export your data under the Settings tab and send me the data and any relevant info at CulturaIdle@gmail.com. Thank you!");
       return;
     }
@@ -371,8 +377,8 @@ export class SelectedAnimalComponent implements OnInit {
       return;
     }
 
-    if (globalResource.amount < this.selectedItemQuantity) {
-      alert("You don't have that many " + globalResource.name + "!");
+    if (!isNectarOfTheGods && globalResource!.amount < this.selectedItemQuantity) {
+      alert("You don't have that many " + globalResource!.name + "!");
       return;
     }
 
@@ -382,7 +388,8 @@ export class SelectedAnimalComponent implements OnInit {
       return;
     }
 
-    globalResource.amount -= this.selectedItemQuantity;
+    if (!isNectarOfTheGods)
+      globalResource!.amount -= this.selectedItemQuantity;
 
     if (this.selectedItem.itemType === ShopItemTypeEnum.Food) {
       if (this.selectedItem.name === "Mangoes") {
@@ -439,6 +446,18 @@ export class SelectedAnimalComponent implements OnInit {
         this.selectedAnimal.miscStats.diminishingReturnsBonus += +this.selectedItemQuantity;
         this.selectedAnimal.miscStats.bonusDiminishingReturnsCertificateCount += +this.selectedItemQuantity;
         this.globalService.calculateAnimalRacingStats(this.selectedAnimal);
+      }
+      if (this.selectedItem.name === "Nectar of the Gods") {    
+        var hasOrbInfuser = this.globalService.globalVar.resources.some(item => item.name === "Orb Infuser");
+        var infusionMessage = "";
+        if (this.selectedAnimal.equippedOrb === null || this.selectedAnimal.equippedOrb === undefined)
+          infusionMessage = "You have not selected an orb and so no orb will improve when using this. If you did not intentionally do this, cancel this and select an orb for this animal. Continue?";
+        else
+          infusionMessage = "Your selected orb is the " + this.selectedAnimal.equippedOrb.name + ". It will receive a " + this.globalService.getNectarOfTheGodsOrbInfusionIncrease(this.selectedAnimal).toFixed(2) + "% increase per level. Continue?";
+        if (!hasOrbInfuser || (hasOrbInfuser && confirm(infusionMessage)))
+        {    
+          this.globalService.handleNectarOfTheGodsReset(this.selectedAnimal);
+        }
       }
     }
 
@@ -589,6 +608,14 @@ export class SelectedAnimalComponent implements OnInit {
     return this.lookupService.bonusTalentsPopover(this.selectedAnimal);
   }
 
+  getBonusAbilityEfficiencyPopover() {
+    return this.lookupService.bonusAbilityEfficiencyPopover(this.selectedAnimal);
+  }
+
+  getBonusOrbXpPopover() {
+    return this.lookupService.bonusOrbXpPopover(this.selectedAnimal);
+  }
+
   getAbilityPopover() {
     return this.lookupService.abilityPopover();
   }
@@ -608,7 +635,7 @@ export class SelectedAnimalComponent implements OnInit {
   getItemShortDescription(name: string) {
     var description = "";
 
-    description = this.globalService.getItemDescription(name);
+    description = this.globalService.getItemDescription(name, this.selectedAnimal);
 
     return description;
   }
@@ -677,6 +704,7 @@ export class SelectedAnimalComponent implements OnInit {
 
   resetSelectedAnimalInfo(newAnimal: Animal) {
     this.selectedAnimal = newAnimal;
+    console.log("Abi: " + this.selectedAnimal.miscStats.bonusAbilityEfficiency);
     this.areTalentsAvailable = this.lookupService.isItemUnlocked("rainbowRace");
     this.orbIsUnlocked = this.lookupService.isItemUnlocked("orbs") && this.selectedAnimal.canEquipOrb;
 
@@ -753,25 +781,22 @@ export class SelectedAnimalComponent implements OnInit {
     var paidTalentResetNotice = 'Future resets for this animal will be more expensive.';
     if (talentResetCost === 0)
       paidTalentResetNotice = "";
-    if (this.lookupService.getCoins() >= talentResetCost && 
-    confirm("This will refund all talent points and allow you to reselect your specialization. " + paidTalentResetNotice + "  Continue?"))
-    {
-      this.lookupService.spendCoins(this.lookupService.getTalentResetCost(this.selectedAnimal.type));      
+    if (this.lookupService.getCoins() >= talentResetCost &&
+      confirm("This will refund all talent points and allow you to reselect your specialization. " + paidTalentResetNotice + "  Continue?")) {
+      this.lookupService.spendCoins(this.lookupService.getTalentResetCost(this.selectedAnimal.type));
       this.selectedAnimal.talentTree.reset();
       this.availableTalentPoints = this.lookupService.getTalentPointsAvailableToAnimal(this.selectedAnimal);
-      if (this.selectedAnimal.freeTalentResetCount > 0)
-      {
+      if (this.selectedAnimal.freeTalentResetCount > 0) {
         this.selectedAnimal.freeTalentResetCount -= 1;
         if (this.selectedAnimal.freeTalentResetCount < 0)
           this.selectedAnimal.freeTalentResetCount = 0;
       }
-      else
-      {
+      else {
         this.selectedAnimal.talentResetCount += 1;
       }
 
       this.freeTalentResets = this.selectedAnimal.freeTalentResetCount;
-      var talentResetCost = this.lookupService.getTalentResetCost(this.selectedAnimal.type);          
+      var talentResetCost = this.lookupService.getTalentResetCost(this.selectedAnimal.type);
       this.talentResetCost = talentResetCost.toLocaleString() + " Coins";
     }
   }
@@ -887,7 +912,7 @@ export class SelectedAnimalComponent implements OnInit {
     };
   }
 
-  viewOrbDetails(content: any) {    
+  viewOrbDetails(content: any) {
     this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
   }
 

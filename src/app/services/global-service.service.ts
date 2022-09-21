@@ -46,6 +46,7 @@ import { OrbTypeEnum } from '../models/orb-type-enum.model';
 import { Orb } from '../models/animals/orb.model';
 import { EasyPinnacleConditionsEnum, HardPinnacleConditionsEnum, MediumPinnacleConditionsEnum } from '../models/pinnacle-conditions-enum.model';
 import { PinnacleConditions } from '../models/races/pinnacle-conditions.model';
+import { IncubatorStatUpgrades } from '../models/animals/incubator-stat-upgrades.model';
 
 @Injectable({
   providedIn: 'root'
@@ -83,8 +84,8 @@ export class GlobalService {
     this.globalVar.freeRaceCounter = 0;
     this.globalVar.freeRaceTimePeriodCounter = 0;
     this.globalVar.lastTimeStamp = Date.now();
-    this.globalVar.currentVersion = 1.20; //TODO: this needs to be automatically increased or something, too easy to forget
-    this.globalVar.startingVersion = 1.20;
+    this.globalVar.currentVersion = 1.21; //TODO: this needs to be automatically increased or something, too easy to forget
+    this.globalVar.startingVersion = 1.21;
     this.globalVar.startDate = new Date();
     this.globalVar.notifications = new Notifications();
     this.globalVar.relayEnergyFloor = 50;
@@ -1058,6 +1059,15 @@ export class GlobalService {
     researchCenterUpgrade.type = ShopItemTypeEnum.Specialty;
     specialtyShopItems.push(researchCenterUpgrade);
 
+    var orbInfuser = new ShopItem();
+    orbInfuser.name = "Orb Infuser";
+    orbInfuser.purchasePrice.push(this.getCoinsResourceValue(5000000));
+    orbInfuser.basePurchasePrice.push(this.getCoinsResourceValue(5000000));
+    orbInfuser.canHaveMultiples = false;
+    orbInfuser.isAvailable = false;
+    orbInfuser.type = ShopItemTypeEnum.Specialty;
+    specialtyShopItems.push(orbInfuser);
+
     specialtyShopSection.name = "Specialty";
     specialtyShopSection.itemList = specialtyShopItems;
     this.globalVar.shop.push(specialtyShopSection);
@@ -1960,6 +1970,13 @@ export class GlobalService {
     else if (numericValue === 79) {
       this.globalVar.unlockables.set("thePinnacle", true);
       this.globalVar.notifications.isNewSpecialRaceAvailable = true;
+      
+      var specialtyShop = this.globalVar.shop.find(item => item.name === "Specialty");
+      if (specialtyShop !== null && specialtyShop !== undefined) {
+        var orbInfuser = specialtyShop.itemList.find(item => item.name === "Orb Infuser");
+        if (orbInfuser !== null && orbInfuser !== undefined)
+          orbInfuser.isAvailable = true;
+      }
 
       returnVal = ["The Pinnacle", this.utilityService.getSanitizedHtml("A new race type has been unlocked!" +
         " The Pinnacle is an old and mysterious fortress. Researchers have struggled to map out its interior due to the ever changing terrain and constantly shifting weather. Your team has been contracted out to help map the area out. <br/>" +
@@ -3342,22 +3359,22 @@ export class GlobalService {
     var description = "";
 
     if (orbType === OrbTypeEnum.amber) {
-      description = "Increase the Acceleration Rate of the user by " + ((this.globalVar.orbStats.getAccelerationIncrease(1) - 1) * 100).toFixed(0) + "%. Gain orb experience for every meter covered while below your max speed.";
+      description = "Increase the Acceleration Rate of the user by " + ((this.globalVar.orbStats.getAccelerationIncrease(1) - 1) * 100).toFixed(2) + "%. Gain orb experience for every meter covered while below your max speed.";
     }
     if (orbType === OrbTypeEnum.amethyst) {
-      description = "Increase the Power Efficiency of the user by " + ((this.globalVar.orbStats.getPowerIncrease(1) - 1) * 100).toFixed(0) + "%. Gain orb experience for every ability use.";
+      description = "Increase the Power Efficiency of the user by " + ((this.globalVar.orbStats.getPowerIncrease(1) - 1) * 100).toFixed(2) + "%. Gain orb experience for every ability use.";
     }
     if (orbType === OrbTypeEnum.emerald) {
-      description = "Increase the Adaptability Distance of the user by " + ((this.globalVar.orbStats.getAdaptabilityIncrease(1) - 1) * 100).toFixed(0) + "%. Gain orb experience for every meter covered during a special path without stumbling.";
+      description = "Increase the Adaptability Distance of the user by " + ((this.globalVar.orbStats.getAdaptabilityIncrease(1) - 1) * 100).toFixed(2) + "%. Gain orb experience for every meter covered during a special path without stumbling.";
     }
     if (orbType === OrbTypeEnum.ruby) {
-      description = "Increase the Max Speed of the user by " + ((this.globalVar.orbStats.getMaxSpeedIncrease(1) - 1) * 100).toFixed(0) + "%.  Gain orb experience for every meter covered while at or above your max speed.";
+      description = "Increase the Max Speed of the user by " + ((this.globalVar.orbStats.getMaxSpeedIncrease(1) - 1) * 100).toFixed(2) + "%.  Gain orb experience for every meter covered while at or above your max speed.";
     }
     if (orbType === OrbTypeEnum.sapphire) {
-      description = "Increase the Focus Distance of the user by " + ((this.globalVar.orbStats.getFocusIncrease(1) - 1) * 100).toFixed(0) + "%.  Gain orb experience for every meter covered prior to losing focus.";
+      description = "Increase the Focus Distance of the user by " + ((this.globalVar.orbStats.getFocusIncrease(1) - 1) * 100).toFixed(2) + "%.  Gain orb experience for every meter covered prior to losing focus.";
     }
     if (orbType === OrbTypeEnum.topaz) {
-      description = "Increase the Stamina of the user by " + ((this.globalVar.orbStats.getEnduranceIncrease(1) - 1) * 100).toFixed(0) + "%.  Gain orb experience for every meter covered prior to running out of stamina.";
+      description = "Increase the Stamina of the user by " + ((this.globalVar.orbStats.getEnduranceIncrease(1) - 1) * 100).toFixed(2) + "%.  Gain orb experience for every meter covered prior to running out of stamina.";
     }
 
     return description;
@@ -3394,14 +3411,16 @@ export class GlobalService {
   }
 
   //pass in meters spent not at max speed
-  increaseAmberOrbXp(meters: number) {
+  increaseAmberOrbXp(meters: number, racingAnimal: Animal) {
     var factor = .00005;
     var exp = meters * factor;
 
     var orb = this.getOrbDetailsFromType(OrbTypeEnum.amber);
     if (orb !== undefined) {
+      var bonusXp = exp * racingAnimal.miscStats.bonusOrbXp;
+
       if (orb.level < orb.maxLevel) {
-        orb.xp += exp;
+        orb.xp += exp + bonusXp;
 
         if (orb.xp >= orb.xpNeededForLevel && orb.level < orb.maxLevel)
           this.increaseOrbLevel(orb);
@@ -3412,15 +3431,17 @@ export class GlobalService {
   }
 
   //call after every ability use
-  increaseAmethystOrbXp() {
+  increaseAmethystOrbXp(racingAnimal: Animal) {
     var factor = 2;
     var exp = factor;
     //console.log("Amethyst XP Gain: " + exp);
 
     var orb = this.getOrbDetailsFromType(OrbTypeEnum.amethyst);
     if (orb !== undefined) {
+      var bonusXp = exp * racingAnimal.miscStats.bonusOrbXp;
+
       if (orb.level < orb.maxLevel) {
-        orb.xp += exp;
+        orb.xp += exp + bonusXp;
 
         if (orb.xp >= orb.xpNeededForLevel && orb.level < orb.maxLevel)
           this.increaseOrbLevel(orb);
@@ -3431,15 +3452,17 @@ export class GlobalService {
   }
 
   //pass in meters through a special path before stumbling
-  increaseEmeraldOrbXp(meters: number) {
+  increaseEmeraldOrbXp(meters: number, racingAnimal: Animal) {
     var factor = .00008;
     var exp = meters * factor;
     //console.log("Emerald Meters: " + meters + " XP Gain: " + exp);
 
     var orb = this.getOrbDetailsFromType(OrbTypeEnum.emerald);
     if (orb !== undefined) {
+      var bonusXp = exp * racingAnimal.miscStats.bonusOrbXp;
+
       if (orb.level < orb.maxLevel) {
-        orb.xp += exp;
+        orb.xp += exp + bonusXp;
 
         if (orb.xp >= orb.xpNeededForLevel && orb.level < orb.maxLevel)
           this.increaseOrbLevel(orb);
@@ -3450,16 +3473,17 @@ export class GlobalService {
   }
 
   //pass in meters spent at max speed
-  increaseRubyOrbXp(meters: number) {
+  increaseRubyOrbXp(meters: number, racingAnimal: Animal) {
     var factor = .0003;
     var exp = meters * factor;
     //console.log("Ruby Meters: " + meters + " XP Gain: " + exp);
 
     var orb = this.getOrbDetailsFromType(OrbTypeEnum.ruby);
     if (orb !== undefined) {
+      var bonusXp = exp * racingAnimal.miscStats.bonusOrbXp;
+
       if (orb.level < orb.maxLevel) {
-        //console.log("XP Gain: " + exp + " New XP: " + orb.xp);
-        orb.xp += exp;
+        orb.xp += exp + bonusXp;
 
         if (orb.xp >= orb.xpNeededForLevel && orb.level < orb.maxLevel)
           this.increaseOrbLevel(orb);
@@ -3470,16 +3494,17 @@ export class GlobalService {
   }
 
   //pass in meters spent before losing focus
-  increaseSapphireOrbXp(meters: number) {
+  increaseSapphireOrbXp(meters: number, racingAnimal: Animal) {
     var factor = .000025;
     var exp = meters * factor;
     //console.log("Sapphire Meters: " + meters + " XP Gain: " + exp);
 
     var orb = this.getOrbDetailsFromType(OrbTypeEnum.sapphire);
     if (orb !== undefined) {
-      //console.log(orb.level + " vs " + orb.maxLevel);
+      var bonusXp = exp * racingAnimal.miscStats.bonusOrbXp;
+
       if (orb.level < orb.maxLevel) {
-        orb.xp += exp;
+        orb.xp += exp + bonusXp;
 
         if (orb.xp >= orb.xpNeededForLevel && orb.level < orb.maxLevel)
           this.increaseOrbLevel(orb);
@@ -3490,15 +3515,17 @@ export class GlobalService {
   }
 
   //pass in meters before stamina reaches 0
-  increaseTopazOrbXp(meters: number) {
+  increaseTopazOrbXp(meters: number, racingAnimal: Animal) {
     var factor = .000025;
     var exp = meters * factor;
     //console.log("Topaz Meters: " + meters + " XP Gain: " + exp);
 
     var orb = this.getOrbDetailsFromType(OrbTypeEnum.topaz);
     if (orb !== undefined) {
+      var bonusXp = exp * racingAnimal.miscStats.bonusOrbXp;
+
       if (orb.level < orb.maxLevel) {
-        orb.xp += exp;
+        orb.xp += exp + bonusXp;
 
         if (orb.xp >= orb.xpNeededForLevel && orb.level < orb.maxLevel)
           this.increaseOrbLevel(orb);
@@ -4243,6 +4270,32 @@ export class GlobalService {
     return new Race(raceLegs, this.globalVar.circuitRank, false, 1, totalDistance, timeToComplete, undefined, LocalRaceTypeEnum.Track, type, RaceTypeEnum.trainingTrack);
   }
 
+  generateLegacyTrackRace(animal: Animal, type: TrackRaceTypeEnum) {
+    var timeToComplete = 120;
+
+    var raceLegs: RaceLeg[] = [];
+    var leg = new RaceLeg();
+    leg.courseType = animal.raceCourseType;
+
+    timeToComplete = 100;
+    leg.distance = 5000000 * Math.pow(2, animal.legacyRaceCount);
+    leg.terrain = new Terrain(TerrainTypeEnum.Stormy);
+
+    raceLegs.push(leg);
+
+    var totalDistance = 0;
+
+    raceLegs.forEach(leg => {
+      totalDistance += leg.distance;
+    });
+
+    raceLegs.forEach(leg => {
+      leg.pathData = this.GenerateRaceLegPaths(leg, totalDistance, type);
+    });
+
+    return new Race(raceLegs, this.globalVar.circuitRank, false, 1, totalDistance, timeToComplete, undefined, LocalRaceTypeEnum.Track, type, RaceTypeEnum.trainingTrack);
+  }
+
   GenerateRaceLegPaths(leg: RaceLeg, totalDistance: number, trackRaceType?: TrackRaceTypeEnum): RacePath[] {
     var totalRacePaths = 20;
 
@@ -4422,7 +4475,8 @@ export class GlobalService {
     var breedLevelStatModifier = this.globalVar.modifiers.find(item => item.text === "breedLevelStatModifier");
     if (breedLevelStatModifier !== undefined && breedLevelStatModifier !== null)
       breedLevelStatModifierValue = breedLevelStatModifier.value;
-    breedLevelStatModifierValue = 1 + (breedLevelStatModifierValue * (animal.breedLevel - 1));
+    
+    breedLevelStatModifierValue = 1 + ((breedLevelStatModifierValue + animal.miscStats.bonusBreedModifierAmount) * (animal.breedLevel - 1));
 
     //talents
     var topSpeedTalentModifier = 1;
@@ -4606,7 +4660,7 @@ export class GlobalService {
   increaseAbilityXp(animal: Animal, xpAmount?: number, isTrainingTrack?: boolean) {
     //also increase power orb xp if in use
     if (animal.equippedOrb !== undefined && animal.equippedOrb !== null && !isTrainingTrack && this.getOrbTypeFromResource(animal.equippedOrb) === OrbTypeEnum.amethyst) {
-      this.increaseAmethystOrbXp();
+      this.increaseAmethystOrbXp(animal);
     }
 
     var abilityLevelCap = 25;
@@ -4833,17 +4887,17 @@ export class GlobalService {
     if (name === "Yellow Baton")
       returnVal = "Increase next racer's Endurance by 10% on Relay";
     if (name === "Amethyst Orb")
-      returnVal = "Increase your Power Efficiency by " + ((this.globalVar.orbStats.getPowerIncrease(1) - 1) * 100).toFixed(0) + "%.";
+      returnVal = "Increase your Power Efficiency by " + ((this.globalVar.orbStats.getPowerIncrease(1) - 1) * 100).toFixed(2) + "%.";
     if (name === "Sapphire Orb")
-      returnVal = "Increase your Focus Distance by " + ((this.globalVar.orbStats.getFocusIncrease(1) - 1) * 100).toFixed(0) + "%.";
+      returnVal = "Increase your Focus Distance by " + ((this.globalVar.orbStats.getFocusIncrease(1) - 1) * 100).toFixed(2) + "%.";
     if (name === "Amber Orb")
-      returnVal = "Increase your Acceleration Rate by " + ((this.globalVar.orbStats.getAccelerationIncrease(1) - 1) * 100).toFixed(0) + "%.";
+      returnVal = "Increase your Acceleration Rate by " + ((this.globalVar.orbStats.getAccelerationIncrease(1) - 1) * 100).toFixed(2) + "%.";
     if (name === "Topaz Orb")
-      returnVal = "Increase your Stamina by " + ((this.globalVar.orbStats.getEnduranceIncrease(1) - 1) * 100).toFixed(0) + "%.";
+      returnVal = "Increase your Stamina by " + ((this.globalVar.orbStats.getEnduranceIncrease(1) - 1) * 100).toFixed(2) + "%.";
     if (name === "Emerald Orb")
-      returnVal = "Increase your Adaptability Distance by " + ((this.globalVar.orbStats.getAdaptabilityIncrease(1) - 1) * 100).toFixed(0) + "%.";
+      returnVal = "Increase your Adaptability Distance by " + ((this.globalVar.orbStats.getAdaptabilityIncrease(1) - 1) * 100).toFixed(2) + "%.";
     if (name === "Ruby Orb")
-      returnVal = "Increase your Max Speed by " + ((this.globalVar.orbStats.getMaxSpeedIncrease(1) - 1) * 100).toFixed(0) + "%.";
+      returnVal = "Increase your Max Speed by " + ((this.globalVar.orbStats.getMaxSpeedIncrease(1) - 1) * 100).toFixed(2) + "%.";
     if (name === "Scary Mask")
       returnVal = "Cause a distraction the first time you lose focus while ahead of competition, slowing competitors by 2 seconds.";
     if (name === "Running Shoes")
@@ -4856,8 +4910,16 @@ export class GlobalService {
     return returnVal;
   }
 
-  getItemDescription(name: string) {
+  getItemDescription(name: string, animal?: Animal) {
     var description = "";
+    var nectarOfTheGodsIncrease = 0;
+    var nectarOrbInfusion = "";
+    if (animal !== undefined)
+    {
+      nectarOfTheGodsIncrease = this.getNectarOfTheGodsIncrease(animal) * 100;
+      if (this.globalVar.resources.some(item => item.name === "Orb Infuser"))
+        nectarOrbInfusion = "and your selected Orb's stat gain per level by  " + this.getNectarOfTheGodsOrbInfusionIncrease(animal).toFixed(2) + "% ";
+    }
 
     if (name === "Apples")
       description = "+1 Acceleration to a single animal";
@@ -4883,7 +4945,9 @@ export class GlobalService {
       description = "Give an animal +1 Bonus Breed XP Gain from Training. Can use up to 30 of these certificates on any individual animal.";
     if (name === "Diminishing Returns Increase Certificate")
       description = "Give an animal +1 Diminishing Returns per Facility Level. Can use up to 30 of these certificates on any individual animal.";
-
+    if (name === "Nectar of the Gods")
+      description = "Drink this to reset Breed Level, Incubator Upgrades, and Ability Levels back to 1. Increase Breed Modifier per Breed Level by " + nectarOfTheGodsIncrease.toFixed(2) + "% " + nectarOrbInfusion + "when using this.";
+    
     return description;
   }
 
@@ -4916,6 +4980,71 @@ export class GlobalService {
     var description = "Volcanic racers make their way while a Volcano ominously looms in the background. As you race, the Volcano will erupt making it impossible to proceed if you get stuck behind the lava flow. If you stay ahead of the average pace for the Volcanic leg of the race, you should have no problem speeding past the lava so make sure your Max Speed and Acceleration are up to the challenge.";
 
     return description;
+  }
+
+  handleNectarOfTheGodsReset(animal: Animal) {    
+    animal.miscStats.bonusBreedModifierAmount += this.getNectarOfTheGodsIncrease(animal);  
+    if (this.globalVar.resources.some(item => item.name === "Orb Infuser"))
+    {
+      var orbInfusionAmount = this.getNectarOfTheGodsOrbInfusionIncrease(animal);
+      if (animal.equippedOrb !== undefined && animal.equippedOrb !== null)
+      {
+        var orb = this.getOrbDetailsFromType(this.getOrbTypeFromResource(animal.equippedOrb));
+        if (orb !== undefined)
+        {
+          orb.defaultIncrease += orbInfusionAmount / 100;
+          orb.increasePerLevel += orbInfusionAmount / 100;
+        }
+      }
+    }  
+    animal.previousBreedLevel = 1;
+    animal.breedLevel = 1;
+    animal.breedGaugeMax = 200;
+    animal.breedGaugeXp = 0;
+    animal.incubatorStatUpgrades = new IncubatorStatUpgrades();
+    animal.ability.abilityLevel = 1;
+    animal.ability.abilityMaxXp = 50;
+    animal.ability.abilityXp = 0;
+    animal.nectarAvailable = false;
+    animal.allTrainingTracks.legacyTrack.rewardsObtained = 0;
+    animal.legacyRaceCount += 1;
+
+    animal.availableAbilities.forEach(item => {
+      item.abilityLevel = 1;
+      item.abilityMaxXp = 50;
+      item.abilityXp = 0;
+  
+    });
+    
+    this.calculateAnimalRacingStats(animal);
+  }
+
+  getNectarOfTheGodsIncrease(animal: Animal) {
+    var breedModifierIncreaseAmount = 0;
+    var breedLevelDropOff = 1500;
+
+    if (animal.breedLevel <= breedLevelDropOff)
+      breedModifierIncreaseAmount = animal.breedLevel / 100;
+    else
+    {
+      var amplifier = 5;
+      var horizontalStretch = .005;
+      var horizontalPosition = 1;
+      var verticalPosition = 15;
+
+      //5 * (log(.005 * var + 1)) + 15      
+      breedModifierIncreaseAmount = amplifier * Math.log10(horizontalStretch * (animal.breedLevel - breedLevelDropOff) + horizontalPosition) + verticalPosition;
+    }
+
+    return breedModifierIncreaseAmount / 100;
+  }
+
+  getNectarOfTheGodsOrbInfusionIncrease(animal: Animal) {
+    var infusionAmount = 0;
+
+    infusionAmount = animal.breedLevel / 1500;
+
+    return infusionAmount;
   }
 
   updateTrackedMaxStats(animal: Animal) {
@@ -5074,12 +5203,13 @@ export class GlobalService {
     }
     else if (progressionSetting === 4) {
       trainingStatValue = 5000;
-      breedLevel = 1500;
+      breedLevel = 1000;
       incubatorUpgradeValue = 12.5;
       talentCount = 60;
     }
-
+    var breedLevelCounter = 900;
     this.globalVar.animals.forEach(animal => {
+      breedLevelCounter += 100;
       if (animal.type === AnimalTypeEnum.Goat || animal.type === AnimalTypeEnum.Caribou ||
         animal.type === AnimalTypeEnum.Octopus) {
         animal.isAvailable = true;
@@ -5098,7 +5228,7 @@ export class GlobalService {
       animal.currentStats.focus = trainingStatValue;
       animal.currentStats.adaptability = trainingStatValue;
 
-      animal.breedLevel = breedLevel;    
+      animal.breedLevel = breedLevelCounter;    
 
       animal.incubatorStatUpgrades.maxSpeedModifier = incubatorUpgradeValue;
       animal.incubatorStatUpgrades.accelerationModifier = incubatorUpgradeValue;

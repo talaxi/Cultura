@@ -21,8 +21,10 @@ export class TrainingTrackRaceViewComponent implements OnInit {
   noviceTrackRace: Race;
   intermediateTrackRace: Race;
   masterTrackRace: Race;
+  legacyTrackRace: Race;
   intermediateTrackAvailable: boolean = false;
   masterTrackAvailable: boolean = false;
+  legacyTrackAvailable: boolean = false;
   @Output() raceSelected = new EventEmitter<Race>();
   @Input() selectedAnimal: Animal;
   showRace = false;
@@ -31,25 +33,26 @@ export class TrainingTrackRaceViewComponent implements OnInit {
   isNoviceRaceToggled = false;
   isIntermediateRaceToggled = false;
   isMasterRaceToggled = false;
+  isLegacyRaceToggled = false;
   public trackRaceTypeEnum = TrackRaceTypeEnum;
 
   constructor(private globalService: GlobalService, private lookupService: LookupService, private sanitizer: DomSanitizer,
     private modalService: NgbModal, private componentCommunicationService: ComponentCommunicationService) { }
 
   ngOnInit(): void {
-    this.practiceTrackRace = this.globalService.generateTrackRace(this.selectedAnimal, TrackRaceTypeEnum.practice);
     this.noviceTrackRace = this.globalService.generateTrackRace(this.selectedAnimal, TrackRaceTypeEnum.novice);
     this.intermediateTrackRace = this.globalService.generateTrackRace(this.selectedAnimal, TrackRaceTypeEnum.intermediate);
     this.masterTrackRace = this.globalService.generateTrackRace(this.selectedAnimal, TrackRaceTypeEnum.master);
+    this.legacyTrackRace = this.globalService.generateLegacyTrackRace(this.selectedAnimal, TrackRaceTypeEnum.legacy);
 
     this.intermediateTrackAvailable = this.selectedAnimal.allTrainingTracks.intermediateTrackAvailable;
     this.masterTrackAvailable = this.selectedAnimal.allTrainingTracks.masterTrackAvailable;
-
+    this.legacyTrackAvailable = this.selectedAnimal.allTrainingTracks.legacyTrackAvailable;
     
     this.isNoviceRaceToggled = this.globalService.globalVar.settings.get("noviceRaceToggled");
     this.isIntermediateRaceToggled = this.globalService.globalVar.settings.get("intermediateRaceToggled");
     this.isMasterRaceToggled = this.globalService.globalVar.settings.get("masterRaceToggled");    
-
+    this.isLegacyRaceToggled = this.globalService.globalVar.settings.get("legacyRaceToggled");    
 
     this.colorConditional = {
       'flatlandColor': this.selectedAnimal.getRaceCourseType() === 'Flatland',
@@ -90,7 +93,12 @@ export class TrainingTrackRaceViewComponent implements OnInit {
         rewardsObtained = this.selectedAnimal.allTrainingTracks.intermediateTrack.rewardsObtained;
       else if (type === TrackRaceTypeEnum.master)
         rewardsObtained = this.selectedAnimal.allTrainingTracks.masterTrack.rewardsObtained;
-
+        else if (type === TrackRaceTypeEnum.legacy)
+        {
+          rewardsObtained = this.selectedAnimal.allTrainingTracks.legacyTrack.rewardsObtained;
+          trackPaceModifierValue = 1;
+        }
+        
       if (i < rewardsObtained) {
         popover += "<span class='crossed'>(" + (i * trackPaceModifierValue * 100) + "% faster than average pace) " + reward + "</span>\n";
       }
@@ -114,7 +122,9 @@ export class TrainingTrackRaceViewComponent implements OnInit {
     if (type === "intermediateRaceToggled")
       this.isIntermediateRaceToggled = !this.isIntermediateRaceToggled;
     if (type === "masterRaceToggled")
-      this.isMasterRaceToggled = !this.isMasterRaceToggled;    
+      this.isMasterRaceToggled = !this.isMasterRaceToggled;
+      if (type === "legacyRaceToggled")
+      this.isLegacyRaceToggled = !this.isLegacyRaceToggled;    
   }
 
 

@@ -992,7 +992,7 @@ export class RaceLogicService {
             if (racingAnimal.equippedOrb !== undefined && racingAnimal.equippedOrb !== null &&
               this.selectedRace.raceType !== RaceTypeEnum.trainingTrack &&
               this.globalService.getOrbTypeFromResource(racingAnimal.equippedOrb) === OrbTypeEnum.emerald) {
-              this.globalService.increaseEmeraldOrbXp(lastPath.length);
+              this.globalService.increaseEmeraldOrbXp(lastPath.length, racingAnimal);
             }
 
             if (racingAnimal.type === AnimalTypeEnum.Goat && racingAnimal.ability.name === "Sure-footed") {
@@ -2024,6 +2024,26 @@ export class RaceLogicService {
               if (racingAnimal !== undefined && racingAnimal !== null)
                 racingAnimal.miscStats.bonusTalents += item.amount;
             }
+            else if (item.name === "Bonus Base Ability Efficiency" && item.itemType === ShopItemTypeEnum.Other) {
+              var courseType = this.selectedRace.raceLegs[0].courseType;
+              var racingAnimal = this.racingAnimals.find(animal => animal.raceCourseType === courseType);
+              if (racingAnimal !== undefined && racingAnimal !== null)
+                racingAnimal.miscStats.bonusAbilityEfficiency += item.amount;
+              console.log("Bonus Ability Efficiency: " + racingAnimal!.miscStats.bonusAbilityEfficiency);
+            }
+            else if (item.name === "Bonus Orb XP Gain" && item.itemType === ShopItemTypeEnum.Other) {
+              var courseType = this.selectedRace.raceLegs[0].courseType;
+              var racingAnimal = this.racingAnimals.find(animal => animal.raceCourseType === courseType);
+              if (racingAnimal !== undefined && racingAnimal !== null)
+                racingAnimal.miscStats.bonusOrbXp += item.amount;
+                console.log("Bonus Orb XP: " + racingAnimal!.miscStats.bonusOrbXp);
+            }
+            else if (item.name === "Nectar of the Gods" && item.itemType === ShopItemTypeEnum.Other) {
+              var courseType = this.selectedRace.raceLegs[0].courseType;
+              var racingAnimal = this.racingAnimals.find(animal => animal.raceCourseType === courseType);
+              if (racingAnimal !== undefined && racingAnimal !== null)
+                racingAnimal.nectarAvailable = true;
+            }
             else
               this.globalService.globalVar.resources.push(new ResourceValue(item.name, item.amount, item.itemType));
           }
@@ -2070,6 +2090,8 @@ export class RaceLogicService {
       track = racingAnimal.allTrainingTracks.intermediateTrack;
     if (this.selectedRace.trackRaceType === TrackRaceTypeEnum.master)
       track = racingAnimal.allTrainingTracks.masterTrack;
+    if (this.selectedRace.trackRaceType === TrackRaceTypeEnum.legacy)
+      track = racingAnimal.allTrainingTracks.legacyTrack;
 
     if (track === null)
       return;
@@ -2079,6 +2101,9 @@ export class RaceLogicService {
     var trackPaceModifierValuePair = this.globalService.globalVar.modifiers.find(item => item.text === "trainingTrackPaceModifier");
     if (trackPaceModifierValuePair !== undefined)
       trackPaceModifierValue = trackPaceModifierValuePair.value;
+
+    if (this.selectedRace.trackRaceType === TrackRaceTypeEnum.master)
+      trackPaceModifierValue = 1;
 
     for (var i = 0; i < track.totalRewards; i++) {
       if (i < track.rewardsObtained)
@@ -2093,6 +2118,8 @@ export class RaceLogicService {
             racingAnimal.allTrainingTracks.intermediateTrackAvailable = true;
           if (this.selectedRace.trackRaceType === TrackRaceTypeEnum.intermediate)
             racingAnimal.allTrainingTracks.masterTrackAvailable = true;
+          if (this.selectedRace.trackRaceType === TrackRaceTypeEnum.master)
+            racingAnimal.allTrainingTracks.legacyTrackAvailable = true;
         }
 
         if (this.selectedRace.rewards === undefined || this.selectedRace.rewards === null)
@@ -2721,7 +2748,7 @@ export class RaceLogicService {
       this.globalService.getOrbTypeFromResource(racingAnimal.equippedOrb) === OrbTypeEnum.ruby &&
       this.selectedRace.raceType !== RaceTypeEnum.trainingTrack &&
       velocity >= modifiedMaxSpeed) {
-      this.globalService.increaseRubyOrbXp(distanceCovered);
+      this.globalService.increaseRubyOrbXp(distanceCovered, racingAnimal);
     }
 
     //add to amber when below max speed
@@ -2729,7 +2756,7 @@ export class RaceLogicService {
       this.globalService.getOrbTypeFromResource(racingAnimal.equippedOrb) === OrbTypeEnum.amber &&
       this.selectedRace.raceType !== RaceTypeEnum.trainingTrack &&
       velocity < modifiedMaxSpeed) {
-      this.globalService.increaseAmberOrbXp(distanceCovered);
+      this.globalService.increaseAmberOrbXp(distanceCovered, racingAnimal);
     }
 
     //add to topaz when you haven't run out of stamina
@@ -2737,7 +2764,7 @@ export class RaceLogicService {
       this.globalService.getOrbTypeFromResource(racingAnimal.equippedOrb) === OrbTypeEnum.topaz &&
       this.selectedRace.raceType !== RaceTypeEnum.trainingTrack &&
       !racingAnimal.raceVariables.ranOutOfStamina) {
-      this.globalService.increaseTopazOrbXp(distanceCovered);
+      this.globalService.increaseTopazOrbXp(distanceCovered, racingAnimal);
     }
 
     //add to sapphire when you haven't lost focus
@@ -2745,7 +2772,7 @@ export class RaceLogicService {
       this.globalService.getOrbTypeFromResource(racingAnimal.equippedOrb) === OrbTypeEnum.sapphire &&
       this.selectedRace.raceType !== RaceTypeEnum.trainingTrack &&
       !racingAnimal.raceVariables.hasLostFocusDuringRace) {
-      this.globalService.increaseSapphireOrbXp(distanceCovered);
+      this.globalService.increaseSapphireOrbXp(distanceCovered, racingAnimal);
     }
   }
 
@@ -3362,6 +3389,9 @@ export class RaceLogicService {
     var trackPaceModifierValuePair = this.globalService.globalVar.modifiers.find(item => item.text === "trainingTrackPaceModifier");
     if (trackPaceModifierValuePair !== undefined)
       trackPaceModifierValue = trackPaceModifierValuePair.value;
+
+    if (race.trackRaceType === TrackRaceTypeEnum.legacy)
+      trackPaceModifierValue = 1;
 
     if (race.localRaceType === LocalRaceTypeEnum.Track) {
       for (var i = 0; i < totalRacers - 1; i++) {

@@ -450,6 +450,9 @@ export class LookupService {
     //don't forget to include 1 for yourself when doing this
     if (race.localRaceType === LocalRaceTypeEnum.Track) {
       totalRacers = 13;
+
+      if (race.trackRaceType === TrackRaceTypeEnum.legacy)
+        totalRacers = 5;
     }
     else {
       var moneyMarkIsUnlocked = this.getResourceByName("Money Mark");
@@ -519,6 +522,15 @@ export class LookupService {
     }
     else if (name === "Orb Pendant") {
       return "This looks like the perfect size to fit an orb inside.";
+    }
+    else if (name === "Bonus Base Ability Efficiency") {
+      return "Increase Ability Efficiency by this amount. Only applies to this animal.";
+    }
+    else if (name === "Bonus Orb XP Gain") {
+      return "Increase the amount of XP gained for orbs by this amount. Only applies to this animal.";
+    }
+    else if (name === "Nectar of the Gods") {
+      return "Drink this to reset Breed Level, Incubator Upgrades, and Ability Levels back to 1. Increase Breed Modifier per Breed Level based on your Breed Level when using this.";
     }
     else if (name === "Training Time Reduction") {
       return "Reduce training times by this percent. Only applies to this animal.";
@@ -640,6 +652,12 @@ export class LookupService {
       rewards.push("- +3 Diminishing Returns per Facility Level");
       rewards.push("- +1% Training Time Reduction");
       rewards.push("- +3 Talents");
+    }
+    else if (type === TrackRaceTypeEnum.legacy) {
+      rewards.push("- +5 Bonus Breed XP Gain From Training");
+      rewards.push("- +5% Base Ability Efficiency Increase");
+      rewards.push("- +10% Orb XP Gain Increase");
+      rewards.push("- Nectar of the Gods");
     }
 
     return rewards;
@@ -803,8 +821,10 @@ export class LookupService {
       pinnacleReduction = .01;
     }
 
+    var legacyBonus = 1 + animal.miscStats.bonusAbilityEfficiency;
+
     var modifiedPower = (animal.currentStats.powerMs * powerAbilityModifier * terrainModifier * statLossFromExhaustion) / 100;
-    var modifiedEfficiency = usedAbility.efficiency * abilityEfficiencyRelayBonus * firstUseAbilityModifier + (usedAbility.efficiency * ((usedAbility.abilityLevel - 1) * .01));
+    var modifiedEfficiency = usedAbility.efficiency * legacyBonus * abilityEfficiencyRelayBonus * firstUseAbilityModifier + (usedAbility.efficiency * ((usedAbility.abilityLevel - 1) * .01));
     modifiedEfficiency *= pinnacleReduction;
 
     //console.log(usedAbility.name + ": " + modifiedEfficiency + " * (1 + " + modifiedPower + ")");
@@ -1609,6 +1629,8 @@ export class LookupService {
       description = "Increase Renown by " + renownAmountEarned + " for every 10 barn levels every " + timeToCollect + " seconds while an animal trains at an Attraction.";
     else if (itemName === "Research Center Improvements")
       description = "Increase stat gain from Coaching and Scrimmages by " + (researchCenterRewardBonusAmountModifier * 100) + "% for every 10 barn levels of a Research Center.";
+    else if (itemName === "Orb Infuser")
+      description = "When using Nectar of the Gods, permanently increase the equipped Orb's stat increase amount per orb level.";
 
     var sanitized = this.sanitizer.sanitize(SecurityContext.HTML, this.sanitizer.bypassSecurityTrustHtml(description));
     if (sanitized !== null)
@@ -1687,7 +1709,7 @@ export class LookupService {
       "Base: " + baseMaxSpeedModifier.toFixed(3) + "\n";
 
     if (breedLevelStatModifierValue > 1)
-      popover += "Breed Modifier: *" + breedLevelStatModifierValue.toFixed(2) + "\n";
+      popover += "Breed Modifier: *" + (breedLevelStatModifierValue + animal.miscStats.bonusBreedModifierAmount).toFixed(2) + "\n";
 
     if (traitModifier !== 1)
       popover += animal.trait.traitName + " (Trait): *" + traitModifier.toFixed(2) + "\n";
@@ -1701,7 +1723,7 @@ export class LookupService {
     if (animal.equippedOrb !== undefined && animal.equippedOrb !== null &&
       this.globalService.getOrbTypeFromResource(animal.equippedOrb) === OrbTypeEnum.ruby &&
       this.globalService.globalVar.orbStats.getMaxSpeedIncrease(1) > 1)
-      popover += "Ruby Orb: *" + this.globalService.globalVar.orbStats.getMaxSpeedIncrease(1).toFixed(1) + "\n";
+      popover += "Ruby Orb: *" + this.globalService.globalVar.orbStats.getMaxSpeedIncrease(1).toFixed(3) + "\n";
 
 
     popover += "\n Default Speed value after Breed is " + (animal.increasedDefaultStats.topSpeed + animal.baseStats.topSpeed).toFixed(3) + ".";
@@ -1734,7 +1756,7 @@ export class LookupService {
       "Base: " + baseAccelerationModifier.toFixed(3) + "\n";
 
     if (breedLevelStatModifierValue > 1)
-      popover += "Breed Modifier: *" + breedLevelStatModifierValue.toFixed(2) + "\n";
+      popover += "Breed Modifier: *" + (breedLevelStatModifierValue + animal.miscStats.bonusBreedModifierAmount).toFixed(2) + "\n";
 
     if (traitModifier !== 1)
       popover += animal.trait.traitName + " (Trait): *" + traitModifier.toFixed(2) + "\n";
@@ -1748,7 +1770,7 @@ export class LookupService {
     if (animal.equippedOrb !== undefined && animal.equippedOrb !== null &&
       this.globalService.getOrbTypeFromResource(animal.equippedOrb) === OrbTypeEnum.amber &&
       this.globalService.globalVar.orbStats.getAccelerationIncrease(1) > 1)
-      popover += "Amber Orb: *" + this.globalService.globalVar.orbStats.getAccelerationIncrease(1).toFixed(1) + "\n";
+      popover += "Amber Orb: *" + this.globalService.globalVar.orbStats.getAccelerationIncrease(1).toFixed(3) + "\n";
 
     popover += "\n Default Acceleration value after Breed is " + (animal.increasedDefaultStats.acceleration + animal.baseStats.acceleration).toFixed(3) + ".";
     return popover;
@@ -1780,7 +1802,7 @@ export class LookupService {
       "Base: " + baseStaminaModifier.toFixed(3) + "\n";
 
     if (breedLevelStatModifierValue > 1)
-      popover += "Breed Modifier: *" + breedLevelStatModifierValue.toFixed(2) + "\n";
+      popover += "Breed Modifier: *" + (breedLevelStatModifierValue + animal.miscStats.bonusBreedModifierAmount).toFixed(2) + "\n";
 
     if (traitModifier !== 1)
       popover += animal.trait.traitName + " (Trait): *" + traitModifier.toFixed(2) + "\n";
@@ -1794,7 +1816,7 @@ export class LookupService {
     if (animal.equippedOrb !== undefined && animal.equippedOrb !== null &&
       this.globalService.getOrbTypeFromResource(animal.equippedOrb) === OrbTypeEnum.topaz &&
       this.globalService.globalVar.orbStats.getEnduranceIncrease(1) > 1)
-      popover += "Topaz Orb: *" + this.globalService.globalVar.orbStats.getEnduranceIncrease(1).toFixed(1) + "\n";
+      popover += "Topaz Orb: *" + this.globalService.globalVar.orbStats.getEnduranceIncrease(1).toFixed(3) + "\n";
 
     popover += "\n Default Endurance value after Breed is " + (animal.increasedDefaultStats.endurance + animal.baseStats.endurance).toFixed(3) + ".";
     return popover;
@@ -1826,7 +1848,7 @@ export class LookupService {
       "Base: " + basePowerModifier.toFixed(3) + "\n";
 
     if (breedLevelStatModifierValue > 1)
-      popover += "Breed Modifier: *" + breedLevelStatModifierValue.toFixed(2) + "\n";
+      popover += "Breed Modifier: *" + (breedLevelStatModifierValue + animal.miscStats.bonusBreedModifierAmount).toFixed(2) + "\n";
 
     if (traitModifier !== 1)
       popover += animal.trait.traitName + " (Trait): *" + traitModifier.toFixed(2) + "\n";
@@ -1840,7 +1862,7 @@ export class LookupService {
     if (animal.equippedOrb !== undefined && animal.equippedOrb !== null &&
       this.globalService.getOrbTypeFromResource(animal.equippedOrb) === OrbTypeEnum.amethyst &&
       this.globalService.globalVar.orbStats.getPowerIncrease(1) > 1)
-      popover += "Amethyst Orb: *" + this.globalService.globalVar.orbStats.getPowerIncrease(1).toFixed(1) + "\n";
+      popover += "Amethyst Orb: *" + this.globalService.globalVar.orbStats.getPowerIncrease(1).toFixed(3) + "\n";
 
     popover += "\n Default Power value after Breed is " + (animal.increasedDefaultStats.power + animal.baseStats.power).toFixed(3) + ".";
 
@@ -1873,7 +1895,7 @@ export class LookupService {
       "Base: " + baseFocusModifier.toFixed(3) + "\n";
 
     if (breedLevelStatModifierValue > 1)
-      popover += "Breed Modifier: *" + breedLevelStatModifierValue.toFixed(2) + "\n";
+      popover += "Breed Modifier: *" + (breedLevelStatModifierValue + animal.miscStats.bonusBreedModifierAmount).toFixed(2) + "\n";
 
     if (traitModifier !== 1)
       popover += animal.trait.traitName + " (Trait): *" + traitModifier.toFixed(2) + "\n";
@@ -1887,7 +1909,7 @@ export class LookupService {
     if (animal.equippedOrb !== undefined && animal.equippedOrb !== null &&
       this.globalService.getOrbTypeFromResource(animal.equippedOrb) === OrbTypeEnum.sapphire &&
       this.globalService.globalVar.orbStats.getFocusIncrease(1) > 1)
-      popover += "Sapphire Orb: *" + this.globalService.globalVar.orbStats.getFocusIncrease(1).toFixed(1) + "\n";
+      popover += "Sapphire Orb: *" + this.globalService.globalVar.orbStats.getFocusIncrease(1).toFixed(3) + "\n";
 
 
     popover += "\n Default Focus value after Breed is " + (animal.increasedDefaultStats.focus + animal.baseStats.focus).toFixed(3) + ".";
@@ -1920,7 +1942,7 @@ export class LookupService {
       "Base: " + baseAdaptabilityModifier.toFixed(3) + "\n";
 
     if (breedLevelStatModifierValue > 1)
-      popover += "Breed Modifier: *" + breedLevelStatModifierValue.toFixed(2) + "\n";
+      popover += "Breed Modifier: *" + (breedLevelStatModifierValue + animal.miscStats.bonusBreedModifierAmount).toFixed(2) + "\n";
 
     if (traitModifier !== 1)
       popover += animal.trait.traitName + " (Trait): *" + traitModifier.toFixed(2) + "\n";
@@ -1934,7 +1956,7 @@ export class LookupService {
     if (animal.equippedOrb !== undefined && animal.equippedOrb !== null &&
       this.globalService.getOrbTypeFromResource(animal.equippedOrb) === OrbTypeEnum.emerald &&
       this.globalService.globalVar.orbStats.getAdaptabilityIncrease(1) > 1)
-      popover += "Emerald Orb: *" + this.globalService.globalVar.orbStats.getAdaptabilityIncrease(1).toFixed(1) + "\n";
+      popover += "Emerald Orb: *" + this.globalService.globalVar.orbStats.getAdaptabilityIncrease(1).toFixed(3) + "\n";
 
     popover += "\n Default Adaptability value after Breed is " + (animal.increasedDefaultStats.adaptability + animal.baseStats.adaptability).toFixed(3) + ".";
     return popover;
@@ -1955,7 +1977,11 @@ export class LookupService {
     var popover = "Base Efficiency: " + animal.ability.efficiency + "\n";
 
     if (animal.ability.abilityLevel > 1)
-      popover += "Level Efficiency Multiplier: " + (1 + (animal.ability.abilityLevel - 1) * .01);
+      popover += "Level Efficiency Multiplier: *" + (1 + (animal.ability.abilityLevel - 1) * .01);
+    
+    if (animal.miscStats.bonusAbilityEfficiency > 0)
+      popover += "Bonus Ability Efficiency: *" + (1 + animal.miscStats.bonusAbilityEfficiency);
+
 
     return popover;
   }
@@ -1988,7 +2014,7 @@ export class LookupService {
 
   bonusTrainingXpPopover(animal: Animal) {
     var popover = "";
-    var trackRaceBonus = animal.allTrainingTracks.getTotalTrainingTrackBonusBreedXpFromTraining();
+    var trackRaceBonus = animal.allTrainingTracks.getTotalTrainingTrackBonusBreedXpFromTraining(animal);
 
     if (trackRaceBonus > 0)
       popover += "Track Race Rewards: " + trackRaceBonus + "\n";
@@ -2033,6 +2059,25 @@ export class LookupService {
     return popover;
   }
 
+  bonusAbilityEfficiencyPopover(animal: Animal) {
+    var popover = "";
+    var trackRaceBonus = animal.allTrainingTracks.getTotalTrainingTrackBonusAbilityEfficiency(animal);
+
+    if (trackRaceBonus > 0)
+      popover += "Track Race Rewards: " + (trackRaceBonus * 100) + "%\n";
+
+    return popover;
+  }
+
+  bonusOrbXpPopover(animal: Animal) {
+    var popover = "";
+    var trackRaceBonus = animal.allTrainingTracks.getTotalTrainingTrackBonusOrbXp(animal);
+
+    if (trackRaceBonus > 0)
+      popover += "Track Race Rewards: " + (trackRaceBonus * 100) + "%\n";
+
+    return popover;
+  }
 
   isAmountMoreThanCertificateCap(selectedAmount: number, selectedAnimal: Animal, certificateName: string) {
     var isAmountMoreThanCap = false;

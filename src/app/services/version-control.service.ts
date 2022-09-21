@@ -24,7 +24,7 @@ export class VersionControlService {
   constructor(private globalService: GlobalService, private lookupService: LookupService, private utilityService: UtilityService) { }
 
   //add to this in descending order
-  gameVersions = [1.20, 1.19, 1.18, 1.17, 1.16, 1.15, 1.14, 1.13, 1.12, 1.11, 1.10, 1.09, 1.08, 1.07, 1.06, 1.05, 1.04, 1.03, 1.02, 1.01, 1.00];
+  gameVersions = [1.21, 1.20, 1.19, 1.18, 1.17, 1.16, 1.15, 1.14, 1.13, 1.12, 1.11, 1.10, 1.09, 1.08, 1.07, 1.06, 1.05, 1.04, 1.03, 1.02, 1.01, 1.00];
 
   getListAscended() {
     var ascendedList: number[] = [];
@@ -191,6 +191,13 @@ export class VersionControlService {
         "<ul><li>Token rewards increase every five Grand Prixes during an event period instead of after every Grand Prix during an event period. This should smooth out token gain a bit more instead of hitting a point where you go from getting barely any tokens to a massive amount all at once.</li>" +
         "<li>Base coin rewards per interval have been increased from 250 to 100. This amount increases after every successful Grand Prix during an event period.</li></ul>" +
         "Bug fixes.";
+    if (version === 1.21)
+      changes = "A new reset has been added!" +
+      "<ul><li>A new training trace race, the Legacy Track, has been added. Complete for new bonuses as well as the unique item Nectar of the Gods.</li>" + 
+      "<li>Using Nectar of the Gods resets your Breed Level, Ability Levels, and Incubator Upgrades back to 1 for the animal using it. Your Breed Modifier is increased by an amount based on your Breed Level when using the Nectar.</li>" + 
+      "<li>A new item, Orb Infuser, has been added to the shop. After purchasing, any time you use Nectar of the Gods, you will also permanently increase the stat gain per orb level of the orb that animal has equipped.</li>" + 
+      "<ul><li>After using Nectar of the Gods, the Legacy Track is reset so that you can regain the bonuses from that track race. The track gets progressively harder the more times you complete it.</li></ul>" + 
+      "UI improvements.";
     return changes;
   }
 
@@ -238,6 +245,8 @@ export class VersionControlService {
       date = new Date('2022-09-13 12:00:00');
     if (version === 1.20)
       date = new Date('2022-09-15 12:00:00');
+    if (version === 1.21)
+      date = new Date('2022-09-21 12:00:00');
 
     return date.toDateString().replace(/^\S+\s/, '');
   }
@@ -1239,6 +1248,28 @@ export class VersionControlService {
             researchCenterUpgrade.isAvailable = true;
           }
         }
+        else if (version === 1.21) {
+          this.globalService.globalVar.animals.forEach(item => {
+            item.legacyRaceCount = 0;
+            item.miscStats.bonusAbilityEfficiency = 0;
+            item.miscStats.bonusOrbXp = 0;
+          });
+
+          var specialtyShop = this.globalService.globalVar.shop.find(item => item.name === "Specialty");
+          if (specialtyShop !== null && specialtyShop !== undefined) {
+            var orbInfuser = new ShopItem();
+            orbInfuser.name = "Orb Infuser";
+            orbInfuser.purchasePrice.push(this.globalService.getCoinsResourceValue(5000000));
+            orbInfuser.basePurchasePrice.push(this.globalService.getCoinsResourceValue(5000000));
+            orbInfuser.canHaveMultiples = false;
+            orbInfuser.isAvailable = false;
+            orbInfuser.type = ShopItemTypeEnum.Specialty;
+            specialtyShop.itemList.push(orbInfuser);
+
+            if (this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.circuitRank) >= 79)
+            orbInfuser.isAvailable = true;
+          }
+        }
 
         this.globalService.globalVar.currentVersion = version;
       }
@@ -1249,7 +1280,7 @@ export class VersionControlService {
     this.globalService.globalVar.animals.filter(item => item.isAvailable).forEach(animal => {
       var freeRaceBonus = animal.allTrainingTracks.getTotalTrainingTrackBonusBreedXpFromFreeRaces();
       var circuitRaceBonus = animal.allTrainingTracks.getTotalTrainingTrackBonusBreedXpFromCircuitRaces();
-      var trainingRaceBonus = animal.allTrainingTracks.getTotalTrainingTrackBonusBreedXpFromTraining();
+      var trainingRaceBonus = animal.allTrainingTracks.getTotalTrainingTrackBonusBreedXpFromTraining(animal);
       var drBonus = animal.allTrainingTracks.getTotalTrainingTrackBonusDiminishingReturnsPerFacilityLevel();
       var trainingTimeReductionBonus = animal.allTrainingTracks.getTotalTrainingTrackBonusTrainingTimeReduction();
       var talentsBonus = animal.allTrainingTracks.getTotalTrainingTrackBonusTalents();

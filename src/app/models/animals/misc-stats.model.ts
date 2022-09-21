@@ -5,6 +5,9 @@ export class MiscStats {
     trainingTimeReduction: number;
     diminishingReturnsBonus: number;
     bonusTalents: number;
+    bonusAbilityEfficiency: number;
+    bonusOrbXp: number;
+    bonusBreedModifierAmount: number;
 
     bonusTrainingBreedXpCertificateCount: number;
     bonusCircuitBreedXpCertificateCount: number;
@@ -19,6 +22,9 @@ export class MiscStats {
         this.trainingTimeReduction = 0;
         this.diminishingReturnsBonus = 0;
         this.bonusTalents = 0;
+        this.bonusAbilityEfficiency = 0;
+        this.bonusOrbXp = 0;
+        this.bonusBreedModifierAmount = 0;
 
         this.bonusTrainingBreedXpCertificateCount = 0;
         this.bonusCircuitBreedXpCertificateCount = 0;
@@ -41,6 +47,9 @@ export class MiscStats {
         copyStats.certificateUseCap = originalStats.certificateUseCap;
         copyStats.diminishingReturnsBonus = originalStats.diminishingReturnsBonus;
         copyStats.trainingTimeReduction = originalStats.trainingTimeReduction;
+        copyStats.bonusAbilityEfficiency = originalStats.bonusAbilityEfficiency;
+        copyStats.bonusOrbXp = originalStats.bonusOrbXp;
+        copyStats.bonusBreedModifierAmount = originalStats.bonusBreedModifierAmount;
 
         return copyStats;
     }

@@ -281,6 +281,26 @@
                             number : '1.0-0' }}
                         </span>
                     </div>
+
+                    <div *ngIf="selectedAnimal.miscStats.bonusAbilityEfficiency > 0">
+                        <span>
+                            <span class="keyword" [ngbPopover]="bonusAbilityEfficiencyPopoverContent"
+                                triggers="mouseenter:mouseleave" popoverClass="popoverClass">Bonus Ability Efficiency:</span> {{
+                            selectedAnimal.miscStats.bonusAbilityEfficiency * 100
+                            |
+                            number : '1.0-0' }}%
+                        </span>
+                    </div>
+
+                    <div *ngIf="selectedAnimal.miscStats.bonusOrbXp > 0">
+                        <span>
+                            <span class="keyword" [ngbPopover]="bonusOrbXpPopoverContent"
+                                triggers="mouseenter:mouseleave" popoverClass="popoverClass">Bonus Orb XP Gain:</span> {{
+                            selectedAnimal.miscStats.bonusOrbXp * 100
+                            |
+                            number : '1.0-0' }}%
+                        </span>
+                    </div>
                 </div>
             </div>
             <div class="abilities">
@@ -396,6 +416,18 @@
 <ng-template #bonusTalentsPopoverContent>
     <div class="popoverClass">
         {{ getBonusTalentsPopover() }}
+    </div>
+</ng-template>
+
+<ng-template #bonusAbilityEfficiencyPopoverContent>
+    <div class="popoverClass">
+        {{ getBonusAbilityEfficiencyPopover() }}
+    </div>
+</ng-template>
+
+<ng-template #bonusOrbXpPopoverContent>
+    <div class="popoverClass">
+        {{ getBonusOrbXpPopover() }}
     </div>
 </ng-template>
 

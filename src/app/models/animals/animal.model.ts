@@ -64,6 +64,8 @@ export class Animal {
     freeTalentResetCount = 0;
     scrimmageEnergyTimer = 0;
     totalRacesRun: number; //for tracked stats
+    legacyRaceCount: number = 0;
+    nectarAvailable: boolean = false;
 
     constructor() {
         this.incubatorStatUpgrades = new IncubatorStatUpgrades();
@@ -104,6 +106,8 @@ export class Animal {
         copyAnimal.trackedAnimalStats = originalAnimal.trackedAnimalStats;
         copyAnimal.trait = originalAnimal.trait;
         copyAnimal.miscStats = originalAnimal.miscStats.makeCopy(originalAnimal.miscStats);
+        copyAnimal.legacyRaceCount = originalAnimal.legacyRaceCount;
+        copyAnimal.nectarAvailable = originalAnimal.nectarAvailable;
 
         return copyAnimal;
     }

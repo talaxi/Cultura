@@ -1,4 +1,5 @@
 import { Type } from "class-transformer";
+import { Animal } from "../animals/animal.model";
 import { ResourceValue } from "../resources/resource-value.model";
 import { ShopItemTypeEnum } from "../shop-item-type-enum.model";
 import { TrainingTrack } from "./training-track.model";
@@ -10,12 +11,16 @@ export class AllTrainingTracks {
     intermediateTrack: TrainingTrack;
     @Type(() => TrainingTrack)
     masterTrack: TrainingTrack;
+    @Type(() => TrainingTrack)
+    legacyTrack: TrainingTrack;
     intermediateTrackAvailable: boolean;
     masterTrackAvailable: boolean;
+    legacyTrackAvailable: boolean;
 
     constructor() {
         this.intermediateTrackAvailable = false;
         this.masterTrackAvailable = false;
+        this.legacyTrackAvailable = false;
 
         this.noviceTrack = new TrainingTrack();
         this.noviceTrack.totalRewards = 12;
@@ -65,18 +70,25 @@ export class AllTrainingTracks {
         this.masterTrack.rewards.push(new ResourceValue("Diminishing Returns per Facility Level", 3, ShopItemTypeEnum.Other));
         this.masterTrack.rewards.push(new ResourceValue("Training Time Reduction", 1, ShopItemTypeEnum.Other));
         this.masterTrack.rewards.push(new ResourceValue("Bonus Talents", 3, ShopItemTypeEnum.Other));
+
+        this.legacyTrack = new TrainingTrack();
+        this.legacyTrack.totalRewards = 4;        
+        this.legacyTrack.rewards.push(new ResourceValue("Bonus Breed XP Gain From Training", 5, ShopItemTypeEnum.Other));
+        this.legacyTrack.rewards.push(new ResourceValue("Bonus Base Ability Efficiency", .05, ShopItemTypeEnum.Other));
+        this.legacyTrack.rewards.push(new ResourceValue("Bonus Orb XP Gain", .1, ShopItemTypeEnum.Other));
+        this.legacyTrack.rewards.push(new ResourceValue("Nectar of the Gods", 1, ShopItemTypeEnum.Other));    
     }
 
     getTotalRewardCount() {
-        return this.noviceTrack.totalRewards + this.intermediateTrack.totalRewards + this.masterTrack.totalRewards;
+        return this.noviceTrack.totalRewards + this.intermediateTrack.totalRewards + this.masterTrack.totalRewards + this.legacyTrack.totalRewards;
     }
 
     getTotalRewardsObtained() {
-        return this.noviceTrack.rewardsObtained - this.intermediateTrack.rewardsObtained - this.masterTrack.rewardsObtained;
+        return this.noviceTrack.rewardsObtained - this.intermediateTrack.rewardsObtained - this.masterTrack.rewardsObtained - this.legacyTrack.rewardsObtained;
     }
 
     getTotalRewardsRemaining() {
-        return this.getTotalRewardCount() - this.noviceTrack.rewardsObtained - this.intermediateTrack.rewardsObtained - this.masterTrack.rewardsObtained;
+        return this.getTotalRewardCount() - this.noviceTrack.rewardsObtained - this.intermediateTrack.rewardsObtained - this.masterTrack.rewardsObtained - this.legacyTrack.rewardsObtained;
     }
 
     getTotalTrainingTrackBonusBreedXpFromFreeRaces() {
@@ -113,7 +125,7 @@ export class AllTrainingTracks {
         return bonusXp;
     }
 
-    getTotalTrainingTrackBonusBreedXpFromTraining() {
+    getTotalTrainingTrackBonusBreedXpFromTraining(animal: Animal) {
         var bonusXp = 0;
 
         if (this.noviceTrack.rewards.length === 0 || this.intermediateTrack.rewards.length === 0 || this.masterTrack.rewards.length === 0)
@@ -133,6 +145,12 @@ export class AllTrainingTracks {
 
         if (this.masterTrack.rewardsObtained >= 5)
             bonusXp += this.masterTrack.rewards[4].amount;
+
+        bonusXp += animal.legacyRaceCount * 5;
+    
+        if (this.legacyTrack.rewardsObtained >= 1)
+            bonusXp += 5;
+    
 
         return bonusXp;
     }
@@ -187,6 +205,28 @@ export class AllTrainingTracks {
             bonusXp += this.masterTrack.rewards[5].amount;
         if (this.masterTrack.rewardsObtained >= 12)
             bonusXp += this.masterTrack.rewards[11].amount;        
+
+        return bonusXp;
+    }
+
+    getTotalTrainingTrackBonusAbilityEfficiency(animal: Animal) {
+        var bonusXp = 0;
+
+        bonusXp = animal.legacyRaceCount * .05;
+        
+        if (this.legacyTrack.rewardsObtained >= 2)
+            bonusXp += .05;
+
+        return bonusXp;
+    }
+
+    getTotalTrainingTrackBonusOrbXp(animal: Animal) {
+        var bonusXp = 0;
+
+        bonusXp = animal.legacyRaceCount * .1;
+        
+        if (this.legacyTrack.rewardsObtained >= 3)
+            bonusXp += .1;
 
         return bonusXp;
     }

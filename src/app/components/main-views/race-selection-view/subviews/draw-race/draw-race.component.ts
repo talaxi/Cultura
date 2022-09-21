@@ -11,6 +11,7 @@ import { DrawnRaceObject } from 'src/app/models/races/drawn-race-objects.model';
 import { RaceLeg } from 'src/app/models/races/race-leg.model';
 import { RacePath } from 'src/app/models/races/race-path.model';
 import { Race } from 'src/app/models/races/race.model';
+import { TrackRaceTypeEnum } from 'src/app/models/track-race-type-enum.model';
 import { GameLoopService } from 'src/app/services/game-loop/game-loop.service';
 import { GlobalService } from 'src/app/services/global-service.service';
 import { LookupService } from 'src/app/services/lookup.service';
@@ -775,6 +776,12 @@ export class DrawRaceComponent implements OnInit {
       var trackPaceModifierValuePair = this.globalService.globalVar.modifiers.find(item => item.text === "trainingTrackPaceModifier");
       if (trackPaceModifierValuePair !== undefined)
         trackPaceModifierValue = trackPaceModifierValuePair.value;
+
+      if (this.race.trackRaceType === TrackRaceTypeEnum.legacy)
+      {
+        totalRacers = 3;
+        trackPaceModifierValue = 1;
+      }
 
       for (var j = 0; j < totalRacers; j++) {
         var paceModifier = 1 + (trackPaceModifierValue * (j + 1));
