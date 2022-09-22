@@ -160,7 +160,7 @@ export class SelectedAnimalComponent implements OnInit {
       this.adaptabilityModifierAmount = this.lookupService.getAdaptabilityModifierByAnimalType(this.selectedAnimal.type);
       this.diminishingReturnsAmount = this.globalService.GetAnimalDiminishingReturns(this.selectedAnimal);
 
-      this.breedLevelPopover = this.lookupService.getBreedLevelPopover(this.selectedAnimal.breedLevel);
+      this.breedLevelPopover = this.lookupService.getBreedLevelPopover(this.selectedAnimal);
       this.abilityLevelMaxedOut = this.isAbilityLevelMaxedOut();
     }
   }
@@ -715,7 +715,7 @@ export class SelectedAnimalComponent implements OnInit {
     this.focusModifierAmount = this.lookupService.getFocusModifierByAnimalType(this.selectedAnimal.type);
     this.adaptabilityModifierAmount = this.lookupService.getAdaptabilityModifierByAnimalType(this.selectedAnimal.type);
     this.diminishingReturnsAmount = this.globalService.GetAnimalDiminishingReturns(this.selectedAnimal);
-    this.breedLevelPopover = this.lookupService.getBreedLevelPopover(this.selectedAnimal.breedLevel);
+    this.breedLevelPopover = this.lookupService.getBreedLevelPopover(this.selectedAnimal);
 
     var stockbreeder = this.lookupService.getStockbreeder();
 
