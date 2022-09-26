@@ -85,6 +85,10 @@ export class SelectedAnimalComponent implements OnInit {
 
   @HostListener('window:keyup', ['$event'])
   keyEvent(event: KeyboardEvent) {
+    if (event.key === this.globalService.globalVar.keybinds.get("Back").toUpperCase() || event.key === this.globalService.globalVar.keybinds.get("Back").toLowerCase()) {
+      this.returnToAnimalView();
+    }
+
     if (!this.modalService.hasOpenModals()) {
       var availableAnimals = this.globalService.globalVar.animals.filter(item => item.isAvailable);
       var indexOfCurrentAnimal = availableAnimals.findIndex(item => this.selectedAnimal === item);

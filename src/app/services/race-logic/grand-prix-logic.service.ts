@@ -139,20 +139,19 @@ export class GrandPrixLogicService {
       //if expedite race was really a thing, you could turn it on while this is active      
       if (this.globalService.globalVar.eventRaceData.segmentTimeCounter >= timeToComplete * 2 && new Date() < this.utilityService.addDaysToDate(this.globalService.globalVar.eventRaceData.currentEventEndDate, 1)) { //&& within 24 hours after end of race
         this.globalService.globalVar.eventRaceData.isCatchingUp = true;
-        /*setTimeout(() => {
-          console.log("Waiting..");
-        }, 500);*/
-        //console.log("Catching up");
+        this.globalService.globalVar.eventRaceData.delayCatchingUpTimeCounter += deltaTime;
       }
       else {
         this.globalService.globalVar.eventRaceData.isCatchingUp = false;
+        this.globalService.globalVar.eventRaceData.delayCatchingUpTimeCounter = 0;
       }
 
       if (this.globalService.globalVar.eventRaceData.segmentTimeCounter >= timeToComplete) {
-        if (this.globalService.globalVar.eventRaceData.isCatchingUp)
+        //TODO FOR LATER:
+        /*if (this.globalService.globalVar.eventRaceData.isCatchingUp && this.globalService.globalVar.eventRaceData.delayCatchingUpTimeCounter < 2)
         {
-
-        }
+          return;
+        }*/
 
         //console.log("Segment complete");
         this.globalService.globalVar.eventRaceData.currentRaceSegmentCount += 1;
@@ -181,6 +180,7 @@ export class GrandPrixLogicService {
             //console.log("Ran segment " + this.globalService.globalVar.eventRaceData.currentRaceSegmentCount);
             //console.log("Resulting frames: " + this.globalService.globalVar.eventRaceData.currentRaceSegmentResult.totalFramesPassed + "(" + (this.globalService.globalVar.eventRaceData.currentRaceSegmentResult.totalFramesPassed / 60) + ")");            
             this.globalService.globalVar.eventRaceData.nextRaceSegment = this.globalService.generateGrandPrixSegment(racingAnimal, this.globalService.globalVar.eventRaceData.isCatchingUp ? this.globalService.globalVar.eventRaceData.segmentTimeCounter : undefined);
+            this.globalService.globalVar.eventRaceData.delayCatchingUpTimeCounter = 0;
           }
         }
       }

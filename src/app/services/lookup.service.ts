@@ -1272,6 +1272,15 @@ export class LookupService {
     return barnName;
   }
 
+  getAnimalNameFromBarn(barn: Barn) {
+    var name = "Empty Barn";
+    var animal = this.globalService.globalVar.animals.find(item => item.associatedBarnNumber === barn.barnNumber);
+    if (animal !== undefined)
+      name = animal.name;
+
+    return name;
+  }
+
   getTerrainPopoverText(terrain: Terrain, raceLeg?: RaceLeg) {
     var popoverText = "";
 
@@ -2219,6 +2228,15 @@ export class LookupService {
     }
     if (name === "Quick View Barn") {
       description = "Condense the barn screen so that each barn is easier to see.";
+    }
+    if (name === "Display Average Distance Pace") {
+      description = "When the average distance pace is outside of your field of view during a race, display it in a bubble on the side of the screen.";
+    }
+    if (name === "Swap Barn Mode") {
+      description = "Enable this to swap your barns around by dragging and dropping them. While this is active, you won't be able to click into your barns."
+    }
+    if (name === "Show Barn Options") {
+      description = "Enable this to show a bar above your barns with different UI options."
     }
 
     return description;

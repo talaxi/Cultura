@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, OnInit, Output } from '@angular/core';
 import { AnimalDeck } from 'src/app/models/animals/animal-deck.model';
 import { Animal } from 'src/app/models/animals/animal.model';
 import { NavigationEnum } from 'src/app/models/navigation-enum.model';
@@ -20,6 +20,16 @@ export class TrainingTrackViewComponent implements OnInit {
   selectedRace: Race;
   existingPrimaryDeckAnimals: Animal[];
   @Output() raceSelectedEmitter = new EventEmitter<boolean>();
+
+
+  @HostListener('window:keyup', ['$event'])
+  keyEvent(event: KeyboardEvent) {
+    if (this.animalSelected && !this.showRace) {
+      if (event.key === this.globalService.globalVar.keybinds.get("Back").toUpperCase() || event.key === this.globalService.globalVar.keybinds.get("Back").toLowerCase()) {
+        this.returnToAnimalView();
+      }
+    }
+  }
 
   constructor(private globalService: GlobalService, private componentCommunicationService: ComponentCommunicationService) { }
 
@@ -59,8 +69,8 @@ export class TrainingTrackViewComponent implements OnInit {
     this.raceSelectedEmitter.emit(false);
 
     var existingDeck = this.globalService.globalVar.animalDecks.find(item => item.isPrimaryDeck);
-  
+
     if (existingDeck !== undefined && existingDeck !== null)
-      existingDeck.selectedAnimals = this.existingPrimaryDeckAnimals;  
+      existingDeck.selectedAnimals = this.existingPrimaryDeckAnimals;
   }
 }

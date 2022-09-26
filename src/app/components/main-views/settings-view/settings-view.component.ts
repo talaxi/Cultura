@@ -28,6 +28,8 @@ export class SettingsViewComponent implements OnInit {
   useNumbersForCircuitRank: boolean;
   autoStartEventRace: boolean;
   quickViewBarnMode: boolean;
+  displayAverageDistancePace: boolean;
+  showBarnOptions: boolean;
   raceDisplayInfo: string;
   finishTrainingBeforeSwitchingPopoverText: string;
   skipDrawRacePopoverText: string;
@@ -36,6 +38,8 @@ export class SettingsViewComponent implements OnInit {
   raceDisplayInfoPopoverText: string;
   autoStartEventRacePopoverText: string;
   quickViewBarnModePopoverText: string;
+  showBarnOptionsPopoverText: string;
+  displayAverageDistancePacePopoverText: string;
   enteredRedemptionCode: string;
   currentTheme: string;
   public raceDisplayInfoEnum = RaceDisplayInfoEnum;
@@ -103,7 +107,21 @@ export class SettingsViewComponent implements OnInit {
     else
       this.quickViewBarnMode = quickViewBarnMode;
     this.quickViewBarnModePopoverText = this.lookupService.getSettingDescriptions("Quick View Barn");
+    
+    var displayAverageDistancePace = this.globalService.globalVar.settings.get("displayAverageDistancePace");
+    if (displayAverageDistancePace === undefined)
+      this.displayAverageDistancePace = false;
+    else
+      this.displayAverageDistancePace = displayAverageDistancePace;
+    this.displayAverageDistancePacePopoverText = this.lookupService.getSettingDescriptions("Display Average Distance Pace");
 
+    var showBarnOptions = this.globalService.globalVar.settings.get("showBarnOptions");
+    if (showBarnOptions === undefined)
+      this.showBarnOptions = false;
+    else
+      this.showBarnOptions = showBarnOptions;
+    this.showBarnOptionsPopoverText = this.lookupService.getSettingDescriptions("Show Barn Options");
+    
   }
 
   public SaveGame() {
@@ -191,6 +209,16 @@ export class SettingsViewComponent implements OnInit {
   quickViewBarnToggle = () => {
     this.quickViewBarnMode = !this.quickViewBarnMode;
     this.globalService.globalVar.settings.set("quickViewBarnMode", this.quickViewBarnMode);
+  }
+  
+  displayAverageDistancePaceToggle = () => {
+    this.displayAverageDistancePace = !this.displayAverageDistancePace;
+    this.globalService.globalVar.settings.set("displayAverageDistancePace", this.displayAverageDistancePace);
+  }
+
+  showBarnOptionsToggle = () => {
+    this.showBarnOptions = !this.showBarnOptions;
+    this.globalService.globalVar.settings.set("showBarnOptions", this.showBarnOptions);
   }
 
   saveRaceDisplayInfo() {

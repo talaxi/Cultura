@@ -12,7 +12,7 @@ import { UtilityService } from 'src/app/services/utility/utility.service';
 @Component({
   selector: 'app-barn',
   templateUrl: './barn.component.html',
-  styleUrls: ['./barn.component.css'],  
+  styleUrls: ['./barn.component.css'],
 })
 export class BarnComponent implements OnInit {
   @Input() barnNumber: number;
@@ -31,6 +31,7 @@ export class BarnComponent implements OnInit {
   readyToBreed: boolean;
   autoBreedActive: boolean;
   colorConditional: any;
+  swapBarnMode = false;
 
   @Output() selectedBarn = new EventEmitter<number>();
   trainingProgressBarPercent: number;
@@ -39,6 +40,22 @@ export class BarnComponent implements OnInit {
     private utilityService: UtilityService) { }
 
   ngOnInit(): void {
+    this.resetBarn();
+  }
+
+  ngOnChanges() {    
+     this.resetBarn();
+    }  
+
+  ngOnDestroy() {
+    this.previousTrainedAmount = 0;
+
+    if (this.subscription !== null && this.subscription !== undefined) {
+      this.subscription.unsubscribe();
+    }
+  }
+
+  resetBarn() {
     if (this.barnNumber > 0 && this.barnNumber <= this.globalService.globalVar.barns.length + 1) {
       if (this.globalService.globalVar.settings.get("quickViewBarnMode"))
         this.condensedView = true;
@@ -71,27 +88,31 @@ export class BarnComponent implements OnInit {
         this.isLocked = globalBarn.isLocked;
       }
     }
-    else {      
+    else {
       alert("You've run into an error! Please try again. If you have the time, please export your data under the Settings tab and send me the data and any relevant info at CulturaIdle@gmail.com. Thank you!");
     }
 
-    if (!this.isLocked) {      
-      this.subscription = this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {
+    if (this.subscription !== undefined)
+      this.subscription.unsubscribe();
+
+    this.subscription = this.gameLoopService.gameUpdateEvent.subscribe((deltaTime: number) => {
+      if (this.globalService.globalVar.settings.get("swapBarnMode"))
+        this.swapBarnMode = true;
+      if (!this.isLocked) {
         var associatedAnimal = this.globalService.globalVar.animals.find(item => item.associatedBarnNumber == this.barnNumber);
         if (associatedAnimal === undefined || associatedAnimal === null) {
           //any game loop logic needed for an empty barn
         }
         else {
           //UI updates     
-          this.readyToBreed = associatedAnimal.breedGaugeXp >= associatedAnimal.breedGaugeMax && this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.circuitRank) >= 10;          
+          this.readyToBreed = associatedAnimal.breedGaugeXp >= associatedAnimal.breedGaugeMax && this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.circuitRank) >= 10;
           this.autoBreedActive = associatedAnimal.autoBreedActive;
-          
-          if (associatedAnimal.currentTraining === undefined || associatedAnimal.currentTraining === null)
-          {
+
+          if (associatedAnimal.currentTraining === undefined || associatedAnimal.currentTraining === null) {
             this.trainingProgressBarPercent = 0;
             return;
           }
-          if (associatedAnimal.currentTraining.timeTrained < this.previousTrainedAmount) {            
+          if (associatedAnimal.currentTraining.timeTrained < this.previousTrainedAmount) {
             this.trainingCompleteText = this.lookupService.getTrainingProgressionAnimationText(associatedAnimal.currentTraining);
             this.showTrainingAnimation = true;
 
@@ -103,16 +124,12 @@ export class BarnComponent implements OnInit {
           this.previousTrainedAmount = associatedAnimal.currentTraining.timeTrained;
           this.trainingProgressBarPercent = ((associatedAnimal.currentTraining.timeTrained / associatedAnimal.currentTraining.timeToComplete) * 100);
         }
-      });
-    }
+      }
+    });
   }
 
-  ngOnDestroy() {
-    this.previousTrainedAmount = 0;
-
-    if (this.subscription !== null && this.subscription !== undefined) {
-      this.subscription.unsubscribe();
-    }
+  swapBarnActive() {    
+    return { 'turnOffPointer': this.swapBarnMode };
   }
 
   @HostListener("click") onClick() {

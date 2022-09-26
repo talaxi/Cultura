@@ -48,6 +48,8 @@
                     <input id="deck-name" type="text" class="spaced" maxlength="50" formControlName="deckName">
                 </div>
                 <div *ngIf="displayRaceOrder" class="raceOrder">
+                    <em>When this box is checked, this order will be enforced. Drag a course type on top of another to swap their position.</em>
+                    <br/>
                     <input type="checkbox" class="spaced" id="finishTraining" [checked]="isRaceOrderOn"
                         (input)="toggleRaceOrder()">
                     <label class="spaced" (click)="toggleRaceOrder()">Race Order: </label>
@@ -68,6 +70,7 @@
                             (drop)="dropCourseType($event)">{{selectedDeckOrder[4]}}</span></span>
                 </div>
                 <br />
+                <br/>
                 <div class="typeContainer">
                     <button *ngFor="let type of raceCourseTypeList" class="raceType subHeading clickableText buttonAsTextKeepColor"
                         [ngClass]="{'selectedCourseType': selectedCourseType === type, 'flatlandColor': type === 'Flatland',

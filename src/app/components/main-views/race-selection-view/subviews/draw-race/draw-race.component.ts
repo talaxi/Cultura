@@ -488,10 +488,6 @@ export class DrawRaceComponent implements OnInit {
 
       this.mountainEndingY = currentYDistanceTraveled;
 
-      //console.log("Current Y Dist Traveled: " + currentYDistanceTraveled + " Saved Y: " + this.globalService.globalVar.eventRaceData.mountainEndingY +
-      //"GoingUpCalc: " + goingUpCalculatedTotal + " OffsetPathDistance: " + offsetPathDistance + "Dist In Leg: " + currentDistanceInLeg + " UpTotal: " + goingUpTotal);
-
-      //console.log(currentFrame + " vs " + this.globalService.globalVar.eventRaceData.currentRaceSegmentResult.totalFramesPassed + ": " + currentYDistanceTraveled);
       if (this.race.raceType === RaceTypeEnum.event && this.race.eventRaceType === EventRaceTypeEnum.grandPrix &&
         currentFrame === this.globalService.globalVar.eventRaceData.currentRaceSegmentResult.totalFramesPassed - 2) {
         this.globalService.globalVar.eventRaceData.mountainEndingY = currentYDistanceTraveled;
@@ -504,11 +500,6 @@ export class DrawRaceComponent implements OnInit {
 
     currentYDistanceTraveled = this.mountainEndingY;
     if (this.race.raceType === RaceTypeEnum.event && this.race.eventRaceType === EventRaceTypeEnum.grandPrix) {
-      /*if (this.globalService.globalVar.eventRaceData.mountainEndingY === 0 && this.currentLeg.courseType !== RaceCourseTypeEnum.Mountain)
-      {    
-        this.lastPathEndingY = this.canvasHeight / 2;        
-      }*/
-
       currentYDistanceTraveled += this.globalService.globalVar.eventRaceData.mountainEndingY;
       if (this.globalService.globalVar.eventRaceData.previousRaceSegment !== null &&
         this.globalService.globalVar.eventRaceData.previousRaceSegment !== undefined &&
@@ -554,35 +545,11 @@ export class DrawRaceComponent implements OnInit {
     //current distance traveled, scaled with the canvas and modifier, minus getting the coloring in the middle of the screen
     var xDistanceOffset = (currentDistanceTraveled * this.canvasXDistanceScale * xRaceModeModifier) - (this.canvasWidth / 2);
     var yDistanceOffset = currentYDistanceTraveled * this.canvasXDistanceScale * yRaceModeModifier;
-    //could make currentDistanceTraveledY and have that be added to by ySteepness and checking that leg is climb for currentdistainceinleg
-
+    
     this.visibleDistanceXLeft = xDistanceOffset;
     this.visibleDistanceXRight = xDistanceOffset + (this.canvasWidth);
-    //console.log("Visible X Distance: " + this.visibleDistanceXLeft + " , " + this.visibleDistanceXRight);    
-
+    
     this.setDrawnObjectGoingUpStatus(); //calculate it out
-
-    /*if (this.currentLeg.courseType === RaceCourseTypeEnum.Ocean) {
-      var foundCurrentPath = false;
-      var totalDistance = 0;
-      var pathCounter = 0;
-      this.currentLeg.pathData.forEach(path => {
-        if (!foundCurrentPath) {
-          if (currentDistanceInLeg >= totalDistance && currentDistanceInLeg < totalDistance + path.length) {
-            foundCurrentPath = true;
-          }
-          else
-            pathCounter += 1;
-
-          totalDistance += path.length;
-        }
-      });
-
-      if (pathCounter % 2 === 0)
-        isCurrentlyGoingUp = true;
-      else
-        isCurrentlyGoingUp = false;
-    }*/
 
     context.globalCompositeOperation = "source-over";
 
@@ -605,9 +572,7 @@ export class DrawRaceComponent implements OnInit {
           mountainLegDistance = 0;
 
         leg.pathData.forEach(path => {
-          if (leg.courseType === RaceCourseTypeEnum.Flatland) {
-            //this.grandPrixMountainYReset();
-
+          if (leg.courseType === RaceCourseTypeEnum.Flatland) {            
             if (path.routeDesign === RaceDesignEnum.Regular)
               this.drawRegularFlatlandOverview(context, path, xRaceModeModifier, yRaceModeModifier, xDistanceOffset, yDistanceOffset);
             if (path.routeDesign === RaceDesignEnum.S)
@@ -795,6 +760,8 @@ export class DrawRaceComponent implements OnInit {
     }
 
     this.drawBreakpoints(context, xRaceModeModifier, raceLegs);
+    if (this.globalService.globalVar.settings.get("displayAverageDistancePace")) 
+      this.drawCompetitorDistanceMarker(context, xRaceModeModifier, currentDistanceTraveled, averageDistance);
 
     if (raceLegs.some(item => item.courseType === RaceCourseTypeEnum.Volcanic)) {
       var volcanicStartDistance = 0;
@@ -1043,6 +1010,69 @@ export class DrawRaceComponent implements OnInit {
 
       distanceSum += leg.distance;
     }
+  }
+
+  drawCompetitorDistanceMarker(context: any, xRaceModeModifier: number, currentDistanceTraveled: number, averageDistance: number) {    
+    var averageDistanceScaled = (averageDistance * this.canvasXDistanceScale * xRaceModeModifier);
+    if (this.race.raceType === RaceTypeEnum.event && this.race.eventRaceType === EventRaceTypeEnum.grandPrix)
+    {
+      var eventDistanceCoveredScaled = this.globalService.globalVar.eventRaceData.distanceCovered;      
+      currentDistanceTraveled += eventDistanceCoveredScaled;      
+    }
+
+    context.font = '16px bold';
+    var originalFillStyle = context.fillStyle;
+    var originalStrokeStyle = context.strokeStyle;
+    var originalOperation = context.globalCompositeOperation;
+    context.fillStyle = '#BAC2C2';
+    context.strokeStyle = 'black';
+    context.globalCompositeOperation = "source-over";
+    context.textAlign = "center";
+
+    var arcXCenter = this.canvasWidth / 10;
+    var arcYCenter = this.canvasHeight / 5;
+    var arcXRadius = this.canvasWidth / 32;
+
+    if (this.canvasWidth < 600)
+    {
+      context.font = '12px bold';
+      arcXRadius *= 2;
+    }
+
+    if (averageDistanceScaled < this.visibleDistanceXLeft) {   
+      context.beginPath();
+      context.arc(arcXCenter, arcYCenter, arcXRadius, 3.3, 3);      
+      context.moveTo(arcXCenter - (arcXRadius * .9), arcYCenter + arcXRadius / 4);
+      context.lineTo(arcXCenter  - (arcXRadius * 1.3), arcYCenter);
+      context.lineTo(arcXCenter - (arcXRadius * .9), arcYCenter - arcXRadius / 4);
+      context.stroke();
+      context.fill();
+      context.fillStyle = 'black';
+      context.beginPath();
+      context.fillRect(arcXCenter - 2.5, arcYCenter - 17.5, 5, 5);                 
+
+      context.fillText(this.utilityService.reduceToProperUnits(Math.round(currentDistanceTraveled - averageDistance)), arcXCenter, arcYCenter + 15);
+    }
+    else if (averageDistanceScaled > this.visibleDistanceXRight) {
+      arcXCenter = 9 * this.canvasWidth / 10;
+
+      context.beginPath();
+      context.arc(arcXCenter, arcYCenter, arcXRadius, .15, 2*Math.PI - .15);      
+      context.moveTo(arcXCenter + (arcXRadius * .9), arcYCenter - arcXRadius / 4);
+      context.lineTo(arcXCenter + (arcXRadius * 1.3), arcYCenter);
+      context.lineTo(arcXCenter + (arcXRadius * .9), arcYCenter + arcXRadius / 4);
+      context.stroke();
+      context.fill();
+      context.fillStyle = 'black';
+      context.beginPath();
+      context.fillRect(arcXCenter - 2.5, arcYCenter - 17.5, 5, 5);         
+
+      context.fillText(this.utilityService.reduceToProperUnits(Math.round(averageDistance - currentDistanceTraveled)), arcXCenter, arcYCenter + 15);
+    }
+
+    context.fillStyle = originalFillStyle;
+    context.globalCompositeOperation = originalOperation;
+    context.strokeSTyle = originalStrokeStyle;
   }
 
   drawRegularFlatlandOverview(context: any, path: RacePath, xRaceModeModifier: number, yRaceModeModifier: number, xDistanceOffset?: number, yDistanceOffset?: number): void {

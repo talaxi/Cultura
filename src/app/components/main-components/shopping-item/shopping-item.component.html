@@ -1,6 +1,7 @@
 <div class="item" *ngIf="longDescription !== '' && longDescription !== undefined && longDescription !== null"
     [ngbPopover]="longDescriptionContent" triggers="mouseenter:mouseleave" popoverClass="popoverClass">
-    <span [ngClass]="colorConditional" class="keyword"><span *ngIf="displayNumberPurchasing">{{ selectedItem.numberPurchasing }} </span> {{
+    <span [ngClass]="colorConditional" class="keyword"><span *ngIf="displayNumberPurchasing">{{
+            selectedItem.numberPurchasing }} </span> {{
         displayName }}</span> <em *ngIf="selectedItem.totalShopQuantity > 1"> ({{ selectedItem.totalShopQuantity -
         selectedItem.amountPurchased }} left)</em>
     <br />
@@ -12,11 +13,21 @@
         {{ purchaseResourcesRequired }}
     </div>
     <br />
-    <button (click)="BuyItem()" [disabled]="!canAffordItem">Buy <span *ngIf="buyMultiplierAmount > 1"> x {{buyMultiplierAmount}}</span></button>
+    <span *ngIf="displayPurchasingQuantity" class="flex">
+        <span>
+            <label>Quantity:
+                <input class="quantity" maxlength="20" [(ngModel)]="purchasingQuantity" (change)="updatePrice()">
+            </label>
+        </span>
+        <button (click)="BuyItem()" [disabled]="!canAffordItem">Buy</button>
+    </span>
+    <span *ngIf="!displayPurchasingQuantity"><button (click)="BuyItem()"
+            [disabled]="!canAffordItem">Buy</button></span>
 </div>
 
 <div class="item" *ngIf="longDescription === '' || longDescription === undefined || longDescription === null">
-    <span [ngClass]="colorConditional" class="keyword"><span *ngIf="displayNumberPurchasing">{{ selectedItem.numberPurchasing }} </span>{{
+    <span [ngClass]="colorConditional" class="keyword"><span *ngIf="displayNumberPurchasing">{{
+            selectedItem.numberPurchasing }} </span>{{
         displayName }}</span> <em *ngIf="selectedItem.totalShopQuantity > 1"> ({{ selectedItem.totalShopQuantity -
         selectedItem.amountPurchased }} left)</em>
     <br />
@@ -28,7 +39,16 @@
         {{ purchaseResourcesRequired }}
     </div>
     <br />
-    <button (click)="BuyItem()" [disabled]="!canAffordItem">Buy <span *ngIf="buyMultiplierAmount > 1"> x {{buyMultiplierAmount}}</span></button>
+    <span *ngIf="displayPurchasingQuantity" class="flex">
+        <span>
+            <label>Quantity:
+                <input class="quantity" maxlength="20" [(ngModel)]="purchasingQuantity" (change)="updatePrice()">
+            </label>
+        </span>
+        <button (click)="BuyItem()" [disabled]="!canAffordItem">Buy</button>
+    </span>
+    <span *ngIf="!displayPurchasingQuantity"><button (click)="BuyItem()"
+            [disabled]="!canAffordItem">Buy</button></span>
 </div>
 
 <ng-template #longDescriptionContent>

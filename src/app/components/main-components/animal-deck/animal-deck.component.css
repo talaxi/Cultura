@@ -26,3 +26,16 @@ font-size-adjust: 0.75;*/
     height: 100%;
     margin-left: .5rem;
 }
+
+@media (max-width: 800px) {
+    .headers {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        width: 50%;
+    }
+
+    .rightSpaced {
+        margin-top: .5rem;
+    }
+}

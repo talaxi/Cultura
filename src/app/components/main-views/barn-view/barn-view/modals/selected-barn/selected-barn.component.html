@@ -2,7 +2,10 @@
     <div class="infoText">
         <div class="infoGridContainer">
             <div class="unassign">
-                <button (click)="unassignAnimal()">Unassign</button>
+                <div class="unassignButtons">
+                    <button (click)="unassignAnimal()" class="rightSpaced">Unassign</button>
+                    <button (click)="openSwapModal(swapModal)">Swap</button>
+                </div>
                 <!--<span  class="clickableText" (click)="unassignAnimal()">Unassign</span>-->
                 <br />
                 <br />
@@ -203,6 +206,32 @@
     </div>
 </ng-template>
 
+
+<ng-template #swapModal let-modal>
+    <div class="modalClass">        
+            <div class="modal-header">
+                <h4 class="modal-title" id="modal-basic-title">Swap Animals</h4>
+                <button type="button" aria-label="Close" (click)="modal.dismiss()">X</button>
+            </div>
+            <div class="modal-body centered">
+                <span>Swap</span>
+                <br/>
+                <div class="barnRow"><strong>{{ lookupService.getBarnName(barn) }}</strong> - <span [innerHTML]="animalNameWithClass(barn)"></span></div>                
+                <span>With</span>
+                <br/>                
+                <div *ngIf="otherBarns.length === 0">
+                    <span>No Barns Available</span>
+                </div>
+                <div *ngIf="otherBarns.length > 0">
+                <div *ngFor="let otherBarn of otherBarns">
+                    <div class="barnRow flex"><span><strong>{{ lookupService.getBarnName(otherBarn) }}</strong> - <span [innerHTML]="animalNameWithClass(otherBarn)"></span></span>
+                    <button (click)="swapAnimals(otherBarn.barnNumber)" class="rightAligned">Swap</button>
+                    </div>                    
+                </div>
+            </div>
+            </div>
+    </div>
+</ng-template>
 
 <ng-template #specializationModal let-modal>
     <div class="modalClass">

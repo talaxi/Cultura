@@ -1,4 +1,4 @@
-<div class="barn clickableText" *ngIf="!condensedView">
+<div class="barn clickableText" *ngIf="!condensedView" [ngClass]="this.swapBarnActive()">
     <div class="unlocked" *ngIf="this.isOccupied">
         <span>{{ barnName }} <strong *ngIf="barn.barnUpgrades.barnLevel > 0">Lv {{barn.barnUpgrades.barnLevel}}</strong></span>
         <h6 [ngClass]="colorConditional" class="keyword" *ngIf="associatedAnimal.name !== associatedAnimal.getAnimalType()">
@@ -45,7 +45,7 @@
     </h6>
 </div>
 
-<div class="condensedBarn clickableText" *ngIf="condensedView">
+<div class="condensedBarn clickableText" *ngIf="condensedView" [ngClass]="{'turnOffPointer': swapBarnMode}">
     <div class="condensedFlex unlocked" *ngIf="this.isOccupied">
         <span class="barnNameWidth">{{ barnName }} <strong *ngIf="barn.barnUpgrades.barnLevel > 0">Lv {{barn.barnUpgrades.barnLevel}}</strong></span>
         <h6 [ngClass]="colorConditional" class="keyword inlineBlock condensedMargin nameWidth" *ngIf="associatedAnimal.name !== associatedAnimal.getAnimalType()">

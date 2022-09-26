@@ -27,8 +27,10 @@ export class ShoppingItemComponent implements OnInit {
   altPressed: boolean;
   ctrlPressed: boolean;
   amountSubscription: any;
+  purchasingQuantity: number = 1;
+  displayPurchasingQuantity = false;
 
-  @HostListener('window:keydown', ['$event'])
+  /*@HostListener('window:keydown', ['$event'])
   keyEventDown(event: KeyboardEvent) {
     if ((this.selectedItem.type === ShopItemTypeEnum.Consumable || this.selectedItem.type === ShopItemTypeEnum.Food ||
       this.selectedItem.type === ShopItemTypeEnum.Equipment || this.selectedItem.type === ShopItemTypeEnum.Resources) &&
@@ -82,12 +84,17 @@ export class ShoppingItemComponent implements OnInit {
         }
       }
     }
-  }
+  }*/
 
   constructor(private globalService: GlobalService, private lookupService: LookupService, private gameLoopService: GameLoopService) { }
 
-  ngOnInit(): void {
+  ngOnInit(): void {    
     this.buyMultiplierAmount = 1;
+
+    if (this.selectedItem.canHaveMultiples && this.selectedItem.name !== "Mangoes"
+      && (this.selectedItem.quantityAdditive === undefined || this.selectedItem.quantityAdditive === 0)
+      && (this.selectedItem.quantityMultiplier === undefined || this.selectedItem.quantityMultiplier === 1))
+      this.displayPurchasingQuantity = true;
 
     if (this.selectedItem.type === ShopItemTypeEnum.Ability) {
       this.shortDescription = this.lookupService.getAnimalAbilityDescription(true, this.selectedItem.additionalIdentifier);
@@ -177,7 +184,7 @@ export class ShoppingItemComponent implements OnInit {
             displayName = "Medal";
         }
 
-        this.purchaseResourcesRequired = resource.amount.toLocaleString() + " " + displayName + ", ";
+        this.purchaseResourcesRequired = (resource.amount * this.buyMultiplierAmount).toLocaleString() + " " + displayName + ", ";
 
         var currentAmount = this.lookupService.getResourceByName(resource.name);
         if (currentAmount < resource.amount * this.buyMultiplierAmount)
@@ -194,6 +201,7 @@ export class ShoppingItemComponent implements OnInit {
   }
 
   BuyItem(): void {
+    this.buyMultiplierAmount = this.purchasingQuantity;
     if (this.canBuyItem()) {
       this.spendResourcesOnItem();
       
@@ -227,6 +235,8 @@ export class ShoppingItemComponent implements OnInit {
   }
 
   canBuyItem() {
+    this.buyMultiplierAmount = this.purchasingQuantity;
+
     var canBuy = true;
     this.selectedItem.purchasePrice.forEach(resource => {
       var userResourceAmount = this.lookupService.getResourceByName(resource.name);
@@ -235,6 +245,12 @@ export class ShoppingItemComponent implements OnInit {
     });
 
     return canBuy;
+  }
+
+  updatePrice() {
+    this.canBuyItem();
+
+
   }
 
   spendResourcesOnItem() {

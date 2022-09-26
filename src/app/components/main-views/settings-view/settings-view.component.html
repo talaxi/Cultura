@@ -59,6 +59,24 @@
                     </label>
                 </span>
                 <br />
+                <span [ngbPopover]="displayAverageDistancePacePopoverText" class="checkboxOption"
+                    triggers="mouseenter:mouseleave">
+                    <label>
+                        <input type="checkbox" class="rightSpaced" id="displayAverageDistancePace"
+                            [(ngModel)]="displayAverageDistancePace" (input)="displayAverageDistancePaceToggle()">
+                        <span>Display Distance From Average Pace During Race</span>
+                    </label>
+                </span>
+                <br />
+                <span [ngbPopover]="showBarnOptionsPopoverText" class="checkboxOption"
+                    triggers="mouseenter:mouseleave">
+                    <label>
+                        <input type="checkbox" class="rightSpaced" id="showBarnOptions"
+                            [(ngModel)]="showBarnOptions" (input)="showBarnOptionsToggle()">
+                        <span>Show Barn Options</span>
+                    </label>
+                </span>
+                <br />
             </div>
             <div [ngbPopover]="raceDisplayInfoPopoverText" triggers="mouseenter:mouseleave" ngbDropdown
                 class="d-inline-block">

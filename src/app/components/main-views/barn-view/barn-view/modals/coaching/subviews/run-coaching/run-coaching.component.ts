@@ -110,9 +110,7 @@ export class RunCoachingComponent implements OnInit {
     if (this.currentPathType === CoachingCourseTypeEnum.focus)
       this.activePoints = this.drawFocusTrace(context);
     if (this.currentPathType === CoachingCourseTypeEnum.adaptability)
-      this.activePoints = this.drawAdaptabilityTrace(context);
-    if (this.currentPathType === CoachingCourseTypeEnum.special)
-      this.activePoints = this.drawSpecialTrace(context);
+      this.activePoints = this.drawAdaptabilityTrace(context);    
 
     context.strokeStyle = this.getAnimalDistanceColor(this.associatedAnimal.raceCourseType);
     context.globalCompositeOperation = "source-atop";
@@ -522,38 +520,6 @@ export class RunCoachingComponent implements OnInit {
       context.lineTo(linePoints[i][0], linePoints[i][1]);
       context.stroke();
     }
-
-    return linePoints;
-  }
-
-  //TODO
-  drawSpecialTrace(context: any) {
-    var offsetX = this.canvasWidth * .1;
-    var offsetY = this.canvasHeight * .1;
-
-    var linePoints = [];
-    linePoints.push([offsetX, offsetY]);
-    linePoints.push([this.canvasWidth - offsetX, offsetY]);
-    linePoints.push([this.canvasWidth / 2, this.canvasHeight / 2]);
-    linePoints.push([this.canvasWidth - offsetX, this.canvasHeight - offsetY]);
-    linePoints.push([offsetX, this.canvasHeight - offsetY]);
-
-    context.beginPath();
-    context.moveTo(linePoints[0][0], linePoints[0][1]);
-    context.lineTo(linePoints[1][0], linePoints[1][1]);
-    context.stroke();
-    context.beginPath();
-    context.moveTo(linePoints[1][0], linePoints[1][1]);
-    context.lineTo(linePoints[2][0], linePoints[2][1]);
-    context.stroke();
-    context.beginPath();
-    context.moveTo(linePoints[2][0], linePoints[2][1]);
-    context.lineTo(linePoints[3][0], linePoints[3][1]);
-    context.stroke();
-    context.beginPath();
-    context.moveTo(linePoints[3][0], linePoints[3][1]);
-    context.lineTo(linePoints[4][0], linePoints[4][1]);
-    context.stroke();
 
     return linePoints;
   }

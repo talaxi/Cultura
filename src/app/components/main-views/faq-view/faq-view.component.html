@@ -807,6 +807,67 @@
                     </div>
                     <hr />
                 </div>
+                <div *ngIf="legacyTrackAvailable">
+                    <div>
+                        <div class="expanderMargin">
+                            <button type="button" aria-label="Expand"
+                                (click)="expandAnswer('faqAnswerNectarOfTheGodsCalculator')">+</button>
+                        </div>
+                        <div class="faqQuestion">
+                            <p>Nectar of the Gods Reset Gain</p>
+                        </div>
+                    </div>
+                    <div class="faqAnswer hide" id="faqAnswerNectarOfTheGodsCalculator">
+                        <div class="expanderMargin"></div>
+                        <div><em>Select an animal or enter your own values to see how much your Breed Modifier will increase. Selecting an animal pulls from their current breed level.</em>
+                        </div>
+                        <br />
+                        <br />
+                        <div class="inputsAndResult">
+                            <div class="mb-3 inputs">
+                                <div class="dropdownSelection">
+                                    <label for="breed-xp-animal" class="keyword">Animal:</label>
+                                    <select name="breed-xp-animal" id="breed-xp-animal" class="spaced"
+                                        [(ngModel)]="notgSelectedAnimalType" (change)="newNotgAnimalSelected()">
+                                        <option *ngFor="let animal of availableAnimals" [value]="animal.type">
+                                            {{animal.name}}</option>
+                                    </select>
+                                </div>
+                                <em>or</em>
+                                <div>
+                                    <label for="notg-breed-level" class="shortLabelMargin keyword">Breed Level:</label>
+                                    <input id="notg-breed-level" type="number" (change)="notgAnimalNotSelected()"
+                                        class="spaced" maxlength="20" [(ngModel)]="notgBreedLevel">                                    
+                                </div>
+                                <div *ngIf="seePinnacleSpoiler">
+                                    <br />
+                                    <label for="hasOrbInfuser" class="labelMargin keyword">Orb Infuser purchased?</label>
+                                    <input type="checkbox" class="spaced" id="hasImprovements"
+                                        [checked]="hasOrbInfuser" (input)="toggleHasOrbInfuser()">
+                                </div>
+                            </div>
+                            <div class="result">
+                                <span>Result:</span>
+                                <br />                             
+                                <div [ngClass]="{'inactiveCalculation': notgBreedLevel > 1500}"><em>If Breed Level <= 1500: </em>
+                                <em><span class="keyword">{{notgBreedLevel}}</span> / 100</em> =
+                                <span class='keyword'>{{ notgBreedModifierGain }}% added to Breed Modifier per Breed Level multiplier</span>
+                                </div>
+                                <div [ngClass]="{'inactiveCalculation': notgBreedLevel <= 1500}"><em>If Breed Level > 1500: </em>
+                                    <em>5 * (log(.005 * <span class="keyword">{{notgBreedLevel}}</span> + 1)) + 15</em> =
+                                    <span class='keyword'>{{ notgBreedModifierGain }}% added to Breed Modifier per Breed Level multiplier</span>
+                                    </div>
+                                    
+                                <br/>
+                                <div *ngIf="hasOrbInfuser">
+                                    <em><span class="keyword">{{notgBreedLevel}}</span> / 1500</em> =
+                                <span class='keyword'>{{ notgOrbInfuserGain }}% added to Orb Stat Bonus % per Orb Level</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                </div>
             </div>
         </div>
     </div>

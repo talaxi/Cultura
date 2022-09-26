@@ -182,12 +182,46 @@ export class UtilityService {
     return degrees * (Math.PI / 180);
   }
 
+  reduceToProperUnits(amount: number) {
+    var reducedAmount = "";
+
+    var numReductions = 0;
+
+    while (amount.toString().length > 3 && numReductions < 8) {
+      amount /= 1000;
+      amount = Math.round(amount);
+      numReductions += 1;
+    }
+    reducedAmount = amount.toString();
+
+    if (numReductions === 0)
+      reducedAmount += " m";
+    if (numReductions === 1)
+      reducedAmount += " km";
+    if (numReductions === 2)
+      reducedAmount += " Mm";
+    if (numReductions === 3)
+      reducedAmount += " Gm";
+    if (numReductions === 4)
+      reducedAmount += " Tm";
+    if (numReductions === 5)
+      reducedAmount += " Pm";
+    if (numReductions === 6)
+      reducedAmount += " Em";
+    if (numReductions === 7)
+      reducedAmount += " Zm";
+    if (numReductions === 8)
+      reducedAmount += " Ym";
+
+    return reducedAmount;
+  }
+
   getSanitizedHtml(text: string) {
     var sanitizedHtml = this.sanitizer.sanitize(SecurityContext.HTML, this.sanitizer.bypassSecurityTrustHtml(text));
 
     if (sanitizedHtml === null)
       return "";
-    
+
     return sanitizedHtml;
   }
 

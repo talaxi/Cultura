@@ -42,6 +42,7 @@ export class GrandPrixData {
     segmentTime: number;
     segmentTimeCounter: number;
     overallTimeCounter: number;
+    delayCatchingUpTimeCounter: number;
     currentEventStartDate: Date;
     currentEventEndDate: Date;
     totalSegments: number;
@@ -87,6 +88,7 @@ export class GrandPrixData {
         this.segmentTime = 120; //each segment is 120 seconds on average
         this.segmentTimeCounter = 0;
         this.overallTimeCounter = 0;
+        this.delayCatchingUpTimeCounter = 0;
         this.rank = "Z";
         this.animalData = [];
         this.queuedRelayEffects = [];

@@ -68,6 +68,7 @@ export class GlobalService {
     this.globalVar.animalDecks = [];
     this.globalVar.barns = [];
     this.globalVar.redeemedCodes = [];
+    this.globalVar.keybinds = new Settings();
     this.globalVar.settings = new Settings();
     this.globalVar.unlockables = new Unlockables();
     this.globalVar.incubator = new Incubator();
@@ -84,12 +85,13 @@ export class GlobalService {
     this.globalVar.freeRaceCounter = 0;
     this.globalVar.freeRaceTimePeriodCounter = 0;
     this.globalVar.lastTimeStamp = Date.now();
-    this.globalVar.currentVersion = 1.22; //TODO: this needs to be automatically increased or something, too easy to forget
-    this.globalVar.startingVersion = 1.22;
+    this.globalVar.currentVersion = 1.23; //TODO: this needs to be automatically increased or something, too easy to forget
+    this.globalVar.startingVersion = 1.23;
     this.globalVar.startDate = new Date();
     this.globalVar.notifications = new Notifications();
     this.globalVar.relayEnergyFloor = 50;
     this.globalVar.doNotRelayBelowEnergyFloor = false;
+    this.globalVar.barnOrder = [];
 
     //Initialize modifiers
     this.InitializeModifiers();
@@ -130,7 +132,8 @@ export class GlobalService {
     //Initialize unlockables
     this.InitializeUnlockables();
 
-    //console.log(this.globalVar);
+    //Initialize Keybinds
+    this.InitializeKeybinds();
   }
 
   InitializeModifiers(): void {
@@ -1287,6 +1290,10 @@ export class GlobalService {
 
         this.globalVar.barns.push(newBarn);
       }
+
+      this.globalVar.barns.forEach(barn => {
+        this.globalVar.barnOrder.push(barn.barnNumber);
+      });
     }
   }
 
@@ -4692,9 +4699,28 @@ export class GlobalService {
     }
   }
 
+  getBarnListInOrder() {
+    var barnList: Barn[] = [];
+
+    this.globalVar.barnOrder.forEach(barnNum => {
+      var matchingBarn = this.globalVar.barns.find(item => item.barnNumber === barnNum);
+      if (matchingBarn !== undefined) 
+        barnList.push(matchingBarn);
+    });
+
+    return barnList;
+  }
+
   InitializeResources() {
     this.globalVar.resources.push(this.initializeService.initializeResource("Coins", 500, ShopItemTypeEnum.Resources));
     this.globalVar.resources.push(this.initializeService.initializeResource("Renown", 1, ShopItemTypeEnum.Progression));
+  }
+
+  InitializeKeybinds() {
+    this.globalVar.keybinds.set("Back", 'B');
+    this.globalVar.settings.set("Show Food", 'F');
+    this.globalVar.settings.set("Shout Encouragement", 'E');
+    this.globalVar.settings.set("Blow Whistle", 'W');
   }
 
   InitializeSettings() {
@@ -4707,6 +4733,8 @@ export class GlobalService {
     this.globalVar.settings.set("raceDisplayInfo", RaceDisplayInfoEnum.both);
     this.globalVar.settings.set("autoStartEventRace", false);
     this.globalVar.settings.set("quickViewBarnMode", false);
+    this.globalVar.settings.set("displayAverageDistancePace", true);    
+    this.globalVar.settings.set("showBarnOptions", true);    
 
     this.globalVar.settings.set("monoRaceToggled", false);
     this.globalVar.settings.set("duoRaceToggled", false);
@@ -5019,12 +5047,16 @@ export class GlobalService {
     this.calculateAnimalRacingStats(animal);
   }
 
-  getNectarOfTheGodsIncrease(animal: Animal) {
+  getNectarOfTheGodsIncrease(animal: Animal, breedLevel?: number) {
+    var animalBreedLevel = animal.breedLevel;
+    if (breedLevel !== undefined && breedLevel > 0)
+      animalBreedLevel = breedLevel;
+
     var breedModifierIncreaseAmount = 0;
     var breedLevelDropOff = 1500;
 
-    if (animal.breedLevel <= breedLevelDropOff)
-      breedModifierIncreaseAmount = animal.breedLevel / 100;
+    if (animalBreedLevel <= breedLevelDropOff)
+      breedModifierIncreaseAmount = animalBreedLevel / 100;
     else
     {
       var amplifier = 5;
@@ -5033,16 +5065,20 @@ export class GlobalService {
       var verticalPosition = 15;
 
       //5 * (log(.005 * var + 1)) + 15      
-      breedModifierIncreaseAmount = amplifier * Math.log10(horizontalStretch * (animal.breedLevel - breedLevelDropOff) + horizontalPosition) + verticalPosition;
+      breedModifierIncreaseAmount = amplifier * Math.log10(horizontalStretch * (animalBreedLevel - breedLevelDropOff) + horizontalPosition) + verticalPosition;
     }
 
     return breedModifierIncreaseAmount / 100;
   }
 
-  getNectarOfTheGodsOrbInfusionIncrease(animal: Animal) {
+  getNectarOfTheGodsOrbInfusionIncrease(animal: Animal, breedLevel?: number) {
     var infusionAmount = 0;
 
-    infusionAmount = animal.breedLevel / 1500;
+    var animalBreedLevel = animal.breedLevel;
+    if (breedLevel !== undefined && breedLevel > 0)
+      animalBreedLevel = breedLevel;
+
+    infusionAmount = animalBreedLevel / 1500;
 
     return infusionAmount;
   }
@@ -5203,7 +5239,7 @@ export class GlobalService {
     }
     else if (progressionSetting === 4) {
       trainingStatValue = 5000;
-      breedLevel = 1000;
+      breedLevel = 1500;
       incubatorUpgradeValue = 12.5;
       talentCount = 60;
     }
@@ -5228,7 +5264,7 @@ export class GlobalService {
       animal.currentStats.focus = trainingStatValue;
       animal.currentStats.adaptability = trainingStatValue;
 
-      animal.breedLevel = breedLevelCounter;    
+      animal.breedLevel = breedLevel;    
 
       animal.incubatorStatUpgrades.maxSpeedModifier = incubatorUpgradeValue;
       animal.incubatorStatUpgrades.accelerationModifier = incubatorUpgradeValue;

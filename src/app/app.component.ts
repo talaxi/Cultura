@@ -30,8 +30,8 @@ export class AppComponent {
   title = 'Cultura';
   newGame = true;
   saveTime = 0;
-  saveFrequency = 20; //in seconds
-  racingSaveFrequency = 60; // in seconds
+  saveFrequency = 10; //in seconds
+  racingSaveFrequency = 20; // in seconds
 
   constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private lookupService: LookupService,
     private specializationService: SpecializationService, private themeService: ThemeService, private raceLogicService: RaceLogicService,
@@ -69,7 +69,7 @@ export class AppComponent {
 
     if (devMode) {
       this.globalService.globalVar.tutorials.tutorialCompleted = true;
-      this.globalService.devModeInitialize(80, 4);
+      this.globalService.devModeInitialize(70, 4);
     }
 
     this.versionControlService.updatePlayerVersion();

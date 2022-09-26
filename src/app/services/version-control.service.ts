@@ -11,6 +11,7 @@ import { ShopItem } from '../models/shop/shop-item.model';
 import { TrainingOptionsEnum } from '../models/training-options-enum.model';
 import { Tutorials } from '../models/tutorials.model';
 import { Notifications } from '../models/utility/notifications.model';
+import { Settings } from '../models/utility/settings.model';
 import { StringNumberPair } from '../models/utility/string-number-pair.model';
 import { GlobalService } from './global-service.service';
 import { LookupService } from './lookup.service';
@@ -24,7 +25,7 @@ export class VersionControlService {
   constructor(private globalService: GlobalService, private lookupService: LookupService, private utilityService: UtilityService) { }
 
   //add to this in descending order
-  gameVersions = [1.22, 1.21, 1.20, 1.19, 1.18, 1.17, 1.16, 1.15, 1.14, 1.13, 1.12, 1.11, 1.10, 1.09, 1.08, 1.07, 1.06, 1.05, 1.04, 1.03, 1.02, 1.01, 1.00];
+  gameVersions = [1.23, 1.22, 1.21, 1.20, 1.19, 1.18, 1.17, 1.16, 1.15, 1.14, 1.13, 1.12, 1.11, 1.10, 1.09, 1.08, 1.07, 1.06, 1.05, 1.04, 1.03, 1.02, 1.01, 1.00];
 
   getListAscended() {
     var ascendedList: number[] = [];
@@ -200,6 +201,14 @@ export class VersionControlService {
       "UI improvements.";
     if (version === 1.22)
       changes = "Bug fixes for Legacy Track.";
+    if (version === 1.23)
+      changes = "Added calculators for Nectar of the Gods reset to FAQ section.\n\n" +
+      "Added a new distance indicator that shows up during races when the average pace is offscreen. You can toggle this on or off on the Settings page.\n\n" +
+      "Removed the Alt/Ctrl/Shift multiplier keys from the shop and instead just added a text box to enter a quantity. This allows you to be more precise and gives mobile users the ability to buy in bulk.\n\n" +
+      "Added ability to move barns around so that you can order them however you please. You can toggle the new barn options bar on or off on the Settings page.\n\n" +
+      "Added ability to quick swap animals from one barn to another when viewing an animal in its barn.\n\n" +
+      "Scrimmages have been adjusted to give slightly more rewards and to no longer be tied to the animal's breed level. Instead, each animal will have 15 scrimmage energy by default and 30 once you reach Circuit Rank AZ.\n\n" +
+      "The back button on every page has been bound to the key 'b' for ease of navigation. I soon plan to give you the ability to choose your own keybinds.";
     return changes;
   }
 
@@ -249,8 +258,10 @@ export class VersionControlService {
       date = new Date('2022-09-15 12:00:00');
     if (version === 1.21)
       date = new Date('2022-09-21 12:00:00');
-      if (version === 1.22)
+    if (version === 1.22)
       date = new Date('2022-09-21 12:00:00');
+    if (version === 1.23)
+      date = new Date('2022-09-26 12:00:00');
 
     return date.toDateString().replace(/^\S+\s/, '');
   }
@@ -1281,6 +1292,17 @@ export class VersionControlService {
               item.allTrainingTracks.legacyTrackAvailable = true;
             }
           });
+        }
+        else if (version === 1.23) {
+          this.globalService.globalVar.settings.set("displayAverageDistancePace", true);  
+          this.globalService.globalVar.settings.set("showBarnOptions", true);    
+          this.globalService.globalVar.barnOrder = [];
+          this.globalService.globalVar.barns.forEach(barn => {
+            this.globalService.globalVar.barnOrder.push(barn.barnNumber);
+          });
+
+          this.globalService.globalVar.keybinds = new Settings();
+          this.globalService.InitializeKeybinds();
         }
 
         this.globalService.globalVar.currentVersion = version;

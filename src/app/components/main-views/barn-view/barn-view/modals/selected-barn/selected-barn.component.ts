@@ -60,6 +60,7 @@ export class SelectedBarnComponent implements OnInit {
   colorConditional: any;
   currentTrainingPopover: string;
   postResetBarnUpgradeLevel = 0;
+  otherBarns: Barn[];
 
   filterSpeed = false;
   filterAcceleration = false;
@@ -104,21 +105,18 @@ export class SelectedBarnComponent implements OnInit {
         this.resetSelectedBarnInfo(newBarn);
       }
     }
+    else if (event.key === this.globalService.globalVar.keybinds.get("Back").toUpperCase() || event.key === this.globalService.globalVar.keybinds.get("Back").toLowerCase()) {
+      this.returnToBarnView();
+    }
   }
 
   constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private modalService: NgbModal,
-    private lookupService: LookupService, private componentCommunicationService: ComponentCommunicationService,
+    public lookupService: LookupService, private componentCommunicationService: ComponentCommunicationService,
     private specializationService: SpecializationService, private tutorialService: TutorialService, private utilityService: UtilityService) {
   }
 
   ngOnInit(): void {
     this.handleTutorial();
-
-    /*this.tutorialSubscription = this.gameLoopService.gameUpdateEvent.subscribe(async () => {
-      if (!this.globalService.globalVar.tutorials.tutorialCompleted && this.globalService.globalVar.tutorials.currentTutorialId > 3) {        
-        this.handleSecondaryTutorial();
-      }
-    });*/
 
     if (this.selectedBarnNumber > 0 && this.selectedBarnNumber <= this.globalService.globalVar.barns.length + 1) {
       var globalBarn = this.globalService.globalVar.barns.find(item => item.barnNumber === this.selectedBarnNumber);
@@ -739,6 +737,8 @@ export class SelectedBarnComponent implements OnInit {
 
       if (globalBarn !== undefined) {
         this.barn = globalBarn;
+        this.otherBarns = this.globalService.getBarnListInOrder();
+        this.otherBarns = this.otherBarns.filter(item => item.barnNumber !== this.selectedBarnNumber && !item.isLocked);        
         this.barnName = this.lookupService.getBarnName(globalBarn);
         this.getSizeValue();
         this.totalBarnStatsPopover = this.getTotalBarnStatsPopover(true);
@@ -842,8 +842,55 @@ export class SelectedBarnComponent implements OnInit {
     return popover;
   }
 
+  animalNameWithClass(barn: Barn)
+  {
+    var name = "Empty Barn";
+    var animal = this.globalService.globalVar.animals.find(item => item.associatedBarnNumber === barn.barnNumber);
+    if (animal !== undefined)
+      name = animal.name;
+
+    if (name === "Empty Barn")
+      name = "<span class='keyword'>" + name + "</span>";
+    else
+      name = "<span class='keyword " + this.getCourseTypeClass(animal!.raceCourseType) + "'>" + name + "</span>";
+
+    return name;
+  }
+
+  swapAnimals(barnNumber: number) {
+    var swappingToAnimal = this.globalService.globalVar.animals.find(item => item.associatedBarnNumber === barnNumber);
+    if (swappingToAnimal !== undefined)
+      swappingToAnimal.associatedBarnNumber = this.selectedBarnNumber;
+
+    this.associatedAnimal.associatedBarnNumber = barnNumber;
+
+    var globalBarn = this.globalService.globalVar.barns.find(item => item.barnNumber === this.selectedBarnNumber);
+
+    if (globalBarn !== null && globalBarn !== undefined)
+      this.resetSelectedBarnInfo(globalBarn);    
+  }
+
+  getCourseTypeClass(courseType: RaceCourseTypeEnum) {
+    if (courseType === RaceCourseTypeEnum.Flatland)
+        return "flatlandColor";
+    if (courseType === RaceCourseTypeEnum.Mountain)
+        return "mountainColor";
+    if (courseType === RaceCourseTypeEnum.Ocean)
+        return "waterColor";
+    if (courseType === RaceCourseTypeEnum.Tundra)
+        return "tundraColor";
+    if (courseType === RaceCourseTypeEnum.Volcanic)
+        return "volcanicColor";
+
+    return "";
+}
+
   goToCoaching() {
     this.isCoachingEmitter.emit(true);
+  }
+
+  openSwapModal(content: any) {
+    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
   }
 
   openBarnUpgradeModal(content: any) {

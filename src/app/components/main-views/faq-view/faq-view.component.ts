@@ -28,6 +28,7 @@ export class FaqViewComponent implements OnInit {
   seeTundraCourseTypeSpoiler: boolean = false;
   seeVolcanicCourseTypeSpoiler: boolean = false;
   seeItemSet2Spoiler: boolean = false;
+  seePinnacleSpoiler: boolean = false;
   currentSection: FaqSectionsEnum = FaqSectionsEnum.basics;
   public faqSectionsEnum = FaqSectionsEnum;
   sunnyTerrainInfo = "";
@@ -38,6 +39,7 @@ export class FaqViewComponent implements OnInit {
   maelstromTerrainInfo = "";
   hailstormTerrainInfo = "";
   torridTerrainInfo = "";
+  legacyTrackAvailable = false;
 
   coinGainRenownAmount: number = 0;
   facilityLevel = 0;
@@ -56,6 +58,13 @@ export class FaqViewComponent implements OnInit {
   incubatorModifierAmount = 0;
   trainingBreedXpGain = 0;
   barnSpecializationLevelAmount = "";
+
+  notgBreedLevel: number;
+  notgBreedModifierGain: number;
+  notgOrbInfuserGain: number;
+  notgSelectedAnimalType: number = 0;
+  notgAnimalSelected = true;
+  hasOrbInfuser = false;
 
   constructor(private componentCommunicationService: ComponentCommunicationService, public lookupService: LookupService,
     private gameLoopService: GameLoopService, public globalService: GlobalService, private specializationService: SpecializationService,
@@ -81,6 +90,9 @@ export class FaqViewComponent implements OnInit {
 
     if (this.globalService.globalVar.animals.find(item => item.type === AnimalTypeEnum.Salamander)?.isAvailable)
       this.seeVolcanicCourseTypeSpoiler = true;
+
+      if (this.lookupService.isItemUnlocked("thePinnacle"))
+      this.seePinnacleSpoiler = true;
 
     this.sunnyTerrainInfo = this.lookupService.getTerrainPopoverText(new Terrain(TerrainTypeEnum.Sunny));
     this.stormyTerrainInfo = this.lookupService.getTerrainPopoverText(new Terrain(TerrainTypeEnum.Stormy));
@@ -113,7 +125,13 @@ export class FaqViewComponent implements OnInit {
       this.incubatorUpgradeLevel = 4;
     }
 
+    this.globalService.globalVar.animals.forEach(item => {
+      if (item.allTrainingTracks.legacyTrackAvailable)
+        this.legacyTrackAvailable = true;
+    });
+
     this.newAnimalSelected(); //default the breed xp calculator
+    this.newNotgAnimalSelected();
 
     this.calculatorSubscription = this.gameLoopService.gameUpdateEvent.subscribe(async () => {
       this.handleRenownModifierCalculation();
@@ -123,6 +141,8 @@ export class FaqViewComponent implements OnInit {
       this.handleTrainingBreedXpGainCalculation();
 
       this.handleBarnSpecializationLevelAmountCalculation();
+
+      this.handleNectarOfTheGodsCalculation();
     });
   }
 
@@ -171,73 +191,101 @@ export class FaqViewComponent implements OnInit {
     }
   }
 
-  handleTrainingBreedXpGainCalculation() {    
+  handleTrainingBreedXpGainCalculation() {
     var defaultAnimal = new Animal();
     defaultAnimal.miscStats.bonusBreedXpGainFromTraining = this.bonusBreedXp;
 
     this.trainingBreedXpGain = this.lookupService.getTrainingBreedGaugeIncrease(this.breedingGroundsSpecializationLevel, defaultAnimal);
   }
 
+  handleNectarOfTheGodsCalculation() {
+    var precisionModifier = 1e2;
+
+    if (this.notgAnimalSelected) {
+      var globalAnimal: Animal | undefined = undefined;
+      if (this.notgSelectedAnimalType !== undefined && this.notgSelectedAnimalType !== null) {
+        globalAnimal = this.globalService.globalVar.animals.find(item => item.getAnimalType() === AnimalTypeEnum[this.notgSelectedAnimalType]);
+
+        if (globalAnimal !== undefined) {          
+          this.notgBreedModifierGain = Math.round((this.globalService.getNectarOfTheGodsIncrease(globalAnimal) * 100) * precisionModifier)  / precisionModifier;
+          this.notgOrbInfuserGain = this.globalService.getNectarOfTheGodsOrbInfusionIncrease(globalAnimal);          
+        }
+      }
+    }
+    else {
+      var defaultAnimal = new Animal();      
+      this.notgBreedModifierGain = Math.round((this.globalService.getNectarOfTheGodsIncrease(defaultAnimal, this.notgBreedLevel) * 100) * precisionModifier)  / precisionModifier;
+      this.notgOrbInfuserGain = this.globalService.getNectarOfTheGodsOrbInfusionIncrease(defaultAnimal, this.notgBreedLevel);      
+    }
+  }
+
   newAnimalSelected() {
-    this.animalSelected = true;    
+    this.animalSelected = true;
     var globalAnimal: Animal | undefined = undefined;
     if (this.selectedAnimalType !== undefined && this.selectedAnimalType !== null) {
       globalAnimal = this.globalService.globalVar.animals.find(item => item.getAnimalType() === AnimalTypeEnum[this.selectedAnimalType]);
-      
+
       if (globalAnimal !== undefined) {
         this.bonusBreedXp = globalAnimal.miscStats.bonusBreedXpGainFromTraining; //TODO: include certificates
 
         if (globalAnimal.associatedBarnNumber >= 0)
           var globalBarn = this.globalService.globalVar.barns.find(item => item.barnNumber === globalAnimal?.associatedBarnNumber);
-        if (globalBarn !== undefined && globalBarn.barnUpgrades.specialization === BarnSpecializationEnum.BreedingGrounds) {          
+        if (globalBarn !== undefined && globalBarn.barnUpgrades.specialization === BarnSpecializationEnum.BreedingGrounds) {
           this.breedingGroundsSpecializationLevel = globalBarn.barnUpgrades.specializationLevel;
         }
       }
-    }    
+    }
+  }
+
+  newNotgAnimalSelected() {
+    console.log("Animal selected");
+    this.notgAnimalSelected = true;
+    var globalAnimal: Animal | undefined = undefined;
+    if (this.notgSelectedAnimalType !== undefined && this.notgSelectedAnimalType !== null) {
+      globalAnimal = this.globalService.globalVar.animals.find(item => item.getAnimalType() === AnimalTypeEnum[this.notgSelectedAnimalType]);
+      if (globalAnimal !== undefined)
+        this.notgBreedLevel = globalAnimal.breedLevel;
+    }
   }
 
   animalNotSelected() {
     this.animalSelected = false;
   }
 
-  handleBarnSpecializationLevelAmountCalculation() {    
-    if (+this.selectedSpecialization === 1)
-    {
+  notgAnimalNotSelected() {
+    this.notgAnimalSelected = false;
+  }
+
+  handleBarnSpecializationLevelAmountCalculation() {
+    if (+this.selectedSpecialization === 1) {
       this.barnSpecializationLevelAmount = this.specializationService.getSpecializationPopoverText(BarnSpecializationEnum.BreedingGrounds, this.barnSpecializationLevel, this.hasBarnImprovements);
     }
-    else if (+this.selectedSpecialization === 2)
-    {
+    else if (+this.selectedSpecialization === 2) {
       this.barnSpecializationLevelAmount = this.specializationService.getSpecializationPopoverText(BarnSpecializationEnum.TrainingFacility, this.barnSpecializationLevel, this.hasBarnImprovements);
     }
-    else if (+this.selectedSpecialization === 3)
-    {
+    else if (+this.selectedSpecialization === 3) {
       this.barnSpecializationLevelAmount = this.specializationService.getSpecializationPopoverText(BarnSpecializationEnum.Attraction, this.barnSpecializationLevel, this.hasBarnImprovements);
     }
-    else if (+this.selectedSpecialization === 4)
-    {
+    else if (+this.selectedSpecialization === 4) {
       this.barnSpecializationLevelAmount = this.specializationService.getSpecializationPopoverText(BarnSpecializationEnum.ResearchCenter, this.barnSpecializationLevel, this.hasBarnImprovements);
     }
   }
 
   checkForImprovements() {
     var hasImprovements = false;
-    if (+this.selectedSpecialization === 1)
-    {
+    if (+this.selectedSpecialization === 1) {
       hasImprovements = this.globalService.globalVar.resources.some(item => item.name === "Breeding Grounds Improvements");
     }
-    else if (+this.selectedSpecialization === 2)
-    {
+    else if (+this.selectedSpecialization === 2) {
       hasImprovements = this.globalService.globalVar.resources.some(item => item.name === "Training Facility Improvements");
     }
-    else if (+this.selectedSpecialization === 3)
-    {
+    else if (+this.selectedSpecialization === 3) {
       hasImprovements = this.globalService.globalVar.resources.some(item => item.name === "Attraction Improvements");
     }
-    else if (+this.selectedSpecialization === 4)
-    {
+    else if (+this.selectedSpecialization === 4) {
       hasImprovements = this.globalService.globalVar.resources.some(item => item.name === "Research Center Improvements");
     }
-    
+
     this.hasBarnImprovements = hasImprovements;
   }
 
@@ -273,6 +321,10 @@ export class FaqViewComponent implements OnInit {
 
   toggleHasImprovements() {
     this.hasBarnImprovements = !this.hasBarnImprovements;
+  }
+
+  toggleHasOrbInfuser() {
+    this.hasOrbInfuser = !this.hasOrbInfuser;
   }
 
   changeSection(newSection: FaqSectionsEnum) {

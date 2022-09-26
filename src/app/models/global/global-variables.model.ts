@@ -52,6 +52,8 @@ export class GlobalVariables {
     @Type(() => AnimalDeck)
     animalDecks: AnimalDeck[];
     @Type(() => Settings)
+    keybinds: Settings;
+    @Type(() => Settings)
     settings: Settings;
     @Type(() => Unlockables)
     unlockables: Unlockables;
@@ -88,6 +90,7 @@ export class GlobalVariables {
     showBreedWarning = true;    
     relayEnergyFloor: number;
     doNotRelayBelowEnergyFloor: boolean;
+    barnOrder: number[];
 
     constructor(existingVariables?: GlobalVariables) {
         if (existingVariables !== undefined && existingVariables !== null) {            
@@ -110,6 +113,7 @@ export class GlobalVariables {
             this.eventRaceData = existingVariables.eventRaceData;
             this.notifications = existingVariables.notifications;
             this.previousEventRewards = [];
+            this.barnOrder = existingVariables.barnOrder;
             this.nationalRaceCountdown = 0;
             this.autoFreeRaceCounter = 0;
             this.freeRaceCounter = 0;

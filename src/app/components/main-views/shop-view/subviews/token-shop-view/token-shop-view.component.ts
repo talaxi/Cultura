@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { NavigationEnum } from 'src/app/models/navigation-enum.model';
 import { RaceTypeEnum } from 'src/app/models/race-type-enum.model';
 import { ShopSection } from 'src/app/models/shop/shop-section.model';
@@ -20,6 +20,13 @@ export class TokenShopViewComponent implements OnInit {
   shopType = ShopsEnum.token;
   currentTokens = 0;
   subscription: any;
+
+  @HostListener('window:keyup', ['$event'])
+  keyEvent(event: KeyboardEvent) {    
+      if (event.key === this.globalService.globalVar.keybinds.get("Back").toUpperCase() || event.key === this.globalService.globalVar.keybinds.get("Back").toLowerCase()) {
+        this.returnToEventRaceView();      
+    }
+  }
 
   constructor(private globalService: GlobalService, public lookupService: LookupService, private gameLoopService: GameLoopService,
     private componentCommunicationService: ComponentCommunicationService) { }

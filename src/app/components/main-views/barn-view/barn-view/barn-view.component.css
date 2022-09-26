@@ -9,6 +9,40 @@
   height: 100%;
 }
 
+.rightSpaced {
+  margin-right: .5em;
+}
+
+.checkboxOption label {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.checkboxOption input {
+  vertical-align: middle;
+}
+
+.checkboxOption label span {
+  vertical-align: middle;
+}
+
+.barnOptions {
+  position: sticky;
+  right: 0;
+  width: 100%;
+  background-color: var(--background-secondary);
+  border-color: var(--background-tertiary);
+  color: var(--foreground-default);
+
+  padding: 0.1rem;
+  border-bottom: 1px solid rgba(0, 0, 0, .8);
+}
+
+.flexed {
+  display: flex;
+  justify-content: space-around;
+}
+
 .barnDefault {
   background-color: var(--background-secondary);
   border-color: var(--background-tertiary);
@@ -21,6 +55,10 @@
   display: inline-block;
   vertical-align: middle;
   height: 100%;
+}
+
+.pointerCursor {
+  cursor: pointer;
 }
 
 .condensedBarnDefault {

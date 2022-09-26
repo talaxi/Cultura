@@ -1,4 +1,4 @@
-import { Component, ComponentFactoryResolver, ElementRef, EventEmitter, Input, OnInit, Output, SecurityContext, ViewChild } from '@angular/core';
+import { Component, ComponentFactoryResolver, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, SecurityContext, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { race, Subject } from 'rxjs';
@@ -61,6 +61,13 @@ export class RaceComponent implements OnInit {
   burstEffect = RacerEffectEnum.Burst;
   grandPrixRace: boolean = false;
   eventRaceSubscription: any;
+
+  @HostListener('window:keyup', ['$event'])
+  keyEvent(event: KeyboardEvent) {    
+      if (event.key === this.globalService.globalVar.keybinds.get("Back").toUpperCase() || event.key === this.globalService.globalVar.keybinds.get("Back").toLowerCase()) {
+        this.goToRaceSelection();      
+    }
+  }
 
   constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private utilityService: UtilityService,
     public lookupService: LookupService, private initializeService: InitializeService, private modalService: NgbModal,

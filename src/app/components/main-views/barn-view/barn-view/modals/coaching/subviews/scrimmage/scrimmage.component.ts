@@ -59,7 +59,7 @@ export class ScrimmageComponent implements OnInit {
   reachedExhaustion = false;
   triggerBurstTimer: boolean = false;
   burstTimer: number = 0;
-  burstThreshold: number = .4;
+  burstThreshold: number = .42;
 
   @HostListener('window:keyup', ['$event'])
   keyEvent(event: KeyboardEvent) {    
@@ -101,8 +101,8 @@ export class ScrimmageComponent implements OnInit {
         if (associatedAnimal !== undefined && associatedAnimal !== null) {
           this.associatedAnimal = associatedAnimal;
 
-          this.maxEnergy = Math.ceil(this.associatedAnimal.breedLevel / 5);
-          if (this.maxEnergy > 30)
+          this.maxEnergy = 15;
+          if (this.utilityService.getNumericValueOfCircuitRank(this.globalService.globalVar.circuitRank) > 26)
             this.maxEnergy = 30;
           this.remainingEnergy = this.maxEnergy - 1;
           this.associatedAnimal.scrimmageEnergyTimer = this.energyResetMinutes * 60;
@@ -368,9 +368,9 @@ export class ScrimmageComponent implements OnInit {
   scrimmageComplete() {
     //handle rewards
     var randomStat = this.getRandomStatType();
-    var value = (7 - this.timeToFinishScrimmage) / 100;
-    if (value < .005)
-      value = .005;
+    var value = (8 - this.timeToFinishScrimmage) / 100;
+    if (value < .01)
+      value = .01;
 
     value *= this.chainModifier;
 

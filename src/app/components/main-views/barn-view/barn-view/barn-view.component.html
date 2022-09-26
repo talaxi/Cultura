@@ -1,138 +1,189 @@
+<div *ngIf="selectedBarn === 0 && showBarnOptions" class="flexed barnOptions">
+    <span [ngbPopover]="swapBarnModePopoverText" class="checkboxOption" triggers="mouseenter:mouseleave">
+        <label>
+            <input type="checkbox" class="rightSpaced" id="skipRace" [(ngModel)]="swapBarnMode"
+                (input)="swapBarnModeToggle()">
+            <span>Swap Barn Mode</span>
+        </label>
+    </span>
+
+    <span [ngbPopover]="quickViewBarnModePopoverText" class="checkboxOption" triggers="mouseenter:mouseleave">
+        <label>
+            <input type="checkbox" class="rightSpaced" id="quickViewBarn" [(ngModel)]="isCondensedView"
+                (input)="quickViewBarnToggle()">
+            <span>Minimized Barn View</span>
+        </label>
+    </span>
+</div>
+
+
 <div class="gridContainer" id="barnViewDiv" *ngIf="selectedBarn === 0 && !isCondensedView">
     <div class="barnRow">
         <div class="barn1 barnDefault" [ngClass]='tutorialActive ? "tutorialActive" : ""'>
-            <app-barn [barnNumber]="1" (selectedBarn)="goToBarn($event)"></app-barn>
+            <app-barn id="Barn1" [ngClass]="{'pointerCursor': swapBarnMode}" [barnNumber]="allBarns[0].barnNumber" (selectedBarn)="goToBarn($event)" [draggable]="swapBarnMode"
+            (dragstart)="dragStart($event)" (dragover)="allowDrop($event)" (drop)="dropBarn($event)"></app-barn>
         </div>
 
         <div class="barn2 barnDefault">
-            <app-barn [barnNumber]="2" (selectedBarn)="goToBarn($event)"></app-barn>
+            <app-barn id="Barn2" [ngClass]="{'pointerCursor': swapBarnMode}" [barnNumber]="allBarns[1].barnNumber" (selectedBarn)="goToBarn($event)" [draggable]="swapBarnMode"
+            (dragstart)="dragStart($event)" (dragover)="allowDrop($event)" (drop)="dropBarn($event)"></app-barn>
         </div>
 
         <div class="barn3 barnDefault">
-            <app-barn [barnNumber]="3" (selectedBarn)="goToBarn($event)"></app-barn>
+            <app-barn id="Barn3" [ngClass]="{'pointerCursor': swapBarnMode}" [barnNumber]="allBarns[2].barnNumber" (selectedBarn)="goToBarn($event)" [draggable]="swapBarnMode"
+            (dragstart)="dragStart($event)" (dragover)="allowDrop($event)" (drop)="dropBarn($event)"></app-barn>
         </div>
     </div>
     <div class="barnRow" *ngIf="barnRow2IsUnlocked">
         <div class="barn4 barnDefault" *ngIf="barnRow2IsUnlocked">
-            <app-barn [barnNumber]="4" (selectedBarn)="goToBarn($event)"></app-barn>
+            <app-barn id="Barn4" [ngClass]="{'pointerCursor': swapBarnMode}" [barnNumber]="allBarns[3].barnNumber" (selectedBarn)="goToBarn($event)" [draggable]="swapBarnMode"
+            (dragstart)="dragStart($event)" (dragover)="allowDrop($event)" (drop)="dropBarn($event)"></app-barn>
         </div>
 
         <div class="barn5 barnDefault" *ngIf="barnRow2IsUnlocked">
-            <app-barn [barnNumber]="5" (selectedBarn)="goToBarn($event)"></app-barn>
+            <app-barn id="Barn5" [ngClass]="{'pointerCursor': swapBarnMode}" [barnNumber]="allBarns[4].barnNumber" (selectedBarn)="goToBarn($event)" [draggable]="swapBarnMode"
+            (dragstart)="dragStart($event)" (dragover)="allowDrop($event)" (drop)="dropBarn($event)"></app-barn>
         </div>
 
         <div class="barn6 barnDefault" *ngIf="barnRow2IsUnlocked">
-            <app-barn [barnNumber]="6" (selectedBarn)="goToBarn($event)"></app-barn>
+            <app-barn id="Barn6" [ngClass]="{'pointerCursor': swapBarnMode}" [barnNumber]="allBarns[5].barnNumber" (selectedBarn)="goToBarn($event)" [draggable]="swapBarnMode"
+            (dragstart)="dragStart($event)" (dragover)="allowDrop($event)" (drop)="dropBarn($event)"></app-barn>
         </div>
     </div>
     <div class="barnRow" *ngIf="barnRow3IsUnlocked">
         <div class="barn7 barnDefault" *ngIf="barnRow3IsUnlocked">
-            <app-barn [barnNumber]="7" (selectedBarn)="goToBarn($event)"></app-barn>
+            <app-barn id="Barn7" [ngClass]="{'pointerCursor': swapBarnMode}" [barnNumber]="allBarns[6].barnNumber" (selectedBarn)="goToBarn($event)" [draggable]="swapBarnMode"
+            (dragstart)="dragStart($event)" (dragover)="allowDrop($event)" (drop)="dropBarn($event)"></app-barn>
         </div>
 
         <div class="barn8 barnDefault" *ngIf="barnRow3IsUnlocked">
-            <app-barn [barnNumber]="8" (selectedBarn)="goToBarn($event)"></app-barn>
+            <app-barn id="Barn8" [ngClass]="{'pointerCursor': swapBarnMode}" [barnNumber]="allBarns[7].barnNumber" (selectedBarn)="goToBarn($event)" [draggable]="swapBarnMode"
+            (dragstart)="dragStart($event)" (dragover)="allowDrop($event)" (drop)="dropBarn($event)"></app-barn>
         </div>
 
         <div class="barn9 barnDefault" *ngIf="barnRow3IsUnlocked">
-            <app-barn [barnNumber]="9" (selectedBarn)="goToBarn($event)"></app-barn>
+            <app-barn id="Barn9" [ngClass]="{'pointerCursor': swapBarnMode}" [barnNumber]="allBarns[8].barnNumber" (selectedBarn)="goToBarn($event)" [draggable]="swapBarnMode"
+            (dragstart)="dragStart($event)" (dragover)="allowDrop($event)" (drop)="dropBarn($event)"></app-barn>
         </div>
     </div>
     <div class="barnRow" *ngIf="barnRow4IsUnlocked">
         <div class="barn10 barnDefault" *ngIf="barnRow4IsUnlocked">
-            <app-barn [barnNumber]="10" (selectedBarn)="goToBarn($event)"></app-barn>
+            <app-barn id="Barn10" [ngClass]="{'pointerCursor': swapBarnMode}" [barnNumber]="allBarns[9].barnNumber" (selectedBarn)="goToBarn($event)" [draggable]="swapBarnMode"
+            (dragstart)="dragStart($event)" (dragover)="allowDrop($event)" (drop)="dropBarn($event)"></app-barn>
         </div>
 
         <div class="barn11 barnDefault" *ngIf="barnRow4IsUnlocked">
-            <app-barn [barnNumber]="11" (selectedBarn)="goToBarn($event)"></app-barn>
+            <app-barn id="Barn11" [ngClass]="{'pointerCursor': swapBarnMode}" [barnNumber]="allBarns[10].barnNumber" (selectedBarn)="goToBarn($event)" [draggable]="swapBarnMode"
+            (dragstart)="dragStart($event)" (dragover)="allowDrop($event)" (drop)="dropBarn($event)"></app-barn>
         </div>
 
         <div class="barn12 barnDefault" *ngIf="barnRow4IsUnlocked">
-            <app-barn [barnNumber]="12" (selectedBarn)="goToBarn($event)"></app-barn>
+            <app-barn id="Barn12" [ngClass]="{'pointerCursor': swapBarnMode}" [barnNumber]="allBarns[11].barnNumber" (selectedBarn)="goToBarn($event)" [draggable]="swapBarnMode"
+            (dragstart)="dragStart($event)" (dragover)="allowDrop($event)" (drop)="dropBarn($event)"></app-barn>
         </div>
     </div>
     <div class="barnRow" *ngIf="barnRow5IsUnlocked">
         <div class="barn13 barnDefault" *ngIf="barnRow5IsUnlocked">
-            <app-barn [barnNumber]="13" (selectedBarn)="goToBarn($event)"></app-barn>
+            <app-barn id="Barn13" [ngClass]="{'pointerCursor': swapBarnMode}" [barnNumber]="allBarns[12].barnNumber" (selectedBarn)="goToBarn($event)" [draggable]="swapBarnMode"
+            (dragstart)="dragStart($event)" (dragover)="allowDrop($event)" (drop)="dropBarn($event)"></app-barn>
         </div>
 
         <div class="barn14 barnDefault" *ngIf="barnRow5IsUnlocked">
-            <app-barn [barnNumber]="14" (selectedBarn)="goToBarn($event)"></app-barn>
+            <app-barn id="Barn14" [ngClass]="{'pointerCursor': swapBarnMode}" [barnNumber]="allBarns[13].barnNumber" (selectedBarn)="goToBarn($event)" [draggable]="swapBarnMode"
+            (dragstart)="dragStart($event)" (dragover)="allowDrop($event)" (drop)="dropBarn($event)"></app-barn>
         </div>
 
         <div class="barn15 barnDefault" *ngIf="barnRow5IsUnlocked">
-            <app-barn [barnNumber]="15" (selectedBarn)="goToBarn($event)"></app-barn>
+            <app-barn id="Barn15" [ngClass]="{'pointerCursor': swapBarnMode}" [barnNumber]="allBarns[14].barnNumber" (selectedBarn)="goToBarn($event)" [draggable]="swapBarnMode"
+            (dragstart)="dragStart($event)" (dragover)="allowDrop($event)" (drop)="dropBarn($event)"></app-barn>
         </div>
     </div>
 </div>
 
-<div id="barnViewDiv" *ngIf="selectedBarn === 0 && isCondensedView">  
-    <div class="column">  
+<div id="barnViewDiv" *ngIf="selectedBarn === 0 && isCondensedView">
+    <div class="column">
         <div class="barn1 condensedBarnDefault" [ngClass]='tutorialActive ? "tutorialActive" : ""'>
-            <app-barn [barnNumber]="1" (selectedBarn)="goToBarn($event)"></app-barn>
+            <app-barn id="Barn1" [ngClass]="{'pointerCursor': swapBarnMode}" [barnNumber]="allBarns[0].barnNumber" (selectedBarn)="goToBarn($event)" [draggable]="swapBarnMode"
+            (dragstart)="dragStart($event)" (dragover)="allowDrop($event)" (drop)="dropBarn($event)"></app-barn>
         </div>
-        <br/>
+        <br />
         <div class="barn2 condensedBarnDefault">
-            <app-barn [barnNumber]="2" (selectedBarn)="goToBarn($event)"></app-barn>
+            <app-barn id="Barn2" [ngClass]="{'pointerCursor': swapBarnMode}" [barnNumber]="allBarns[1].barnNumber" (selectedBarn)="goToBarn($event)" [draggable]="swapBarnMode"
+            (dragstart)="dragStart($event)" (dragover)="allowDrop($event)" (drop)="dropBarn($event)"></app-barn>
         </div>
-        <br/>
+        <br />
         <div class="barn3 condensedBarnDefault">
-            <app-barn [barnNumber]="3" (selectedBarn)="goToBarn($event)"></app-barn>
-        </div>   
-        <br/>     
+            <app-barn id="Barn3" [ngClass]="{'pointerCursor': swapBarnMode}" [barnNumber]="allBarns[2].barnNumber" (selectedBarn)="goToBarn($event)" [draggable]="swapBarnMode"
+            (dragstart)="dragStart($event)" (dragover)="allowDrop($event)" (drop)="dropBarn($event)"></app-barn>
+        </div>
+        <br />
         <div class="barn4 condensedBarnDefault" *ngIf="barnRow2IsUnlocked">
-            <app-barn [barnNumber]="4" (selectedBarn)="goToBarn($event)"></app-barn>
+            <app-barn id="Barn4" [ngClass]="{'pointerCursor': swapBarnMode}" [barnNumber]="allBarns[3].barnNumber" (selectedBarn)="goToBarn($event)" [draggable]="swapBarnMode"
+            (dragstart)="dragStart($event)" (dragover)="allowDrop($event)" (drop)="dropBarn($event)"></app-barn>
         </div>
-        <br/>
+        <br />
         <div class="barn5 condensedBarnDefault" *ngIf="barnRow2IsUnlocked">
-            <app-barn [barnNumber]="5" (selectedBarn)="goToBarn($event)"></app-barn>
+            <app-barn id="Barn5" [ngClass]="{'pointerCursor': swapBarnMode}" [barnNumber]="allBarns[4].barnNumber" (selectedBarn)="goToBarn($event)" [draggable]="swapBarnMode"
+            (dragstart)="dragStart($event)" (dragover)="allowDrop($event)" (drop)="dropBarn($event)"></app-barn>
         </div>
-        <br/>
+        <br />
         <div class="barn6 condensedBarnDefault" *ngIf="barnRow2IsUnlocked">
-            <app-barn [barnNumber]="6" (selectedBarn)="goToBarn($event)"></app-barn>
-        </div>    
-        <br/>
+            <app-barn id="Barn6" [ngClass]="{'pointerCursor': swapBarnMode}" [barnNumber]="allBarns[5].barnNumber" (selectedBarn)="goToBarn($event)" [draggable]="swapBarnMode"
+            (dragstart)="dragStart($event)" (dragover)="allowDrop($event)" (drop)="dropBarn($event)"></app-barn>
+        </div>
+        <br />
         <div class="barn7 condensedBarnDefault" *ngIf="barnRow3IsUnlocked">
-            <app-barn [barnNumber]="7" (selectedBarn)="goToBarn($event)"></app-barn>
+            <app-barn id="Barn7" [ngClass]="{'pointerCursor': swapBarnMode}" [barnNumber]="allBarns[6].barnNumber" (selectedBarn)="goToBarn($event)" [draggable]="swapBarnMode"
+            (dragstart)="dragStart($event)" (dragover)="allowDrop($event)" (drop)="dropBarn($event)"></app-barn>
         </div>
-        <br/>
+        <br />
         <div class="barn8 condensedBarnDefault" *ngIf="barnRow3IsUnlocked">
-            <app-barn [barnNumber]="8" (selectedBarn)="goToBarn($event)"></app-barn>
+            <app-barn id="Barn8" [ngClass]="{'pointerCursor': swapBarnMode}" [barnNumber]="allBarns[7].barnNumber" (selectedBarn)="goToBarn($event)" [draggable]="swapBarnMode"
+            (dragstart)="dragStart($event)" (dragover)="allowDrop($event)" (drop)="dropBarn($event)"></app-barn>
         </div>
-        <br/>
+        <br />
         <div class="barn9 condensedBarnDefault" *ngIf="barnRow3IsUnlocked">
-            <app-barn [barnNumber]="9" (selectedBarn)="goToBarn($event)"></app-barn>
+            <app-barn id="Barn9" [ngClass]="{'pointerCursor': swapBarnMode}" [barnNumber]="allBarns[8].barnNumber" (selectedBarn)="goToBarn($event)" [draggable]="swapBarnMode"
+            (dragstart)="dragStart($event)" (dragover)="allowDrop($event)" (drop)="dropBarn($event)"></app-barn>
         </div>
-        <br/>
+        <br />
         <div class="barn10 condensedBarnDefault" *ngIf="barnRow4IsUnlocked">
-            <app-barn [barnNumber]="10" (selectedBarn)="goToBarn($event)"></app-barn>
+            <app-barn id="Barn10" [ngClass]="{'pointerCursor': swapBarnMode}" [barnNumber]="allBarns[9].barnNumber" (selectedBarn)="goToBarn($event)" [draggable]="swapBarnMode"
+            (dragstart)="dragStart($event)" (dragover)="allowDrop($event)" (drop)="dropBarn($event)"></app-barn>
         </div>
-        <br/>
+        <br />
         <div class="barn11 condensedBarnDefault" *ngIf="barnRow4IsUnlocked">
-            <app-barn [barnNumber]="11" (selectedBarn)="goToBarn($event)"></app-barn>
+            <app-barn id="Barn11" [ngClass]="{'pointerCursor': swapBarnMode}" [barnNumber]="allBarns[10].barnNumber" (selectedBarn)="goToBarn($event)" [draggable]="swapBarnMode"
+            (dragstart)="dragStart($event)" (dragover)="allowDrop($event)" (drop)="dropBarn($event)"></app-barn>
         </div>
-        <br/>
+        <br />
         <div class="barn12 condensedBarnDefault" *ngIf="barnRow4IsUnlocked">
-            <app-barn [barnNumber]="12" (selectedBarn)="goToBarn($event)"></app-barn>
+            <app-barn id="Barn12" [ngClass]="{'pointerCursor': swapBarnMode}" [barnNumber]="allBarns[11].barnNumber" (selectedBarn)="goToBarn($event)" [draggable]="swapBarnMode"
+            (dragstart)="dragStart($event)" (dragover)="allowDrop($event)" (drop)="dropBarn($event)"></app-barn>
         </div>
-        <br/>
+        <br />
         <div class="barn13 condensedBarnDefault" *ngIf="barnRow5IsUnlocked">
-            <app-barn [barnNumber]="13" (selectedBarn)="goToBarn($event)"></app-barn>
+            <app-barn id="Barn13" [ngClass]="{'pointerCursor': swapBarnMode}" [barnNumber]="allBarns[12].barnNumber" (selectedBarn)="goToBarn($event)" [draggable]="swapBarnMode"
+            (dragstart)="dragStart($event)" (dragover)="allowDrop($event)" (drop)="dropBarn($event)"></app-barn>
         </div>
-        <br/>
+        <br />
         <div class="barn14 condensedBarnDefault" *ngIf="barnRow5IsUnlocked">
-            <app-barn [barnNumber]="14" (selectedBarn)="goToBarn($event)"></app-barn>
+            <app-barn id="Barn14" [ngClass]="{'pointerCursor': swapBarnMode}" [barnNumber]="allBarns[13].barnNumber" (selectedBarn)="goToBarn($event)" [draggable]="swapBarnMode"
+            (dragstart)="dragStart($event)" (dragover)="allowDrop($event)" (drop)="dropBarn($event)"></app-barn>
         </div>
-        <br/>
+        <br />
         <div class="barn15 condensedBarnDefault" *ngIf="barnRow5IsUnlocked">
-            <app-barn [barnNumber]="15" (selectedBarn)="goToBarn($event)"></app-barn>
-        </div>    
+            <app-barn id="Barn15" [ngClass]="{'pointerCursor': swapBarnMode}" [barnNumber]="allBarns[14].barnNumber" (selectedBarn)="goToBarn($event)" [draggable]="swapBarnMode"
+            (dragstart)="dragStart($event)" (dragover)="allowDrop($event)" (drop)="dropBarn($event)"></app-barn>
+        </div>
     </div>
 </div>
 
-<div class="selectedBarnDiv" *ngIf="selectedBarn > 0">    
-    <app-selected-barn *ngIf="!isCoaching" [selectedBarnNumber]="this.selectedBarn" (returnToBarnEmitter)="goToBarn(0)" (isCoachingEmitter)="goToCoaching($event)">
+<div class="selectedBarnDiv" *ngIf="selectedBarn > 0">
+    <app-selected-barn *ngIf="!isCoaching" [selectedBarnNumber]="this.selectedBarn" (returnToBarnEmitter)="goToBarn(0)"
+        (isCoachingEmitter)="goToCoaching($event)">
     </app-selected-barn>
-    <app-coaching [selectedBarnNumber]="this.selectedBarn" (isCoachingEmitter)="goToCoaching($event)" *ngIf="isCoaching">        
+    <app-coaching [selectedBarnNumber]="this.selectedBarn" (isCoachingEmitter)="goToCoaching($event)"
+        *ngIf="isCoaching">
     </app-coaching>
 </div>

@@ -4,7 +4,7 @@
     </div>
     <div class="mainArea">
         <div id="BarnView" class="mainView" *ngIf="activeView === navigationEnum.barn">
-            <app-barn-view></app-barn-view>
+            <app-barn-view></app-barn-view>            
         </div>
         <div id="RaceSelectionView" class="mainView" *ngIf="activeView === navigationEnum.raceselection">
             <app-race-selection-view></app-race-selection-view>
@@ -36,7 +36,7 @@
         <div id="SettingsView" class="mainView" *ngIf="activeView === navigationEnum.settings">
             <app-settings-view></app-settings-view>
         </div>
-    </div>
+    </div>    
     <div class="navArea">
         <app-navigation (viewChanged)="changeView($event)"></app-navigation>
     </div>
