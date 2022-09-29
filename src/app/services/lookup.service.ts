@@ -169,6 +169,15 @@ export class LookupService {
     }
   }
 
+  getMonthlyMangoLimit() {
+    var monthlyMangoDefaultLimit = 0;
+    var monthlyMangoDefaultLimitModifier = this.globalService.globalVar.modifiers.find(item => item.text === "monthlyMangoDefaultLimit");
+      if (monthlyMangoDefaultLimitModifier !== undefined && monthlyMangoDefaultLimitModifier !== null)
+      monthlyMangoDefaultLimit = monthlyMangoDefaultLimitModifier.value;
+
+    return monthlyMangoDefaultLimit * this.globalService.getNumberOfCircuitRankRotations();
+  }
+
   getRenownCoinModifier(totalRenown: number, displayingPercentage: boolean): number {
     var modifierAmount = 1;
     var renownDiminishingReturnsCap = 50;

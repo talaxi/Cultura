@@ -1060,7 +1060,7 @@ export class RaceLogicService {
 
               if (this.selectedRace.raceType === RaceTypeEnum.event && this.selectedRace.eventRaceType === EventRaceTypeEnum.grandPrix)
                 this.globalService.globalVar.eventRaceData.eventAbilityData.storingPowerUseCount += 1;
-
+              
               whalePowerStored += whalePowerStoredBase;
             }
           }
@@ -2028,15 +2028,13 @@ export class RaceLogicService {
               var courseType = this.selectedRace.raceLegs[0].courseType;
               var racingAnimal = this.racingAnimals.find(animal => animal.raceCourseType === courseType);
               if (racingAnimal !== undefined && racingAnimal !== null)
-                racingAnimal.miscStats.bonusAbilityEfficiency += item.amount;
-              console.log("Bonus Ability Efficiency: " + racingAnimal!.miscStats.bonusAbilityEfficiency);
+                racingAnimal.miscStats.bonusAbilityEfficiency += item.amount;              
             }
             else if (item.name === "Bonus Orb XP Gain" && item.itemType === ShopItemTypeEnum.Other) {
               var courseType = this.selectedRace.raceLegs[0].courseType;
               var racingAnimal = this.racingAnimals.find(animal => animal.raceCourseType === courseType);
               if (racingAnimal !== undefined && racingAnimal !== null)
-                racingAnimal.miscStats.bonusOrbXp += item.amount;
-                console.log("Bonus Orb XP: " + racingAnimal!.miscStats.bonusOrbXp);
+                racingAnimal.miscStats.bonusOrbXp += item.amount;                
             }
             else if (item.name === "Nectar of the Gods" && item.itemType === ShopItemTypeEnum.Other) {
               var courseType = this.selectedRace.raceLegs[0].courseType;
@@ -3371,8 +3369,7 @@ export class RaceLogicService {
           var orbDetails: Orb | undefined;
           if (orbType !== undefined)
             orbDetails = this.globalService.getOrbDetailsFromType(orbType!);
-
-          //console.log(orbDetails?.maxLevel + " vs " + numericValueOfPinnacleFloor);
+          
           if (orbType !== undefined && orbDetails !== undefined && orbDetails.maxLevel > numericValueOfPinnacleFloor) {
             item.changeOnFrame = 1;
           }

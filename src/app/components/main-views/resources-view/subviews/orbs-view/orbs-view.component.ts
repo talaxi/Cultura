@@ -14,10 +14,8 @@ export class OrbsViewComponent implements OnInit {
 
   constructor(public globalService: GlobalService) { }
 
-  ngOnInit(): void {
-    console.log(this.globalService.globalVar.resources);
-    this.allOrbs = this.globalService.globalVar.orbStats.allOrbs.filter(item => this.globalService.globalVar.resources.some(resource => this.globalService.getOrbTypeFromResource(resource) === item.type));    
-    console.log(this.allOrbs);
+  ngOnInit(): void {    
+    this.allOrbs = this.globalService.globalVar.orbStats.allOrbs.filter(item => this.globalService.globalVar.resources.some(resource => this.globalService.getOrbTypeFromResource(resource) === item.type));        
   }
 
   getProgressBarPercent(type: OrbTypeEnum) {

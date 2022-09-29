@@ -83,15 +83,16 @@ export class GlobalService {
     this.globalVar.nationalRaceCountdown = 0;
     this.globalVar.autoFreeRaceCounter = 0;
     this.globalVar.freeRaceCounter = 0;
-    this.globalVar.freeRaceTimePeriodCounter = 0;
+    this.globalVar.freeRaceTimePeriodCounter = 0;    
     this.globalVar.lastTimeStamp = Date.now();
-    this.globalVar.currentVersion = 1.23; //TODO: this needs to be automatically increased or something, too easy to forget
-    this.globalVar.startingVersion = 1.23;
+    this.globalVar.currentVersion = 1.24; //TODO: this needs to be automatically increased or something, too easy to forget
+    this.globalVar.startingVersion = 1.24;
     this.globalVar.startDate = new Date();
     this.globalVar.notifications = new Notifications();
     this.globalVar.relayEnergyFloor = 50;
     this.globalVar.doNotRelayBelowEnergyFloor = false;
     this.globalVar.barnOrder = [];
+    this.globalVar.monthlyMangoesPurchased = 0;
 
     //Initialize modifiers
     this.InitializeModifiers();
@@ -137,6 +138,8 @@ export class GlobalService {
   }
 
   InitializeModifiers(): void {
+    this.globalVar.modifiers.push(new StringNumberPair(250, "monthlyMangoDefaultLimit"));
+
     this.globalVar.modifiers.push(new StringNumberPair(.2, "staminaModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(.9, "exhaustionStatLossModifier"));
     this.globalVar.modifiers.push(new StringNumberPair(.3, "exhaustionStatLossMinimumModifier"));
@@ -3805,8 +3808,7 @@ export class GlobalService {
     if (endDate instanceof Date)
       this.globalVar.eventRaceData.currentEventEndDate = endDate;
 
-    this.globalVar.eventRaceData.weatherCluster = this.getRandomGrandPrixWeatherCluster();
-    this.globalVar.previousEventRewards = [];
+    this.globalVar.eventRaceData.weatherCluster = this.getRandomGrandPrixWeatherCluster();    
   }
 
   animalCanRaceGrandPrix(animal: Animal) {
@@ -4734,7 +4736,7 @@ export class GlobalService {
     this.globalVar.settings.set("autoStartEventRace", false);
     this.globalVar.settings.set("quickViewBarnMode", false);
     this.globalVar.settings.set("displayAverageDistancePace", true);    
-    this.globalVar.settings.set("showBarnOptions", true);    
+    this.globalVar.settings.set("showBarnOptions", false);    
 
     this.globalVar.settings.set("monoRaceToggled", false);
     this.globalVar.settings.set("duoRaceToggled", false);
@@ -4859,6 +4861,15 @@ export class GlobalService {
     }
 
     return description;
+  }
+
+  //every Z-A is one rotation
+  getNumberOfCircuitRankRotations() {
+    var rotations = 1;
+
+    rotations += Math.floor((this.utilityService.getNumericValueOfCircuitRank(this.globalVar.circuitRank) - 1) / 26);
+
+    return rotations;
   }
 
   sortAnimalOrder() {
@@ -5239,7 +5250,7 @@ export class GlobalService {
     }
     else if (progressionSetting === 4) {
       trainingStatValue = 5000;
-      breedLevel = 1500;
+      breedLevel = 1000;
       incubatorUpgradeValue = 12.5;
       talentCount = 60;
     }

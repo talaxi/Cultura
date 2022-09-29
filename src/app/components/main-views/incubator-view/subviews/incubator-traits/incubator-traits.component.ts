@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 import { AnimalStatEnum } from 'src/app/models/animal-stat-enum.model';
 import { AnimalTraits } from 'src/app/models/animals/animal-traits.model';
 import { Animal } from 'src/app/models/animals/animal.model';
@@ -32,6 +32,14 @@ export class IncubatorTraitsComponent implements OnInit {
   filterAdaptability = false;
 
   colorConditional: any;
+
+  @HostListener('window:keyup', ['$event'])
+  keyEvent(event: KeyboardEvent) {    
+      if (event.key === this.globalService.globalVar.keybinds.get("Back").toUpperCase() || event.key === this.globalService.globalVar.keybinds.get("Back").toLowerCase()) {
+        this.returnToAnimalView();      
+    }
+  }
+
 
   constructor(private globalService: GlobalService, private gameLoopService: GameLoopService,
     private lookupService: LookupService, private componentCommunicationService: ComponentCommunicationService) { }
@@ -78,6 +86,15 @@ export class IncubatorTraitsComponent implements OnInit {
 
       this.trainingProgressBarPercent = ((incubator.timeTrained / incubator.timeToComplete) * 100);
     });
+  }
+
+  cancelIncubation() {
+    var incubator = this.globalService.globalVar.incubator;
+    
+    incubator.timeTrained = 0;
+    incubator.assignedAnimal = null;
+    incubator.assignedTrait = null;
+    this.selectedAnimal.canTrain = true;
   }
 
   selectNewTrait(trait: AnimalTraits): void {

@@ -22,6 +22,7 @@ export class BarnViewComponent implements OnInit {
   barnRow5IsUnlocked = false;
   subscription: any;
   isCondensedView = false;
+  refreshTrainingPopoverText = "";
 
   showBarnOptions: boolean = true;
   swapBarnMode: boolean = false;
@@ -33,16 +34,17 @@ export class BarnViewComponent implements OnInit {
   constructor(private lookupService: LookupService, private componentCommunicationService: ComponentCommunicationService,
     private globalService: GlobalService, private gameLoopService: GameLoopService) { }
 
-  ngOnInit(): void {    
+  ngOnInit(): void {
     this.allBarns = this.globalService.getBarnListInOrder();
     this.componentCommunicationService.setNewView(NavigationEnum.barn);
+    this.refreshTrainingPopoverText = "Click here to restart your current training for all barns or, if no training is selected, restart your previous training.";
     if (this.globalService.globalVar.settings.get("quickViewBarnMode"))
       this.isCondensedView = true;
 
     if (this.globalService.globalVar.settings.get("swapBarnMode"))
       this.swapBarnMode = true;
 
-      
+
     if (this.globalService.globalVar.settings.get("showBarnOptions"))
       this.showBarnOptions = true;
     else
@@ -64,8 +66,8 @@ export class BarnViewComponent implements OnInit {
       this.tutorialActive = true;
     }
 
-    this.subscription = this.componentCommunicationService.getBarnView().subscribe((value) => {      
-      this.selectedBarn = value;      
+    this.subscription = this.componentCommunicationService.getBarnView().subscribe((value) => {
+      this.selectedBarn = value;
     });
   }
 
@@ -79,33 +81,51 @@ export class BarnViewComponent implements OnInit {
     this.globalService.globalVar.settings.set("swapBarnMode", this.swapBarnMode);
   }
 
-  dragStart(event: any) {    
+  refreshTraining() {
+    this.globalService.globalVar.barns.forEach(barn => {
+      var animal = this.globalService.globalVar.animals.find(item => item.associatedBarnNumber === barn.barnNumber);
+      if (animal !== undefined && animal !== null && animal.previousTraining !== undefined && animal.previousTraining !== null) {
+        var newTraining = Object.assign({}, animal.previousTraining);
+        newTraining.timeTrained = 0;
+      
+        if (animal.currentTraining !== null && animal.currentTraining !== undefined && animal.currentTraining.trainingTimeRemaining > 0 &&
+          this.globalService.globalVar.settings.get("finishTrainingBeforeSwitching")) {
+          animal.queuedTraining = newTraining;
+        }
+        else {
+          animal.currentTraining = newTraining;
+        }
+      }
+    });
+  }
+
+  dragStart(event: any) {
     if (this.swapBarnMode) {
       this.dragSourceElement = event;
       event.dataTransfer.setData("text", event.target.id);
     }
   }
 
-  allowDrop(event: any) {    
+  allowDrop(event: any) {
     if (this.swapBarnMode) {
       event.preventDefault();
     }
   }
 
-  dropBarn(event: any) {    
+  dropBarn(event: any) {
     if (this.swapBarnMode) {
       event.preventDefault();
       event.stopPropagation();
 
       var data = event.dataTransfer.getData("text");
-      var dataElement = document.getElementById(data);      
+      var dataElement = document.getElementById(data);
       var targetEvent = event.target;
 
       if (dataElement === null)
-        return; 
+        return;
 
       if (targetEvent === null)
-        return;    
+        return;
 
       var swapFromId = dataElement.id.substring(4);
       var swapToId = targetEvent.id.substring(4);
@@ -113,21 +133,21 @@ export class BarnViewComponent implements OnInit {
       if (swapFromId === undefined || swapToId === undefined || Number(swapFromId) === NaN || Number(swapToId) === NaN)
         return;
 
-      var swappingFromBarnNumber = this.globalService.globalVar.barnOrder[Number(swapFromId)-1];
-      var swappingToBarnNumber = this.globalService.globalVar.barnOrder[Number(swapToId)-1];
+      var swappingFromBarnNumber = this.globalService.globalVar.barnOrder[Number(swapFromId) - 1];
+      var swappingToBarnNumber = this.globalService.globalVar.barnOrder[Number(swapToId) - 1];
 
       var swappingFromIndex = this.globalService.globalVar.barnOrder.findIndex(item => item === swappingFromBarnNumber);
-      var swappingToIndex = this.globalService.globalVar.barnOrder.findIndex(item => item === swappingToBarnNumber);      
+      var swappingToIndex = this.globalService.globalVar.barnOrder.findIndex(item => item === swappingToBarnNumber);
 
       if (swappingFromIndex < 0 || swappingToIndex < 0)
         return;
 
       var actualSwapFromValue = this.globalService.globalVar.barnOrder[swappingFromIndex];
-      var actualSwapToValue = this.globalService.globalVar.barnOrder[swappingToIndex];      
+      var actualSwapToValue = this.globalService.globalVar.barnOrder[swappingToIndex];
 
       this.globalService.globalVar.barnOrder[swappingFromIndex] = actualSwapToValue;
       this.globalService.globalVar.barnOrder[swappingToIndex] = actualSwapFromValue;
-      this.allBarns = this.globalService.getBarnListInOrder();      
+      this.allBarns = this.globalService.getBarnListInOrder();
     }
   }
 

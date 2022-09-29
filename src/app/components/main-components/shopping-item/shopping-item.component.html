@@ -3,7 +3,7 @@
     <span [ngClass]="colorConditional" class="keyword"><span *ngIf="displayNumberPurchasing">{{
             selectedItem.numberPurchasing }} </span> {{
         displayName }}</span> <em *ngIf="selectedItem.totalShopQuantity > 1"> ({{ selectedItem.totalShopQuantity -
-        selectedItem.amountPurchased }} left)</em>
+        amountPurchased }} left{{mangoTextLimit}})</em>
     <br />
     <br />
     <span [innerHTML]="shortDescription"></span>
@@ -29,7 +29,7 @@
     <span [ngClass]="colorConditional" class="keyword"><span *ngIf="displayNumberPurchasing">{{
             selectedItem.numberPurchasing }} </span>{{
         displayName }}</span> <em *ngIf="selectedItem.totalShopQuantity > 1"> ({{ selectedItem.totalShopQuantity -
-        selectedItem.amountPurchased }} left)</em>
+        amountPurchased }} left{{mangoTextLimit}})</em>
     <br />
     <br />
     <span [innerHTML]="shortDescription"></span>

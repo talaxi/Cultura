@@ -14,6 +14,11 @@
             <span>Minimized Barn View</span>
         </label>
     </span>
+
+    <span>
+        <button (click)="refreshTraining()" class="refreshTraining" [ngbPopover]="refreshTrainingPopoverText"
+        triggers="mouseenter:mouseleave">&#x21bb; Refresh Training</button>        
+        </span>
 </div>
 
 

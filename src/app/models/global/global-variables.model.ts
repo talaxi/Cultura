@@ -82,7 +82,7 @@ export class GlobalVariables {
     userIsRacing = false;   
     autoFreeRaceCounter: number;     
     freeRaceCounter: number;
-    freeRaceTimePeriodCounter: number;   
+    freeRaceTimePeriodCounter: number;       
     lastMonoRaceCourseType: RaceCourseTypeEnum; 
     currentVersion: number;
     startingVersion: number;
@@ -91,6 +91,7 @@ export class GlobalVariables {
     relayEnergyFloor: number;
     doNotRelayBelowEnergyFloor: boolean;
     barnOrder: number[];
+    monthlyMangoesPurchased: number;
 
     constructor(existingVariables?: GlobalVariables) {
         if (existingVariables !== undefined && existingVariables !== null) {            
@@ -114,6 +115,7 @@ export class GlobalVariables {
             this.notifications = existingVariables.notifications;
             this.previousEventRewards = [];
             this.barnOrder = existingVariables.barnOrder;
+            this.monthlyMangoesPurchased = existingVariables.monthlyMangoesPurchased;
             this.nationalRaceCountdown = 0;
             this.autoFreeRaceCounter = 0;
             this.freeRaceCounter = 0;

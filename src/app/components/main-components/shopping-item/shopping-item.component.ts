@@ -29,6 +29,8 @@ export class ShoppingItemComponent implements OnInit {
   amountSubscription: any;
   purchasingQuantity: number = 1;
   displayPurchasingQuantity = false;
+  amountPurchased: number;
+  mangoTextLimit = "";
 
   /*@HostListener('window:keydown', ['$event'])
   keyEventDown(event: KeyboardEvent) {
@@ -90,6 +92,7 @@ export class ShoppingItemComponent implements OnInit {
 
   ngOnInit(): void {    
     this.buyMultiplierAmount = 1;
+    this.amountPurchased = this.selectedItem.amountPurchased;
 
     if (this.selectedItem.canHaveMultiples && this.selectedItem.name !== "Mangoes"
       && (this.selectedItem.quantityAdditive === undefined || this.selectedItem.quantityAdditive === 0)
@@ -192,6 +195,15 @@ export class ShoppingItemComponent implements OnInit {
         else
           this.canAffordItem = true;
       });
+
+      if (this.selectedItem.name === "Mangoes")
+      {
+        this.mangoTextLimit = " this month";
+        this.amountPurchased = this.globalService.globalVar.monthlyMangoesPurchased;
+
+        if (this.lookupService.getMonthlyMangoLimit() - this.amountPurchased <= 0)
+          this.canAffordItem = false;
+      }
 
 
       if (this.purchaseResourcesRequired.length > 0) {
@@ -323,6 +335,7 @@ export class ShoppingItemComponent implements OnInit {
         {
           //base price + amount purchased * growth
           price.amount += 50;
+          this.globalService.globalVar.monthlyMangoesPurchased += 1;
         }
 
         if (price.name === "Tokens")
@@ -356,6 +369,10 @@ export class ShoppingItemComponent implements OnInit {
         if (internationalRaces !== undefined && internationalRaces !== null)
           internationalRaces.isAvailable = true;
       }
+    }
+
+    if (this.selectedItem.name === "International Races") {
+      this.globalService.globalVar.nationalRaceCountdown = 0;
     }
 
     if (this.selectedItem.name === "Incubator Upgrade Lv1") {

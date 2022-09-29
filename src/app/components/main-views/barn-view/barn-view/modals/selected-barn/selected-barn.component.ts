@@ -150,6 +150,7 @@ export class SelectedBarnComponent implements OnInit {
     if (animal.currentTraining !== null && animal.currentTraining !== undefined) {
       if (this.globalService.globalVar.settings.get("finishTrainingBeforeSwitching")) {
         animal.queuedTraining = newTraining;
+        animal.previousTraining = Object.assign({}, newTraining);
         return;
       }
 
@@ -157,6 +158,7 @@ export class SelectedBarnComponent implements OnInit {
     }
 
     animal.currentTraining = newTraining;
+    animal.previousTraining = Object.assign({}, newTraining);
     this.existingTraining = newTraining;
 
     if (!this.globalService.globalVar.tutorials.tutorialCompleted && this.globalService.globalVar.tutorials.currentTutorialId === 2) {
@@ -730,7 +732,7 @@ export class SelectedBarnComponent implements OnInit {
     this.upgradeText = "Upgrade";
     this.barnSpecializationsUnlocked = this.lookupService.isItemUnlocked("barnSpecializations");
     this.coachingUnlocked = this.lookupService.isItemUnlocked("coaching");
-    this.selectedBarnNumber = newBarn.barnNumber;
+    this.selectedBarnNumber = newBarn.barnNumber;    
 
     if (this.selectedBarnNumber > 0 && this.selectedBarnNumber <= this.globalService.globalVar.barns.length + 1) {
       var globalBarn = this.globalService.globalVar.barns.find(item => item.barnNumber === this.selectedBarnNumber);

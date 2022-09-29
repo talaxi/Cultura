@@ -76,6 +76,7 @@
   }
   
   .back {
+    padding-top: .25rem;
     grid-area: back;
   }
   

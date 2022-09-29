@@ -29,6 +29,8 @@ export class Animal {
     currentTraining: TrainingOption | null;
     @Type(() => TrainingOption)
     queuedTraining: TrainingOption | null;
+    @Type(() => TrainingOption)
+    previousTraining: TrainingOption | null;
     associatedBarnNumber: number;
     @Type(() => Ability)
     ability: Ability;

@@ -2,15 +2,14 @@
   z-index: 1050 !important;
 }
 
-.selectedBarnModal {    
-    height: 100%;
-    background-color: var(--background-secondary);    
-    color: var(--foreground-default);
-  }
+.selectedBarnModal {
+  height: 100%;
+  background-color: var(--background-secondary);
+  color: var(--foreground-default);
+}
 
-.infoText
-{
-    text-align: center;
+.infoText {
+  text-align: center;
 }
 
 .centered {
@@ -42,61 +41,59 @@
   justify-content: space-around;
 }
 
-.customLabel
-{    
-    font-weight: 700;
-    text-align: center;
-    width: 100%; /* needs to match the size of the main grid */
+.customLabel {
+  font-weight: 700;
+  text-align: center;
+  width: 100%;
+  /* needs to match the size of the main grid */
 }
 
-.progressBarContainer
-{
-    height: 2rem;
+.progressBarContainer {
+  height: 2rem;
 }
 
-.progressBar
-{
-    height: 2rem;
+.progressBar {
+  height: 2rem;
 }
 
-.progressBar > div, .progress-bar, .progressBar div {
+.progressBar>div,
+.progress-bar,
+.progressBar div {
   -webkit-transition: initial !important;
   -o-transition: initial !important;
   transition: initial !important;
 }
 
-.gridContainer
-{
-    height: 100%;
-    display: grid;
-    grid-template-columns: auto;
-    grid-template-rows: auto;
-    justify-content: stretch;
-    grid-template-areas: 
-      "trainingName trainingStats trainingTimeToComplete";
+.gridContainer {
+  height: 100%;
+  display: grid;
+  grid-template-columns: auto;
+  grid-template-rows: auto;
+  justify-content: stretch;
+  grid-template-areas:
+    "trainingName trainingStats trainingTimeToComplete";
 }
 
 .trainingName {
-    grid-area: trainingName;
-  }
+  grid-area: trainingName;
+}
 
-  .trainingStats {
-    grid-area: trainingStats;
-  }
+.trainingStats {
+  grid-area: trainingStats;
+}
 
-  .trainingTimeToComplete {
-    grid-area: trainingTimeToComplete;
-  }
+.trainingTimeToComplete {
+  grid-area: trainingTimeToComplete;
+}
 
-  .infoGridContainer
-{
-    height: 100%;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: auto;
-    justify-content: stretch;
-    grid-template-areas: 
-      "unassign info back";
+.infoGridContainer {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: auto;
+  justify-content: stretch;
+  grid-template-areas:
+    "unassign info back";
 }
 
 .unassign {
@@ -113,6 +110,28 @@
   grid-area: back;
 }
 
+.trainingGrid {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: auto;
+  justify-content: stretch;
+  grid-template-areas:
+    "refreshTraining trainingTimer trainingSpacer";
+}
+
+.refreshTraining {
+  grid-area: refreshTraining;
+}
+
+.trainingTimer {
+  grid-area: trainingTimer;
+}
+
+.trainingSpacer {
+  grid-area: trainingSpacer;
+}
+
 .trainingDescription {
   text-align: center;
 }
@@ -122,15 +141,14 @@
   color: var(--foreground-secondary);
 }
 
-.filterGridContainer
-{
-    height: 100%;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: auto;
-    justify-content: stretch;
-    grid-template-areas: 
-      "facilitySizeFilter resetFiltersHeader statFilter";
+.filterGridContainer {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: auto;
+  justify-content: stretch;
+  grid-template-areas:
+    "facilitySizeFilter resetFiltersHeader statFilter";
 }
 
 .facilitySizeFilter {
@@ -159,7 +177,7 @@
   color: var(--foreground-default);
 }
 
-.specializationType {  
+.specializationType {
   text-decoration: underline solid transparent;
   transition: text-decoration .3s ease;
   display: inline-block;
@@ -184,7 +202,7 @@
 
 .activeTrainingOption {
   font-weight: bold;
-  color: var(--foreground-secondary);  
+  color: var(--foreground-secondary);
 }
 
 .spaceEvenly {
@@ -202,19 +220,33 @@
   text-align: center;
 }
 
+.mobileVersion {
+  display: none;
+}
+
 @media (max-width: 800px) {
-  .filterGridContainer
-  {
-      height: 100%;
-      display: grid;
-      grid-template-columns: 2fr 1fr 2fr;
-      grid-template-rows: auto;
-      justify-content: stretch;
-      grid-template-areas: 
-        "facilitySizeFilter resetFiltersHeader statFilter";
+  .filterGridContainer {
+    height: 100%;
+    display: grid;
+    grid-template-columns: 2fr 1fr 2fr;
+    grid-template-rows: auto;
+    justify-content: stretch;
+    grid-template-areas:
+      "facilitySizeFilter resetFiltersHeader statFilter";
   }
 
   .barnRow {
     width: 100%;
+  }
+
+  .desktopVersion {
+    display: none;
+  }
+
+  .mobileVersion {
+    display: block;
+  }
+  .sizeSpacing {
+    margin-left: 0;
   }
 }

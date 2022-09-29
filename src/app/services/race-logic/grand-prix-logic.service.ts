@@ -59,6 +59,7 @@ export class GrandPrixLogicService {
     if (!this.globalService.globalVar.eventRaceData.initialSetupComplete) //wasn't within event and now you are
     {
       //do initial set up
+      this.globalService.globalVar.previousEventRewards = [];
       this.globalService.initialGrandPrixSetup("Z", 1);
       this.globalService.globalVar.eventRaceData.initialSetupComplete = true;
       this.globalService.globalVar.notifications.isEventRaceNowActive = true;

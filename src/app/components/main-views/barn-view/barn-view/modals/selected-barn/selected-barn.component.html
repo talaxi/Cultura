@@ -40,8 +40,11 @@
                 <div>
                     <span [ngClass]="{'sizeSpacing': this.sizeValue !== 'Large' }">{{ this.sizeValue }} </span> <span
                         *ngIf="this.sizeValue !== 'Large'" [ngbPopover]="costToBuildContent"
-                        triggers="mouseenter:mouseleave" popoverClass="popoverClass"><button (click)="upgradeBarnSize()"
-                            [disabled]="!canBuild" class="sizeButtonSpacing">Build</button></span>
+                        triggers="mouseenter:mouseleave" popoverClass="popoverClass">
+                        <br class="mobileVersion" />
+                        <button (click)="upgradeBarnSize()"
+                            [disabled]="!canBuild" class="sizeButtonSpacing">Build</button>
+                        </span>
                 </div>
                 <hr />
                 <div *ngIf="this.existingTraining !== null && this.existingTraining !== undefined"
@@ -59,6 +62,7 @@
             <div class="back">
                 <button (click)="returnToBarnView()">Back</button>
                 <!--<span (click)="returnToBarnView()" class="clickableText">Back</span>-->
+                <br />
                 <br />
                 <br />
                 <br />
@@ -121,12 +125,12 @@
         </div>
         <br />
         <div [ngClass]='tutorialActive ? "tutorialActive" : ""'>
-            <app-training-list *ngIf="associatedAnimal.canTrain" [availableTrainingOptions]="availableTrainings"
-                (selectedTrainingOption)="selectNewTraining($event)">
-            </app-training-list>
             <div *ngIf="!associatedAnimal.canTrain" class="keyword">
-                This animal is currently busy and cannot train.
+                <em>This animal is currently busy and will not progress in their training.</em>
             </div>
+            <app-training-list [availableTrainingOptions]="availableTrainings"
+                (selectedTrainingOption)="selectNewTraining($event)">
+            </app-training-list>            
         </div>
     </div>
 </div>

@@ -103,6 +103,8 @@ export class AppComponent {
   }
 
   public gameCheckup(deltaTime: number): void {
+    this.handleMonthlyMangoTimer();
+
     //update training time
     if (this.globalService.globalVar.animals === undefined || this.globalService.globalVar.animals === null) {
       return;
@@ -122,7 +124,7 @@ export class AppComponent {
           this.specializationService.handleAttractionRevenue(deltaTime, animal);
           this.specializationService.handleTrainingFacilityImprovementsIncreases(deltaTime, animal);
 
-          while (animal.currentTraining !== null && animal.currentTraining.timeTrained >= animal.currentTraining.timeToComplete) {
+          while (animal.currentTraining !== null && animal.currentTraining.timeTrained >= animal.currentTraining.timeToComplete) {            
             var associatedBarn = this.globalService.globalVar.barns.find(item => item.barnNumber === animal.associatedBarnNumber);
             var breedingGroundsSpecializationLevel = 0;
 
@@ -179,6 +181,16 @@ export class AppComponent {
     this.grandPrixLogicService.handleGrandPrix(deltaTime);
   }
 
+  handleMonthlyMangoTimer() {
+    var lastTimestampMonth = new Date(this.globalService.globalVar.lastTimeStamp).getMonth();
+    var currentTimestampMonth = new Date().getMonth();
+
+    if (currentTimestampMonth !== lastTimestampMonth)
+    {
+      this.globalService.globalVar.monthlyMangoesPurchased = 0;
+    }
+  }
+
   handleScrimmageTimer(deltaTime: number) {
     this.globalService.globalVar.animals.forEach(animal => {
       if (animal.scrimmageEnergyTimer > 0)
@@ -187,7 +199,7 @@ export class AppComponent {
   }
   
   handleFreeRaceTimer(deltaTime: number) {
-    this.globalService.globalVar.freeRaceTimePeriodCounter += deltaTime;
+    this.globalService.globalVar.freeRaceTimePeriodCounter += deltaTime;    
 
     //delay if user is racing to prevent lag
     //TODO: ignore this delay if you're at cap time and still in this situation?
@@ -201,17 +213,15 @@ export class AppComponent {
       var autofreeRaceMaxIdleTimePeriodPair = this.globalService.globalVar.modifiers.find(item => item.text === "autoFreeRacesMaxIdleTimePeriodModifier");
       if (autofreeRaceMaxIdleTimePeriodPair !== undefined)
         autofreeRaceMaxIdleTimePeriod = autofreeRaceMaxIdleTimePeriodPair.value;
-
-      while (this.globalService.globalVar.freeRaceTimePeriodCounter >= freeRaceTimePeriod &&
+      if (this.globalService.globalVar.freeRaceTimePeriodCounter >= freeRaceTimePeriod &&
         autofreeRaceMaxIdleTimePeriod > 0) {
-        //console.log("Free Race Time Period Counter: " + this.globalService.globalVar.freeRaceTimePeriodCounter);
         if (this.globalService.globalVar.freeRaceTimePeriodCounter > autofreeRaceMaxIdleTimePeriod)
           this.globalService.globalVar.freeRaceTimePeriodCounter = autofreeRaceMaxIdleTimePeriod;
 
         this.globalService.globalVar.freeRaceTimePeriodCounter -= freeRaceTimePeriod;
         autofreeRaceMaxIdleTimePeriod -= freeRaceTimePeriod;
         this.globalService.globalVar.freeRaceCounter = 0;
-        this.globalService.globalVar.autoFreeRaceCounter = 0;
+        this.globalService.globalVar.autoFreeRaceCounter = 0;        
 
         this.handleAutoFreeRace(deltaTime);
       }

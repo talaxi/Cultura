@@ -5,6 +5,7 @@ import { ShopSection } from 'src/app/models/shop/shop-section.model';
 import { ShopsEnum } from 'src/app/models/shops-enum.model';
 import { ComponentCommunicationService } from 'src/app/services/component-communication.service';
 import { GlobalService } from 'src/app/services/global-service.service';
+import { LookupService } from 'src/app/services/lookup.service';
 
 @Component({
   selector: 'app-shop-view',
@@ -24,7 +25,8 @@ export class ShopViewComponent implements OnInit {
   subscription: any;
   resetShopSubject: Subject<void> = new Subject<void>();
 
-  constructor(private globalService: GlobalService, private componentCommunicationService: ComponentCommunicationService) { }
+  constructor(private globalService: GlobalService, private componentCommunicationService: ComponentCommunicationService,
+    private lookupService: LookupService) { }
 
   ngOnInit(): void {
     this.componentCommunicationService.setNewView(NavigationEnum.shop);
@@ -57,7 +59,17 @@ export class ShopViewComponent implements OnInit {
     var foodShopSection = this.globalService.globalVar.shop.find(item => item.name === "Food" &&
       (!filtersActive || (filtersActive && this.filterFood)));
     if (foodShopSection !== undefined)
+    {
+      var shopMangoes = foodShopSection.itemList.find(item => item.name === "Mangoes");      
+      var remainingMangoes = this.lookupService.getMonthlyMangoLimit();
+      if (remainingMangoes < 0)
+        remainingMangoes = 0;
+
+      if (shopMangoes !== undefined)
+        shopMangoes.totalShopQuantity = remainingMangoes;
+
       this.sections.push(foodShopSection);
+    }
 
     var specialtyShopSection = this.globalService.globalVar.shop.find(item => item.name === "Specialty" &&
       (!filtersActive || (filtersActive && this.filterSpecialty)));

@@ -25,7 +25,7 @@ export class VersionControlService {
   constructor(private globalService: GlobalService, private lookupService: LookupService, private utilityService: UtilityService) { }
 
   //add to this in descending order
-  gameVersions = [1.23, 1.22, 1.21, 1.20, 1.19, 1.18, 1.17, 1.16, 1.15, 1.14, 1.13, 1.12, 1.11, 1.10, 1.09, 1.08, 1.07, 1.06, 1.05, 1.04, 1.03, 1.02, 1.01, 1.00];
+  gameVersions = [1.24, 1.23, 1.22, 1.21, 1.20, 1.19, 1.18, 1.17, 1.16, 1.15, 1.14, 1.13, 1.12, 1.11, 1.10, 1.09, 1.08, 1.07, 1.06, 1.05, 1.04, 1.03, 1.02, 1.01, 1.00];
 
   getListAscended() {
     var ascendedList: number[] = [];
@@ -209,6 +209,13 @@ export class VersionControlService {
       "Added ability to quick swap animals from one barn to another when viewing an animal in its barn.\n\n" +
       "Scrimmages have been adjusted to give slightly more rewards and to no longer be tied to the animal's breed level. Instead, each animal will have 15 scrimmage energy by default and 30 once you reach Circuit Rank AZ.\n\n" +
       "The back button on every page has been bound to the key 'b' for ease of navigation. I soon plan to give you the ability to choose your own keybinds.";
+    if (version === 1.24)
+      changes = "Added a new limit to how many Mangoes you can buy from the Shop every month. This limit is increased each time your circuit rank makes it through the alphabet (so AZ, AAZ, etc.). The amount will reset at the beginning of each month. Trying this out as a solution to Mangoes becoming very strong the longer you play, but it is subject to change.\n\n" +
+      "Made changes to idle free race timers so that there is less load time.\n\n" +
+      "Added 'Refresh Training' button that will restart all animal's trainings or restart their previous one if no training is currently active.\n\n" +
+      "You can now select a training while an animal is in the Incubator or Grand Prix, but the training will not begin until they are no longer busy with those tasks.\n\n" +
+      "Added button to cancel incubation.\n\n" +
+      "Bug fixes and UI improvements.";
     return changes;
   }
 
@@ -262,6 +269,8 @@ export class VersionControlService {
       date = new Date('2022-09-21 12:00:00');
     if (version === 1.23)
       date = new Date('2022-09-26 12:00:00');
+    if (version === 1.24)
+      date = new Date('2022-09-29 12:00:00');
 
     return date.toDateString().replace(/^\S+\s/, '');
   }
@@ -1303,6 +1312,11 @@ export class VersionControlService {
 
           this.globalService.globalVar.keybinds = new Settings();
           this.globalService.InitializeKeybinds();
+        }
+        
+        else if (version === 1.24) {
+          this.globalService.globalVar.monthlyMangoesPurchased = 0;
+          this.globalService.globalVar.modifiers.push(new StringNumberPair(250, "monthlyMangoDefaultLimit"));          
         }
 
         this.globalService.globalVar.currentVersion = version;
