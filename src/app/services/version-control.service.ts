@@ -25,7 +25,7 @@ export class VersionControlService {
   constructor(private globalService: GlobalService, private lookupService: LookupService, private utilityService: UtilityService) { }
 
   //add to this in descending order
-  gameVersions = [1.24, 1.23, 1.22, 1.21, 1.20, 1.19, 1.18, 1.17, 1.16, 1.15, 1.14, 1.13, 1.12, 1.11, 1.10, 1.09, 1.08, 1.07, 1.06, 1.05, 1.04, 1.03, 1.02, 1.01, 1.00];
+  gameVersions = [1.25, 1.24, 1.23, 1.22, 1.21, 1.20, 1.19, 1.18, 1.17, 1.16, 1.15, 1.14, 1.13, 1.12, 1.11, 1.10, 1.09, 1.08, 1.07, 1.06, 1.05, 1.04, 1.03, 1.02, 1.01, 1.00];
 
   getListAscended() {
     var ascendedList: number[] = [];
@@ -216,6 +216,9 @@ export class VersionControlService {
       "You can now select a training while an animal is in the Incubator or Grand Prix, but the training will not begin until they are no longer busy with those tasks.\n\n" +
       "Added button to cancel incubation.\n\n" +
       "Bug fixes and UI improvements.";
+    if (version === 1.25)
+      changes = "Swapped Monkey and Coaching rewards. Coaching is now a reward for reaching circuit rank X (3) and Monkey is a reward for reaching circuit rank W (4). Circuit and free races have been updated accordingly. \n\n" +
+      "Scrimmages are now a reward at circuit rank P (11).";
     return changes;
   }
 
@@ -271,6 +274,8 @@ export class VersionControlService {
       date = new Date('2022-09-26 12:00:00');
     if (version === 1.24)
       date = new Date('2022-09-29 12:00:00');
+    if (version === 1.25)
+      date = new Date('2022-09-30 12:00:00');
 
     return date.toDateString().replace(/^\S+\s/, '');
   }
@@ -1317,6 +1322,9 @@ export class VersionControlService {
         else if (version === 1.24) {
           this.globalService.globalVar.monthlyMangoesPurchased = 0;
           this.globalService.globalVar.modifiers.push(new StringNumberPair(250, "monthlyMangoDefaultLimit"));          
+        }
+        else if (version === 1.25) {
+          this.globalService.globalVar.unlockables.set("scrimmages", true);
         }
 
         this.globalService.globalVar.currentVersion = version;

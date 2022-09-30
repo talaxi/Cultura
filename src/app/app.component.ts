@@ -19,6 +19,10 @@ import { RaceCourseTypeEnum } from './models/race-course-type-enum.model';
 import { UtilityService } from './services/utility/utility.service';
 import { Animal } from './models/animals/animal.model';
 import { GrandPrixLogicService } from './services/race-logic/grand-prix-logic.service';
+import { ActivatedRoute } from '@angular/router';
+import { loadStripe } from '@stripe/stripe-js';
+import { Stripe } from 'stripe';
+
 declare var LZString: any;
 
 @Component({
@@ -36,11 +40,13 @@ export class AppComponent {
   constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private lookupService: LookupService,
     private specializationService: SpecializationService, private themeService: ThemeService, private raceLogicService: RaceLogicService,
     private deploymentService: DeploymentService, private versionControlService: VersionControlService, private utilityService: UtilityService,
-    private grandPrixLogicService: GrandPrixLogicService) {
+    private grandPrixLogicService: GrandPrixLogicService, private activatedRoute: ActivatedRoute) {
   }
 
   ngOnInit() {
     var compressedGameData = localStorage.getItem("culturaIdleGameData");
+
+
 
     if (compressedGameData === null || compressedGameData === undefined || compressedGameData.length === 0) {
       compressedGameData = localStorage.getItem("gameData");
@@ -72,6 +78,7 @@ export class AppComponent {
       this.globalService.devModeInitialize(70, 4);
     }
 
+    //this.checkForSupporterConfirmation();
     this.versionControlService.updatePlayerVersion();
 
     var lastPerformanceNow = 0;
@@ -124,7 +131,7 @@ export class AppComponent {
           this.specializationService.handleAttractionRevenue(deltaTime, animal);
           this.specializationService.handleTrainingFacilityImprovementsIncreases(deltaTime, animal);
 
-          while (animal.currentTraining !== null && animal.currentTraining.timeTrained >= animal.currentTraining.timeToComplete) {            
+          while (animal.currentTraining !== null && animal.currentTraining.timeTrained >= animal.currentTraining.timeToComplete) {
             var associatedBarn = this.globalService.globalVar.barns.find(item => item.barnNumber === animal.associatedBarnNumber);
             var breedingGroundsSpecializationLevel = 0;
 
@@ -185,8 +192,7 @@ export class AppComponent {
     var lastTimestampMonth = new Date(this.globalService.globalVar.lastTimeStamp).getMonth();
     var currentTimestampMonth = new Date().getMonth();
 
-    if (currentTimestampMonth !== lastTimestampMonth)
-    {
+    if (currentTimestampMonth !== lastTimestampMonth) {
       this.globalService.globalVar.monthlyMangoesPurchased = 0;
     }
   }
@@ -197,9 +203,9 @@ export class AppComponent {
         animal.scrimmageEnergyTimer -= deltaTime;
     });
   }
-  
+
   handleFreeRaceTimer(deltaTime: number) {
-    this.globalService.globalVar.freeRaceTimePeriodCounter += deltaTime;    
+    this.globalService.globalVar.freeRaceTimePeriodCounter += deltaTime;
 
     //delay if user is racing to prevent lag
     //TODO: ignore this delay if you're at cap time and still in this situation?
@@ -221,7 +227,7 @@ export class AppComponent {
         this.globalService.globalVar.freeRaceTimePeriodCounter -= freeRaceTimePeriod;
         autofreeRaceMaxIdleTimePeriod -= freeRaceTimePeriod;
         this.globalService.globalVar.freeRaceCounter = 0;
-        this.globalService.globalVar.autoFreeRaceCounter = 0;        
+        this.globalService.globalVar.autoFreeRaceCounter = 0;
 
         this.handleAutoFreeRace(deltaTime);
       }
@@ -268,6 +274,35 @@ export class AppComponent {
       var raceResult = this.raceLogicService.runRace(freeRace, true);
     }
   }
+
+  //come back to this later
+  /*checkForSupporterConfirmation() {
+    this.activatedRoute.queryParams.subscribe(async params => {
+      if (params === undefined || params.co === undefined)
+        return;
+
+      var checkoutConfirmation = params.co;    
+
+      var stripe = new Stripe("pk_test_51LmnxHDINqQNy3RQMhhmLBTUa7pCzWRRJ9m0RD5eDnKJkWiXg2pTcdXjU3yaSJwuznY7EY0fOsp3kPBSAEbwnOU100ftH3CtlN", {
+        apiVersion: '2022-08-01',
+      });
+
+      if (stripe === undefined)
+        return;
+
+      //make sure you have stripe from node.js or whatever
+      var session = await stripe.checkout.sessions.retrieve(checkoutConfirmation);
+      console.log("Session:");
+      console.log(session);
+
+      //var checkoutInfo = stripeObj.sessi //.checkout.sessions.retrieve(req.query.session_id);
+
+      //hit stripe up with the checkout value
+      //if it matches up, set global var for supporter and showing of a message to let users know they are supporters
+      //reload to remove query string unless you can do some other trick like checking the date or something        
+    }
+    );
+  }*/
 
   /*public grandPrixWorker(deltaTime: number) {
     if (typeof Worker !== 'undefined') {

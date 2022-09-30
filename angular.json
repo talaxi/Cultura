@@ -37,7 +37,7 @@
             ],
             "webWorkerTsConfig": "tsconfig.worker.json",
             "allowedCommonJsDependencies": [
-              "class-transformer"
+              "class-transformer", "crypto", "stream", "http", "https"
             ]
           },
           "configurations": {

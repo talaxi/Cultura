@@ -7,7 +7,7 @@
                 <button class="buttonAsText coaching s5Heading clickableText"
                     (click)="changeDisplayCoachingView(coachingTypeEnum.coaching)"
                     [ngClass]='displayCoachingView === coachingTypeEnum.coaching ? "filterActive" : ""'>Coaching</button>
-                <div>
+                <div  *ngIf="scrimmagesUnlocked">
                     <button class="buttonAsText scrimmage s5Heading clickableText" [disabled]="restingForScrimmage"
                     (click)="changeDisplayCoachingView(coachingTypeEnum.scrimmage)"
                     [ngClass]='displayCoachingView === coachingTypeEnum.scrimmage ? "filterActive" : ""'><span *ngIf="showScrimmageIcon" class="availableIcon">!</span>Scrimmage</button><em *ngIf="restingForScrimmage" class="smallText rightSpaced">(Retry in {{scrimmageRestingTimeRemaining}})</em>

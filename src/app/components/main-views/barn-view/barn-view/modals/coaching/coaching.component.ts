@@ -5,6 +5,7 @@ import { CoachingTypeEnum } from 'src/app/models/coaching-type-enum.model';
 import { RaceCourseTypeEnum } from 'src/app/models/race-course-type-enum.model';
 import { GameLoopService } from 'src/app/services/game-loop/game-loop.service';
 import { GlobalService } from 'src/app/services/global-service.service';
+import { LookupService } from 'src/app/services/lookup.service';
 import { UtilityService } from 'src/app/services/utility/utility.service';
 import { ThemeService } from 'src/app/theme/theme.service';
 
@@ -40,11 +41,18 @@ export class CoachingComponent implements OnInit {
   showScrimmageIcon = false;
   restingForScrimmage: boolean;
   scrimmageRestingTimeRemaining: string;
+  scrimmagesUnlocked: boolean = false;
 
-  constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private utilityService: UtilityService) { }
+  constructor(private globalService: GlobalService, private gameLoopService: GameLoopService, private utilityService: UtilityService,
+    private lookupService: LookupService) { }
 
   ngOnInit(): void {
     this.displayCoachingView = CoachingTypeEnum.coaching; 
+
+    if (this.lookupService.isItemUnlocked("scrimmages"))
+    {      
+      this.scrimmagesUnlocked = true;
+    }
 
     if (this.selectedBarnNumber > 0 && this.selectedBarnNumber <= this.globalService.globalVar.barns.length + 1) {
       var globalBarn = this.globalService.globalVar.barns.find(item => item.barnNumber === this.selectedBarnNumber);

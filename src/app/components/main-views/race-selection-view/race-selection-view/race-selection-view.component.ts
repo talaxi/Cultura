@@ -31,7 +31,7 @@ export class RaceSelectionViewComponent implements OnInit {
     this.componentCommunicationService.setNewView(NavigationEnum.raceselection);
 
     this.subscription = this.gameLoopService.gameUpdateEvent.subscribe(async (deltaTime: number) => {
-      this.newSpecialRaceAvailable = this.globalService.globalVar.notifications.isNewSpecialRaceAvailable && (this.globalService.globalVar.tutorials.tutorialCompleted || this.globalService.globalVar.tutorials.currentTutorialId > 9);
+      this.newSpecialRaceAvailable = this.globalService.globalVar.notifications.isNewSpecialRaceAvailable && (this.globalService.globalVar.tutorials.tutorialCompleted || this.globalService.globalVar.tutorials.currentTutorialId > 6);
       this.eventRaceNowAvailable = this.globalService.globalVar.notifications.isEventRaceNowActive && this.lookupService.isItemUnlocked("grandPrix") && (this.globalService.globalVar.tutorials.tutorialCompleted || this.globalService.globalVar.tutorials.currentTutorialId > 9);
     });
 

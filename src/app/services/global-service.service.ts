@@ -83,10 +83,10 @@ export class GlobalService {
     this.globalVar.nationalRaceCountdown = 0;
     this.globalVar.autoFreeRaceCounter = 0;
     this.globalVar.freeRaceCounter = 0;
-    this.globalVar.freeRaceTimePeriodCounter = 0;    
+    this.globalVar.freeRaceTimePeriodCounter = 0;
     this.globalVar.lastTimeStamp = Date.now();
-    this.globalVar.currentVersion = 1.24; //TODO: this needs to be automatically increased or something, too easy to forget
-    this.globalVar.startingVersion = 1.24;
+    this.globalVar.currentVersion = 1.25; //TODO: this needs to be automatically increased or something, too easy to forget
+    this.globalVar.startingVersion = 1.25;
     this.globalVar.startDate = new Date();
     this.globalVar.notifications = new Notifications();
     this.globalVar.relayEnergyFloor = 50;
@@ -1450,9 +1450,24 @@ export class GlobalService {
         "generates new interest in your facility, which means it's time to make some upgrades. Gain Facility Level points from winning these races that increase your Diminishing Returns max value. <br/> <br/>" +
         "<em>Select this race and others like it by choosing the 'Special Race' option from the 'Races' menu.</em>")];
 
-      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(3) + "Monkey";
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(3) + "Coaching";
     }
-    if (numericValue === 3) {
+    else if (numericValue === 3) {
+      this.globalVar.unlockables.set("coaching", true);
+
+      //unlock whistle upgrade from shop
+      var specialtyShop = this.globalVar.shop.find(item => item.name === "Specialty");
+      if (specialtyShop !== null && specialtyShop !== undefined) {
+        var whistle = specialtyShop.itemList.find(item => item.name === "Whistle");
+        if (whistle !== null && whistle !== undefined)
+          whistle.isAvailable = true;
+      }
+
+      returnVal = ["Coaching", "Take charge of your animal's training by giving them some coaching yourself. Visit a barn with an animal assigned and select 'Coach' to get started."];
+
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(4) + "Monkey";
+    }
+    if (numericValue === 4) {
       var monkey = this.globalVar.animals.find(item => item.type === AnimalTypeEnum.Monkey);
       if (monkey !== undefined && monkey !== null) {
         monkey.isAvailable = true;
@@ -1474,22 +1489,8 @@ export class GlobalService {
 
       returnVal = ["Monkey", this.getAnimalDescription("Monkey")];
 
-      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(4) + "Coaching";
-    }
-    else if (numericValue === 4) {
-      this.globalVar.unlockables.set("coaching", true);
-
-      //unlock whistle upgrade from shop
-      var specialtyShop = this.globalVar.shop.find(item => item.name === "Specialty");
-      if (specialtyShop !== null && specialtyShop !== undefined) {
-        var whistle = specialtyShop.itemList.find(item => item.name === "Whistle");
-        if (whistle !== null && whistle !== undefined)
-          whistle.isAvailable = true;
-      }
-
-      returnVal = ["Coaching", "Take charge of your animal's training by giving them some coaching yourself. Visit a barn with an animal assigned and select 'Coach' to get started."];
-
       var amount = 500;
+
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(5) + amount + " Coins";
     }
     else if (numericValue === 5) {
@@ -1564,6 +1565,15 @@ export class GlobalService {
 
       this.sortAnimalOrder();
       returnVal = ["Hare", this.getAnimalDescription("Hare")];
+
+      this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(11) + "Scrimmages";
+    }
+    if (numericValue === 11) {
+      this.globalVar.unlockables.set("scrimmages", true);
+
+      returnVal = ["Scrimmages", this.utilityService.getSanitizedHtml("A new coaching type has been unlocked! " +
+        "Scrimmages are another way to manually train your animal. Instead of directly raising their stats, you can permanently increase their default stat value after Breeding. The faster you help your animal race, the more their values will increase.<br/><br/>" +        
+        "<em>Run scrimmages by selecting 'Coach' when viewing a barn and selecting 'Scrimmage' in the upper menu.</em>")];
 
       var amount = 20;
       this.globalVar.circuitRankUpRewardDescription = this.getRewardReceiveText(12) + amount + " Stat Increasing Food";
@@ -1980,7 +1990,7 @@ export class GlobalService {
     else if (numericValue === 79) {
       this.globalVar.unlockables.set("thePinnacle", true);
       this.globalVar.notifications.isNewSpecialRaceAvailable = true;
-      
+
       var specialtyShop = this.globalVar.shop.find(item => item.name === "Specialty");
       if (specialtyShop !== null && specialtyShop !== undefined) {
         var orbInfuser = specialtyShop.itemList.find(item => item.name === "Orb Infuser");
@@ -2070,7 +2080,7 @@ export class GlobalService {
       var raceLegs: RaceLeg[] = [];
       var seedValue = 'C' + i + j;
 
-      if (i <= 2) //make these breakpoints configurable, figure out your time horizon on new races
+      if (i <= 3) //make these breakpoints configurable, figure out your time horizon on new races
       {
         additiveValue = -37;
 
@@ -2082,6 +2092,14 @@ export class GlobalService {
           else if (j === 1)
             leg.terrain = new Terrain(TerrainTypeEnum.Rainy);
         }
+        else if (i === 3) {
+          if (j === 0)
+            leg.terrain = new Terrain(TerrainTypeEnum.Sunny);
+          else if (j === 1)
+            leg.terrain = new Terrain(TerrainTypeEnum.Rainy);
+          else if (j === 2)
+            leg.terrain = new Terrain(TerrainTypeEnum.Stormy);
+        }
         else
           leg.terrain = new Terrain(TerrainTypeEnum.Sunny);
 
@@ -2089,7 +2107,7 @@ export class GlobalService {
         raceLegs.push(leg);
       }
       else if (i <= 14) {
-        if (i === 3)
+        if (i === 4)
           additiveValue = 5 * i;
         else
           additiveValue = 35 * i;
@@ -2743,7 +2761,7 @@ export class GlobalService {
     var raceLegs: RaceLeg[] = [];
 
     var leg = new RaceLeg();
-    if (i === 1)
+    if (i <= 2)
       leg.courseType = RaceCourseTypeEnum.Flatland;
     else {
       var availableCourses: RaceCourseTypeEnum[] = [];
@@ -3608,7 +3626,7 @@ export class GlobalService {
 
     var raceLegs: RaceLeg[] = [];
 
-    if (numericalRank <= 2) {
+    if (numericalRank <= 4) {
       var leg = new RaceLeg();
       leg.courseType = RaceCourseTypeEnum.Flatland;
       leg.terrain = this.getRandomTerrain(leg.courseType);
@@ -3808,7 +3826,7 @@ export class GlobalService {
     if (endDate instanceof Date)
       this.globalVar.eventRaceData.currentEventEndDate = endDate;
 
-    this.globalVar.eventRaceData.weatherCluster = this.getRandomGrandPrixWeatherCluster();    
+    this.globalVar.eventRaceData.weatherCluster = this.getRandomGrandPrixWeatherCluster();
   }
 
   animalCanRaceGrandPrix(animal: Animal) {
@@ -4484,7 +4502,7 @@ export class GlobalService {
     var breedLevelStatModifier = this.globalVar.modifiers.find(item => item.text === "breedLevelStatModifier");
     if (breedLevelStatModifier !== undefined && breedLevelStatModifier !== null)
       breedLevelStatModifierValue = breedLevelStatModifier.value;
-    
+
     breedLevelStatModifierValue = 1 + ((breedLevelStatModifierValue + animal.miscStats.bonusBreedModifierAmount) * (animal.breedLevel - 1));
 
     //talents
@@ -4706,7 +4724,7 @@ export class GlobalService {
 
     this.globalVar.barnOrder.forEach(barnNum => {
       var matchingBarn = this.globalVar.barns.find(item => item.barnNumber === barnNum);
-      if (matchingBarn !== undefined) 
+      if (matchingBarn !== undefined)
         barnList.push(matchingBarn);
     });
 
@@ -4735,8 +4753,8 @@ export class GlobalService {
     this.globalVar.settings.set("raceDisplayInfo", RaceDisplayInfoEnum.both);
     this.globalVar.settings.set("autoStartEventRace", false);
     this.globalVar.settings.set("quickViewBarnMode", false);
-    this.globalVar.settings.set("displayAverageDistancePace", true);    
-    this.globalVar.settings.set("showBarnOptions", false);    
+    this.globalVar.settings.set("displayAverageDistancePace", true);
+    this.globalVar.settings.set("showBarnOptions", false);
 
     this.globalVar.settings.set("monoRaceToggled", false);
     this.globalVar.settings.set("duoRaceToggled", false);
@@ -4758,6 +4776,7 @@ export class GlobalService {
     this.globalVar.unlockables.set("duoRace", false);
     this.globalVar.unlockables.set("rainbowRace", false);
     this.globalVar.unlockables.set("thePinnacle", false);
+    this.globalVar.unlockables.set("scrimmages", false);
     this.globalVar.unlockables.set("grandPrix", false);
     this.globalVar.unlockables.set("orbs", false);
     this.globalVar.unlockables.set("barnRow2", false);
@@ -4953,8 +4972,7 @@ export class GlobalService {
     var description = "";
     var nectarOfTheGodsIncrease = 0;
     var nectarOrbInfusion = "";
-    if (animal !== undefined)
-    {
+    if (animal !== undefined) {
       nectarOfTheGodsIncrease = this.getNectarOfTheGodsIncrease(animal) * 100;
       if (this.globalVar.resources.some(item => item.name === "Orb Infuser"))
         nectarOrbInfusion = "and your selected Orb's stat gain per level by  " + this.getNectarOfTheGodsOrbInfusionIncrease(animal).toFixed(2) + "% ";
@@ -4986,7 +5004,7 @@ export class GlobalService {
       description = "Give an animal +1 Diminishing Returns per Facility Level. Can use up to 30 of these certificates on any individual animal.";
     if (name === "Nectar of the Gods")
       description = "Drink this to reset Breed Level, Incubator Upgrades, and Ability Levels back to 1. Increase Breed Modifier per Breed Level by " + nectarOfTheGodsIncrease.toFixed(2) + "% " + nectarOrbInfusion + "when using this.";
-    
+
     return description;
   }
 
@@ -5021,21 +5039,18 @@ export class GlobalService {
     return description;
   }
 
-  handleNectarOfTheGodsReset(animal: Animal) {    
-    animal.miscStats.bonusBreedModifierAmount += this.getNectarOfTheGodsIncrease(animal);  
-    if (this.globalVar.resources.some(item => item.name === "Orb Infuser"))
-    {
+  handleNectarOfTheGodsReset(animal: Animal) {
+    animal.miscStats.bonusBreedModifierAmount += this.getNectarOfTheGodsIncrease(animal);
+    if (this.globalVar.resources.some(item => item.name === "Orb Infuser")) {
       var orbInfusionAmount = this.getNectarOfTheGodsOrbInfusionIncrease(animal);
-      if (animal.equippedOrb !== undefined && animal.equippedOrb !== null)
-      {
+      if (animal.equippedOrb !== undefined && animal.equippedOrb !== null) {
         var orb = this.getOrbDetailsFromType(this.getOrbTypeFromResource(animal.equippedOrb));
-        if (orb !== undefined)
-        {
+        if (orb !== undefined) {
           orb.defaultIncrease += orbInfusionAmount / 100;
           orb.increasePerLevel += orbInfusionAmount / 100;
         }
       }
-    }  
+    }
     animal.previousBreedLevel = 1;
     animal.breedLevel = 1;
     animal.breedGaugeMax = 200;
@@ -5052,9 +5067,9 @@ export class GlobalService {
       item.abilityLevel = 1;
       item.abilityMaxXp = 50;
       item.abilityXp = 0;
-  
+
     });
-    
+
     this.calculateAnimalRacingStats(animal);
   }
 
@@ -5068,8 +5083,7 @@ export class GlobalService {
 
     if (animalBreedLevel <= breedLevelDropOff)
       breedModifierIncreaseAmount = animalBreedLevel / 100;
-    else
-    {
+    else {
       var amplifier = 5;
       var horizontalStretch = .005;
       var horizontalPosition = 1;
@@ -5275,7 +5289,7 @@ export class GlobalService {
       animal.currentStats.focus = trainingStatValue;
       animal.currentStats.adaptability = trainingStatValue;
 
-      animal.breedLevel = breedLevel;    
+      animal.breedLevel = breedLevel;
 
       animal.incubatorStatUpgrades.maxSpeedModifier = incubatorUpgradeValue;
       animal.incubatorStatUpgrades.accelerationModifier = incubatorUpgradeValue;

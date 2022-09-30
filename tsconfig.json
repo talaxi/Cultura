@@ -24,7 +24,13 @@
     "lib": [
       "esnext",
       "dom"
-    ]
+    ],
+    "paths": {
+      "crypto": [ "./node_modules/crypto-browserify" ],
+      "stream": [ "./node_modules/stream-browserify" ],
+      "http": [ "./node_modules/stream-http" ],
+      "https": [ "./node_modules/https-browserify" ]
+    }
   },
   "ts-node": {
     // these options are overrides used only by ts-node
