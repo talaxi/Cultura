@@ -218,7 +218,7 @@ export class VersionControlService {
       "Bug fixes and UI improvements.";
     if (version === 1.25)
       changes = "Swapped Monkey and Coaching rewards. Coaching is now a reward for reaching circuit rank X (3) and Monkey is a reward for reaching circuit rank W (4). Circuit and free races have been updated accordingly. \n\n" +
-      "Scrimmages are now a reward at circuit rank P (11).";
+      "Scrimmages are now a reward at circuit rank P (11) instead of being grouped with the Coaching reward.";
     return changes;
   }
 
