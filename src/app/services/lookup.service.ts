@@ -2189,6 +2189,7 @@ export class LookupService {
 
     if (!this.globalService.globalVar.settings.get("hideTips")) {
       tipList.push("Horses are prey animals. Their best method of defense? Run!");
+      tipList.push("Try out my new game, Ballad of Heroes! https://talaxi.github.io/balladofheroes/");
 
       if (this.globalService.globalVar.animals.find(item => item.type === AnimalTypeEnum.Monkey)?.isAvailable)
         tipList.push("There are over 300 species of Monkey in the world. Roughly half are considered Old World Monkeys in Asia and Africa, and the others are New World Monkeys in Central and South America.")
